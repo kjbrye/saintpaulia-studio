@@ -477,9 +477,14 @@ export class UserEntity extends CustomEntity {
     } = await supabase.auth.getUser();
     if (!user) throw new Error("Not authenticated");
 
+    const mappedData = {
+      ...this.mapDataFields(userData),
+      updated_at: new Date().toISOString(),
+    };
+
     const { data, error } = await this.supabase
       .from("users")
-      .update({ ...userData, updated_at: new Date().toISOString() })
+      .update(mappedData)
       .eq("id", user.id)
       .select()
       .maybeSingle(); // Use maybeSingle to handle no rows gracefully
@@ -495,6 +500,15 @@ export class UserEntity extends CustomEntity {
     }
 
     return this.mapResultFields(data);
+  }
+
+  /**
+   * Base44 compatibility helper for updating the current user
+   * @param {Object} userData - User data to update
+   * @returns {Promise<Object>} Updated user data
+   */
+  async updateMe(userData) {
+    return this.updateMyUserData(userData);
   }
 
   /**
