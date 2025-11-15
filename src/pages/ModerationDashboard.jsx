@@ -2,9 +2,9 @@
 import React, { useState } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
-import { Shield, AlertTriangle, Eye, EyeOff, Trash2, UserX, CheckCircle, XCircle, MessageCircle, FileText, ArrowLeft, Filter, TrendingUp } from "lucide-react";
+import { Shield, AlertTriangle, EyeOff, Trash2, CheckCircle, XCircle, MessageCircle, FileText, ArrowLeft, Filter, TrendingUp } from "lucide-react";
 import { format } from "date-fns";
 
 export default function ModerationDashboard() {
@@ -131,7 +131,7 @@ Provide a brief analysis and risk assessment.`;
         }
       });
       return response;
-    } catch (error) {
+    } catch {
       return null;
     }
   };

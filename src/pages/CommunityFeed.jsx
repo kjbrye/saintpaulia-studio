@@ -87,7 +87,6 @@ export default function CommunityFeed() {
     topic.tags?.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()))
   );
 
-  const currentTheme = currentUser?.theme || "glassmorphism";
   const isLoading = activeTab === "feed" ? postsLoading : topicsLoading;
 
   return (

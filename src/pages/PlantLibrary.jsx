@@ -86,12 +86,6 @@ export default function PlantLibrary() {
     initialData: [],
   });
 
-  const { data: allHealthLogs = [] } = useQuery({
-    queryKey: ['allHealthLogs'],
-    queryFn: () => base44.entities.HealthLog.list('-observation_date', 500),
-    initialData: [],
-  });
-
   const { data: allPestDiseaseLogs = [] } = useQuery({
     queryKey: ['allPestDiseaseLogs'],
     queryFn: () => base44.entities.PestDiseaseLog.list('-date_observed', 500),
@@ -159,48 +153,55 @@ export default function PlantLibrary() {
     let comparison = 0;
 
     switch (sortBy) {
-      case "name":
+      case "name": {
         const nameA = a.nickname || a.cultivar_name || "";
         const nameB = b.nickname || b.cultivar_name || "";
         comparison = nameA.localeCompare(nameB);
         break;
-      
-      case "acquired":
+      }
+
+      case "acquired": {
         const dateA = a.acquisition_date ? new Date(a.acquisition_date) : new Date(0);
         const dateB = b.acquisition_date ? new Date(b.acquisition_date) : new Date(0);
         comparison = dateA.getTime() - dateB.getTime();
         break;
-      
-      case "last_watered":
+      }
+
+      case "last_watered": {
         const waterA = a.last_watered ? new Date(a.last_watered) : new Date(0);
         const waterB = b.last_watered ? new Date(b.last_watered) : new Date(0);
         comparison = waterA.getTime() - waterB.getTime();
         break;
-      
-      case "last_fertilized":
+      }
+
+      case "last_fertilized": {
         const fertA = a.last_fertilized ? new Date(a.last_fertilized) : new Date(0);
         const fertB = b.last_fertilized ? new Date(b.last_fertilized) : new Date(0);
         comparison = fertA.getTime() - fertB.getTime();
         break;
-      
-      case "hybridizer":
+      }
+
+      case "hybridizer": {
         const hybA = a.hybridizer || "";
         const hybB = b.hybridizer || "";
         comparison = hybA.localeCompare(hybB);
         break;
-      
-      case "location":
+      }
+
+      case "location": {
         const locA = a.location || "";
         const locB = b.location || "";
         comparison = locA.localeCompare(locB);
         break;
-      
+      }
+
       case "updated":
-      default:
+      default: {
         const updatedA = new Date(a.updated_date || a.created_date);
         const updatedB = new Date(b.updated_date || b.created_date);
         comparison = updatedA.getTime() - updatedB.getTime();
         break;
+      }
     }
 
     return sortOrder === "asc" ? comparison : -comparison;
@@ -224,7 +225,7 @@ export default function PlantLibrary() {
   // Reset display count when filters or search change
   useEffect(() => {
     setDisplayCount(viewMode === "grid" ? 12 : 20);
-  }, [filters, searchQuery, sortBy, sortOrder]);
+  }, [filters, searchQuery, sortBy, sortOrder, viewMode]);
 
   // Infinite scroll observer
   useEffect(() => {
@@ -350,14 +351,14 @@ export default function PlantLibrary() {
     setSearchQuery("");
   };
 
-  const hasActiveFilters = 
-    Object.entries(filters).some(([key, value]) => {
+  const hasActiveFilters =
+    Object.entries(filters).some(([, value]) => {
       if (typeof value === 'boolean') return value === true;
       return value !== "";
     }) || searchQuery !== "";
 
-  const activeFilterCount = 
-    Object.entries(filters).filter(([key, value]) => {
+  const activeFilterCount =
+    Object.entries(filters).filter(([, value]) => {
       if (typeof value === 'boolean') return value === true;
       return value !== "";
     }).length + (searchQuery ? 1 : 0);

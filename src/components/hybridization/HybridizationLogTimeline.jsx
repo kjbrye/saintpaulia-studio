@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { format } from "date-fns";
 import { Calendar, Edit, Trash2, Star, Image as ImageIcon, Sprout } from "lucide-react";
 import { base44 } from "@/api/base44Client";
@@ -15,8 +15,6 @@ const milestoneConfig = {
 
 export default function HybridizationLogTimeline({ logs, offspring, onEdit, projectId }) {
   const queryClient = useQueryClient();
-  const [expandedLog, setExpandedLog] = useState(null);
-
   const deleteMutation = useMutation({
     mutationFn: (logId) => base44.entities.HybridizationLog.delete(logId),
     onSuccess: () => {
@@ -59,7 +57,6 @@ export default function HybridizationLogTimeline({ logs, offspring, onEdit, proj
   return (
     <div className="space-y-4">
       {logs.map((log, index) => {
-        const isExpanded = expandedLog === log.id;
         const isLatest = index === 0;
         const milestone = log.milestone ? milestoneConfig[log.milestone] : null;
         const MilestoneIcon = milestone?.icon;

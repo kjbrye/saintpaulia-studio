@@ -1,6 +1,5 @@
 import React from "react";
-import { Sparkles, AlertTriangle, Heart, TrendingUp } from "lucide-react";
-import { differenceInDays } from "date-fns";
+import { AlertTriangle, Heart, TrendingUp } from "lucide-react";
 
 export default function HealthSummary({ healthLogs }) {
   if (healthLogs.length === 0) {

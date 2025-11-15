@@ -12,26 +12,6 @@ import { toast } from "sonner";
 
 const LOGO_URL = "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/690e3cd78523fb5fba0a8466/632f6e485_PlantLogos.png";
 
-const getSmartWateringInterval = (potSize, soilMix) => {
-  if (!potSize) return 7;
-  
-  const soilLower = soilMix?.toLowerCase() || "";
-  const hasPerlite = soilLower.includes("perlite");
-  const hasPeat = soilLower.includes("peat") || soilLower.includes("sphagnum");
-  
-  let baseInterval = 7;
-  
-  if (potSize <= 2) baseInterval = 3;
-  else if (potSize <= 4) baseInterval = 5;
-  else if (potSize <= 6) baseInterval = 7;
-  else baseInterval = 10;
-  
-  if (hasPerlite) baseInterval -= 1;
-  if (hasPeat) baseInterval += 1;
-  
-  return Math.max(2, baseInterval);
-};
-
 export default function EditPlant() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();

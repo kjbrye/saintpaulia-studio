@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { X, Upload, Loader2, Sparkles, Plus } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import HealthStatusBadge from "./HealthStatusBadge";
 import DatePicker from "../ui/DatePicker";
 
 const commonSymptoms = [

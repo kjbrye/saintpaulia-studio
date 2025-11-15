@@ -63,11 +63,9 @@ export default function RecentActivityWidget({ careLogs, healthLogs, journalEntr
             </p>
           </div>
         ) : (
-          activities.map((activity, idx) => {
-            const plant = plants.find(p => p.id === activity.plant_id);
-            return (
-              <Link key={`${activity.type}-${activity.id}-${idx}`} to={createPageUrl(`PlantDetail?id=${activity.plant_id}`)}>
-                <div className="neuro-button rounded-2xl p-4">
+          activities.map((activity, idx) => (
+            <Link key={`${activity.type}-${activity.id}-${idx}`} to={createPageUrl(`PlantDetail?id=${activity.plant_id}`)}>
+              <div className="neuro-button rounded-2xl p-4">
                   <div className="flex items-start gap-3">
                     <div className="neuro-icon-well w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0">
                       {getActivityIcon(activity.type)}
@@ -86,10 +84,9 @@ export default function RecentActivityWidget({ careLogs, healthLogs, journalEntr
                       </p>
                     </div>
                   </div>
-                </div>
-              </Link>
-            );
-          })
+              </div>
+            </Link>
+          ))
         )}
       </div>
     </div>

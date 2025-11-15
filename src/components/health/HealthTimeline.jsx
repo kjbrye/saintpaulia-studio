@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { format } from "date-fns";
-import { ChevronDown, ChevronUp, Sparkles, Image as ImageIcon } from "lucide-react";
+import { ChevronDown, ChevronUp, Sparkles } from "lucide-react";
 import HealthStatusBadge from "./HealthStatusBadge";
 import ReactMarkdown from "react-markdown";
 

@@ -12,7 +12,7 @@ const COLOR_OPTIONS = {
   sky: { bg: "rgba(125, 211, 252, 0.2)", border: "rgba(125, 211, 252, 0.4)", text: "#7DD3FC" }
 };
 
-export default function CollectionSelector({ plantId, selectedCollections, onChange }) {
+export default function CollectionSelector({ selectedCollections, onChange }) {
   const { data: collections = [] } = useQuery({
     queryKey: ['plantCollections'],
     queryFn: () => base44.entities.PlantCollection.list(),

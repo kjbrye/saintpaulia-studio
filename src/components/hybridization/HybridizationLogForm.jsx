@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { X, Upload, Loader2, Plus, Calendar } from "lucide-react";
+import { X, Upload, Loader2, Plus } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 

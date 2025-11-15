@@ -1,6 +1,6 @@
 
 import React from "react";
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from "recharts";
 import { Droplets, Leaf, Scissors, Shovel } from "lucide-react";
 
 export default function CareFrequencyAnalytics({ careLogs, plants }) {
@@ -94,13 +94,9 @@ export default function CareFrequencyAnalytics({ careLogs, plants }) {
                 style={{ fontSize: '12px', fill: 'var(--text-muted)' }}
               />
               <Tooltip content={<CustomTooltip />} />
-              <Bar 
-                dataKey="count" 
-                fill="#A7F3D0"
-                radius={[8, 8, 0, 0]}
-              >
+              <Bar dataKey="count" fill="#A7F3D0" radius={[8, 8, 0, 0]}>
                 {chartData.map((entry, index) => (
-                  <Bar key={`bar-${index}`} dataKey="count" fill={entry.color} />
+                  <Cell key={`bar-${index}`} fill={entry.color} />
                 ))}
               </Bar>
             </BarChart>

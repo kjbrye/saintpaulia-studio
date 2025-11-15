@@ -1,9 +1,9 @@
 
-import React, { useState } from "react";
+import React from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { ArrowLeft, Edit, Trash2, MapPin, Thermometer, Droplets, Sun, Wind, Image as ImageIcon, Plus, ChevronRight } from "lucide-react";
+import { ArrowLeft, Edit, Trash2, MapPin, Thermometer, Droplets, Sun, Wind, Plus, ChevronRight } from "lucide-react";
 import { createPageUrl } from "@/utils";
 
 const LOGO_URL = "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/690e3cd78523fb5fba0a8466/632f6e485_PlantLogos.png";

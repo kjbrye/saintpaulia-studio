@@ -3,7 +3,7 @@ import { base44 } from "@/api/base44Client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
-import { ArrowLeft, MessageSquare, ThumbsUp, Reply, CheckCircle, Edit, Trash2, Pin, Lock, User } from "lucide-react";
+import { ArrowLeft, MessageSquare, ThumbsUp, Reply, CheckCircle, Trash2, Pin, Lock, User } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import ReactMarkdown from "react-markdown";
 
@@ -268,7 +268,7 @@ export default function ForumTopic() {
       incrementViewMutation.mutate();
       sessionStorage.setItem(`viewed_topic_${topicId}`, 'true');
     }
-  }, [topic, topicId]);
+  }, [topic, topicId, incrementViewMutation]);
 
   if (isLoading) {
     return (
@@ -297,7 +297,6 @@ export default function ForumTopic() {
   }
 
   const category = CATEGORIES[topic.category];
-  const isOwner = topic.created_by === currentUser?.email;
   const currentTheme = currentUser?.theme || "glassmorphism";
 
   return (

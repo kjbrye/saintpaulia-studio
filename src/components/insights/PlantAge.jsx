@@ -23,8 +23,6 @@ export default function PlantAge({ plant, careLogs }) {
   const totalDays = differenceInDays(today, acquisitionDate);
   const years = differenceInYears(today, acquisitionDate);
   const months = differenceInMonths(today, acquisitionDate) % 12;
-  const days = totalDays % 30;
-
   // Calculate care timeline milestones
   const firstWatering = careLogs.find(log => log.care_type === "watering");
   const firstFertilizing = careLogs.find(log => log.care_type === "fertilizing");

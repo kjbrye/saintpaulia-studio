@@ -4,7 +4,7 @@ import { base44 } from "@/api/base44Client";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
-import { ArrowLeft, TrendingUp, BarChart3, PieChart, Calendar, Award, Target, Zap } from "lucide-react";
+import { ArrowLeft, TrendingUp, BarChart3, PieChart, Target, Zap } from "lucide-react";
 import CollectionGrowthChart from "../components/analytics/CollectionGrowthChart";
 import CareFrequencyAnalytics from "../components/analytics/CareFrequencyAnalytics";
 import PropagationSuccessChart from "../components/analytics/PropagationSuccessChart";

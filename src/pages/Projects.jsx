@@ -4,7 +4,7 @@ import { base44 } from "@/api/base44Client";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
-import { Beaker, Search, Plus, ArrowLeft, Leaf } from "lucide-react";
+import { Beaker, Search, ArrowLeft, Leaf } from "lucide-react";
 import EmptyState from "../components/shared/EmptyState";
 import BackToTop from "../components/shared/BackToTop";
 

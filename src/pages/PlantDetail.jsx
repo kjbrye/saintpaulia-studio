@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { ArrowLeft, Edit, Trash2, Heart, Activity, BarChart3, BookOpen, Flower2, Image as ImageIcon, Clock, Users, Sparkles, Info, Bug, Package } from "lucide-react";
+import { ArrowLeft, Edit, Trash2, Heart, Activity, BarChart3, BookOpen, Flower2, Image as ImageIcon, Users, Sparkles, Info, Bug, Package } from "lucide-react";
 import { createPageUrl } from "@/utils";
 import QuickCareButtons from "../components/plants/QuickCareButtons";
 import ContextualTooltip from "../components/onboarding/ContextualTooltip";

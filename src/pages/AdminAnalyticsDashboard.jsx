@@ -3,11 +3,9 @@ import { base44 } from "@/api/base44Client";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
-import { ArrowLeft, TrendingUp, Users, Library, MessageSquare, Heart, Activity, Calendar, BarChart3, PieChart } from "lucide-react";
+import { ArrowLeft, TrendingUp, Users, Library, MessageSquare, Activity, Calendar, BarChart3 } from "lucide-react";
 import { AreaChart, Area, BarChart, Bar, LineChart, Line, PieChart as RechartsPieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
 import { format, subDays, startOfMonth, endOfMonth, eachDayOfInterval, eachMonthOfInterval, startOfYear } from "date-fns";
-
-const LOGO_URL = "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/690e3cd78523fb5fba0a8466/632f6e485_PlantLogos.png";
 
 const COLORS = ["#C4B5FD", "#A7F3D0", "#FCD34D", "#FCA5A5", "#7DD3FC", "#F0ABFC", "#E9D5FF"];
 
@@ -65,27 +63,14 @@ export default function AdminAnalyticsDashboard() {
     initialData: []
   });
 
-  const { data: allProjects = [] } = useQuery({
-    queryKey: ['allProjects'],
-    queryFn: () => base44.entities.HybridizationProject.list(),
-    initialData: []
-  });
-
-  const { data: allWishlist = [] } = useQuery({
-    queryKey: ['allWishlist'],
-    queryFn: () => base44.entities.Wishlist.list(),
-    initialData: []
-  });
-
-  // Calculate date ranges
-  const now = new Date();
-  const startDate = timeRange === "7days" ? subDays(now, 7) :
-                    timeRange === "30days" ? subDays(now, 30) :
-                    timeRange === "90days" ? subDays(now, 90) :
-                    startOfYear(now);
-
   // Analytics calculations
   const analytics = useMemo(() => {
+    const now = new Date();
+    const startDate = timeRange === "7days" ? subDays(now, 7) :
+      timeRange === "30days" ? subDays(now, 30) :
+      timeRange === "90days" ? subDays(now, 90) :
+      startOfYear(now);
+
     const totalUsers = allUsers.length;
     const activeUsers = allUsers.filter(u => {
       const hasPlants = allPlants.some(p => p.created_by === u.email);
@@ -275,13 +260,11 @@ export default function AdminAnalyticsDashboard() {
       careTypeData,
       userEngagementData
     };
-  }, [allUsers, allPlants, allCareLogs, allCommunityPosts, allComments, allLikes, timeRange, startDate, now]);
+  }, [allUsers, allPlants, allCareLogs, allCommunityPosts, allComments, allLikes, timeRange]);
 
   if (!currentUser || currentUser.role !== 'admin') {
     return null;
   }
-
-  const currentTheme = currentUser?.theme || "glassmorphism";
 
   return (
     <div className="min-h-screen py-8 px-4 sm:px-6 lg:px-8">

@@ -1,6 +1,6 @@
 import React from "react";
 
-export default function StatsCard({ title, value, gradient = "lavender" }) {
+export default function StatsCard({ title, value }) {
   return (
     <div className="neuro-card rounded-3xl p-8">
       <p className="text-sm font-semibold mb-3" style={{ color: "var(--text-secondary)" }}>

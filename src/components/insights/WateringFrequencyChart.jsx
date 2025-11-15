@@ -1,6 +1,6 @@
 import React from "react";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from "recharts";
-import { format, parseISO, startOfWeek, endOfWeek, eachWeekOfInterval, differenceInDays } from "date-fns";
+import { format, endOfWeek, eachWeekOfInterval, differenceInDays } from "date-fns";
 
 export default function WateringFrequencyChart({ careLogs }) {
   if (careLogs.length === 0) {

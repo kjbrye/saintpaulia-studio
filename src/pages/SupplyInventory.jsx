@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery } from "@tanstack/react-query";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { ArrowLeft, Plus, Package, AlertTriangle, Search, Filter, TrendingDown, DollarSign } from "lucide-react";
 import SupplyCard from "../components/supplies/SupplyCard";
@@ -15,7 +15,6 @@ const LOGO_URL = "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/pub
 
 export default function SupplyInventory() {
   const { isTooltipDismissed, dismissTooltip } = useTooltips();
-  const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("all");
   const [showLowStockOnly, setShowLowStockOnly] = useState(false);
@@ -37,8 +36,6 @@ export default function SupplyInventory() {
 
   const lowStockCount = supplies.filter(s => s.quantity <= s.minimum_quantity).length;
   const totalValue = supplies.reduce((sum, s) => sum + (s.cost || 0), 0);
-  const categories = [...new Set(supplies.map(s => s.category))];
-
   return (
     <div className="min-h-screen py-8 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">

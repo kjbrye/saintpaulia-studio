@@ -1,6 +1,6 @@
 
 import React from "react";
-import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from "recharts";
+import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
 import { PieChart as PieIcon, Package } from "lucide-react";
 
 export default function CollectionBreakdown({ plants }) {

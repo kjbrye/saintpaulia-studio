@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { base44 } from "@/api/base44Client";
 import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
-import { X, Plus, Edit, Trash2, Package, MapPin } from "lucide-react";
+import { Plus, Edit, Trash2, Package, MapPin } from "lucide-react";
 import { toast } from "sonner";
 
 export default function BatchManager({ projectId }) {

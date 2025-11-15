@@ -4,7 +4,7 @@ import { base44 } from "@/api/base44Client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
-import { ArrowLeft, Search, Database, Sparkles, Loader2, Filter, X, ChevronDown, ChevronUp, BookOpen, Info, Star, Heart } from "lucide-react";
+import { ArrowLeft, Search, Database, Sparkles, Loader2, Filter, X, ChevronDown, ChevronUp, BookOpen, Star, Heart } from "lucide-react";
 import { toast } from "sonner";
 
 const LOGO_URL = "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/690e3cd78523fb5fba0a8466/632f6e485_PlantLogos.png";

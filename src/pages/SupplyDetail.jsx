@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { ArrowLeft, Edit, Trash2, Package, Calendar, MapPin, DollarSign, TrendingDown, Plus, AlertTriangle } from "lucide-react";
+import { ArrowLeft, Edit, Trash2, Package, Calendar, MapPin, DollarSign, TrendingDown, AlertTriangle } from "lucide-react";
 import { createPageUrl } from "@/utils";
 import { toast } from "sonner";
 import SupplyUsageForm from "../components/supplies/SupplyUsageForm";

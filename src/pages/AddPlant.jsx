@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
-import { ArrowLeft, Upload, Loader2, AlertTriangle, MapPin, Plus } from "lucide-react";
+import { ArrowLeft, Upload, Loader2, AlertTriangle, MapPin } from "lucide-react";
 import { createPageUrl } from "@/utils";
 import CollectionSelector from "../components/collections/CollectionSelector";
 import LocationManager from "../components/locations/LocationManager";
