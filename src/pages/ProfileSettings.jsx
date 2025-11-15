@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -57,6 +57,7 @@ export default function ProfileSettings() {
   const [showResetConfirmation, setShowResetConfirmation] = useState(false);
   const [resetConfirmText, setResetConfirmText] = useState("");
   const [showDashboardCustomizer, setShowDashboardCustomizer] = useState(false);
+  const previousEmailRef = useRef(null);
 
   const { data: currentUser, isLoading: userLoading } = useQuery({
     queryKey: ['currentUser'],
@@ -84,14 +85,62 @@ export default function ProfileSettings() {
         community_updates: currentUser.community_updates !== false,
         care_reminders: currentUser.care_reminders !== false
       });
+      previousEmailRef.current = currentUser.email || null;
+    } else {
+      previousEmailRef.current = null;
     }
   }, [currentUser]);
 
   const updateMutation = useMutation({
     mutationFn: (data) => base44.auth.updateMe(data),
-    onSuccess: () => {
+    onSuccess: (updatedUser, variables) => {
+      const appliedUpdates = updatedUser || variables;
+
+      if (appliedUpdates) {
+        const sanitizedUpdates = Object.fromEntries(
+          Object.entries(appliedUpdates).filter(([key, value]) =>
+            value !== undefined &&
+            [
+              'username',
+              'bio',
+              'profile_picture',
+              'email_notifications',
+              'community_updates',
+              'care_reminders',
+              'theme',
+            ].includes(key)
+          )
+        );
+
+        if (Object.keys(sanitizedUpdates).length > 0) {
+          setFormData((previous) => ({
+            ...previous,
+            ...sanitizedUpdates,
+          }));
+
+          queryClient.setQueryData(['currentUser'], (previous) =>
+            previous ? { ...previous, ...sanitizedUpdates } : previous
+          );
+
+          const email = previousEmailRef.current;
+          if (email) {
+            queryClient.setQueryData(['userProfile', email], (previous) =>
+              previous ? { ...previous, ...sanitizedUpdates } : previous
+            );
+            queryClient.setQueryData(['publicProfile', email], (previous) =>
+              previous ? { ...previous, ...sanitizedUpdates } : previous
+            );
+          }
+        }
+      }
+
       queryClient.invalidateQueries({ queryKey: ['currentUser'] });
       queryClient.invalidateQueries({ queryKey: ['userProfile'] });
+      if (previousEmailRef.current) {
+        queryClient.invalidateQueries({ queryKey: ['userProfile', previousEmailRef.current] });
+        queryClient.invalidateQueries({ queryKey: ['publicProfile', previousEmailRef.current] });
+      }
+
       toast.success("Profile updated!", {
         description: "Your changes have been saved."
       });
