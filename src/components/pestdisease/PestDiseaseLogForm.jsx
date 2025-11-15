@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { X, Upload, Loader2, Trash2, Bug, AlertOctagon } from "lucide-react";
+import { X, Upload, Loader2, Trash2 } from "lucide-react";
 import DatePicker from "../ui/DatePicker";
 import { toast } from "sonner";
 
@@ -84,7 +84,7 @@ export default function PestDiseaseLogForm({ plantId, log, onClose }) {
       const results = await Promise.all(uploadPromises);
       const urls = results.map(r => r.file_url);
       setFormData(prev => ({ ...prev, photos: [...prev.photos, ...urls] }));
-    } catch (error) {
+    } catch {
       toast.error("Upload failed", {
         description: "Could not upload images."
       });

@@ -4,7 +4,7 @@ import { Heart, MessageCircle, Star, User, Bookmark, Shield, Trash2 } from "luci
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { base44 } from "@/api/base44Client";
 import { format } from "date-fns";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import PostDetailModal from "./PostDetailModal";
 import { toast } from "sonner";
@@ -12,7 +12,6 @@ import { toast } from "sonner";
 const LOGO_URL = "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/690e3cd78523fb5fba0a8466/632f6e485_PlantLogos.png";
 
 export default function PostCard({ post, currentUser }) {
-  const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [showModal, setShowModal] = useState(false);
 

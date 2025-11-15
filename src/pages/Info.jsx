@@ -1,6 +1,6 @@
 
 import React, { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { ArrowLeft, BookOpen, Sparkles, Heart, Users, Beaker, Library, Calendar, BarChart3, Package, Star, HelpCircle, Lightbulb, CheckCircle, ChevronRight, X, RotateCcw, Database } from "lucide-react";
 import { useTooltips } from "../components/onboarding/TooltipManager";
@@ -121,7 +121,6 @@ const FEATURES = [
 
 
 export default function Info() {
-  const navigate = useNavigate();
   const { resetTooltips } = useTooltips();
   const [showOnboarding, setShowOnboarding] = useState(false);
 

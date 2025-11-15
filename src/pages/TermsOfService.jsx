@@ -3,8 +3,6 @@ import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { ArrowLeft, FileText } from "lucide-react";
 
-const LOGO_URL = "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/690e3cd78523fb5fba0a8466/632f6e485_PlantLogos.png";
-
 export default function TermsOfService() {
   return (
     <div className="min-h-screen py-8 px-4 sm:px-6 lg:px-8">

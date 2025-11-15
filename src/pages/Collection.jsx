@@ -4,13 +4,12 @@ import { base44 } from "@/api/base44Client";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
-import { Beaker, Library, ArrowRight, Star, Users, TrendingUp, Calendar, Droplets, Plus, User, BookOpen, BarChart3, Bug, Package, Flower2, Info } from "lucide-react";
+import { Beaker, Library, ArrowRight, Star, Users, TrendingUp, Calendar, Droplets, Plus, User, BarChart3, Bug, Package, Flower2, Info } from "lucide-react";
 import StatsCard from "../components/plants/StatsCard";
 import RecentActivityWidget from "../components/dashboard/RecentActivityWidget";
 import ContextualTooltip from "../components/onboarding/ContextualTooltip";
 import { useTooltips } from "../components/onboarding/TooltipManager";
 import EmptyState from "../components/shared/EmptyState";
-import BackToTop from "../components/shared/BackToTop";
 
 const LOGO_URL = "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/690e3cd78523fb5fba0a8466/632f6e485_PlantLogos.png";
 
@@ -25,7 +24,7 @@ const getCareStatus = (lastCareDate, daysThreshold) => {
 export default function Collection() {
   const { isTooltipDismissed, dismissTooltip } = useTooltips();
 
-  const { data: plants = [], isLoading } = useQuery({
+  const { data: plants = [] } = useQuery({
     queryKey: ['plants'],
     queryFn: () => base44.entities.Plant.list('-updated_date'),
     initialData: []

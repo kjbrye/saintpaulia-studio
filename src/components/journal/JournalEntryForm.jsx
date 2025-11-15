@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { X, Upload, Loader2, Plus, Tag, Image as ImageIcon, FileText, Sprout, Bug, Scissors, TrendingUp, AlertTriangle, Eye, Beaker, Sparkles } from "lucide-react";
+import { X, Loader2, Plus, Tag, Image as ImageIcon, FileText, Sprout, Bug, Scissors, TrendingUp, AlertTriangle, Eye, Beaker, Sparkles } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import DatePicker from "../ui/DatePicker";
@@ -123,8 +123,6 @@ export default function JournalEntryForm({ plantId, entry, onClose }) {
     e.preventDefault();
     mutation.mutate(formData);
   };
-
-  const selectedType = ENTRY_TYPES.find(t => t.value === formData.entry_type);
 
   return (
     <div className="fixed inset-0 bg-black/20 backdrop-blur-sm z-50 flex items-center justify-center p-4">
@@ -278,7 +276,7 @@ export default function JournalEntryForm({ plantId, entry, onClose }) {
               ))}
 
               {/* Upload Placeholders */}
-              {uploadingFiles.map((id, index) => (
+              {uploadingFiles.map((id) => (
                 <div key={id} className="glass-card rounded-2xl aspect-square flex items-center justify-center"
                   style={{
                     background: "linear-gradient(135deg, rgba(168, 159, 239, 0.15) 0%, rgba(154, 226, 211, 0.12) 100%)"

@@ -222,7 +222,7 @@ export default function ProfileSettings() {
     try {
       const { file_url } = await base44.integrations.Core.UploadFile({ file });
       setFormData((prev) => ({ ...prev, profile_picture: file_url }));
-    } catch (error) {
+    } catch {
       toast.error("Upload failed", {
         description: "Could not upload image. Please try again."
       });
@@ -233,7 +233,8 @@ export default function ProfileSettings() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const { theme, ...dataWithoutTheme } = formData;
+    const dataWithoutTheme = { ...formData };
+    delete dataWithoutTheme.theme;
     updateMutation.mutate(dataWithoutTheme);
   };
 
@@ -267,7 +268,6 @@ export default function ProfileSettings() {
 
   }
 
-  const displayName = currentUser?.username || currentUser?.full_name || currentUser?.email?.split('@')[0] || 'User';
   const currentTheme = currentUser?.theme || "glassmorphism";
   const isAdmin = currentUser?.role === 'admin';
 

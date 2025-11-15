@@ -30,12 +30,6 @@ export default function CollectionManager({ onClose }) {
     initialData: []
   });
 
-  const { data: plants = [] } = useQuery({
-    queryKey: ['plants'],
-    queryFn: () => base44.entities.Plant.list(),
-    initialData: []
-  });
-
   const createMutation = useMutation({
     mutationFn: (collectionData) => base44.entities.PlantCollection.create({
       ...collectionData,

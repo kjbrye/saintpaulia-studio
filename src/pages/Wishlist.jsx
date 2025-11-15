@@ -4,7 +4,7 @@ import { base44 } from "@/api/base44Client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
-import { Plus, Search, Filter, Star, ExternalLink, Edit, Trash2, ChevronDown, ArrowLeft, ShoppingCart, Calendar, Users } from "lucide-react";
+import { Plus, Search, Filter, Star, ExternalLink, Edit, Trash2, ChevronDown, ArrowLeft, ShoppingCart, Calendar } from "lucide-react";
 import PurchaseWishlistModal from "../components/wishlist/PurchaseWishlistModal";
 import EmptyState from "../components/shared/EmptyState";
 import BackToTop from "../components/shared/BackToTop";

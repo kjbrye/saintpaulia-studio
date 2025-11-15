@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import ReactDOM from "react-dom";
-import { ArrowLeft, Plus, Loader2, AlertTriangle, Package, X, Upload, Image } from "lucide-react";
+import { ArrowLeft, Plus, Loader2, AlertTriangle, Package, X, Upload } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 import { format } from "date-fns";
@@ -147,7 +147,7 @@ export default function CareLogForm({ plantId, plant, careType, onClose }) {
         ...prev,
         photos: [...prev.photos, file_url]
       }));
-    } catch (error) {
+    } catch {
       alert("Failed to upload photo. Please try again.");
     } finally {
       setUploadingPhoto(false);

@@ -1,7 +1,7 @@
 
 import React from "react";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
-import { format, startOfWeek, eachWeekOfInterval, subWeeks } from "date-fns";
+import { format, eachWeekOfInterval, subWeeks } from "date-fns";
 import { Activity, TrendingUp, TrendingDown } from "lucide-react";
 
 export default function HealthTrendsChart({ healthLogs }) {

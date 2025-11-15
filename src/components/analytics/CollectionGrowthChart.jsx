@@ -1,7 +1,7 @@
 
 import React from "react";
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Area, AreaChart } from "recharts";
-import { format, startOfMonth, eachMonthOfInterval, subMonths } from "date-fns";
+import { XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Area, AreaChart } from "recharts";
+import { format, eachMonthOfInterval, subMonths } from "date-fns";
 import { TrendingUp } from "lucide-react";
 
 export default function CollectionGrowthChart({ plants, timeRange }) {

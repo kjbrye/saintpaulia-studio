@@ -1,6 +1,6 @@
 
 import React, { useState, useMemo } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import { useQuery } from "@tanstack/react-query";
 import { createPageUrl } from "@/utils";
@@ -42,7 +42,6 @@ const CARE_TYPES = {
 };
 
 export default function CareCalendar() {
-  const navigate = useNavigate();
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState(null);
   const [viewMode, setViewMode] = useState("month"); // "month" or "week"

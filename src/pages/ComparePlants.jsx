@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import { useQuery } from "@tanstack/react-query";
-import { ArrowLeft, Plus, X, Check, Calendar, Droplets, Sun, Leaf, Thermometer, Beaker, MapPin, Package } from "lucide-react";
+import { ArrowLeft, Plus, X, Check, Calendar, Droplets, Sun, Leaf, Beaker, MapPin, Package } from "lucide-react";
 import { createPageUrl } from "@/utils";
 import { format } from "date-fns";
 
@@ -314,7 +314,7 @@ export default function ComparePlants() {
                         Attribute
                       </p>
                     </th>
-                    {selectedPlants.map((plant, idx) => (
+                    {selectedPlants.map((plant, _idx) => (
                       <th key={plant.id} className="text-left py-4 px-3 min-w-[250px]">
                         <div className="flex items-center justify-between gap-2">
                           <p className="text-sm font-semibold truncate" style={{ color: "var(--text-primary)" }}>

@@ -33,6 +33,31 @@ export default [
         'warn',
         { allowConstantExport: true },
       ],
+      'react/prop-types': 'off',
+      'react/no-unescaped-entities': 'off',
+      'no-unused-vars': [
+        'error',
+        {
+          argsIgnorePattern: '^_',
+          varsIgnorePattern: '^React$',
+        },
+      ],
+    },
+  },
+  {
+    files: [
+      '*.config.js',
+      'vite.config.js',
+      'postcss.config.js',
+      'tailwind.config.js',
+      'eslint.config.js',
+    ],
+    languageOptions: {
+      ecmaVersion: 2020,
+      globals: {
+        ...globals.node,
+      },
+      sourceType: 'module',
     },
   },
 ]

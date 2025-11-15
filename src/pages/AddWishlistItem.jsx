@@ -70,7 +70,7 @@ export default function AddWishlistItem() {
     try {
       const { file_url } = await base44.integrations.Core.UploadFile({ file });
       setFormData(prev => ({ ...prev, photo_url: file_url }));
-    } catch (error) {
+    } catch {
       alert('Failed to upload image');
     } finally {
       setUploading(false);

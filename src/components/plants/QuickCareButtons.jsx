@@ -66,7 +66,7 @@ export default function QuickCareButtons({ plantId }) {
   return (
     <>
       <div className="grid grid-cols-2 gap-3">
-        {careTypes.map(({ type, icon: Icon, label, gradient, color }) => (
+        {careTypes.map(({ type, icon: Icon, label, color }) => (
           <button
             key={type}
             onClick={() => handleCareClick(type)}

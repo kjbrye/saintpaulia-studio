@@ -3,8 +3,6 @@ import { X, Upload, Loader2, Trash2, Image as ImageIcon } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-const LOGO_URL = "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/690e3cd78523fb5fba0a8466/632f6e485_PlantLogos.png";
-
 export default function PlantPhotoGallery({ plant, onClose }) {
   const queryClient = useQueryClient();
   const [uploading, setUploading] = useState(false);

@@ -1,13 +1,12 @@
 import React, { useState } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Plus, Repeat, Check, X, Edit, Trash2, Calendar, Loader2 } from "lucide-react";
+import { Plus, Repeat, Check, X, Trash2 } from "lucide-react";
 import { format, addDays } from "date-fns";
 
-export default function RecurringCareManager({ plantId, plant, currentUser }) {
+export default function RecurringCareManager({ plantId, currentUser }) {
   const queryClient = useQueryClient();
   const [showForm, setShowForm] = useState(false);
-  const [editingTask, setEditingTask] = useState(null);
 
   const { data: recurringTasks = [] } = useQuery({
     queryKey: ['recurringTasks', plantId],
