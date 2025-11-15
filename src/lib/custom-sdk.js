@@ -4,40 +4,74 @@ import { createClient } from "@supabase/supabase-js";
 // Handle both Vite (import.meta.env) and Node.js (process.env) environments
 const getEnvVar = (key, defaultValue) => {
   if (typeof import.meta !== "undefined" && import.meta.env) {
-    return import.meta.env[key] || defaultValue;
+    const value = import.meta.env[key];
+    if (value !== undefined && value !== null && value !== "") {
+      return value;
+    }
   }
   if (typeof globalThis !== "undefined" && globalThis.process?.env) {
-    return globalThis.process.env[key] || defaultValue;
+    const value = globalThis.process.env[key];
+    if (value !== undefined && value !== null && value !== "") {
+      return value;
+    }
   }
   return defaultValue;
 };
 
-// Create service role client for admin operations (bypasses RLS)
 const supabaseUrl = getEnvVar("VITE_SUPABASE_URL", "http://127.0.0.1:54321");
+const isLocalSupabase = /^(https?:\/\/)?(localhost|127\.0\.0\.1)(:\d+)?/.test(
+  supabaseUrl || ""
+);
+
+const defaultServiceRoleKey = isLocalSupabase
+  ? "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImV4cCI6MTk4MzgxMjk5Nn0.EGIM96RAZx35lJzdJsyH-qQwv8Hdp7fsn3W0YpN81IU"
+  : undefined;
+
 const supabaseServiceKey = getEnvVar(
   "VITE_SUPABASE_SERVICE_ROLE_KEY",
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImV4cCI6MTk4MzgxMjk5Nn0.EGIM96RAZx35lJzdJsyH-qQwv8Hdp7fsn3W0YpN81IU"
-);
-const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey, {
-  auth: {
-    autoRefreshToken: false,
-    persistSession: false,
-  },
-  db: {
-    schema: "public",
-  },
-});
+  defaultServiceRoleKey
+)?.trim();
 
-// Test service role access on initialization (silent)
-supabaseAdmin
-  .from("users")
-  .select("id")
-  .limit(1)
-  .then(({ error }) => {
-    if (error) {
+const getServiceRoleStorageKey = () => {
+  try {
+    const hostname = new URL(supabaseUrl).hostname;
+    const [projectRef] = hostname.split(".");
+    return `sb-${projectRef}-service-role-auth-token`;
+  } catch (error) {
+    console.warn("Unable to derive Supabase project ref for storage key:", error);
+    return "sb-service-role-auth-token";
+  }
+};
+
+const serviceRoleClient = supabaseServiceKey
+  ? createClient(supabaseUrl, supabaseServiceKey, {
+      auth: {
+        autoRefreshToken: false,
+        persistSession: false,
+        storageKey: getServiceRoleStorageKey(),
+      },
+      db: {
+        schema: "public",
+      },
+    })
+  : null;
+
+if (serviceRoleClient) {
+  serviceRoleClient
+    .from("users")
+    .select("id")
+    .limit(1)
+    .then(({ error }) => {
+      if (error) {
+        console.error("Service role client initialization failed:", error);
+      }
+    })
+    .catch((error) => {
       console.error("Service role client initialization failed:", error);
-    }
-  });
+    });
+}
+
+let serviceRoleFallbackWarned = false;
 
 /**
  * Base Entity class that provides CRUD operations compatible with Base44 SDK
@@ -45,8 +79,17 @@ supabaseAdmin
 export class CustomEntity {
   constructor(tableName, useServiceRole = false) {
     this.tableName = tableName;
-    this.supabase = useServiceRole ? supabaseAdmin : supabase;
-    this.useServiceRole = useServiceRole;
+    const canUseServiceRole = Boolean(serviceRoleClient) && useServiceRole;
+
+    if (useServiceRole && !canUseServiceRole && !serviceRoleFallbackWarned) {
+      console.warn(
+        "Service role operations requested but no service role key is configured. Falling back to anon client."
+      );
+      serviceRoleFallbackWarned = true;
+    }
+
+    this.supabase = canUseServiceRole ? serviceRoleClient : supabase;
+    this.useServiceRole = canUseServiceRole;
   }
 
   /**
