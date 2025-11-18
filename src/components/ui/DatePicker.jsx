@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { Calendar, ChevronLeft, ChevronRight, X } from "lucide-react";
 import { format } from "date-fns";
 
@@ -15,11 +16,22 @@ export default function DatePicker({
   const [isOpen, setIsOpen] = useState(false);
   const [currentMonth, setCurrentMonth] = useState(value ? new Date(value) : new Date());
   const containerRef = useRef(null);
+  const triggerRef = useRef(null);
+  const dropdownRef = useRef(null);
+  const [portalTarget, setPortalTarget] = useState(null);
+  const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0, width: 0 });
+
+  useEffect(() => {
+    setPortalTarget(typeof document !== "undefined" ? document.body : null);
+  }, []);
 
   // Close on click outside
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (containerRef.current && !containerRef.current.contains(event.target)) {
+      const clickedOutsideContainer = containerRef.current && !containerRef.current.contains(event.target);
+      const clickedOutsideDropdown = dropdownRef.current ? !dropdownRef.current.contains(event.target) : true;
+
+      if (clickedOutsideContainer && clickedOutsideDropdown) {
         setIsOpen(false);
       }
     };
@@ -28,6 +40,30 @@ export default function DatePicker({
       document.addEventListener('mousedown', handleClickOutside);
       return () => document.removeEventListener('mousedown', handleClickOutside);
     }
+  }, [isOpen]);
+
+  const updateDropdownPosition = () => {
+    if (!triggerRef.current) return;
+    const triggerRect = triggerRef.current.getBoundingClientRect();
+    setDropdownPosition({
+      top: triggerRect.bottom + 8,
+      left: triggerRect.left,
+      width: triggerRect.width,
+    });
+  };
+
+  useEffect(() => {
+    if (!isOpen) return;
+    updateDropdownPosition();
+
+    const handleResizeOrScroll = () => updateDropdownPosition();
+    window.addEventListener('resize', handleResizeOrScroll);
+    window.addEventListener('scroll', handleResizeOrScroll, true);
+
+    return () => {
+      window.removeEventListener('resize', handleResizeOrScroll);
+      window.removeEventListener('scroll', handleResizeOrScroll, true);
+    };
   }, [isOpen]);
 
   const daysInMonth = new Date(
@@ -124,6 +160,7 @@ export default function DatePicker({
       <div
         onClick={() => setIsOpen(!isOpen)}
         className="glass-input px-4 py-3 rounded-2xl cursor-pointer flex items-center justify-between gap-2"
+        ref={triggerRef}
         style={{ color: value ? "var(--text-primary)" : "var(--text-muted)" }}
       >
         <div className="flex items-center gap-2 flex-1">
@@ -143,16 +180,25 @@ export default function DatePicker({
         )}
       </div>
 
-      {isOpen && (
-        <div 
-          className="absolute z-50 mt-2 glass-card rounded-3xl p-5 shadow-2xl"
+      {isOpen && portalTarget && createPortal(
+        <div
+          ref={dropdownRef}
+          className="fixed z-[9999]"
           style={{
-            boxShadow: "0 20px 50px rgba(32, 24, 51, 0.8), inset 0 1px 1px rgba(255, 255, 255, 0.2)",
-            minWidth: "320px",
-            maxWidth: "400px",
-            border: "1px solid rgba(227, 201, 255, 0.3)"
+            top: dropdownPosition.top,
+            left: dropdownPosition.left,
           }}
         >
+          <div
+            className="glass-card rounded-3xl p-5 shadow-2xl"
+            style={{
+              boxShadow: "0 20px 50px rgba(32, 24, 51, 0.8), inset 0 1px 1px rgba(255, 255, 255, 0.2)",
+              minWidth: "320px",
+              maxWidth: "400px",
+              width: Math.max(dropdownPosition.width, 320),
+              border: "1px solid rgba(227, 201, 255, 0.3)"
+            }}
+          >
           {/* Month Navigation */}
           <div className="flex items-center justify-between mb-5">
             <button
@@ -245,7 +291,9 @@ export default function DatePicker({
               Close
             </button>
           </div>
-        </div>
+          </div>
+        </div>,
+        portalTarget
       )}
     </div>
   );
