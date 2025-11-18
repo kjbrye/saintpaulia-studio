@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { X, Plus, Edit, Trash2, MapPin, Thermometer, Droplets, Sun, Wind, Loader2, Upload } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 
 const COLOR_OPTIONS = [
   { value: "lavender", label: "Lavender", color: "#E3C9FF" },
@@ -33,6 +34,11 @@ export default function LocationManager({ onClose }) {
     color: "lavender"
   });
 
+  const { data: currentUser } = useQuery({
+    queryKey: ['currentUser'],
+    queryFn: () => base44.auth.me().catch(() => null),
+  });
+
   const { data: locations = [] } = useQuery({
     queryKey: ['locations'],
     queryFn: () => base44.entities.Location.list('-updated_date'),
@@ -46,11 +52,25 @@ export default function LocationManager({ onClose }) {
   });
 
   const createMutation = useMutation({
-    mutationFn: (locationData) => base44.entities.Location.create(locationData),
+    mutationFn: async (locationData) => {
+      if (!currentUser?.id) {
+        throw new Error("You must be signed in to create locations.");
+      }
+
+      return base44.entities.Location.create({
+        ...locationData,
+        user_id: currentUser.id,
+      });
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['locations'] });
       resetForm();
-    }
+    },
+    onError: (error) => {
+      toast.error("Unable to create location", {
+        description: error.message,
+      });
+    },
   });
 
   const updateMutation = useMutation({
