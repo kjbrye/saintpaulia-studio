@@ -3,9 +3,16 @@ import { createPortal } from "react-dom";
 import { Calendar, ChevronLeft, ChevronRight, X } from "lucide-react";
 import { format } from "date-fns";
 
-export default function DatePicker({ 
-  value, 
-  onChange, 
+const parseLocalDate = (value) => {
+  if (!value) return null;
+  const [year, month, day] = value.split('-').map(Number);
+  if (!year || !month || !day) return null;
+  return new Date(year, month - 1, day);
+};
+
+export default function DatePicker({
+  value,
+  onChange,
   placeholder = "Select date",
   label,
   required = false,
@@ -14,7 +21,7 @@ export default function DatePicker({
   className = ""
 }) {
   const [isOpen, setIsOpen] = useState(false);
-  const [currentMonth, setCurrentMonth] = useState(value ? new Date(value) : new Date());
+  const [currentMonth, setCurrentMonth] = useState(value ? parseLocalDate(value) : new Date());
   const containerRef = useRef(null);
   const triggerRef = useRef(null);
   const dropdownRef = useRef(null);
@@ -133,7 +140,7 @@ export default function DatePicker({
 
   const isSelected = (day) => {
     if (!value) return false;
-    const selectedDate = new Date(value);
+    const selectedDate = parseLocalDate(value);
     return (
       day === selectedDate.getDate() &&
       currentMonth.getMonth() === selectedDate.getMonth() &&
@@ -166,7 +173,7 @@ export default function DatePicker({
         <div className="flex items-center gap-2 flex-1">
           <Calendar className="w-4 h-4" style={{ color: "var(--text-muted)", strokeWidth: 2 }} />
           <span className="text-sm">
-            {value ? format(new Date(value), 'MMMM dd, yyyy') : placeholder}
+            {value ? format(parseLocalDate(value), 'MMMM dd, yyyy') : placeholder}
           </span>
         </div>
         {value && (
