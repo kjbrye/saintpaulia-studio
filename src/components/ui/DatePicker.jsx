@@ -144,8 +144,8 @@ export default function DatePicker({
       </div>
 
       {isOpen && (
-        <div 
-          className="absolute z-50 mt-2 glass-card rounded-3xl p-5 shadow-2xl"
+        <div
+          className="absolute z-[100] mt-2 glass-card rounded-3xl p-5 shadow-2xl"
           style={{
             boxShadow: "0 20px 50px rgba(32, 24, 51, 0.8), inset 0 1px 1px rgba(255, 255, 255, 0.2)",
             minWidth: "320px",
