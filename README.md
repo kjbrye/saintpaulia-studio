@@ -22,8 +22,38 @@ Saintpaulia Studio is a modern web app for African violet collectors. It keeps c
 ## Getting Started
 Ensure you are running Node.js 18+.
 
+### 1. Install Dependencies
+
 ```bash
 npm install
+```
+
+### 2. Configure Supabase
+
+This project uses Supabase as the backend database. You'll need to:
+
+1. Create a [Supabase project](https://supabase.com/dashboard)
+2. Set up your environment variables (create a `.env` file):
+   ```env
+   VITE_SUPABASE_URL=your_supabase_project_url
+   VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
+   VITE_SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key
+   ```
+
+### 3. Run Database Migrations
+
+Before running the app, you need to apply database migrations to set up the required schema:
+
+1. Go to your [Supabase dashboard](https://supabase.com/dashboard)
+2. Navigate to **SQL Editor**
+3. Run the migrations from the `migrations/` folder in order
+4. See [migrations/README.md](./migrations/README.md) for detailed instructions
+
+**Important:** The `add_category_to_supply.sql` migration is required to fix the "Could not find the 'category' column" error.
+
+### 4. Start Development Server
+
+```bash
 npm run dev
 ```
 
