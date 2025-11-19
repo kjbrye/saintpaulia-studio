@@ -513,7 +513,7 @@ export default function PublicProfile() {
                               {project.status}
                             </span>
                           </div>
-                          {project.expected_traits && project.expected_traits.length > 0 && (
+                          {Array.isArray(project.expected_traits) && project.expected_traits.length > 0 && (
                             <div className="flex flex-wrap gap-1.5 mt-3">
                               {project.expected_traits.slice(0, 4).map((trait, idx) => (
                                 <span

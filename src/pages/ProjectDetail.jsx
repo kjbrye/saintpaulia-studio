@@ -281,9 +281,9 @@ export default function ProjectDetail() {
           </div>
 
           {/* Expected Traits */}
-          {project.expected_traits && project.expected_traits.length > 0 && (
+          {Array.isArray(project.expected_traits) && project.expected_traits.length > 0 && (
             <div className="glass-card rounded-3xl p-6">
-              <h3 className="text-lg font-bold mb-3" style={{ 
+              <h3 className="text-lg font-bold mb-3" style={{
                 color: "var(--text-primary)",
                 textShadow: "var(--heading-shadow)",
                 fontFamily: "'Playfair Display', Georgia, serif"

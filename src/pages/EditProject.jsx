@@ -64,7 +64,7 @@ export default function EditProject() {
         seed_parent_id: project.seed_parent_id || "",
         pollen_parent_id: project.pollen_parent_id || "",
         cross_date: project.cross_date || "",
-        expected_traits: project.expected_traits || [],
+        expected_traits: Array.isArray(project.expected_traits) ? project.expected_traits : [],
         growing_conditions: project.growing_conditions || "",
         notes: project.notes || "",
         status: project.status || "planning"
