@@ -22,8 +22,27 @@ Saintpaulia Studio is a modern web app for African violet collectors. It keeps c
 ## Getting Started
 Ensure you are running Node.js 18+.
 
+### 1. Install Dependencies
 ```bash
 npm install
+```
+
+### 2. Configure Environment Variables
+Copy the example environment file and add your Supabase credentials:
+
+```bash
+cp .env.example .env.local
+```
+
+Then edit `.env.local` and add your actual Supabase credentials:
+- `VITE_SUPABASE_URL` - Your Supabase project URL
+- `VITE_SUPABASE_ANON_KEY` - Your Supabase public anon key
+- `VITE_SUPABASE_SERVICE_ROLE_KEY` - Your Supabase service role key (optional)
+
+You can find these values in your [Supabase project dashboard](https://app.supabase.com/) under **Project Settings → API**.
+
+### 3. Start Development Server
+```bash
 npm run dev
 ```
 
