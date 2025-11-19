@@ -167,7 +167,7 @@ export default function GenealogyTree({ project, seedParent, pollenParent, allPl
 
     text += "=== PROJECT (Generation 0) ===\n";
     text += `Cross: ${project.project_name}\n`;
-    text += `Expected Traits: ${project.expected_traits?.join(', ') || 'None specified'}\n`;
+    text += `Expected Traits: ${Array.isArray(project.expected_traits) ? project.expected_traits.join(', ') : 'None specified'}\n`;
 
     const blob = new Blob([text], { type: 'text/plain' });
     const url = URL.createObjectURL(blob);
@@ -319,8 +319,8 @@ export default function GenealogyTree({ project, seedParent, pollenParent, allPl
                     <p className="text-sm mb-3" style={{ color: "#F0EBFF", opacity: 0.8 }}>
                       Current Generation
                     </p>
-                    
-                    {project.expected_traits && project.expected_traits.length > 0 && (
+
+                    {Array.isArray(project.expected_traits) && project.expected_traits.length > 0 && (
                       <>
                         <p className="text-xs font-semibold mb-2" style={{ color: "#A7F3D0" }}>
                           Expected Traits:
