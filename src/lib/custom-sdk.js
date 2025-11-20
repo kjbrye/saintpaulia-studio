@@ -929,28 +929,47 @@ export function createCustomClient() {
             file?.type
           );
 
-          // TODO: Replace with Supabase Storage upload
-          // Example implementation:
-          // const fileName = `${Date.now()}_${file.name}`;
-          // const { data, error } = await supabase.storage
-          //   .from('uploads')
-          //   .upload(fileName, file);
-          //
-          // if (error) throw error;
-          //
-          // const { data: { publicUrl } } = supabase.storage
-          //   .from('uploads')
-          //   .getPublicUrl(fileName);
-          //
-          // return { file_url: publicUrl };
+          if (!file) {
+            throw new Error("No file provided for upload");
+          }
 
-          // Mock response for now
-          const mockUrl = `https://mock-storage.supabase.co/uploads/${Date.now()}_${
-            file?.name || "file"
-          }`;
+          const bucket = "plant-photos";
+          const fileExtension = file.name?.includes(".")
+            ? `.${file.name.split(".").pop()}`
+            : "";
+          const filePath = `${Date.now()}_${
+            Math.random().toString(36).slice(2)
+          }${fileExtension}`;
+
+          const { error: uploadError } = await supabase.storage
+            .from(bucket)
+            .upload(filePath, file, {
+              contentType: file.type || undefined,
+              upsert: false,
+            });
+
+          if (uploadError) {
+            throw new Error(`Failed to upload file: ${uploadError.message}`);
+          }
+
+          const { data: publicData, error: publicUrlError } = supabase.storage
+            .from(bucket)
+            .getPublicUrl(filePath);
+
+          if (publicUrlError) {
+            throw new Error(
+              `Failed to retrieve public URL: ${publicUrlError.message}`
+            );
+          }
+
+          const publicUrl = publicData?.publicUrl;
+
+          if (!publicUrl) {
+            throw new Error("Unable to retrieve public URL after upload");
+          }
+
           return {
-            file_url: mockUrl,
-            note: "File upload integration not yet implemented - this is a mock URL",
+            file_url: publicUrl,
           };
         },
 
