@@ -142,17 +142,25 @@ export class CustomEntity {
         let mappedValue = value;
 
         // Ensure array fields are always arrays (handle JSON strings and null/undefined)
-        const arrayFields = ['expected_traits', 'tags'];
+        const arrayFields = [
+          'expected_traits',
+          'tags',
+          'symptoms',
+          'photos',
+          'care_actions',
+          'observed_traits',
+          'desired_traits'
+        ];
         if (arrayFields.includes(mappedKey)) {
-          if (typeof value === 'string') {
-            try {
-              mappedValue = JSON.parse(value);
-              if (!Array.isArray(mappedValue)) {
+            if (typeof value === 'string') {
+              try {
+                mappedValue = JSON.parse(value);
+                if (!Array.isArray(mappedValue)) {
+                  mappedValue = [];
+                }
+              } catch {
                 mappedValue = [];
               }
-            } catch (e) {
-              mappedValue = [];
-            }
           } else if (!Array.isArray(value)) {
             mappedValue = [];
           }
