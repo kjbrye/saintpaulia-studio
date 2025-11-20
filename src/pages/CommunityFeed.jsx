@@ -32,7 +32,7 @@ export default function CommunityFeed() {
     queryKey: ['communityPosts', sortBy],
     queryFn: async () => {
       const allPosts = await base44.entities.CommunityPost.filter(
-        { moderation_status: "active" },
+        { moderation_status: ["active", "approved"] },
         sortBy === "popular" ? '-like_count' : '-created_date'
       );
       return allPosts;
