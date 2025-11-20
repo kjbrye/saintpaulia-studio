@@ -28,6 +28,11 @@ export default function CreatePost() {
   const [uploading, setUploading] = useState(false);
   const [customTag, setCustomTag] = useState("");
 
+  const { data: currentUser } = useQuery({
+    queryKey: ['currentUser'],
+    queryFn: () => base44.auth.me(),
+  });
+
   const { data: myPlants = [] } = useQuery({
     queryKey: ['myPlants'],
     queryFn: () => base44.entities.Plant.list(),
@@ -51,6 +56,7 @@ export default function CreatePost() {
   const createMutation = useMutation({
     mutationFn: (postData) => base44.entities.CommunityPost.create({
       ...postData,
+      created_by: currentUser?.email,
       like_count: 0,
       comment_count: 0,
       moderation_status: "active"
