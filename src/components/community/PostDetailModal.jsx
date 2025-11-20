@@ -38,8 +38,8 @@ export default function PostDetailModal({ post, currentUser, onClose }) {
     staleTime: 5 * 60 * 1000,
   });
 
-  // Use currentUser data if this is their own post
-  const author = isOwnPost ? currentUser : postAuthor;
+  // Prefer the post author's profile, fall back to the post creator email
+  const author = postAuthor ?? (post.created_by === currentUser?.email ? currentUser : null);
 
   const { data: comments = [] } = useQuery({
     queryKey: ['postComments', post.id],
@@ -285,9 +285,10 @@ export default function PostDetailModal({ post, currentUser, onClose }) {
 
   const photos = post.photos || [];
   const hasPhotos = photos.length > 0;
-  const displayName = (isOwnPost || !authorLoading)
-    ? (author?.username || author?.full_name || post.created_by?.split('@')[0] || 'User')
-    : "Loading...";
+  const displayName = author?.username
+    || author?.full_name
+    || post.created_by?.split('@')[0]
+    || 'User';
 
   return (
     <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4" onClick={onClose}>
