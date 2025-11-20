@@ -37,7 +37,8 @@ export default function CreateForumTopic() {
       ...data,
       last_activity_date: new Date().toISOString(),
       view_count: 0,
-      reply_count: 0
+      reply_count: 0,
+      moderation_status: "active"
     }),
     onSuccess: (newTopic) => {
       navigate(createPageUrl(`ForumTopic?id=${newTopic.id}`));
