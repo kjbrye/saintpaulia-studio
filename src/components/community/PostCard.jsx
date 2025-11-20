@@ -57,8 +57,8 @@ export default function PostCard({ post, currentUser }) {
     staleTime: 5 * 60 * 1000,
   });
 
-  // Use currentUser data if this is their own post
-  const author = isOwnPost ? currentUser : postAuthor;
+  // Prefer the post author's profile, fall back to the post creator email
+  const author = postAuthor ?? (post.created_by === currentUser?.email ? currentUser : null);
 
   const likeMutation = useMutation({
     mutationFn: async () => {
@@ -178,9 +178,10 @@ export default function PostCard({ post, currentUser }) {
   const primaryPhoto = post.photos?.[0];
   const hasPhotos = post.photos && post.photos.length > 0;
   
-  const displayName = (isOwnPost || !authorLoading) 
-    ? (author?.username || author?.full_name || post.created_by?.split('@')[0] || 'User')
-    : "Loading...";
+  const displayName = author?.username
+    || author?.full_name
+    || post.created_by?.split('@')[0]
+    || 'User';
 
   return (
     <>
