@@ -52,7 +52,8 @@ export default function CreatePost() {
     mutationFn: (postData) => base44.entities.CommunityPost.create({
       ...postData,
       like_count: 0,
-      comment_count: 0
+      comment_count: 0,
+      moderation_status: "active"
     }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['communityPosts'] });
