@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
+import { serviceRoleClient, supabase } from "@/lib/custom-sdk";
 import { useQuery } from "@tanstack/react-query";
 import { ArrowLeft, User, Leaf, Beaker, MessageCircle, TrendingUp, Activity, Heart } from "lucide-react";
 import { createPageUrl } from "@/utils";
@@ -19,7 +20,28 @@ export default function PublicProfile() {
 
   const { data: profileUser, isLoading: userLoading } = useQuery({
     queryKey: ['publicProfile', userEmail],
-    queryFn: () => base44.auth.filter({ email: userEmail }).then(users => users[0]),
+    queryFn: async () => {
+      if (!userEmail) return null;
+
+      // Use service role client to bypass RLS for public profile viewing
+      const client = serviceRoleClient || supabase;
+      const { data, error } = await client
+        .from('users')
+        .select('*')
+        .eq('email', userEmail)
+        .maybeSingle();
+
+      if (error) {
+        console.error('Error fetching public profile:', error);
+        return null;
+      }
+
+      if (!data) {
+        console.warn('No user found with email:', userEmail);
+      }
+
+      return data;
+    },
     enabled: !!userEmail
   });
 

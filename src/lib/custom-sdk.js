@@ -1026,5 +1026,8 @@ export function createCustomClient() {
   };
 }
 
+// Export service role client for cases where we need to bypass RLS
+export { serviceRoleClient, supabase };
+
 // Export the default client instance
 export const customClient = createCustomClient();
