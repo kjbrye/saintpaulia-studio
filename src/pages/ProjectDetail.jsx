@@ -123,9 +123,27 @@ export default function ProjectDetail() {
     );
   }
 
+  const normalizedOffspring = (offspring || []).map(off => ({
+    ...off,
+    observed_traits: Array.isArray(off.observed_traits)
+      ? off.observed_traits
+      : typeof off.observed_traits === 'string'
+        ? off.observed_traits.split(',').map(trait => trait.trim()).filter(Boolean)
+        : []
+  }));
+
+  const normalizedLogs = (hybridizationLogs || []).map(log => ({
+    ...log,
+    traits_observed: Array.isArray(log.traits_observed)
+      ? log.traits_observed
+      : typeof log.traits_observed === 'string'
+        ? log.traits_observed.split(',').map(trait => trait.trim()).filter(Boolean)
+        : []
+  }));
+
   const config = statusConfig[project.status];
-  const bloomedCount = offspring.filter(o => o.status === "bloomed").length;
-  const selectedCount = offspring.filter(o => o.status === "selected").length;
+  const bloomedCount = normalizedOffspring.filter(o => o.status === "bloomed").length;
+  const selectedCount = normalizedOffspring.filter(o => o.status === "selected").length;
   
   // Get parent plants for genealogy
   const seedParent = project.seed_parent_id ? allPlants.find(p => p.id === project.seed_parent_id) : null;
@@ -203,7 +221,7 @@ export default function ProjectDetail() {
                 color: "var(--text-primary)",
                 fontFamily: "'Playfair Display', Georgia, serif"
               }}>
-                {offspring.length}
+                {normalizedOffspring.length}
               </p>
               <p className="text-xs" style={{ color: "var(--text-secondary)" }}>Total Seedlings</p>
             </div>
@@ -358,11 +376,11 @@ export default function ProjectDetail() {
           )}
 
           {/* AI Insights Section */}
-          {(offspring.length > 0 || hybridizationLogs.length > 0) && (
-            <AIInsights 
+          {(normalizedOffspring.length > 0 || normalizedLogs.length > 0) && (
+            <AIInsights
               project={project}
-              offspring={offspring}
-              logs={hybridizationLogs}
+              offspring={normalizedOffspring}
+              logs={normalizedLogs}
               allPlants={allPlants}
             />
           )}
@@ -420,8 +438,8 @@ export default function ProjectDetail() {
                 </button>
               </div>
 
-              <OffspringGrid 
-                offspring={offspring} 
+              <OffspringGrid
+                offspring={normalizedOffspring}
                 onEdit={handleEditOffspring}
                 projectId={projectId}
               />
@@ -449,9 +467,9 @@ export default function ProjectDetail() {
                 </button>
               </div>
 
-              <HybridizationLogTimeline 
-                logs={hybridizationLogs}
-                offspring={offspring}
+              <HybridizationLogTimeline
+                logs={normalizedLogs}
+                offspring={normalizedOffspring}
                 onEdit={handleEditLog}
                 projectId={projectId}
               />
