@@ -19,7 +19,7 @@ export default function PublicProfile() {
 
   const { data: profileUser, isLoading: userLoading } = useQuery({
     queryKey: ['publicProfile', userEmail],
-    queryFn: () => base44.entities.User.filter({ email: userEmail }).then(users => users[0]),
+    queryFn: () => base44.auth.filter({ email: userEmail }).then(users => users[0]),
     enabled: !!userEmail
   });
 
