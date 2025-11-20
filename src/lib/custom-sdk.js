@@ -149,7 +149,8 @@ export class CustomEntity {
           'photos',
           'care_actions',
           'observed_traits',
-          'desired_traits'
+          'desired_traits',
+          'leaf_types'
         ];
         if (arrayFields.includes(mappedKey)) {
             if (typeof value === 'string') {
