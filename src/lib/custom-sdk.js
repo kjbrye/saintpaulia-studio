@@ -139,7 +139,26 @@ export class CustomEntity {
       const mapped = {};
       for (const [key, value] of Object.entries(obj)) {
         const mappedKey = reverseFieldMappings[key] || key;
-        mapped[mappedKey] = value;
+        let mappedValue = value;
+
+        // Ensure array fields are always arrays (handle JSON strings and null/undefined)
+        const arrayFields = ['expected_traits', 'tags'];
+        if (arrayFields.includes(mappedKey)) {
+          if (typeof value === 'string') {
+            try {
+              mappedValue = JSON.parse(value);
+              if (!Array.isArray(mappedValue)) {
+                mappedValue = [];
+              }
+            } catch (e) {
+              mappedValue = [];
+            }
+          } else if (!Array.isArray(value)) {
+            mappedValue = [];
+          }
+        }
+
+        mapped[mappedKey] = mappedValue;
       }
       return mapped;
     };
