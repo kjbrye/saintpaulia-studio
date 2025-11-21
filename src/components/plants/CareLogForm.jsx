@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import ReactDOM from "react-dom";
 import { ArrowLeft, Plus, Loader2, AlertTriangle, Package, X, Upload } from "lucide-react";
-import { base44 } from "@/api/base44Client";
+import { supabase } from "@/lib/supabaseClient";
+import { UploadFile } from "@/api/integrations";
 import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 import { format } from "date-fns";
 import DateTimePicker from "../ui/DateTimePicker";
@@ -15,13 +16,29 @@ export default function CareLogForm({ plantId, plant, careType, onClose }) {
 
   const { data: supplies = [] } = useQuery({
     queryKey: ['supplies'],
-    queryFn: () => base44.entities.Supply.list(),
+    queryFn: async () => {
+      const { data, error } = await supabase.from('supply').select('*');
+      if (error) throw error;
+      return data || [];
+    },
     initialData: []
   });
 
   const { data: currentUser } = useQuery({
     queryKey: ['currentUser'],
-    queryFn: () => base44.auth.me().catch(() => null),
+    queryFn: async () => {
+      const { data: authData, error: authError } = await supabase.auth.getUser();
+      if (authError || !authData?.user) return null;
+
+      const { data, error } = await supabase
+        .from('users')
+        .select('*')
+        .eq('id', authData.user.id)
+        .maybeSingle();
+
+      if (error) throw error;
+      return data;
+    },
   });
 
   const currentTheme = currentUser?.theme || "glassmorphism";
@@ -42,41 +59,32 @@ export default function CareLogForm({ plantId, plant, careType, onClose }) {
 
   const createMutation = useMutation({
     mutationFn: async (careData) => {
-      const user = currentUser ?? await base44.auth.me();
-      if (!user?.id || !user?.email) {
+      const { data: authData, error: authError } = await supabase.auth.getUser();
+      if (authError || !authData?.user) {
         throw new Error("You must be signed in to log care.");
       }
 
-      // Create care log
-      const handleCreateCareLog = async () => {
-  const {
-    data: { user },
-    error: userError,
-  } = await supabase.auth.getUser();
+      const user = currentUser || { id: authData.user.id, email: authData.user.email };
 
-  if (userError || !user) {
-    console.error("User not logged in.");
-    return;
-  }
+      // Create care log entry
+      const { error: careLogError } = await supabase.from('public.care_log').insert({
+        plant_id: plantId,
+        user_id: user.id,
+        created_by: user.email,
+        care_type: careData.care_type,
+        care_date: new Date(careData.care_date).toISOString(),
+        watering_method: careData.watering_method,
+        fertilizer_type: careData.fertilizer_type,
+        new_pot_size: careData.new_pot_size,
+        new_soil_mix: careData.new_soil_mix,
+        notes: careData.notes,
+        photos: careData.photos,
+        supplies_used: careData.supplies_used
+      });
 
-  const { data, error } = await supabase
-    .from('care_log')
-    .insert({
-      user_id: user.id,       // <-- MUST MATCH YOUR RLS POLICY
-      plant_id: plantId,      // <-- Value from your UI
-      date_observed,          // <-- Form state variable
-      care_type,              // <-- Form field
-      notes,                  // <-- Form field
-    })
-    .select()
-    .maybeSingle();
-
-  if (error) {
-    console.error("Failed to insert care log:", error);
-  } else {
-    console.log("Care log created:", data);
-  }
-};
+      if (careLogError) {
+        throw careLogError;
+      }
 
       // Update plant's last care date
       const updateData = {};
@@ -92,30 +100,51 @@ export default function CareLogForm({ plantId, plant, careType, onClose }) {
         updateData.last_groomed = careData.care_date.split('T')[0];
       }
 
-      await base44.entities.Plant.update(plantId, updateData);
+      if (Object.keys(updateData).length > 0) {
+        const { error: plantUpdateError } = await supabase
+          .from('plant')
+          .update(updateData)
+          .eq('id', plantId);
+
+        if (plantUpdateError) {
+          throw plantUpdateError;
+        }
+      }
 
       // Log supply usage and update quantities
       if (careData.supplies_used && careData.supplies_used.length > 0) {
         await Promise.all(
           careData.supplies_used.map(async ({ supply_id, quantity_used }) => {
             const supply = supplies.find(s => s.id === supply_id);
-            if (!supply) return;
+            const usageAmount = parseFloat(quantity_used);
+            if (!supply || !Number.isFinite(usageAmount) || usageAmount <= 0) return;
 
             // Create usage log
-            await base44.entities.SupplyUsageLog.create({
+            const { error: usageError } = await supabase.from('supply_usage_log').insert({
               supply_id: supply_id,
-              quantity_used: parseFloat(quantity_used),
+              quantity_used: usageAmount,
               usage_date: new Date(careData.care_date).toISOString(),
               plant_id: plantId,
               purpose: `${careData.care_type} - ${plant?.cultivar_name || 'Plant'}`,
               notes: careData.notes || undefined
             });
 
+            if (usageError) {
+              throw usageError;
+            }
+
             // Update supply quantity
-            const newQuantity = Math.max(0, supply.quantity - parseFloat(quantity_used));
-            await base44.entities.Supply.update(supply_id, {
-              quantity: newQuantity
-            });
+            const newQuantity = Math.max(0, supply.quantity - usageAmount);
+            const { error: supplyUpdateError } = await supabase
+              .from('supply')
+              .update({
+                quantity: newQuantity
+              })
+              .eq('id', supply_id);
+
+            if (supplyUpdateError) {
+              throw supplyUpdateError;
+            }
           })
         );
       }
@@ -140,7 +169,12 @@ export default function CareLogForm({ plantId, plant, careType, onClose }) {
       care_date: formData.care_date,
       notes: formData.notes || undefined,
       photos: formData.photos,
-      supplies_used: formData.supplies_used.filter(s => s.quantity_used > 0)
+      supplies_used: formData.supplies_used
+        .map(s => ({
+          supply_id: s.supply_id,
+          quantity_used: parseFloat(s.quantity_used)
+        }))
+        .filter(s => s.supply_id && s.quantity_used > 0)
     };
 
     if (formData.care_type === "watering" && formData.watering_method) {
@@ -165,7 +199,7 @@ export default function CareLogForm({ plantId, plant, careType, onClose }) {
 
     setUploadingPhoto(true);
     try {
-      const { file_url } = await base44.integrations.Core.UploadFile({ file });
+      const { file_url } = await UploadFile({ file });
       setFormData(prev => ({
         ...prev,
         photos: [...prev.photos, file_url]
@@ -529,7 +563,6 @@ export default function CareLogForm({ plantId, plant, careType, onClose }) {
               className="glass-button px-8 py-4 rounded-2xl font-semibold"
               style={{ color: (currentTheme === 'light' || currentTheme === 'minimal') ? 'var(--text-secondary)' : "#DDD6FE" }}
             >
-              <button onClick={handleCreateCareLog}>Save Care Log</button>
               Cancel
             </button>
             <button
