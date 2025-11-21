@@ -260,8 +260,8 @@ export default function PlantLibrary() {
       const careDate = new Date().toISOString();
       const careLogs = selectedForBulk.map(plantId => ({
         plant_id: plantId,
-        user_id: user.id,
-        created_by: user.email,
+        user_id: currentUser?.id,
+        created_by: currentUser?.email,
         care_type: careType,
         care_date: careDate,
         notes: notes || `Bulk ${careType}`

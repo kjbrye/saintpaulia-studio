@@ -50,8 +50,8 @@ export default function CareLogForm({ plantId, plant, careType, onClose }) {
       // Create care log
       await base44.entities.CareLog.create({
         plant_id: plantId,
-        user_id: user.id,
-        created_by: user.email,
+        user_id: currentUser?.id,
+        created_by: currentUser?.email,
         care_type: careData.care_type,
         care_date: careData.care_date,
         watering_method: careData.watering_method || undefined,
