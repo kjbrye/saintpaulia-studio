@@ -231,8 +231,13 @@ export class CustomEntity {
 
     // Apply filter conditions with field mapping
     Object.entries(conditions).forEach(([key, value]) => {
+      // Skip undefined filters to avoid invalid queries
+      if (value === undefined) return;
+
       const mappedKey = this.mapFieldName(key);
-      if (Array.isArray(value)) {
+      if (value === null) {
+        query = query.is(mappedKey, null);
+      } else if (Array.isArray(value)) {
         query = query.in(mappedKey, value);
       } else {
         query = query.eq(mappedKey, value);
