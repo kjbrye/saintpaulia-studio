@@ -42,9 +42,16 @@ export default function CareLogForm({ plantId, plant, careType, onClose }) {
 
   const createMutation = useMutation({
     mutationFn: async (careData) => {
+      const user = currentUser ?? await base44.auth.me();
+      if (!user?.id || !user?.email) {
+        throw new Error("You must be signed in to log care.");
+      }
+
       // Create care log
       await base44.entities.CareLog.create({
         plant_id: plantId,
+        user_id: user.id,
+        created_by: user.email,
         care_type: careData.care_type,
         care_date: careData.care_date,
         watering_method: careData.watering_method || undefined,
