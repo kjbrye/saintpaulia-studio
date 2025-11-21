@@ -529,6 +529,7 @@ export default function CareLogForm({ plantId, plant, careType, onClose }) {
               className="glass-button px-8 py-4 rounded-2xl font-semibold"
               style={{ color: (currentTheme === 'light' || currentTheme === 'minimal') ? 'var(--text-secondary)' : "#DDD6FE" }}
             >
+              <button onClick={handleCreateCareLog}>Save Care Log</button>
               Cancel
             </button>
             <button
