@@ -40,7 +40,7 @@ export default function PostCard({ post, currentUser }) {
   });
 
   // Fetch post author's profile (skip if it's current user)
-  const { data: postAuthor, isLoading: authorLoading } = useQuery({
+  const { data: postAuthor } = useQuery({
     queryKey: ['userProfile', post.created_by],
     queryFn: async () => {
       try {
