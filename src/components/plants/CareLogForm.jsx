@@ -48,19 +48,35 @@ export default function CareLogForm({ plantId, plant, careType, onClose }) {
       }
 
       // Create care log
-      await base44.entities.CareLog.create({
-        plant_id: plantId,
-        user_id: currentUser?.id,
-        created_by: currentUser?.email,
-        care_type: careData.care_type,
-        care_date: careData.care_date,
-        watering_method: careData.watering_method || undefined,
-        fertilizer_type: careData.fertilizer_type || undefined,
-        new_pot_size: careData.new_pot_size || undefined,
-        new_soil_mix: careData.new_soil_mix || undefined,
-        notes: careData.notes || undefined,
-        photos: careData.photos?.length > 0 ? careData.photos : undefined
-      });
+      const handleCreateCareLog = async () => {
+  const {
+    data: { user },
+    error: userError,
+  } = await supabase.auth.getUser();
+
+  if (userError || !user) {
+    console.error("User not logged in.");
+    return;
+  }
+
+  const { data, error } = await supabase
+    .from('care_log')
+    .insert({
+      user_id: user.id,       // <-- MUST MATCH YOUR RLS POLICY
+      plant_id: plantId,      // <-- Value from your UI
+      date_observed,          // <-- Form state variable
+      care_type,              // <-- Form field
+      notes,                  // <-- Form field
+    })
+    .select()
+    .maybeSingle();
+
+  if (error) {
+    console.error("Failed to insert care log:", error);
+  } else {
+    console.log("Care log created:", data);
+  }
+};
 
       // Update plant's last care date
       const updateData = {};
