@@ -324,7 +324,7 @@ export class CustomEntity {
       .from(this.tableName)
       .insert(mappedData)
       .select()
-      .single();
+      .maybeSingle();
 
     if (error) {
       // Handle missing table gracefully for legacy entities
@@ -342,6 +342,12 @@ export class CustomEntity {
       console.error(`Create error for ${this.tableName}:`, error);
       throw error;
     }
+
+    // If no row is returned (e.g., due to RLS), return null instead of throwing
+    if (!result) {
+      return null;
+    }
+
     return this.mapResultFields(result);
   }
 
@@ -502,7 +508,7 @@ export class UserEntity extends CustomEntity {
           .from("users")
           .insert(newUser)
           .select()
-          .single();
+          .maybeSingle();
 
         if (createError) {
           console.error("Error creating user:", createError);
@@ -518,7 +524,7 @@ export class UserEntity extends CustomEntity {
           .update({ role: "admin" })
           .eq("id", user.id)
           .select()
-          .single();
+          .maybeSingle();
 
         if (updateError) {
           console.error("Error updating dev user to admin:", updateError);
