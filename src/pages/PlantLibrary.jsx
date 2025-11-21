@@ -252,6 +252,11 @@ export default function PlantLibrary() {
 
   const bulkCareLogMutation = useMutation({
     mutationFn: async ({ careType, notes }) => {
+      const user = currentUser ?? await base44.auth.me();
+      if (!user?.id || !user?.email) {
+        throw new Error("You must be signed in to log care.");
+      }
+
       const careDate = new Date().toISOString();
       const careLogs = selectedForBulk.map(plantId => ({
         plant_id: plantId,
