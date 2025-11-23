@@ -237,8 +237,8 @@ export class CustomEntity {
 
     // Apply filter conditions with field mapping
     Object.entries(conditions).forEach(([key, value]) => {
-      // Skip undefined filters to avoid invalid queries
-      if (value === undefined) return;
+      // Skip undefined and empty string filters to avoid invalid queries
+      if (value === undefined || value === "") return;
 
       const mappedKey = this.mapFieldName(key);
       // Treat string "null" the same as null so optional numeric columns
