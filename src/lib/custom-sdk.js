@@ -117,11 +117,19 @@ export class CustomEntity {
     const mapped = {};
     Object.entries(data).forEach(([key, value]) => {
       // Normalize string "null" and empty strings to actual null to avoid
-      // Postgres bigint casting errors when optional numeric/uuid fields are cleared
+      // Postgres bigint/uuid casting errors when optional fields are cleared
       let normalizedValue = value;
       if (value === "null" || value === "") {
         normalizedValue = null;
       }
+
+      // Ensure ID fields are always strings (UUID format) and never numbers
+      // This prevents bigint casting errors when database uses UUID primary keys
+      const idFields = ['id', 'batch_id', 'project_id', 'parent_plant_id', 'user_id', 'plant_id'];
+      if (idFields.includes(key) && normalizedValue !== null && typeof normalizedValue !== 'string') {
+        normalizedValue = String(normalizedValue);
+      }
+
       const mappedKey = this.mapFieldName(key);
       mapped[mappedKey] = normalizedValue;
     });
@@ -241,14 +249,22 @@ export class CustomEntity {
       if (value === undefined || value === "") return;
 
       const mappedKey = this.mapFieldName(key);
+
+      // Ensure ID fields are always strings (UUID format) to prevent type casting errors
+      const idFields = ['id', 'batch_id', 'project_id', 'parent_plant_id', 'user_id', 'plant_id'];
+      let normalizedValue = value;
+      if (idFields.includes(key) && value !== null && value !== "null" && typeof value !== 'string') {
+        normalizedValue = String(value);
+      }
+
       // Treat string "null" the same as null so optional numeric columns
       // don't receive the literal string value and trigger Postgres casting errors
-      if (value === null || value === "null") {
+      if (normalizedValue === null || normalizedValue === "null") {
         query = query.is(mappedKey, null);
-      } else if (Array.isArray(value)) {
-        query = query.in(mappedKey, value);
+      } else if (Array.isArray(normalizedValue)) {
+        query = query.in(mappedKey, normalizedValue);
       } else {
-        query = query.eq(mappedKey, value);
+        query = query.eq(mappedKey, normalizedValue);
       }
     });
 
