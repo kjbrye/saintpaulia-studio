@@ -69,6 +69,12 @@ export default function PropagationLogForm({ projectId, log, onClose }) {
             if (value === "" && key !== 'observation') {
               return [key, null];
             }
+            // Ensure ID fields (project_id, batch_id) are always strings or null
+            // This prevents UUID/bigint casting errors in PostgreSQL
+            const idFields = ['project_id', 'batch_id'];
+            if (idFields.includes(key) && value !== null && value !== "" && typeof value !== 'string') {
+              return [key, String(value)];
+            }
             return [key, value];
           })
           .filter(([key, value]) => {
