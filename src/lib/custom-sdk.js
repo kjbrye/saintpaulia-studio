@@ -116,9 +116,12 @@ export class CustomEntity {
 
     const mapped = {};
     Object.entries(data).forEach(([key, value]) => {
-      // Normalize string "null" values back to actual null to avoid
-      // Postgres bigint casting errors when optional numeric fields are cleared
-      const normalizedValue = value === "null" ? null : value;
+      // Normalize string "null" and empty strings to actual null to avoid
+      // Postgres bigint casting errors when optional numeric/uuid fields are cleared
+      let normalizedValue = value;
+      if (value === "null" || value === "") {
+        normalizedValue = null;
+      }
       const mappedKey = this.mapFieldName(key);
       mapped[mappedKey] = normalizedValue;
     });

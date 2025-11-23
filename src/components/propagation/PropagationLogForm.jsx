@@ -61,14 +61,26 @@ export default function PropagationLogForm({ projectId, log, onClose }) {
 
   const saveMutation = useMutation({
     mutationFn: (data) => {
+      // Clean and convert empty strings to null for optional fields
       const cleanedData = Object.fromEntries(
-        Object.entries(data).filter(([key, value]) => {
-          if (key === 'watered' || key === 'nutrient_applied') return true;
-          if (Array.isArray(value)) return value.length > 0;
-          return value !== "" && value !== null && value !== undefined;
-        })
+        Object.entries(data)
+          .map(([key, value]) => {
+            // Convert empty strings to null for optional fields
+            if (value === "" && key !== 'observation') {
+              return [key, null];
+            }
+            return [key, value];
+          })
+          .filter(([key, value]) => {
+            // Always include boolean fields
+            if (key === 'watered' || key === 'nutrient_applied') return true;
+            // Include arrays only if they have items
+            if (Array.isArray(value)) return value.length > 0;
+            // Exclude null and undefined values
+            return value !== null && value !== undefined;
+          })
       );
-      
+
       if (log) {
         return base44.entities.PropagationLog.update(log.id, cleanedData);
       }
