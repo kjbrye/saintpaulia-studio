@@ -220,11 +220,11 @@ export default function CreateForumTopic() {
             </Link>
             <button
               type="submit"
-              disabled={!formData.title.trim() || !formData.content.trim() || createTopicMutation.isLoading}
+              disabled={!formData.title.trim() || !formData.content.trim() || createTopicMutation.isPending}
               className="neuro-accent-raised px-6 py-3 rounded-2xl font-semibold"
               style={{ color: (currentTheme === 'light' || currentTheme === 'minimal') ? '#FFFFFF' : '#F0EBFF' }}
             >
-              {createTopicMutation.isLoading ? 'Creating...' : 'Create Topic'}
+              {createTopicMutation.isPending ? 'Creating...' : 'Create Topic'}
             </button>
           </div>
         </form>

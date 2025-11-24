@@ -444,11 +444,11 @@ export default function ForumTopic() {
             />
             <button
               onClick={() => createReplyMutation.mutate({ topic_id: topicId, content: replyContent })}
-              disabled={!replyContent.trim() || createReplyMutation.isLoading}
+              disabled={!replyContent.trim() || createReplyMutation.isPending}
               className="neuro-accent-raised px-6 py-3 rounded-2xl font-semibold"
               style={{ color: (currentTheme === 'light' || currentTheme === 'minimal') ? '#FFFFFF' : '#F0EBFF' }}
             >
-              {createReplyMutation.isLoading ? 'Posting...' : 'Post Reply'}
+              {createReplyMutation.isPending ? 'Posting...' : 'Post Reply'}
             </button>
           </div>
         )}
