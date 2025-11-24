@@ -877,11 +877,63 @@ export function createCustomClient() {
     entities: createEntitiesProxy(),
     auth: new UserEntity(),
     functions: {
-      // Placeholder functions that can be implemented later
-      verifyHcaptcha: async () => {
-        // TODO: Implement hCaptcha verification
-        console.warn("verifyHcaptcha not yet implemented");
-        return { success: true };
+      verifyHcaptcha: async ({ token, remoteip = null }) => {
+        const secretKey = getEnvVar("VITE_HCAPTCHA_SECRET_KEY", null);
+
+        if (!secretKey) {
+          console.warn(
+            "hCaptcha secret key not configured (VITE_HCAPTCHA_SECRET_KEY)"
+          );
+          return {
+            success: false,
+            error: "hCaptcha not configured",
+          };
+        }
+
+        if (!token) {
+          return {
+            success: false,
+            error: "No hCaptcha token provided",
+          };
+        }
+
+        try {
+          const params = new URLSearchParams({
+            secret: secretKey,
+            response: token,
+          });
+
+          if (remoteip) {
+            params.append("remoteip", remoteip);
+          }
+
+          const response = await fetch("https://api.hcaptcha.com/siteverify", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/x-www-form-urlencoded",
+            },
+            body: params.toString(),
+          });
+
+          if (!response.ok) {
+            throw new Error(`hCaptcha API error: ${response.status}`);
+          }
+
+          const result = await response.json();
+
+          return {
+            success: result.success === true,
+            challenge_ts: result.challenge_ts,
+            hostname: result.hostname,
+            error: result["error-codes"]?.join(", ") || null,
+          };
+        } catch (error) {
+          console.error("hCaptcha verification failed:", error);
+          return {
+            success: false,
+            error: error.message || "Verification request failed",
+          };
+        }
       },
     },
     integrations: {
