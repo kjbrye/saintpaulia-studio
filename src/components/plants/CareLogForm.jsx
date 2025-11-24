@@ -67,7 +67,7 @@ export default function CareLogForm({ plantId, plant, careType, onClose }) {
       const user = currentUser || { id: authData.user.id, email: authData.user.email };
 
       // Create care log entry
-      const { error: careLogError } = await supabase.from('public.care_log').insert({
+      const { error: careLogError } = await supabase.from('care_log').insert({
         plant_id: plantId,
         user_id: user.id,
         created_by: user.email,
