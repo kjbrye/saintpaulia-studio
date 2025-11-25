@@ -810,6 +810,56 @@ export class UserEntity extends CustomEntity {
 }
 
 /**
+ * Wishlist Entity with user_id validation
+ * Ensures that a valid user_id is always provided when creating wishlist entries
+ */
+export class WishlistEntity extends CustomEntity {
+  constructor() {
+    super("wishlist", false); // Use anonymous client (RLS handles access control)
+  }
+
+  /**
+   * Create a new wishlist entry with mandatory user_id validation
+   * @param {Object} data - Wishlist entry data
+   * @returns {Promise<Object>} Created wishlist entry
+   * @throws {Error} If user_id is missing or invalid
+   */
+  async create(data) {
+    // Validate user_id is present and not empty
+    if (!data.user_id) {
+      throw new Error(
+        "user_id is required to create a wishlist entry. Please ensure the user is authenticated."
+      );
+    }
+
+    // Validate user_id is a non-empty string (UUID format expected)
+    if (typeof data.user_id !== "string" || data.user_id.trim() === "") {
+      throw new Error(
+        "user_id must be a valid non-empty string (UUID format expected)."
+      );
+    }
+
+    // Validate UUID format (basic check)
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+    if (!uuidRegex.test(data.user_id)) {
+      throw new Error(
+        "user_id must be a valid UUID format."
+      );
+    }
+
+    // Ensure cultivar_name is also provided (required field)
+    if (!data.cultivar_name || data.cultivar_name.trim() === "") {
+      throw new Error(
+        "cultivar_name is required to create a wishlist entry."
+      );
+    }
+
+    // Call parent create method with validated data
+    return super.create(data);
+  }
+}
+
+/**
  * Convert PascalCase entity name to snake_case table name
  * @param {string} entityName - Entity name in PascalCase
  * @returns {string} Table name in snake_case
@@ -850,6 +900,11 @@ function shouldUseServiceRole(entityName) {
 function createEntitiesProxy() {
   const entityCache = new Map();
 
+  // Pre-register specialized entities that need custom validation
+  const specializedEntities = {
+    Wishlist: new WishlistEntity(),
+  };
+
   return new Proxy(
     {},
     {
@@ -861,7 +916,16 @@ function createEntitiesProxy() {
           return entityCache.get(entityName);
         }
 
-        // Create new entity on-demand
+        // Check for specialized entity first
+        if (specializedEntities[entityName]) {
+          entityCache.set(entityName, specializedEntities[entityName]);
+          console.log(
+            `Using specialized entity: ${entityName} (with custom validation)`
+          );
+          return specializedEntities[entityName];
+        }
+
+        // Create new generic entity on-demand
         const tableName = entityNameToTableName(entityName);
         const useServiceRole = shouldUseServiceRole(entityName);
         const entity = new CustomEntity(tableName, useServiceRole);
