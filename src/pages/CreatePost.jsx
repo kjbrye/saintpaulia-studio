@@ -139,7 +139,7 @@ export default function CreatePost() {
         hybridizer: plant.hybridizer || "",
         blossom_type: plant.blossom_type || "",
         blossom_color: plant.blossom_color || "",
-        leaf_type: plant.leaf_type || "",
+        leaf_type: (plant.leaf_types && plant.leaf_types.length > 0) ? plant.leaf_types.join(", ") : "",
         photos: plant.photos || []
       }));
     } else {

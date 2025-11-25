@@ -96,7 +96,7 @@ export default function ComparePlants() {
     {
       label: "Leaf Type",
       icon: Leaf,
-      getValue: (plant) => plant.leaf_type || "—",
+      getValue: (plant) => (plant.leaf_types && plant.leaf_types.length > 0) ? plant.leaf_types.join(", ") : "—",
       render: (value) => <p className="capitalize" style={{ color: "var(--text-secondary)" }}>{value}</p>
     },
     {
