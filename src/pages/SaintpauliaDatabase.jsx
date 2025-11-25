@@ -29,6 +29,12 @@ export default function SaintpauliaDatabase() {
     blossom_color: ""
   });
 
+  // Get current authenticated user
+  const { data: currentUser } = useQuery({
+    queryKey: ['currentUser'],
+    queryFn: () => base44.auth.me(),
+  });
+
   // Fetch existing wishlist items
   const { data: wishlistItems = [] } = useQuery({
     queryKey: ['wishlist'],
@@ -39,7 +45,13 @@ export default function SaintpauliaDatabase() {
   // Add to wishlist mutation
   const addToWishlistMutation = useMutation({
     mutationFn: async (cultivar) => {
+      // Ensure user is authenticated
+      if (!currentUser?.id) {
+        throw new Error("Please log in to add to wishlist");
+      }
+
       return base44.entities.Wishlist.create({
+        user_id: currentUser.id,
         cultivar_name: cultivar.cultivar_name,
         hybridizer: cultivar.hybridizer || "",
         blossom_type: cultivar.blossom_type || "",

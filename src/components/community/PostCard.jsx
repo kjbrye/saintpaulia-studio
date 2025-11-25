@@ -142,12 +142,13 @@ export default function PostCard({ post, currentUser }) {
   const handleAddToWishlist = (e) => {
     e.preventDefault();
     e.stopPropagation();
-    if (!currentUser) {
+    if (!currentUser?.id) {
       toast.warning('Please log in to add to wishlist');
       return;
     }
 
     const wishlistData = {
+      user_id: currentUser.id,
       cultivar_name: post.cultivar_name,
       hybridizer: post.hybridizer || "",
       priority: "medium",

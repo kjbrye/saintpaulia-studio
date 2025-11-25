@@ -142,12 +142,13 @@ export default function PostDetail() {
   };
 
   const handleAddToWishlist = () => {
-    if (!currentUser) {
+    if (!currentUser?.id) {
       alert('Please log in to add to wishlist');
       return;
     }
 
     const wishlistData = {
+      user_id: currentUser.id,
       cultivar_name: post.cultivar_name,
       hybridizer: post.hybridizer || "",
       priority: "medium",
