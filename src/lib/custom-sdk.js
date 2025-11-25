@@ -155,6 +155,17 @@ export class CustomEntity {
         const mappedKey = reverseFieldMappings[key] || key;
         let mappedValue = value;
 
+        // Normalize role field to lowercase for consistent admin checks
+        // This handles cases where role might be stored as 'Admin', 'ADMIN', etc.
+        // Also default null/undefined role to 'user'
+        if (mappedKey === 'role') {
+          if (typeof value === 'string') {
+            mappedValue = value.toLowerCase();
+          } else {
+            mappedValue = 'user';
+          }
+        }
+
         // Ensure array fields are always arrays (handle JSON strings and null/undefined)
         const arrayFields = [
           'expected_traits',
@@ -183,6 +194,13 @@ export class CustomEntity {
 
         mapped[mappedKey] = mappedValue;
       }
+
+      // Ensure role is always present for user records (if id and email exist, it's a user record)
+      // This handles cases where the role column doesn't exist in the database
+      if (obj.id && obj.email && !mapped.role) {
+        mapped.role = 'user';
+      }
+
       return mapped;
     };
 
