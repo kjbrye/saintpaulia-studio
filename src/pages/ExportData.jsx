@@ -132,8 +132,8 @@ export default function ExportData() {
       // Export Plants
       if (exportOptions.plants && plants.length > 0) {
         const plantsHeaders = [
-          'cultivar_name', 'nickname', 'hybridizer', 'year', 'blossom_type', 
-          'blossom_color', 'leaf_type', 'variegation', 'acquisition_date', 
+          'cultivar_name', 'nickname', 'hybridizer', 'year', 'blossom_type',
+          'blossom_color', 'leaf_types', 'variegation', 'acquisition_date', 
           'source', 'location', 'pot_size', 'soil_mix', 'watering_interval',
           'fertilizer_interval', 'fertilizer_npk', 'fertilizer_method', 'notes',
           'last_watered', 'last_fertilized', 'last_repotted', 'last_groomed',
