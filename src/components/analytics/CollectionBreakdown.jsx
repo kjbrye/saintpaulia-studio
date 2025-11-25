@@ -22,8 +22,10 @@ export default function CollectionBreakdown({ plants }) {
   // Leaf type breakdown
   const leafTypeCounts = {};
   plants.forEach(plant => {
-    if (plant.leaf_type) {
-      leafTypeCounts[plant.leaf_type] = (leafTypeCounts[plant.leaf_type] || 0) + 1;
+    if (plant.leaf_types && plant.leaf_types.length > 0) {
+      plant.leaf_types.forEach(leafType => {
+        leafTypeCounts[leafType] = (leafTypeCounts[leafType] || 0) + 1;
+      });
     }
   });
 

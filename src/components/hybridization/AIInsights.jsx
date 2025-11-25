@@ -28,14 +28,14 @@ export default function AIInsights({ project, offspring, logs, allPlants }) {
         name: seedParent.cultivar_name,
         blossom_type: seedParent.blossom_type,
         blossom_color: seedParent.blossom_color,
-        leaf_type: seedParent.leaf_type,
+        leaf_types: seedParent.leaf_types,
         variegation: seedParent.variegation
       } : null,
       pollen_parent: pollenParent ? {
         name: pollenParent.cultivar_name,
         blossom_type: pollenParent.blossom_type,
         blossom_color: pollenParent.blossom_color,
-        leaf_type: pollenParent.leaf_type,
+        leaf_types: pollenParent.leaf_types,
         variegation: pollenParent.variegation
       } : null
     };
@@ -69,13 +69,13 @@ export default function AIInsights({ project, offspring, logs, allPlants }) {
 Seed Parent (♀): ${projectData.seed_parent ? `
   - Name: ${projectData.seed_parent.name}
   - Blossom: ${projectData.seed_parent.blossom_color || "Unknown"} ${projectData.seed_parent.blossom_type || ""}
-  - Foliage: ${projectData.seed_parent.leaf_type || "Unknown"}${projectData.seed_parent.variegation ? `, ${projectData.seed_parent.variegation}` : ""}
+  - Foliage: ${(projectData.seed_parent.leaf_types && projectData.seed_parent.leaf_types.length > 0) ? projectData.seed_parent.leaf_types.join(", ") : "Unknown"}${projectData.seed_parent.variegation ? `, ${projectData.seed_parent.variegation}` : ""}
 ` : "Not specified"}
 
 Pollen Parent (♂): ${projectData.pollen_parent ? `
   - Name: ${projectData.pollen_parent.name}
   - Blossom: ${projectData.pollen_parent.blossom_color || "Unknown"} ${projectData.pollen_parent.blossom_type || ""}
-  - Foliage: ${projectData.pollen_parent.leaf_type || "Unknown"}${projectData.pollen_parent.variegation ? `, ${projectData.pollen_parent.variegation}` : ""}
+  - Foliage: ${(projectData.pollen_parent.leaf_types && projectData.pollen_parent.leaf_types.length > 0) ? projectData.pollen_parent.leaf_types.join(", ") : "Unknown"}${projectData.pollen_parent.variegation ? `, ${projectData.pollen_parent.variegation}` : ""}
 ` : "Not specified"}
 
 **Offspring Results (${offspringData.length} total):**
