@@ -254,7 +254,7 @@ export default function PostDetailModal({ post, currentUser, onClose }) {
   };
 
   const handleAddToWishlist = () => {
-    if (!currentUser) {
+    if (!currentUser?.id) {
       toast.error("Login required", {
         description: "Please log in to add plants to your wishlist."
       });
@@ -262,6 +262,7 @@ export default function PostDetailModal({ post, currentUser, onClose }) {
     }
 
     const wishlistData = {
+      user_id: currentUser.id,
       cultivar_name: post.cultivar_name,
       hybridizer: post.hybridizer || "",
       priority: "medium",

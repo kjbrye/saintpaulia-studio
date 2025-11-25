@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { ArrowLeft, Upload, Loader2, Plus, X, Calendar } from "lucide-react";
 import { createPageUrl } from "@/utils";
 import DatePicker from "../components/ui/DatePicker";
@@ -27,6 +27,12 @@ export default function AddWishlistItem() {
   const [uploading, setUploading] = useState(false);
   const [customTrait, setCustomTrait] = useState("");
   const [customSource, setCustomSource] = useState("");
+
+  // Get current authenticated user
+  const { data: currentUser, isLoading: isLoadingUser } = useQuery({
+    queryKey: ['currentUser'],
+    queryFn: () => base44.auth.me(),
+  });
 
   const [formData, setFormData] = useState({
     cultivar_name: "",
@@ -122,6 +128,15 @@ export default function AddWishlistItem() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    // Ensure user is authenticated
+    if (!currentUser?.id) {
+      toast.error("Please log in to add to wishlist", {
+        description: "You must be signed in to use the wishlist feature."
+      });
+      return;
+    }
+
     // Clean up empty fields
     const cleanData = Object.fromEntries(
       Object.entries(formData).filter(([_, v]) => {
@@ -129,6 +144,10 @@ export default function AddWishlistItem() {
         return v !== "" && v !== null && v !== undefined;
       })
     );
+
+    // Add user_id to the data
+    cleanData.user_id = currentUser.id;
+
     createMutation.mutate(cleanData);
   };
 
@@ -530,11 +549,11 @@ export default function AddWishlistItem() {
             </button>
             <button
               type="submit"
-              disabled={createMutation.isPending}
+              disabled={createMutation.isPending || isLoadingUser || !currentUser}
               className="glass-accent-lavender flex-1 px-8 py-4 rounded-2xl font-semibold disabled:opacity-50"
               style={{ color: "#F0EBFF" }}
             >
-              {createMutation.isPending ? "Adding..." : "Add to Wishlist"}
+              {createMutation.isPending ? "Adding..." : isLoadingUser ? "Loading..." : !currentUser ? "Login Required" : "Add to Wishlist"}
             </button>
           </div>
         </form>
