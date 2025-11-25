@@ -355,7 +355,33 @@ export class CustomEntity {
    */
   async create(data) {
     // Map field names from Base44 to Supabase format
-    const mappedData = this.mapDataFields(data);
+    let mappedData = this.mapDataFields(data);
+
+    // Tables that require user_id for RLS and data integrity
+    const tablesRequiringUserId = ['wishlist', 'plants', 'bloom_log', 'plant_collection'];
+
+    // Auto-inject user_id for tables that require it if not provided
+    if (tablesRequiringUserId.includes(this.tableName)) {
+      if (!mappedData.user_id) {
+        // Try to get the current authenticated user
+        try {
+          const { data: { user }, error: authError } = await supabase.auth.getUser();
+          if (authError || !user) {
+            throw new Error(`Authentication required: You must be logged in to create ${this.tableName} records`);
+          }
+          mappedData.user_id = user.id;
+          console.log(`Auto-injected user_id ${user.id} for ${this.tableName} record`);
+        } catch (authErr) {
+          console.error(`Failed to auto-inject user_id for ${this.tableName}:`, authErr);
+          throw new Error(`Authentication required: Please log in to add items to your ${this.tableName}`);
+        }
+      }
+
+      // Final validation: ensure user_id is a valid non-empty string
+      if (!mappedData.user_id || typeof mappedData.user_id !== 'string' || mappedData.user_id.trim() === '') {
+        throw new Error(`Invalid user_id: Cannot create ${this.tableName} record without a valid user ID`);
+      }
+    }
 
     const { data: result, error } = await this.supabase
       .from(this.tableName)
