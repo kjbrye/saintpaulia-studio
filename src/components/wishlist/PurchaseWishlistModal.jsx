@@ -25,7 +25,7 @@ export default function PurchaseWishlistModal({ item, onClose }) {
         hybridizer: item.hybridizer || "",
         blossom_type: item.blossom_type || "",
         blossom_color: item.blossom_color || "",
-        leaf_types: item.leaf_type ? [item.leaf_type] : [],
+        leaf_types: item.leaf_types ? [item.leaf_types] : [],
         acquisition_date: purchaseData.acquisition_date,
         source: purchaseData.source || `From wishlist (${item.cultivar_name})`,
         location: purchaseData.location || "",
