@@ -965,6 +965,7 @@ function createEntitiesProxy() {
 
   // Pre-register specialized entities that need custom validation
   const specializedEntities = {
+    User: new UserEntity(),
     Wishlist: new WishlistEntity(),
     CommunityPost: new CommunityPostEntity(),
   };
