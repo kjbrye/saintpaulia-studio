@@ -860,6 +860,58 @@ export class WishlistEntity extends CustomEntity {
   }
 }
 
+export class CommunityPostEntity extends CustomEntity {
+  constructor() {
+    super("community_post");
+  }
+
+  /**
+   * Create a new community post with sensible defaults
+   * Automatically associates the post with the current authenticated user
+   *
+   * @param {Object} data - Post data
+   * @returns {Promise<Object>} Created post
+   */
+  async create(data) {
+    // Fetch the current user when user_id or created_by is missing
+    let userId = data.user_id;
+    let createdBy = data.created_by;
+
+    if (!userId || !createdBy) {
+      const {
+        data: { user },
+        error: authError,
+      } = await supabase.auth.getUser();
+
+      if (authError) {
+        throw new Error(`Authentication error: ${authError.message}`);
+      }
+
+      if (!user) {
+        throw new Error(
+          "User must be authenticated to create a community post."
+        );
+      }
+
+      userId = userId || user.id;
+      createdBy = createdBy || user.email;
+    }
+
+    const postData = {
+      like_count: 0,
+      comment_count: 0,
+      moderation_status: "active",
+      photos: Array.isArray(data.photos) ? data.photos : [],
+      tags: Array.isArray(data.tags) ? data.tags : [],
+      ...data,
+      user_id: userId,
+      created_by: createdBy,
+    };
+
+    return super.create(postData);
+  }
+}
+
 /**
  * Convert PascalCase entity name to snake_case table name
  * @param {string} entityName - Entity name in PascalCase
@@ -904,6 +956,7 @@ function createEntitiesProxy() {
   // Pre-register specialized entities that need custom validation
   const specializedEntities = {
     Wishlist: new WishlistEntity(),
+    CommunityPost: new CommunityPostEntity(),
   };
 
   return new Proxy(
