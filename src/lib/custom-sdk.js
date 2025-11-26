@@ -897,12 +897,20 @@ export class CommunityPostEntity extends CustomEntity {
       createdBy = createdBy || user.email;
     }
 
+    const allowedStatuses = ["active", "archived", "draft"];
+
+    const resolvedStatus = data.status ?? "active";
+    if (!allowedStatuses.includes(resolvedStatus)) {
+      throw new Error(
+        `Invalid status value. Allowed values are: ${allowedStatuses.join(", ")}`
+      );
+    }
+
     const postData = {
       ...data,
       like_count: data.like_count ?? 0,
       comment_count: data.comment_count ?? 0,
-      // Ensure posts always have a valid status value for the database constraint
-      status: data.status ?? "published",
+      status: resolvedStatus,
       moderation_status: data.moderation_status ?? "active",
       photos: Array.isArray(data.photos) ? data.photos : [],
       tags: Array.isArray(data.tags) ? data.tags : [],
