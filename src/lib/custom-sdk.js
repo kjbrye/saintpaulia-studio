@@ -898,14 +898,14 @@ export class CommunityPostEntity extends CustomEntity {
     }
 
     const postData = {
-      like_count: 0,
-      comment_count: 0,
+      ...data,
+      like_count: data.like_count ?? 0,
+      comment_count: data.comment_count ?? 0,
       // Ensure posts always have a valid status value for the database constraint
-      status: data.status || "published",
-      moderation_status: "active",
+      status: data.status ?? "published",
+      moderation_status: data.moderation_status ?? "active",
       photos: Array.isArray(data.photos) ? data.photos : [],
       tags: Array.isArray(data.tags) ? data.tags : [],
-      ...data,
       user_id: userId,
       created_by: createdBy,
     };
