@@ -57,6 +57,7 @@ export default function CreatePost() {
     mutationFn: (postData) => base44.entities.CommunityPost.create({
       ...postData,
       created_by: currentUser?.email,
+      user_id: currentUser?.id,
       like_count: 0,
       comment_count: 0,
       moderation_status: "active"
@@ -158,7 +159,14 @@ export default function CreatePost() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    
+
+    if (!currentUser?.id) {
+      toast.error("Please sign in to share a post", {
+        description: "Log in to publish to the community feed."
+      });
+      return;
+    }
+
     // Allow submission even without photos
     const cleanedData = {
       ...formData,
