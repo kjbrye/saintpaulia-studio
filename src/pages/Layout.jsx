@@ -11,84 +11,87 @@ import { supabase } from "../lib/supabaseClient";
 const THEMES = {
   glassmorphism: {
     name: "Studio Violet (Default)",
-    description: "Ethereal glass effects with violet hues",
-    background: "linear-gradient(135deg, #201833 0%, #3C2E5A 50%, #4F3F73 100%)",
-    showFloatingFlowers: true,
-    showLightSpots: true,
-    floatingFlowerImage: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/690e3cd78523fb5fba0a8466/f0efee9e3_PlantLogos2.png",
-    
-    // Text Colors
-    textPrimary: "#F5F3FF",
-    textSecondary: "#DDD6FE",
-    textMuted: "#C7C9E6",
-    textDark: "#0F0A1F",
-    
-    // Accent Colors
-    accentPrimary: "#E3C9FF",
-    accentSecondary: "#A7F3D0",
-    accentGlow: "#A89FEF",
-    
-    // Glass/Neuro Surfaces
-    glassCardBg: "linear-gradient(135deg, rgba(227, 201, 255, 0.15) 0%, rgba(168, 159, 239, 0.08) 100%)",
-    glassCardBorder: "rgba(227, 201, 255, 0.25)",
-    glassCardShadow: "0 8px 32px 0 rgba(32, 24, 51, 0.6), inset 0 1px 1px 0 rgba(255, 255, 255, 0.2), inset 0 -1px 1px 0 rgba(60, 46, 90, 0.4)",
-    
-    glassButtonBg: "linear-gradient(135deg, rgba(227, 201, 255, 0.2) 0%, rgba(168, 159, 239, 0.12) 100%)",
-    glassButtonBorder: "rgba(227, 201, 255, 0.3)",
-    glassButtonShadow: "0 4px 16px 0 rgba(32, 24, 51, 0.4), inset 0 1px 0.5px 0 rgba(255, 255, 255, 0.25)",
-    glassButtonHoverShadow: "0 6px 24px 0 rgba(168, 159, 239, 0.5), 0 0 30px rgba(168, 159, 239, 0.4), 0 0 60px rgba(168, 159, 239, 0.2), inset 0 1px 0.5px 0 rgba(255, 255, 255, 0.3)",
-    
-    glassAccentBg: "linear-gradient(135deg, rgba(227, 201, 255, 0.25) 0%, rgba(168, 159, 239, 0.2) 100%)",
-    glassAccentBorder: "rgba(227, 201, 255, 0.4)",
-    glassAccentShadow: "0 4px 20px 0 rgba(168, 159, 239, 0.4), inset 0 1px 0.5px 0 rgba(255, 255, 255, 0.3)",
-    glassAccentHoverShadow: "0 8px 32px rgba(168, 159, 239, 0.6), 0 0 40px rgba(168, 159, 239, 0.5), 0 0 80px rgba(168, 159, 239, 0.3), inset 0 1px 0.5px 0 rgba(255, 255, 255, 0.4)",
-    
-    glassAccentMossBg: "linear-gradient(135deg, rgba(154, 226, 211, 0.22) 0%, rgba(154, 226, 211, 0.15) 100%)",
-    glassAccentMossBorder: "rgba(154, 226, 211, 0.4)",
-    glassAccentMossShadow: "0 4px 20px 0 rgba(154, 226, 211, 0.35), inset 0 1px 0.5px 0 rgba(255, 255, 255, 0.25)",
-    glassAccentMossHoverShadow: "0 8px 32px rgba(154, 226, 211, 0.6), 0 0 40px rgba(154, 226, 211, 0.5), 0 0 80px rgba(154, 226, 211, 0.25), inset 0 1px 0.5px 0 rgba(255, 255, 255, 0.35)",
-    
-    glassInputBg: "linear-gradient(135deg, rgba(218, 213, 247, 0.08) 0%, rgba(199, 201, 230, 0.05) 100%)",
-    glassInputBorder: "rgba(227, 201, 255, 0.2)",
-    glassInputShadow: "inset 0 1px 2px 0 rgba(32, 24, 51, 0.3)",
-    glassInputFocusBg: "linear-gradient(135deg, rgba(218, 213, 247, 0.12) 0%, rgba(199, 201, 230, 0.08) 100%)",
-    glassInputFocusBorder: "rgba(168, 159, 239, 0.5)",
-    glassInputFocusShadow: "0 0 0 3px rgba(168, 159, 239, 0.2), inset 0 1px 2px 0 rgba(32, 24, 51, 0.2)",
-    glassInputPlaceholder: "rgba(199, 201, 230, 0.6)",
-    
-    // Neuro Surfaces
-    neuroCardBg: "linear-gradient(145deg, rgba(79, 63, 115, 0.35) 0%, rgba(60, 46, 90, 0.4) 100%)",
-    neuroCardShadow: "16px 16px 32px rgba(15, 10, 31, 0.5), -16px -16px 32px rgba(95, 79, 135, 0.25), inset 2px 2px 4px rgba(95, 79, 135, 0.2), inset -2px -2px 4px rgba(15, 10, 31, 0.2)",
-    neuroCardBorder: "rgba(168, 159, 239, 0.25)",
-    
-    neuroButtonBg: "linear-gradient(145deg, rgba(79, 63, 115, 0.4) 0%, rgba(60, 46, 90, 0.45) 100%)",
-    neuroButtonShadow: "12px 12px 24px rgba(15, 10, 31, 0.4), -12px -12px 24px rgba(95, 79, 135, 0.3), inset 2px 2px 4px rgba(95, 79, 135, 0.25), inset -1px -1px 2px rgba(15, 10, 31, 0.15)",
-    neuroButtonBorder: "rgba(168, 159, 239, 0.3)",
-    neuroButtonHoverShadow: "16px 16px 32px rgba(15, 10, 31, 0.55), -16px -16px 32px rgba(95, 79, 135, 0.4), inset 2px 2px 4px rgba(95, 79, 135, 0.28), inset -1px -1px 2px rgba(15, 10, 31, 0.18), 0 0 24px rgba(168, 159, 239, 0.3), 0 0 48px rgba(168, 159, 239, 0.15)",
-    neuroButtonActiveShadow: "inset 10px 10px 20px rgba(15, 10, 31, 0.5), inset -10px -10px 20px rgba(95, 79, 135, 0.2), inset 3px 3px 6px rgba(15, 10, 31, 0.4)",
-    
-    neuroInputBg: "linear-gradient(145deg, rgba(60, 46, 90, 0.42) 0%, rgba(79, 63, 115, 0.38) 100%)",
-    neuroInputShadow: "inset 10px 10px 20px rgba(15, 10, 31, 0.45), inset -10px -10px 20px rgba(95, 79, 135, 0.2), inset 3px 3px 6px rgba(15, 10, 31, 0.35)",
-    neuroInputBorder: "rgba(168, 159, 239, 0.25)",
-    neuroInputFocusBorder: "rgba(168, 159, 239, 0.6)",
-    neuroInputFocusShadow: "0 0 0 4px rgba(168, 159, 239, 0.3), inset 0 1px 2px 0 rgba(32, 24, 51, 0.2)",
-    neuroInputPlaceholder: "rgba(199, 201, 230, 0.6)",
-    
-    neuroAccentBg: "linear-gradient(145deg, rgba(227, 201, 255, 0.4) 0%, rgba(168, 159, 239, 0.36) 100%)",
-    neuroAccentShadow: "16px 16px 32px rgba(15, 10, 31, 0.5), -16px -16px 32px rgba(95, 79, 135, 0.4), inset 3px 3px 6px rgba(227, 201, 255, 0.3), inset -2px -2px 4px rgba(15, 10, 31, 0.18), 0 2px 8px rgba(227, 201, 255, 0.15)",
-    neuroAccentBorder: "rgba(227, 201, 255, 0.45)",
-    neuroAccentHoverShadow: "20px 20px 40px rgba(15, 10, 31, 0.6), -20px -20px 40px rgba(95, 79, 135, 0.5), inset 3px 3px 6px rgba(227, 201, 255, 0.35), inset -2px -2px 4px rgba(15, 10, 31, 0.2), 0 4px 16px rgba(227, 201, 255, 0.25), 0 0 30px rgba(227, 201, 255, 0.4), 0 0 60px rgba(227, 201, 255, 0.2)",
-    neuroAccentActiveShadow: "inset 10px 10px 20px rgba(15, 10, 31, 0.5), inset -10px -10px 20px rgba(95, 79, 135, 0.25), inset 3px 3px 6px rgba(15, 10, 31, 0.35)",
-    
+    description: "Botanical elegance with sage green accents",
+    background: "url('/botanical-bg.png') center center / cover no-repeat fixed, linear-gradient(135deg, #f5f2eb 0%, #ebe7df 100%)",
+    showFloatingFlowers: false,
+    showLightSpots: false,
+    floatingFlowerImage: "",
+    waxSealImage: "/wax-seal.png",
+
+    // Text Colors - Dark text for light background
+    textPrimary: "#3d4a3a",
+    textSecondary: "#5a6857",
+    textMuted: "#7a8577",
+    textDark: "#2d352b",
+
+    // Accent Colors - Sage green palette
+    accentPrimary: "#818b7e",
+    accentSecondary: "#a67c52",
+    accentGlow: "#6b7568",
+
+    // Glass/Neuro Surfaces - Sage green theme
+    glassCardBg: "#818b7e",
+    glassCardBorder: "rgba(107, 117, 104, 0.6)",
+    glassCardShadow: "0 8px 24px 0 rgba(61, 74, 58, 0.35), 0 4px 8px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.15)",
+
+    glassButtonBg: "#818b7e",
+    glassButtonBorder: "rgba(107, 117, 104, 0.5)",
+    glassButtonShadow: "0 4px 12px 0 rgba(61, 74, 58, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.12)",
+    glassButtonHoverShadow: "0 6px 20px 0 rgba(61, 74, 58, 0.4), 0 2px 8px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.15)",
+
+    glassAccentBg: "#818b7e",
+    glassAccentBorder: "rgba(107, 117, 104, 0.6)",
+    glassAccentColor: "#f5f2eb",
+    glassAccentShadow: "0 6px 20px 0 rgba(61, 74, 58, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.15)",
+    glassAccentHoverShadow: "0 8px 28px rgba(61, 74, 58, 0.45), 0 4px 12px rgba(0, 0, 0, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.18)",
+
+    glassAccentMossBg: "#6b7568",
+    glassAccentMossBorder: "rgba(90, 104, 87, 0.6)",
+    glassAccentMossColor: "#f5f2eb",
+    glassAccentMossShadow: "0 6px 20px 0 rgba(61, 74, 58, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.12)",
+    glassAccentMossHoverShadow: "0 8px 28px rgba(61, 74, 58, 0.45), 0 4px 12px rgba(0, 0, 0, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.15)",
+
+    glassInputBg: "#818b7e",
+    glassInputBorder: "rgba(107, 117, 104, 0.5)",
+    glassInputShadow: "inset 0 2px 4px 0 rgba(61, 74, 58, 0.2)",
+    glassInputFocusBg: "#8a9487",
+    glassInputFocusBorder: "rgba(107, 117, 104, 0.8)",
+    glassInputFocusShadow: "0 0 0 3px rgba(129, 139, 126, 0.3), inset 0 2px 4px rgba(61, 74, 58, 0.15)",
+    glassInputPlaceholder: "rgba(245, 242, 235, 0.6)",
+
+    // Neuro Surfaces - Sage green neumorphism
+    neuroCardBg: "#818b7e",
+    neuroCardShadow: "12px 12px 24px rgba(61, 74, 58, 0.4), -12px -12px 24px rgba(151, 161, 147, 0.3), inset 1px 1px 2px rgba(255, 255, 255, 0.1)",
+    neuroCardBorder: "rgba(107, 117, 104, 0.4)",
+
+    neuroButtonBg: "#818b7e",
+    neuroButtonShadow: "8px 8px 16px rgba(61, 74, 58, 0.35), -8px -8px 16px rgba(151, 161, 147, 0.25), inset 1px 1px 2px rgba(255, 255, 255, 0.1)",
+    neuroButtonBorder: "rgba(107, 117, 104, 0.4)",
+    neuroButtonHoverShadow: "10px 10px 20px rgba(61, 74, 58, 0.4), -10px -10px 20px rgba(151, 161, 147, 0.3), inset 1px 1px 2px rgba(255, 255, 255, 0.12)",
+    neuroButtonActiveShadow: "inset 6px 6px 12px rgba(61, 74, 58, 0.35), inset -6px -6px 12px rgba(151, 161, 147, 0.2)",
+
+    neuroInputBg: "#818b7e",
+    neuroInputShadow: "inset 6px 6px 12px rgba(61, 74, 58, 0.3), inset -6px -6px 12px rgba(151, 161, 147, 0.2)",
+    neuroInputBorder: "rgba(107, 117, 104, 0.4)",
+    neuroInputFocusBorder: "rgba(107, 117, 104, 0.7)",
+    neuroInputFocusShadow: "0 0 0 3px rgba(129, 139, 126, 0.25), inset 4px 4px 8px rgba(61, 74, 58, 0.2)",
+    neuroInputPlaceholder: "rgba(245, 242, 235, 0.5)",
+
+    neuroAccentBg: "#6b7568",
+    neuroAccentShadow: "10px 10px 20px rgba(61, 74, 58, 0.4), -10px -10px 20px rgba(151, 161, 147, 0.3), inset 1px 1px 2px rgba(255, 255, 255, 0.1)",
+    neuroAccentBorder: "rgba(90, 104, 87, 0.5)",
+    neuroAccentHoverShadow: "12px 12px 24px rgba(61, 74, 58, 0.45), -12px -12px 24px rgba(151, 161, 147, 0.35), inset 1px 1px 2px rgba(255, 255, 255, 0.12)",
+    neuroAccentActiveShadow: "inset 6px 6px 12px rgba(61, 74, 58, 0.35), inset -6px -6px 12px rgba(151, 161, 147, 0.2)",
+
     // Misc
-    dividerBg: "linear-gradient(90deg, rgba(227, 201, 255, 0) 0%, rgba(227, 201, 255, 0.4) 50%, rgba(227, 201, 255, 0) 100%)",
-    dividerShadow: "0 1px 2px rgba(168, 159, 239, 0.1), 0 -1px 2px rgba(168, 159, 239, 0.05)",
-    headingShadow: "0 2px 8px rgba(15, 10, 31, 0.6), 0 1px 3px rgba(0, 0, 0, 0.4)",
-    backdropFilter: "blur(16px) brightness(1.1)",
-    lightSpotGradient1: "radial-gradient(circle, rgba(227, 201, 255, 0.4) 0%, transparent 70%)",
-    lightSpotGradient2: "radial-gradient(circle, rgba(154, 226, 211, 0.35) 0%, transparent 70%)",
-    scrollbarTrackBg: "linear-gradient(135deg, rgba(60, 46, 90, 0.3) 0%, rgba(32, 24, 51, 0.25) 100%)",
-    scrollbarThumbBg: "linear-gradient(135deg, rgba(227, 201, 255, 0.4) 0%, rgba(168, 159, 239, 0.35) 100%)",
+    dividerBg: "linear-gradient(90deg, rgba(129, 139, 126, 0) 0%, rgba(129, 139, 126, 0.5) 50%, rgba(129, 139, 126, 0) 100%)",
+    dividerShadow: "0 1px 2px rgba(61, 74, 58, 0.1)",
+    headingShadow: "0 1px 3px rgba(61, 74, 58, 0.15)",
+    backdropFilter: "none",
+    lightSpotGradient1: "radial-gradient(circle, rgba(129, 139, 126, 0.1) 0%, transparent 70%)",
+    lightSpotGradient2: "radial-gradient(circle, rgba(166, 124, 82, 0.08) 0%, transparent 70%)",
+    scrollbarTrackBg: "rgba(129, 139, 126, 0.2)",
+    scrollbarThumbBg: "#818b7e",
   },
   high_contrast: {
     name: "High Contrast",
@@ -690,15 +693,15 @@ const handleLogout = async () => {
         }
 
         .glass-card-dark {
-          background: ${currentTheme === 'glassmorphism' ? 'linear-gradient(135deg, rgba(79, 63, 115, 0.3) 10%, rgba(60, 46, 90, 0.2) 100%)' :
+          background: ${currentTheme === 'glassmorphism' ? '#6b7568' :
             currentTheme === 'high_contrast' ? '#1A1A1A' :
             currentTheme === 'light' ? '#F3F4F6' :
             currentTheme === 'dark' ? 'rgba(15, 10, 31, 0.95)' :
             currentTheme === 'nature' ? 'linear-gradient(135deg, rgba(102, 123, 104, 0.4) 0%, rgba(104, 65, 47, 0.3) 100%)' :
             '#FFFFFF'};
-          ${theme.backdropFilter && (currentTheme === 'glassmorphism' || currentTheme === 'nature') ? `backdrop-filter: ${theme.backdropFilter}; -webkit-backdrop-filter: ${theme.backdropFilter};` : ''}
+          ${theme.backdropFilter && currentTheme === 'nature' ? `backdrop-filter: ${theme.backdropFilter}; -webkit-backdrop-filter: ${theme.backdropFilter};` : ''}
           border: ${currentTheme === 'high_contrast' ? '3px solid #FFFFFF' : '1px solid var(--glass-card-border)'};
-          box-shadow: ${currentTheme === 'glassmorphism' ? '0 8px 32px 0 rgba(32, 24, 51, 0.7), inset 0 1px 1px 0 rgba(255, 255, 255, 0.15)' :
+          box-shadow: ${currentTheme === 'glassmorphism' ? '0 8px 24px 0 rgba(61, 74, 58, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.1)' :
             currentTheme === 'high_contrast' ? '0 0 0 3px #FFD700' :
             currentTheme === 'light' ? '0 2px 8px rgba(0, 0, 0, 0.06)' :
             currentTheme === 'dark' ? '0 8px 24px rgba(0, 0, 0, 0.6)' :
@@ -708,9 +711,9 @@ const handleLogout = async () => {
 
         .glass-input {
           background: var(--glass-input-bg);
-          ${theme.backdropFilter && (currentTheme === 'glassmorphism' || currentTheme === 'nature') ? `backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);` : ''}
+          ${theme.backdropFilter && currentTheme === 'nature' ? `backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);` : ''}
           border: ${currentTheme === 'high_contrast' ? '3px' : '1px'} solid var(--glass-input-border);
-          color: var(--text-primary);
+          color: ${currentTheme === 'glassmorphism' ? '#f5f2eb' : 'var(--text-primary)'};
           box-shadow: var(--glass-input-shadow);
         }
 
@@ -727,13 +730,14 @@ const handleLogout = async () => {
 
         .glass-input option {
           background: ${currentTheme === 'high_contrast' ? '#000000' :
-            currentTheme === 'light' || currentTheme === 'minimal' ? '#FFFFFF' : '#1E1B2E'};
+            currentTheme === 'light' || currentTheme === 'minimal' ? '#FFFFFF' :
+            currentTheme === 'glassmorphism' ? '#818b7e' : '#1E1B2E'};
           color: var(--text-primary);
         }
 
         select.glass-input {
           color: var(--text-primary);
-          background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3E%3Cpath stroke='${currentTheme === 'light' || currentTheme === 'minimal' ? '%234a4a6a' : '%23F5F3FF'}' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3E%3C/svg%3E");
+          background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3E%3Cpath stroke='${currentTheme === 'light' || currentTheme === 'minimal' ? '%234a4a6a' : currentTheme === 'glassmorphism' ? '%23f5f2eb' : '%23F5F3FF'}' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3E%3C/svg%3E");
           background-position: right 0.5rem center;
           background-repeat: no-repeat;
           background-size: 1.5em 1.5em;
@@ -781,7 +785,7 @@ const handleLogout = async () => {
         }
         ` : ''}
 
-        ${(currentTheme === 'glassmorphism' || currentTheme === 'nature') ? `
+        ${currentTheme === 'nature' ? `
         body::before {
           content: '';
           position: fixed;
@@ -789,9 +793,9 @@ const handleLogout = async () => {
           left: 0;
           right: 0;
           bottom: 0;
-          background: 
-            radial-gradient(circle at 25% 35%, ${currentTheme === 'nature' ? 'rgba(248, 211, 197, 0.015)' : 'rgba(227, 201, 255, 0.015)'} 0%, transparent 50%),
-            radial-gradient(circle at 75% 65%, ${currentTheme === 'nature' ? 'rgba(163, 184, 153, 0.015)' : 'rgba(154, 226, 211, 0.015)'} 0%, transparent 50%);
+          background:
+            radial-gradient(circle at 25% 35%, rgba(248, 211, 197, 0.015) 0%, transparent 50%),
+            radial-gradient(circle at 75% 65%, rgba(163, 184, 153, 0.015) 0%, transparent 50%);
           pointer-events: none;
           z-index: 1;
         }
@@ -839,13 +843,13 @@ const handleLogout = async () => {
         }
 
         .neuro-badge {
-          background: ${currentTheme === 'glassmorphism' ? 'linear-gradient(145deg, rgba(60, 46, 90, 0.38) 0%, rgba(79, 63, 115, 0.42) 100%)' :
+          background: ${currentTheme === 'glassmorphism' ? '#818b7e' :
             currentTheme === 'light' ? 'linear-gradient(145deg, #fefeff 0%, #f9f8ff 100%)' :
             'linear-gradient(145deg, rgba(30, 27, 46, 0.92) 0%, rgba(15, 10, 31, 0.96) 100%)'};
-          box-shadow: ${currentTheme === 'glassmorphism' ? '6px 6px 12px rgba(15, 10, 31, 0.35), -6px -6px 12px rgba(95, 79, 135, 0.3), inset 1px 1px 2px rgba(95, 79, 135, 0.2), inset -1px -1px 2px rgba(15, 10, 31, 0.15)' :
+          box-shadow: ${currentTheme === 'glassmorphism' ? '6px 6px 12px rgba(61, 74, 58, 0.35), -6px -6px 12px rgba(151, 161, 147, 0.25), inset 1px 1px 2px rgba(255, 255, 255, 0.1)' :
             currentTheme === 'light' ? '5px 5px 10px rgba(222, 221, 255, 0.5), -5px -5px 10px rgba(255, 255, 255, 0.9), inset 1px 1px 2px rgba(255, 255, 255, 0.7)' :
             '6px 6px 12px rgba(0, 0, 0, 0.5), -6px -6px 12px rgba(60, 50, 85, 0.3), inset 1px 1px 2px rgba(60, 50, 85, 0.2)'};
-          border: 1px solid ${currentTheme === 'glassmorphism' ? 'rgba(168, 159, 239, 0.28)' :
+          border: 1px solid ${currentTheme === 'glassmorphism' ? 'rgba(107, 117, 104, 0.4)' :
             currentTheme === 'light' ? 'rgba(231, 231, 255, 0.5)' :
             'rgba(167, 139, 250, 0.22)'};
         }
@@ -855,7 +859,7 @@ const handleLogout = async () => {
           box-shadow: var(--neuro-accent-shadow);
           border: 1px solid var(--neuro-accent-border);
           transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-          ${currentTheme === 'light' || currentTheme === 'minimal' ? 'color: #1a1a2e !important;' : ''}
+          ${currentTheme === 'light' || currentTheme === 'minimal' ? 'color: #1a1a2e !important;' : currentTheme === 'glassmorphism' ? 'color: #f5f2eb !important;' : ''}
         }
 
         .neuro-accent-raised:hover {
@@ -869,34 +873,34 @@ const handleLogout = async () => {
         }
 
         .neuro-surface {
-          background: ${currentTheme === 'glassmorphism' ? 'linear-gradient(145deg, rgba(60, 46, 90, 0.32) 0%, rgba(79, 63, 115, 0.28) 100%)' :
+          background: ${currentTheme === 'glassmorphism' ? '#7a8577' :
             currentTheme === 'light' ? 'linear-gradient(145deg, #fefeff 0%, #FFFFFF 100%)' :
             'linear-gradient(145deg, rgba(15, 10, 31, 0.92) 0%, rgba(30, 27, 46, 0.88) 100%)'};
-          box-shadow: ${currentTheme === 'glassmorphism' ? 'inset 3px 3px 6px rgba(15, 10, 31, 0.25), inset -3px -3px 6px rgba(95, 79, 135, 0.15)' :
+          box-shadow: ${currentTheme === 'glassmorphism' ? 'inset 3px 3px 6px rgba(61, 74, 58, 0.25), inset -3px -3px 6px rgba(151, 161, 147, 0.15)' :
             currentTheme === 'light' ? 'inset 3px 3px 6px rgba(222, 221, 255, 0.4), inset -3px -3px 6px rgba(255, 255, 255, 1)' :
             'inset 3px 3px 6px rgba(0, 0, 0, 0.35), inset -3px -3px 6px rgba(60, 50, 85, 0.2)'};
         }
 
         .neuro-icon-well {
-          background: ${currentTheme === 'glassmorphism' ? 'linear-gradient(145deg, rgba(60, 46, 90, 0.48) 0%, rgba(79, 63, 115, 0.42) 100%)' :
+          background: ${currentTheme === 'glassmorphism' ? '#6b7568' :
             currentTheme === 'light' ? 'linear-gradient(145deg, #f3f2ff 0%, #f9f8ff 100%)' :
             'linear-gradient(145deg, rgba(15, 10, 31, 0.96) 0%, rgba(30, 27, 46, 0.92) 100%)'};
-          box-shadow: ${currentTheme === 'glassmorphism' ? 'inset 8px 8px 16px rgba(15, 10, 31, 0.45), inset -8px -8px 16px rgba(95, 79, 135, 0.22), inset 2px 2px 4px rgba(15, 10, 31, 0.35), 1px 1px 2px rgba(168, 159, 239, 0.12)' :
+          box-shadow: ${currentTheme === 'glassmorphism' ? 'inset 8px 8px 16px rgba(61, 74, 58, 0.35), inset -8px -8px 16px rgba(151, 161, 147, 0.2), inset 2px 2px 4px rgba(61, 74, 58, 0.3)' :
             currentTheme === 'light' ? 'inset 6px 6px 12px rgba(222, 221, 255, 0.5), inset -6px -6px 12px rgba(255, 255, 255, 0.9), inset 2px 2px 4px rgba(222, 221, 255, 0.4)' :
             'inset 8px 8px 16px rgba(0, 0, 0, 0.5), inset -8px -8px 16px rgba(60, 50, 85, 0.28), inset 2px 2px 4px rgba(0, 0, 0, 0.4)'};
-          border: 1px solid ${currentTheme === 'glassmorphism' ? 'rgba(168, 159, 239, 0.22)' :
+          border: 1px solid ${currentTheme === 'glassmorphism' ? 'rgba(107, 117, 104, 0.35)' :
             currentTheme === 'light' ? 'rgba(231, 231, 255, 0.4)' :
             'rgba(167, 139, 250, 0.22)'};
         }
 
         .neuro-accent-extreme {
-          background: ${currentTheme === 'glassmorphism' ? 'linear-gradient(145deg, rgba(227, 201, 255, 0.48) 0%, rgba(168, 159, 239, 0.42) 100%)' :
+          background: ${currentTheme === 'glassmorphism' ? '#6b7568' :
             currentTheme === 'light' ? 'linear-gradient(145deg, #bfbcfc 0%, #d1cfff 100%)' :
             'linear-gradient(145deg, rgba(167, 139, 250, 0.45) 0%, rgba(139, 92, 246, 0.4) 100%)'};
-          box-shadow: ${currentTheme === 'glassmorphism' ? '20px 20px 40px rgba(15, 10, 31, 0.6), -20px -20px 40px rgba(95, 79, 135, 0.5), inset 4px 4px 8px rgba(227, 201, 255, 0.35), inset -3px -3px 6px rgba(15, 10, 31, 0.25), 0 3px 16px rgba(227, 201, 255, 0.25)' :
+          box-shadow: ${currentTheme === 'glassmorphism' ? '14px 14px 28px rgba(61, 74, 58, 0.45), -14px -14px 28px rgba(151, 161, 147, 0.35), inset 3px 3px 6px rgba(255, 255, 255, 0.12), inset -2px -2px 4px rgba(61, 74, 58, 0.2)' :
             currentTheme === 'light' ? '16px 16px 32px rgba(191, 188, 252, 0.55), -16px -16px 32px rgba(209, 207, 255, 0.4), inset 3px 3px 6px rgba(255, 255, 255, 0.35), inset -3px -3px 6px rgba(137, 139, 188, 0.3), 0 3px 16px rgba(191, 188, 252, 0.3)' :
             '20px 20px 40px rgba(0, 0, 0, 0.65), -20px -20px 40px rgba(60, 50, 85, 0.5), inset 4px 4px 8px rgba(167, 139, 250, 0.35), inset -3px -3px 6px rgba(0, 0, 0, 0.25), 0 3px 16px rgba(167, 139, 250, 0.28)'};
-          border: 1px solid ${currentTheme === 'glassmorphism' ? 'rgba(227, 201, 255, 0.5)' :
+          border: 1px solid ${currentTheme === 'glassmorphism' ? 'rgba(90, 104, 87, 0.5)' :
             currentTheme === 'light' ? 'rgba(137, 139, 188, 0.5)' :
             'rgba(167, 139, 250, 0.4)'};
         }
@@ -927,16 +931,16 @@ const handleLogout = async () => {
 
         ${currentTheme !== 'high_contrast' && currentTheme !== 'minimal' ? `
         .glow-violet {
-          box-shadow: 
-            0 0 15px ${currentTheme === 'nature' ? 'rgba(248, 211, 197, 0.35)' : currentTheme === 'light' ? 'rgba(191, 188, 252, 0.35)' : 'rgba(168, 159, 239, 0.35)'},
-            0 0 30px ${currentTheme === 'nature' ? 'rgba(248, 211, 197, 0.15)' : currentTheme === 'light' ? 'rgba(191, 188, 252, 0.15)' : 'rgba(168, 159, 239, 0.15)'},
+          box-shadow:
+            0 0 15px ${currentTheme === 'nature' ? 'rgba(248, 211, 197, 0.35)' : currentTheme === 'light' ? 'rgba(191, 188, 252, 0.35)' : currentTheme === 'glassmorphism' ? 'rgba(129, 139, 126, 0.35)' : 'rgba(168, 159, 239, 0.35)'},
+            0 0 30px ${currentTheme === 'nature' ? 'rgba(248, 211, 197, 0.15)' : currentTheme === 'light' ? 'rgba(191, 188, 252, 0.15)' : currentTheme === 'glassmorphism' ? 'rgba(129, 139, 126, 0.15)' : 'rgba(168, 159, 239, 0.15)'},
             inset 0 1px 0 rgba(255, 255, 255, 0.2);
         }
 
         .glow-mint {
-          box-shadow: 
-            0 0 15px ${currentTheme === 'light' ? 'rgba(240, 203, 220, 0.35)' : 'rgba(154, 226, 211, 0.35)'},
-            0 0 30px ${currentTheme === 'light' ? 'rgba(240, 203, 220, 0.15)' : 'rgba(154, 226, 211, 0.15)'},
+          box-shadow:
+            0 0 15px ${currentTheme === 'light' ? 'rgba(240, 203, 220, 0.35)' : currentTheme === 'glassmorphism' ? 'rgba(166, 124, 82, 0.35)' : 'rgba(154, 226, 211, 0.35)'},
+            0 0 30px ${currentTheme === 'light' ? 'rgba(240, 203, 220, 0.15)' : currentTheme === 'glassmorphism' ? 'rgba(166, 124, 82, 0.15)' : 'rgba(154, 226, 211, 0.15)'},
             inset 0 1px 0 rgba(255, 255, 255, 0.2);
         }
         ` : ''}
@@ -954,6 +958,10 @@ const handleLogout = async () => {
             -webkit-text-fill-color: transparent;
           ` : currentTheme === 'nature' ? `
             background: linear-gradient(135deg, #fbd8ca 0%, #8fa388 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+          ` : currentTheme === 'glassmorphism' ? `
+            background: linear-gradient(135deg, #97a193 0%, #6b7568 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
           ` : `
@@ -974,6 +982,10 @@ const handleLogout = async () => {
             background: linear-gradient(135deg, #10B981 0%, #059669 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+          ` : currentTheme === 'glassmorphism' ? `
+            background: linear-gradient(135deg, #c9a97c 0%, #a67c52 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
           ` : `
             background: linear-gradient(135deg, #9AE2D3 0%, #6BC4B4 100%);
             -webkit-background-clip: text;
@@ -992,8 +1004,8 @@ const handleLogout = async () => {
         ::-webkit-scrollbar-track {
           background: ${theme.scrollbarTrackBg};
           ${currentTheme !== 'high_contrast' && currentTheme !== 'minimal' ? 'border-radius: 10px;' : ''}
-          ${currentTheme === 'high_contrast' ? 'border: 3px solid #FFFFFF;' : 
-            currentTheme === 'glassmorphism' ? 'border: 1px solid rgba(227, 201, 255, 0.15);' :
+          ${currentTheme === 'high_contrast' ? 'border: 3px solid #FFFFFF;' :
+            currentTheme === 'glassmorphism' ? 'border: 1px solid rgba(107, 117, 104, 0.2);' :
             currentTheme === 'nature' ? 'border: 1px solid rgba(143, 163, 136, 0.15);' :
             currentTheme === 'dark' ? 'border: 1px solid rgba(167, 139, 250, 0.2);' : ''}
         }
@@ -1001,8 +1013,8 @@ const handleLogout = async () => {
         ::-webkit-scrollbar-thumb {
           background: ${theme.scrollbarThumbBg};
           ${currentTheme !== 'high_contrast' && currentTheme !== 'minimal' ? 'border-radius: 10px;' : ''}
-          ${currentTheme === 'high_contrast' ? 'border: 3px solid #FFFFFF; box-shadow: 0 0 0 3px #FFD700;' : 
-            currentTheme === 'glassmorphism' ? 'border: 1px solid rgba(227, 201, 255, 0.3); box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.2);' :
+          ${currentTheme === 'high_contrast' ? 'border: 3px solid #FFFFFF; box-shadow: 0 0 0 3px #FFD700;' :
+            currentTheme === 'glassmorphism' ? 'border: 1px solid rgba(107, 117, 104, 0.4); box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.15);' :
             currentTheme === 'light' ? 'border: 2px solid #f3f2ff;' :
             currentTheme === 'dark' ? 'border: 1px solid rgba(167, 139, 250, 0.3);' :
             currentTheme === 'nature' ? 'border: 1px solid rgba(251, 216, 202, 0.3); box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.15);' :
@@ -1011,26 +1023,26 @@ const handleLogout = async () => {
 
         ::-webkit-scrollbar-thumb:hover {
           background: ${currentTheme === 'high_contrast' ? '#FFF700' :
-            currentTheme === 'glassmorphism' ? 'linear-gradient(135deg, rgba(227, 201, 255, 0.55) 0%, rgba(168, 159, 239, 0.5) 100%)' :
+            currentTheme === 'glassmorphism' ? '#6b7568' :
             currentTheme === 'light' ? 'linear-gradient(135deg, #bfbcfc 0%, #d1cfff 100%)' :
             currentTheme === 'dark' ? 'linear-gradient(135deg, rgba(167, 139, 250, 0.6) 0%, rgba(139, 92, 246, 0.5) 100%)' :
             currentTheme === 'nature' ? 'linear-gradient(135deg, rgba(251, 216, 202, 0.55) 0%, rgba(143, 163, 136, 0.5) 100%)' :
             '#6366F1'};
           ${currentTheme === 'high_contrast' ? 'box-shadow: 0 0 0 3px #FFF700;' :
-            currentTheme === 'glassmorphism' ? 'box-shadow: 0 0 8px rgba(168, 159, 239, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.3);' :
+            currentTheme === 'glassmorphism' ? 'box-shadow: 0 0 6px rgba(107, 117, 104, 0.3), inset 0 1px 1px rgba(255, 255, 255, 0.15);' :
             currentTheme === 'nature' ? 'box-shadow: 0 0 8px rgba(251, 216, 202, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.2);' :
             currentTheme === 'dark' ? 'box-shadow: 0 0 6px rgba(167, 139, 250, 0.3);' : ''}
         }
 
         ${currentTheme === 'glassmorphism' ? `
         ::-webkit-scrollbar-thumb:active {
-          background: linear-gradient(135deg, rgba(227, 201, 255, 0.65) 0%, rgba(168, 159, 239, 0.6) 100%);
+          background: #5a6857;
         }
         ` : ''}
 
         * {
           scrollbar-width: ${currentTheme === 'high_contrast' ? 'auto' : 'thin'};
-          scrollbar-color: ${currentTheme === 'glassmorphism' ? 'rgba(227, 201, 255, 0.4) rgba(60, 46, 90, 0.3)' :
+          scrollbar-color: ${currentTheme === 'glassmorphism' ? '#818b7e rgba(129, 139, 126, 0.2)' :
             currentTheme === 'high_contrast' ? '#FFD700 #000000' :
             currentTheme === 'light' ? '#d1cfff #f3f2ff' :
             currentTheme === 'dark' ? 'rgba(167, 139, 250, 0.4) rgba(15, 10, 31, 0.6)' :
