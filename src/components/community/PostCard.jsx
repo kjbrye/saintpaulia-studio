@@ -76,6 +76,7 @@ export default function PostCard({ post, currentUser }) {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['postLike', post.id] });
+      queryClient.invalidateQueries({ queryKey: ['communityPost', post.id] });
       queryClient.invalidateQueries({ queryKey: ['communityPosts'] });
     }
   });
