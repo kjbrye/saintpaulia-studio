@@ -3,7 +3,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { ArrowLeft, Upload, Loader2, User, Download, AlertTriangle, RefreshCw, Palette, LayoutGrid, Eye, Shield, BarChart3 } from "lucide-react";
+import { ArrowLeft, Upload, Loader2, User, Download, AlertTriangle, RefreshCw, Palette, LayoutGrid, Eye, BarChart3 } from "lucide-react";
 import { createPageUrl } from "@/utils";
 import { toast } from "sonner";
 import DashboardCustomizer from "../components/dashboard/DashboardCustomizer";
@@ -70,7 +70,6 @@ export default function ProfileSettings() {
     profile_picture: "",
     theme: "glassmorphism",
     email_notifications: true,
-    community_updates: true,
     care_reminders: true
   });
 
@@ -82,7 +81,6 @@ export default function ProfileSettings() {
         profile_picture: currentUser.profile_picture || "",
         theme: currentUser.theme || "glassmorphism",
         email_notifications: currentUser.email_notifications !== false,
-        community_updates: currentUser.community_updates !== false,
         care_reminders: currentUser.care_reminders !== false
       });
       previousEmailRef.current = currentUser.email || null;
@@ -105,7 +103,6 @@ export default function ProfileSettings() {
               'bio',
               'profile_picture',
               'email_notifications',
-              'community_updates',
               'care_reminders',
               'theme',
             ].includes(key)
@@ -182,11 +179,7 @@ export default function ProfileSettings() {
       hybridizationLogs,
       offspring,
       plantCollections,
-      wishlistItems,
-      communityPosts,
-      postComments,
-      postLikes,
-      savedPosts] =
+      wishlistItems] =
       await Promise.all([
       base44.entities.Plant.list(),
       base44.entities.CareLog.list(),
@@ -200,11 +193,7 @@ export default function ProfileSettings() {
       base44.entities.HybridizationLog.list(),
       base44.entities.Offspring.list(),
       base44.entities.PlantCollection.list(),
-      base44.entities.Wishlist.list(),
-      base44.entities.CommunityPost.list(),
-      base44.entities.PostComment.list(),
-      base44.entities.PostLike.list(),
-      base44.entities.SavedPost.list()]
+      base44.entities.Wishlist.list()]
       );
 
       await Promise.all([
@@ -215,17 +204,13 @@ export default function ProfileSettings() {
       ...propagationLogs.map((item) => base44.entities.PropagationLog.delete(item.id)),
       ...propagationBatches.map((item) => base44.entities.PropagationBatch.delete(item.id)),
       ...hybridizationLogs.map((item) => base44.entities.HybridizationLog.delete(item.id)),
-      ...offspring.map((item) => base44.entities.Offspring.delete(item.id)),
-      ...postComments.map((item) => base44.entities.PostComment.delete(item.id)),
-      ...postLikes.map((item) => base44.entities.PostLike.delete(item.id)),
-      ...savedPosts.map((item) => base44.entities.SavedPost.delete(item.id))]
+      ...offspring.map((item) => base44.entities.Offspring.delete(item.id))]
       );
 
       await Promise.all([
       ...propagationProjects.map((item) => base44.entities.PropagationProject.delete(item.id)),
       ...hybridizationProjects.map((item) => base44.entities.HybridizationProject.delete(item.id)),
       ...plantCollections.map((item) => base44.entities.PlantCollection.delete(item.id)),
-      ...communityPosts.map((item) => base44.entities.CommunityPost.delete(item.id)),
       ...wishlistItems.map((item) => base44.entities.Wishlist.delete(item.id))]
       );
 
@@ -239,8 +224,7 @@ export default function ProfileSettings() {
         journalEntries.length + bloomLogs.length + propagationProjects.length +
         propagationLogs.length + propagationBatches.length + hybridizationProjects.length +
         hybridizationLogs.length + offspring.length + plantCollections.length +
-        wishlistItems.length + communityPosts.length + postComments.length +
-        postLikes.length + savedPosts.length
+        wishlistItems.length
       };
     },
     onSuccess: (data) => {
@@ -356,59 +340,31 @@ export default function ProfileSettings() {
 
       {/* Admin Sections */}
       {isAdmin && (
-        <>
-          <div className="glass-card rounded-3xl p-6 mb-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <h3 className="text-lg font-bold mb-2 flex items-center gap-2" style={{
-                  color: "var(--text-primary)",
-                  textShadow: "var(--heading-shadow)",
-                  fontFamily: "'Playfair Display', Georgia, serif"
-                }}>
-                  <BarChart3 className="w-5 h-5" style={{ color: "#C4B5FD" }} />
-                  Platform Analytics
-                </h3>
-                <p className="text-sm" style={{ color: "var(--text-secondary)" }}>
-                  View insights on user behavior and app usage
-                </p>
-              </div>
-              <button
-                onClick={() => navigate(createPageUrl("AdminAnalyticsDashboard"))}
-                className="glass-accent-lavender px-6 py-3 rounded-2xl font-semibold flex items-center gap-2 hover:shadow-lg transition-all"
-                style={{ color: "#F0EBFF" }}>
-
-                <BarChart3 className="w-5 h-5" style={{ strokeWidth: 2 }} />
-                <span className="hidden sm:inline">View Analytics</span>
-              </button>
+        <div className="glass-card rounded-3xl p-6 mb-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="text-lg font-bold mb-2 flex items-center gap-2" style={{
+                color: "var(--text-primary)",
+                textShadow: "var(--heading-shadow)",
+                fontFamily: "'Playfair Display', Georgia, serif"
+              }}>
+                <BarChart3 className="w-5 h-5" style={{ color: "#C4B5FD" }} />
+                Platform Analytics
+              </h3>
+              <p className="text-sm" style={{ color: "var(--text-secondary)" }}>
+                View insights on user behavior and app usage
+              </p>
             </div>
-          </div>
+            <button
+              onClick={() => navigate(createPageUrl("AdminAnalyticsDashboard"))}
+              className="glass-accent-lavender px-6 py-3 rounded-2xl font-semibold flex items-center gap-2 hover:shadow-lg transition-all"
+              style={{ color: "#F0EBFF" }}>
 
-          <div className="glass-card rounded-3xl p-6 mb-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <h3 className="text-lg font-bold mb-2 flex items-center gap-2" style={{
-                  color: "var(--text-primary)",
-                  textShadow: "var(--heading-shadow)",
-                  fontFamily: "'Playfair Display', Georgia, serif"
-                }}>
-                  <Shield className="w-5 h-5" style={{ color: "#C4B5FD" }} />
-                  Content Moderation
-                </h3>
-                <p className="text-sm" style={{ color: "var(--text-secondary)" }}>
-                  Review and manage reported posts and comments
-                </p>
-              </div>
-              <button
-                onClick={() => navigate(createPageUrl("ModerationDashboard"))}
-                className="glass-accent-lavender px-6 py-3 rounded-2xl font-semibold flex items-center gap-2 hover:shadow-lg transition-all"
-                style={{ color: "#F0EBFF" }}>
-
-                <Shield className="w-5 h-5" style={{ strokeWidth: 2 }} />
-                <span className="hidden sm:inline">Open Dashboard</span>
-              </button>
-            </div>
+              <BarChart3 className="w-5 h-5" style={{ strokeWidth: 2 }} />
+              <span className="hidden sm:inline">View Analytics</span>
+            </button>
           </div>
-        </>
+        </div>
       )}
 
       {/* Dashboard Customization Section */}
@@ -451,7 +407,7 @@ export default function ProfileSettings() {
               Public Profile Preview
             </h3>
             <p className="text-sm" style={{ color: "var(--text-secondary)" }}>
-              See how your profile appears to other community members
+              View your profile and collection summary
             </p>
           </div>
           <button
@@ -706,35 +662,6 @@ export default function ProfileSettings() {
           <div className="flex items-center justify-between py-3" style={{ borderTop: "1px solid rgba(227, 201, 255, 0.2)" }}>
             <div>
               <p className="font-semibold" style={{ color: "var(--text-primary)" }}>
-                Community Updates
-              </p>
-              <p className="text-xs" style={{ color: "var(--text-secondary)", opacity: 0.8 }}>
-                Get notified about likes, comments, and community activity
-              </p>
-            </div>
-            <label className="relative inline-flex items-center cursor-pointer">
-              <input
-                type="checkbox"
-                checked={formData.community_updates}
-                onChange={(e) => setFormData((prev) => ({ ...prev, community_updates: e.target.checked }))}
-                className="sr-only peer" />
-
-              <div className="w-11 h-6 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all"
-              style={{
-                background: formData.community_updates ?
-                "linear-gradient(135deg, rgba(154, 226, 211, 0.4) 0%, rgba(154, 226, 211, 0.3) 100%)" :
-                "rgba(107, 114, 128, 0.3)",
-                border: formData.community_updates ?
-                "1px solid rgba(154, 226, 211, 0.6)" :
-                "1px solid rgba(107, 114, 128, 0.4)"
-              }} />
-
-            </label>
-          </div>
-
-          <div className="flex items-center justify-between py-3" style={{ borderTop: "1px solid rgba(227, 201, 255, 0.2)" }}>
-            <div>
-              <p className="font-semibold" style={{ color: "var(--text-primary)" }}>
                 Care Reminders
               </p>
               <p className="text-xs" style={{ color: "var(--text-secondary)", opacity: 0.8 }}>
@@ -821,7 +748,7 @@ export default function ProfileSettings() {
                 <li>• All plants in your collection</li>
                 <li>• All care logs, health observations, and journal entries</li>
                 <li>• All breeding and propagation projects</li>
-                <li>• All collections, wishlist items, and community posts</li>
+                <li>• All collections and wishlist items</li>
                 <li>• All other data associated with your account</li>
               </ul>
             </div>

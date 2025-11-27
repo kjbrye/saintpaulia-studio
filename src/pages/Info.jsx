@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
-import { ArrowLeft, BookOpen, Sparkles, Heart, Users, Beaker, Library, Calendar, BarChart3, Package, Star, HelpCircle, Lightbulb, CheckCircle, ChevronRight, X, RotateCcw, Database } from "lucide-react";
+import { ArrowLeft, BookOpen, Sparkles, Heart, Beaker, Library, Calendar, BarChart3, Package, Star, HelpCircle, Lightbulb, CheckCircle, ChevronRight, X, RotateCcw, Database } from "lucide-react";
 import { useTooltips } from "../components/onboarding/TooltipManager";
 import { toast } from "sonner";
 
@@ -38,14 +38,6 @@ const ONBOARDING_STEPS = [
   link: "Projects",
   linkText: "Start a Project",
   color: "#E9D5FF"
-},
-{
-  icon: Users,
-  title: "Join the Community",
-  description: "Share your beautiful blooms, discover new cultivars, and connect with fellow African violet enthusiasts.",
-  link: "CommunityFeed",
-  linkText: "Explore Community",
-  color: "#FCA5A5"
 },
 {
   icon: BarChart3,
@@ -87,12 +79,6 @@ const FEATURES = [
   title: "Breeding & Propagation",
   description: "Document hybridization projects, track offspring traits, and manage propagation batches with detailed logs.",
   color: "#E9D5FF"
-},
-{
-  icon: Users,
-  title: "Community Sharing",
-  description: "Connect with other growers, share your blooms, discover new cultivars, and learn from the community.",
-  color: "#FCA5A5"
 },
 {
   icon: Package,
@@ -373,25 +359,6 @@ export default function Info() {
                   <p className="text-sm" style={{ color: "var(--text-secondary)" }}>
                     Learn advanced techniques and expert advice for growing show-quality African violets.
                   </p>
-                </div>
-              </div>
-            </div>
-
-            <div className="glass-button rounded-2xl p-5">
-              <div className="flex items-start gap-3">
-                <Users className="w-5 h-5 mt-0.5 flex-shrink-0" style={{ color: "#A7F3D0", strokeWidth: 1.8 }} />
-                <div>
-                  <h3 className="font-bold mb-1" style={{ color: "var(--text-primary)" }}>
-                    Community Support
-                  </h3>
-                  <p className="text-sm mb-2" style={{ color: "var(--text-secondary)" }}>
-                    Connect with experienced growers in our community feed. Ask questions, share experiences, and learn together.
-                  </p>
-                  <Link to={createPageUrl("CommunityFeed")}>
-                    <span className="text-sm font-semibold" style={{ color: "#A7F3D0" }}>
-                      Join Community →
-                    </span>
-                  </Link>
                 </div>
               </div>
             </div>

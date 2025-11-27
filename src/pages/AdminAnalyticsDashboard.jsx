@@ -3,7 +3,7 @@ import { base44 } from "@/api/base44Client";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
-import { ArrowLeft, TrendingUp, Users, Library, MessageSquare, Activity, Calendar, BarChart3 } from "lucide-react";
+import { ArrowLeft, TrendingUp, Users, Library, Activity, Calendar, BarChart3 } from "lucide-react";
 import { AreaChart, Area, BarChart, Bar, LineChart, Line, PieChart as RechartsPieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
 import { format, subDays, startOfMonth, endOfMonth, eachDayOfInterval, eachMonthOfInterval, startOfYear } from "date-fns";
 
@@ -45,24 +45,6 @@ export default function AdminAnalyticsDashboard() {
     initialData: []
   });
 
-  const { data: allCommunityPosts = [] } = useQuery({
-    queryKey: ['allCommunityPostsAdmin'],
-    queryFn: () => base44.entities.CommunityPost.list(),
-    initialData: []
-  });
-
-  const { data: allComments = [] } = useQuery({
-    queryKey: ['allCommentsAdmin'],
-    queryFn: () => base44.entities.PostComment.list(),
-    initialData: []
-  });
-
-  const { data: allLikes = [] } = useQuery({
-    queryKey: ['allLikesAdmin'],
-    queryFn: () => base44.entities.PostLike.list(),
-    initialData: []
-  });
-
   // Analytics calculations
   const analytics = useMemo(() => {
     const now = new Date();
@@ -74,17 +56,13 @@ export default function AdminAnalyticsDashboard() {
     const totalUsers = allUsers.length;
     const activeUsers = allUsers.filter(u => {
       const hasPlants = allPlants.some(p => p.created_by === u.email);
-      const hasPosts = allCommunityPosts.some(p => p.created_by === u.email);
-      return hasPlants || hasPosts;
+      return hasPlants;
     }).length;
 
     const totalPlants = allPlants.length;
     const avgPlantsPerUser = totalUsers > 0 ? (totalPlants / totalUsers).toFixed(1) : 0;
 
     const totalCareLogs = allCareLogs.length;
-    const totalPosts = allCommunityPosts.length;
-    const totalComments = allComments.length;
-    const totalLikes = allLikes.length;
 
     // User growth over time
     const userGrowthData = [];
@@ -169,56 +147,6 @@ export default function AdminAnalyticsDashboard() {
       });
     }
 
-    // Community engagement over time
-    const engagementData = [];
-    if (timeRange === "year") {
-      const months = eachMonthOfInterval({ start: startDate, end: now });
-      months.forEach(month => {
-        const monthStart = startOfMonth(month);
-        const monthEnd = endOfMonth(month);
-        const postsInMonth = allCommunityPosts.filter(p => {
-          const created = new Date(p.created_date);
-          return created >= monthStart && created <= monthEnd;
-        }).length;
-        const commentsInMonth = allComments.filter(c => {
-          const created = new Date(c.created_date);
-          return created >= monthStart && created <= monthEnd;
-        }).length;
-        const likesInMonth = allLikes.filter(l => {
-          const created = new Date(l.created_date);
-          return created >= monthStart && created <= monthEnd;
-        }).length;
-        engagementData.push({
-          date: format(month, "MMM yyyy"),
-          posts: postsInMonth,
-          comments: commentsInMonth,
-          likes: likesInMonth
-        });
-      });
-    } else {
-      const days = eachDayOfInterval({ start: startDate, end: now });
-      days.forEach(day => {
-        const postsOnDay = allCommunityPosts.filter(p => {
-          const created = new Date(p.created_date);
-          return format(created, "yyyy-MM-dd") === format(day, "yyyy-MM-dd");
-        }).length;
-        const commentsOnDay = allComments.filter(c => {
-          const created = new Date(c.created_date);
-          return format(created, "yyyy-MM-dd") === format(day, "yyyy-MM-dd");
-        }).length;
-        const likesOnDay = allLikes.filter(l => {
-          const created = new Date(l.created_date);
-          return format(created, "yyyy-MM-dd") === format(day, "yyyy-MM-dd");
-        }).length;
-        engagementData.push({
-          date: format(day, "MMM d"),
-          posts: postsOnDay,
-          comments: commentsOnDay,
-          likes: likesOnDay
-        });
-      });
-    }
-
     // Care type distribution
     const careTypeData = [
       { name: "Watering", value: allCareLogs.filter(c => c.care_type === "watering").length },
@@ -231,16 +159,12 @@ export default function AdminAnalyticsDashboard() {
     const userEngagementData = allUsers.map(user => {
       const userPlants = allPlants.filter(p => p.created_by === user.email).length;
       const userCareLogs = allCareLogs.filter(c => c.created_by === user.email).length;
-      const userPosts = allCommunityPosts.filter(p => p.created_by === user.email).length;
-      const userComments = allComments.filter(c => c.created_by === user.email).length;
-      
+
       return {
         email: user.email,
         plants: userPlants,
         careLogs: userCareLogs,
-        posts: userPosts,
-        comments: userComments,
-        totalActivity: userPlants + userCareLogs + userPosts + userComments
+        totalActivity: userPlants + userCareLogs
       };
     }).sort((a, b) => b.totalActivity - a.totalActivity).slice(0, 10);
 
@@ -250,17 +174,13 @@ export default function AdminAnalyticsDashboard() {
       totalPlants,
       avgPlantsPerUser,
       totalCareLogs,
-      totalPosts,
-      totalComments,
-      totalLikes,
       userGrowthData,
       plantCreationData,
       careActivityData,
-      engagementData,
       careTypeData,
       userEngagementData
     };
-  }, [allUsers, allPlants, allCareLogs, allCommunityPosts, allComments, allLikes, timeRange]);
+  }, [allUsers, allPlants, allCareLogs, timeRange]);
 
   if (isLoadingUser) {
     return (
@@ -331,7 +251,7 @@ export default function AdminAnalyticsDashboard() {
         </div>
 
         {/* Key Metrics */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
           <div className="glass-card rounded-3xl p-6">
             <div className="flex items-center justify-between mb-3">
               <Users className="w-8 h-8" style={{ color: "#C4B5FD", opacity: 0.5 }} />
@@ -371,7 +291,7 @@ export default function AdminAnalyticsDashboard() {
               <Activity className="w-8 h-8" style={{ color: "#FCD34D", opacity: 0.5 }} />
               <TrendingUp className="w-5 h-5" style={{ color: "#A7F3D0" }} />
             </div>
-            <p className="text-3xl font-bold mb-1" style={{ 
+            <p className="text-3xl font-bold mb-1" style={{
               color: "#FCD34D",
               fontFamily: "'Playfair Display', Georgia, serif"
             }}>
@@ -380,23 +300,6 @@ export default function AdminAnalyticsDashboard() {
             <p className="text-sm" style={{ color: "var(--text-secondary)" }}>Care Logs</p>
             <p className="text-xs mt-1" style={{ color: "#A7F3D0" }}>
               Plant care actions
-            </p>
-          </div>
-
-          <div className="glass-card rounded-3xl p-6">
-            <div className="flex items-center justify-between mb-3">
-              <MessageSquare className="w-8 h-8" style={{ color: "#FCA5A5", opacity: 0.5 }} />
-              <TrendingUp className="w-5 h-5" style={{ color: "#A7F3D0" }} />
-            </div>
-            <p className="text-3xl font-bold mb-1" style={{ 
-              color: "#FCA5A5",
-              fontFamily: "'Playfair Display', Georgia, serif"
-            }}>
-              {analytics.totalPosts}
-            </p>
-            <p className="text-sm" style={{ color: "var(--text-secondary)" }}>Community Posts</p>
-            <p className="text-xs mt-1" style={{ color: "#A7F3D0" }}>
-              {analytics.totalComments} comments • {analytics.totalLikes} likes
             </p>
           </div>
         </div>
@@ -478,31 +381,6 @@ export default function AdminAnalyticsDashboard() {
             </ResponsiveContainer>
           </div>
 
-          {/* Community Engagement */}
-          <div className="glass-card rounded-3xl p-6">
-            <h3 className="text-lg font-bold mb-4" style={{ color: "var(--text-primary)" }}>
-              Community Engagement
-            </h3>
-            <ResponsiveContainer width="100%" height={250}>
-              <LineChart data={analytics.engagementData}>
-                <CartesianGrid strokeDasharray="3 3" stroke="rgba(227, 201, 255, 0.2)" />
-                <XAxis dataKey="date" stroke="var(--text-secondary)" style={{ fontSize: '12px' }} />
-                <YAxis stroke="var(--text-secondary)" style={{ fontSize: '12px' }} />
-                <Tooltip 
-                  contentStyle={{ 
-                    background: 'rgba(79, 63, 115, 0.95)', 
-                    border: '1px solid rgba(227, 201, 255, 0.3)',
-                    borderRadius: '12px',
-                    color: 'var(--text-primary)'
-                  }} 
-                />
-                <Legend />
-                <Line type="monotone" dataKey="posts" stroke="#FCA5A5" strokeWidth={2} />
-                <Line type="monotone" dataKey="comments" stroke="#7DD3FC" strokeWidth={2} />
-                <Line type="monotone" dataKey="likes" stroke="#F0ABFC" strokeWidth={2} />
-              </LineChart>
-            </ResponsiveContainer>
-          </div>
         </div>
 
         <div className="grid lg:grid-cols-2 gap-6">
@@ -564,10 +442,6 @@ export default function AdminAnalyticsDashboard() {
                     <span>{user.plants} plants</span>
                     <span>•</span>
                     <span>{user.careLogs} care logs</span>
-                    <span>•</span>
-                    <span>{user.posts} posts</span>
-                    <span>•</span>
-                    <span>{user.comments} comments</span>
                   </div>
                 </div>
               ))}
