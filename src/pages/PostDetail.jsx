@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -16,6 +16,11 @@ export default function PostDetail() {
   const postId = urlParams.get('id');
   const [commentText, setCommentText] = useState("");
   const [selectedPhotoIndex, setSelectedPhotoIndex] = useState(0);
+  const [likeCount, setLikeCount] = useState(0);
+
+  useEffect(() => {
+    setLikeCount(post?.like_count || 0);
+  }, [post?.like_count]);
 
   const { data: post, isLoading } = useQuery({
     queryKey: ['communityPost', postId],
@@ -59,6 +64,7 @@ export default function PostDetail() {
       }
     },
     onSuccess: () => {
+      setLikeCount(prev => userLike ? Math.max(0, prev - 1) : prev + 1);
       queryClient.invalidateQueries({ queryKey: ['postLike', postId] });
       queryClient.invalidateQueries({ queryKey: ['communityPost', postId] });
       queryClient.invalidateQueries({ queryKey: ['communityPosts'] });
@@ -385,16 +391,16 @@ export default function PostDetail() {
                 disabled={likeMutation.isPending}
                 className="flex items-center gap-2 glass-button px-4 py-3 rounded-2xl hover:opacity-80 transition-opacity"
               >
-                <Heart 
-                  className="w-5 h-5" 
-                  style={{ 
+                <Heart
+                  className="w-5 h-5"
+                  style={{
                     color: userLike ? "#FCA5A5" : "var(--text-secondary)",
                     fill: userLike ? "#FCA5A5" : "none",
                     strokeWidth: 2
-                  }} 
+                  }}
                 />
                 <span className="text-sm font-semibold" style={{ color: "var(--text-secondary)" }}>
-                  {post.like_count || 0}
+                  {likeCount}
                 </span>
               </button>
 
