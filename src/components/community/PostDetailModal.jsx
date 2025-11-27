@@ -475,8 +475,8 @@ export default function PostDetailModal({ post, currentUser, onClose }) {
 
                 {/* Posted By */}
                 <div className="pt-3" style={{ borderTop: "1px solid rgba(227, 201, 255, 0.2)" }}>
-                  <Link 
-                    to={createPageUrl(`PublicProfile?email=${post.created_by}`)}
+                  <Link
+                    to={createPageUrl(`PublicProfile?id=${post.user_id}`)}
                     className="flex items-center gap-2 hover:opacity-80 transition-opacity"
                   >
                     <div className="w-10 h-10 rounded-full overflow-hidden glass-button">
@@ -620,7 +620,7 @@ export default function PostDetailModal({ post, currentUser, onClose }) {
                       return (
                         <div key={comment.id} className="glass-button rounded-2xl p-4 group">
                           <div className="flex items-start gap-3">
-                            <Link to={createPageUrl(`PublicProfile?email=${comment.created_by}`)}>
+                            <Link to={createPageUrl(`PublicProfile?id=${commentAuthor?.id}`)}>
                               <div className="w-8 h-8 rounded-full overflow-hidden glass-card cursor-pointer hover:opacity-80 transition-opacity">
                                 {commentAuthor?.profile_picture ? (
                                   <img 
@@ -637,7 +637,7 @@ export default function PostDetailModal({ post, currentUser, onClose }) {
                             </Link>
                             <div className="flex-1 min-w-0">
                               <div className="flex items-center justify-between mb-1">
-                                <Link to={createPageUrl(`PublicProfile?email=${comment.created_by}`)}>
+                                <Link to={createPageUrl(`PublicProfile?id=${commentAuthor?.id}`)}>
                                   <div className="flex items-center gap-1.5 hover:opacity-80 transition-opacity">
                                     <p className="text-sm font-semibold" style={{ color: "#F5F3FF" }}>
                                       {authorDisplayName}
