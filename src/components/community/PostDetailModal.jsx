@@ -104,6 +104,7 @@ export default function PostDetailModal({ post, currentUser, onClose }) {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['postLike', post.id] });
+      queryClient.invalidateQueries({ queryKey: ['communityPost', post.id] });
       queryClient.invalidateQueries({ queryKey: ['communityPosts'] });
     }
   });
