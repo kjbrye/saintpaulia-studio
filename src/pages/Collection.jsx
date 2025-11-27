@@ -4,7 +4,7 @@ import { base44 } from "@/api/base44Client";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
-import { Beaker, Library, ArrowRight, Star, Users, TrendingUp, Calendar, Droplets, Plus, User, BarChart3, Bug, Package, Flower2, Info } from "lucide-react";
+import { Beaker, Library, ArrowRight, Star, TrendingUp, Calendar, Droplets, Plus, User, BarChart3, Bug, Package, Flower2, Info } from "lucide-react";
 import StatsCard from "../components/plants/StatsCard";
 import RecentActivityWidget from "../components/dashboard/RecentActivityWidget";
 import ContextualTooltip from "../components/onboarding/ContextualTooltip";
@@ -184,19 +184,6 @@ export default function Collection() {
                 </button>
               </Link>
 
-              <Link to={createPageUrl("CommunityFeed")}>
-                <button className="neuro-accent-raised px-5 py-4 rounded-2xl font-semibold flex items-center gap-2 w-full">
-                  <Users className="w-5 h-5" style={{ color: "#F0EBFF", strokeWidth: 2 }} />
-                  <div className="hidden sm:block text-left">
-                    <p className="text-sm font-semibold" style={{ color: "#F0EBFF" }}>
-                      Community
-                    </p>
-                    <p className="text-xs" style={{ color: "#F0EBFF", opacity: 0.7 }}>
-                      Share & Discover
-                    </p>
-                  </div>
-                </button>
-              </Link>
             </div>
           </div>
 

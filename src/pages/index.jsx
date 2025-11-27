@@ -28,15 +28,9 @@ import EditWishlistItem from "./EditWishlistItem";
 
 import CommunityFeed from "./CommunityFeed";
 
-import CreatePost from "./CreatePost";
-
-import PostDetail from "./PostDetail";
-
 import ProfileSettings from "./ProfileSettings";
 
 import PublicProfile from "./PublicProfile";
-
-import ModerationDashboard from "./ModerationDashboard";
 
 import CareGuide from "./CareGuide";
 
@@ -73,12 +67,6 @@ import CareCalendar from "./CareCalendar";
 import Info from "./Info";
 
 import SaintpauliaDatabase from "./SaintpauliaDatabase";
-
-import Forum from "./Forum";
-
-import ForumTopic from "./ForumTopic";
-
-import CreateForumTopic from "./CreateForumTopic";
 
 import TermsOfService from "./TermsOfService";
 
@@ -119,16 +107,10 @@ const PAGES = {
     EditWishlistItem: EditWishlistItem,
     
     CommunityFeed: CommunityFeed,
-    
-    CreatePost: CreatePost,
-    
-    PostDetail: PostDetail,
-    
+
     ProfileSettings: ProfileSettings,
-    
+
     PublicProfile: PublicProfile,
-    
-    ModerationDashboard: ModerationDashboard,
     
     CareGuide: CareGuide,
     
@@ -165,13 +147,7 @@ const PAGES = {
     Info: Info,
     
     SaintpauliaDatabase: SaintpauliaDatabase,
-    
-    Forum: Forum,
-    
-    ForumTopic: ForumTopic,
-    
-    CreateForumTopic: CreateForumTopic,
-    
+
     TermsOfService: TermsOfService,
     
     PrivacyPolicy: PrivacyPolicy,
@@ -234,16 +210,10 @@ function PagesContent() {
                 <Route path="/EditWishlistItem" element={<EditWishlistItem />} />
                 
                 <Route path="/CommunityFeed" element={<CommunityFeed />} />
-                
-                <Route path="/CreatePost" element={<CreatePost />} />
-                
-                <Route path="/PostDetail" element={<PostDetail />} />
-                
+
                 <Route path="/ProfileSettings" element={<ProfileSettings />} />
-                
+
                 <Route path="/PublicProfile" element={<PublicProfile />} />
-                
-                <Route path="/ModerationDashboard" element={<ModerationDashboard />} />
                 
                 <Route path="/CareGuide" element={<CareGuide />} />
                 
@@ -280,13 +250,7 @@ function PagesContent() {
                 <Route path="/Info" element={<Info />} />
                 
                 <Route path="/SaintpauliaDatabase" element={<SaintpauliaDatabase />} />
-                
-                <Route path="/Forum" element={<Forum />} />
-                
-                <Route path="/ForumTopic" element={<ForumTopic />} />
-                
-                <Route path="/CreateForumTopic" element={<CreateForumTopic />} />
-                
+
                 <Route path="/TermsOfService" element={<TermsOfService />} />
                 
                 <Route path="/PrivacyPolicy" element={<PrivacyPolicy />} />

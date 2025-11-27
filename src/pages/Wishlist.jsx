@@ -255,8 +255,6 @@ export default function Wishlist() {
                 description="Keep track of cultivars you want to acquire. Add notes about desired traits, set priorities, track potential sources, and mark items when purchased."
                 actionText="Add Wishlist Item"
                 actionLink="AddWishlistItem"
-                secondaryActionText="Browse Community"
-                secondaryActionLink="CommunityFeed"
                 variant="warning"
                 size="large"
               />
