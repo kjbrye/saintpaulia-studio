@@ -503,7 +503,13 @@ const handleLogout = async () => {
 
   return (
     <TooltipProvider>
-    <div className="min-h-screen relative overflow-hidden flex flex-col" style={{ background: theme.background }}>
+    <div className="min-h-screen relative overflow-hidden flex flex-col" style={{
+        background: theme.background,
+        backgroundSize: '100% auto',
+        backgroundAttachment: 'fixed',
+        backgroundPosition: 'top center',
+        backgroundRepeat: 'no-repeat'
+      }}>
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap');
 
