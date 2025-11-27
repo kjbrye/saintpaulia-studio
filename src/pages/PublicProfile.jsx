@@ -14,13 +14,13 @@ const LOGO_URL = "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/pub
 export default function PublicProfile() {
   const navigate = useNavigate();
   const urlParams = new URLSearchParams(window.location.search);
-  const userEmail = urlParams.get('email');
+  const userId = urlParams.get('id');
   const [activeTab, setActiveTab] = useState("posts");
 
   const { data: profileUser, isLoading: userLoading } = useQuery({
-    queryKey: ['publicProfile', userEmail],
-    queryFn: () => base44.auth.filter({ email: userEmail }).then(users => users[0]),
-    enabled: !!userEmail
+    queryKey: ['publicProfile', userId],
+    queryFn: () => base44.entities.User.get(userId),
+    enabled: !!userId
   });
 
   const { data: currentUser } = useQuery({
@@ -29,36 +29,36 @@ export default function PublicProfile() {
   });
 
   const { data: userPosts = [] } = useQuery({
-    queryKey: ['userPosts', userEmail],
-    queryFn: () => base44.entities.CommunityPost.filter({ 
-      created_by: userEmail,
+    queryKey: ['userPosts', profileUser?.email],
+    queryFn: () => base44.entities.CommunityPost.filter({
+      created_by: profileUser?.email,
       moderation_status: "active"
     }, '-created_date'),
-    enabled: !!userEmail,
+    enabled: !!profileUser?.email,
     initialData: []
   });
 
   const { data: userComments = [] } = useQuery({
-    queryKey: ['userComments', userEmail],
-    queryFn: () => base44.entities.PostComment.filter({ 
-      created_by: userEmail,
+    queryKey: ['userComments', profileUser?.email],
+    queryFn: () => base44.entities.PostComment.filter({
+      created_by: profileUser?.email,
       moderation_status: "active"
     }, '-created_date', 10),
-    enabled: !!userEmail,
+    enabled: !!profileUser?.email,
     initialData: []
   });
 
   const { data: userLikes = [] } = useQuery({
-    queryKey: ['userLikes', userEmail],
-    queryFn: () => base44.entities.PostLike.filter({ 
-      created_by: userEmail
+    queryKey: ['userLikes', profileUser?.email],
+    queryFn: () => base44.entities.PostLike.filter({
+      created_by: profileUser?.email
     }, '-created_date'),
-    enabled: !!userEmail,
+    enabled: !!profileUser?.email,
     initialData: []
   });
 
   // Get stats if viewing own profile
-  const isOwnProfile = currentUser?.email === userEmail;
+  const isOwnProfile = currentUser?.email === profileUser?.email;
 
   const { data: plants = [] } = useQuery({
     queryKey: ['plants'],

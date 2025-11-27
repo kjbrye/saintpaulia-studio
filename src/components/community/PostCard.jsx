@@ -346,8 +346,8 @@ export default function PostCard({ post, currentUser }) {
             {/* User & Engagement */}
             <div className="flex items-center justify-between pt-2" 
               style={{ borderTop: "1px solid rgba(227, 201, 255, 0.2)" }}>
-              <Link 
-                to={createPageUrl(`PublicProfile?email=${post.created_by}`)}
+              <Link
+                to={createPageUrl(`PublicProfile?id=${post.user_id}`)}
                 onClick={(e) => e.stopPropagation()}
                 className="flex items-center gap-2 hover:opacity-80 transition-opacity"
               >
