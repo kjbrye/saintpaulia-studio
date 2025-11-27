@@ -13,7 +13,7 @@ export default function AdminAnalyticsDashboard() {
   const navigate = useNavigate();
   const [timeRange, setTimeRange] = useState("30days");
 
-  const { data: currentUser } = useQuery({
+  const { data: currentUser, isLoading: isLoadingUser } = useQuery({
     queryKey: ['currentUser'],
     queryFn: () => base44.auth.me(),
   });
@@ -262,6 +262,18 @@ export default function AdminAnalyticsDashboard() {
     };
   }, [allUsers, allPlants, allCareLogs, allCommunityPosts, allComments, allLikes, timeRange]);
 
+  if (isLoadingUser) {
+    return (
+      <div className="min-h-screen py-8 px-4 flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-12 h-12 border-4 border-t-transparent rounded-full animate-spin mx-auto mb-4"
+            style={{ borderColor: "var(--accent)", borderTopColor: "transparent" }} />
+          <p style={{ color: "var(--text-secondary)" }}>Loading analytics...</p>
+        </div>
+      </div>
+    );
+  }
+
   if (!currentUser || currentUser.role !== 'admin') {
     return null;
   }
@@ -333,7 +345,7 @@ export default function AdminAnalyticsDashboard() {
             </p>
             <p className="text-sm" style={{ color: "var(--text-secondary)" }}>Total Users</p>
             <p className="text-xs mt-1" style={{ color: "#A7F3D0" }}>
-              {analytics.activeUsers} active ({((analytics.activeUsers / analytics.totalUsers) * 100).toFixed(0)}%)
+              {analytics.activeUsers} active ({analytics.totalUsers > 0 ? ((analytics.activeUsers / analytics.totalUsers) * 100).toFixed(0) : 0}%)
             </p>
           </div>
 
