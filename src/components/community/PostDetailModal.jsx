@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { X, Heart, MessageCircle, Star, User, Bookmark, Send, ChevronLeft, ChevronRight, Shield, Trash2 } from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { base44 } from "@/api/base44Client";
@@ -15,6 +15,11 @@ export default function PostDetailModal({ post, currentUser, onClose }) {
   const queryClient = useQueryClient();
   const [commentText, setCommentText] = useState("");
   const [selectedPhotoIndex, setSelectedPhotoIndex] = useState(0);
+  const [likeCount, setLikeCount] = useState(post.like_count || 0);
+
+  useEffect(() => {
+    setLikeCount(post.like_count || 0);
+  }, [post.like_count]);
 
   // Check if this is the current user's post
   const isOwnPost = currentUser?.email === post.created_by;
@@ -103,6 +108,7 @@ export default function PostDetailModal({ post, currentUser, onClose }) {
       }
     },
     onSuccess: () => {
+      setLikeCount(prev => userLike ? Math.max(0, prev - 1) : prev + 1);
       queryClient.invalidateQueries({ queryKey: ['postLike', post.id] });
       queryClient.invalidateQueries({ queryKey: ['communityPost', post.id] });
       queryClient.invalidateQueries({ queryKey: ['communityPosts'] });
@@ -421,16 +427,16 @@ export default function PostDetailModal({ post, currentUser, onClose }) {
                     disabled={likeMutation.isPending}
                     className="flex items-center gap-2 glass-button px-4 py-2.5 rounded-2xl hover:opacity-80 transition-opacity"
                   >
-                    <Heart 
-                      className="w-4 h-4" 
-                      style={{ 
+                    <Heart
+                      className="w-4 h-4"
+                      style={{
                         color: userLike ? "#FCA5A5" : "#DDD6FE",
                         fill: userLike ? "#FCA5A5" : "none",
                         strokeWidth: 2
-                      }} 
+                      }}
                     />
                     <span className="text-sm font-semibold" style={{ color: "#DDD6FE" }}>
-                      {post.like_count || 0}
+                      {likeCount}
                     </span>
                   </button>
 

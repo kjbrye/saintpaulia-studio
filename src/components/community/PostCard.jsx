@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Heart, MessageCircle, Star, User, Bookmark, Shield, Trash2 } from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { base44 } from "@/api/base44Client";
@@ -14,6 +14,11 @@ const LOGO_URL = "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/pub
 export default function PostCard({ post, currentUser }) {
   const queryClient = useQueryClient();
   const [showModal, setShowModal] = useState(false);
+  const [likeCount, setLikeCount] = useState(post.like_count || 0);
+
+  useEffect(() => {
+    setLikeCount(post.like_count || 0);
+  }, [post.like_count]);
 
   // Check if this is the current user's post
   const isOwnPost = currentUser?.email === post.created_by;
@@ -75,6 +80,7 @@ export default function PostCard({ post, currentUser }) {
       }
     },
     onSuccess: () => {
+      setLikeCount(prev => userLike ? Math.max(0, prev - 1) : prev + 1);
       queryClient.invalidateQueries({ queryKey: ['postLike', post.id] });
       queryClient.invalidateQueries({ queryKey: ['communityPost', post.id] });
       queryClient.invalidateQueries({ queryKey: ['communityPosts'] });
@@ -390,14 +396,14 @@ export default function PostCard({ post, currentUser }) {
                 >
                   <Heart 
                     className="w-5 h-5" 
-                    style={{ 
+                    style={{
                       color: userLike ? "#FCA5A5" : "#DDD6FE",
                       fill: userLike ? "#FCA5A5" : "none",
                       strokeWidth: 2
-                    }} 
+                    }}
                   />
                   <span className="text-sm font-semibold" style={{ color: "#DDD6FE" }}>
-                    {post.like_count || 0}
+                    {likeCount}
                   </span>
                 </button>
 
