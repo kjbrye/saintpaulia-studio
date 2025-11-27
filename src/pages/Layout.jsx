@@ -12,83 +12,92 @@ const THEMES = {
   glassmorphism: {
     name: "Studio Violet (Default)",
     description: "Ethereal glass effects with violet hues",
-    background: "linear-gradient(135deg, #201833 0%, #3C2E5A 50%, #4F3F73 100%)",
-    showFloatingFlowers: true,
-    showLightSpots: true,
-    floatingFlowerImage: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/690e3cd78523fb5fba0a8466/f0efee9e3_PlantLogos2.png",
-    
+    background: "linear-gradient(rgba(255,255,255,0.92), rgba(255,255,255,0.92)), url('/background.png')",
+    showFloatingFlowers: false,
+    showLightSpots: false,
+    floatingFlowerImage: "/background.png",
+
     // Text Colors
-    textPrimary: "#F5F3FF",
-    textSecondary: "#DDD6FE",
-    textMuted: "#C7C9E6",
-    textDark: "#0F0A1F",
-    
+    textPrimary: "#2f352e",
+    textSecondary: "#4a5247",
+    textMuted: "#6c7469",
+    textDark: "#11140f",
+
     // Accent Colors
-    accentPrimary: "#E3C9FF",
-    accentSecondary: "#A7F3D0",
-    accentGlow: "#A89FEF",
-    
+    accentPrimary: "#b48b68",
+    accentSecondary: "#d6c7ad",
+    accentGlow: "#f0e2c8",
+
     // Glass/Neuro Surfaces
-    glassCardBg: "linear-gradient(135deg, rgba(227, 201, 255, 0.15) 0%, rgba(168, 159, 239, 0.08) 100%)",
-    glassCardBorder: "rgba(227, 201, 255, 0.25)",
-    glassCardShadow: "0 8px 32px 0 rgba(32, 24, 51, 0.6), inset 0 1px 1px 0 rgba(255, 255, 255, 0.2), inset 0 -1px 1px 0 rgba(60, 46, 90, 0.4)",
-    
-    glassButtonBg: "linear-gradient(135deg, rgba(227, 201, 255, 0.2) 0%, rgba(168, 159, 239, 0.12) 100%)",
-    glassButtonBorder: "rgba(227, 201, 255, 0.3)",
-    glassButtonShadow: "0 4px 16px 0 rgba(32, 24, 51, 0.4), inset 0 1px 0.5px 0 rgba(255, 255, 255, 0.25)",
-    glassButtonHoverShadow: "0 6px 24px 0 rgba(168, 159, 239, 0.5), 0 0 30px rgba(168, 159, 239, 0.4), 0 0 60px rgba(168, 159, 239, 0.2), inset 0 1px 0.5px 0 rgba(255, 255, 255, 0.3)",
-    
-    glassAccentBg: "linear-gradient(135deg, rgba(227, 201, 255, 0.25) 0%, rgba(168, 159, 239, 0.2) 100%)",
-    glassAccentBorder: "rgba(227, 201, 255, 0.4)",
-    glassAccentShadow: "0 4px 20px 0 rgba(168, 159, 239, 0.4), inset 0 1px 0.5px 0 rgba(255, 255, 255, 0.3)",
-    glassAccentHoverShadow: "0 8px 32px rgba(168, 159, 239, 0.6), 0 0 40px rgba(168, 159, 239, 0.5), 0 0 80px rgba(168, 159, 239, 0.3), inset 0 1px 0.5px 0 rgba(255, 255, 255, 0.4)",
-    
-    glassAccentMossBg: "linear-gradient(135deg, rgba(154, 226, 211, 0.22) 0%, rgba(154, 226, 211, 0.15) 100%)",
-    glassAccentMossBorder: "rgba(154, 226, 211, 0.4)",
-    glassAccentMossShadow: "0 4px 20px 0 rgba(154, 226, 211, 0.35), inset 0 1px 0.5px 0 rgba(255, 255, 255, 0.25)",
-    glassAccentMossHoverShadow: "0 8px 32px rgba(154, 226, 211, 0.6), 0 0 40px rgba(154, 226, 211, 0.5), 0 0 80px rgba(154, 226, 211, 0.25), inset 0 1px 0.5px 0 rgba(255, 255, 255, 0.35)",
-    
-    glassInputBg: "linear-gradient(135deg, rgba(218, 213, 247, 0.08) 0%, rgba(199, 201, 230, 0.05) 100%)",
-    glassInputBorder: "rgba(227, 201, 255, 0.2)",
-    glassInputShadow: "inset 0 1px 2px 0 rgba(32, 24, 51, 0.3)",
-    glassInputFocusBg: "linear-gradient(135deg, rgba(218, 213, 247, 0.12) 0%, rgba(199, 201, 230, 0.08) 100%)",
-    glassInputFocusBorder: "rgba(168, 159, 239, 0.5)",
-    glassInputFocusShadow: "0 0 0 3px rgba(168, 159, 239, 0.2), inset 0 1px 2px 0 rgba(32, 24, 51, 0.2)",
-    glassInputPlaceholder: "rgba(199, 201, 230, 0.6)",
-    
+    glassCardBg: "linear-gradient(145deg, rgba(129, 139, 126, 0.42) 0%, rgba(111, 121, 110, 0.36) 100%)",
+    glassCardBorder: "rgba(255, 255, 255, 0.38)",
+    glassCardShadow: "12px 18px 28px rgba(58, 65, 55, 0.35), -8px -10px 16px rgba(255, 255, 255, 0.2), inset 1px 1px 2px rgba(255, 255, 255, 0.3)",
+
+    glassButtonBg: "linear-gradient(135deg, rgba(129, 139, 126, 0.6) 0%, rgba(111, 121, 110, 0.5) 100%)",
+    glassButtonBorder: "rgba(255, 255, 255, 0.45)",
+    glassButtonShadow: "0 10px 20px rgba(58, 65, 55, 0.3), inset 0 1px 0.5px rgba(255, 255, 255, 0.35)",
+    glassButtonHoverShadow: "0 14px 28px rgba(58, 65, 55, 0.4), 0 0 30px rgba(180, 139, 104, 0.35), inset 0 1px 0.5px rgba(255, 255, 255, 0.4)",
+
+    glassAccentBg: "linear-gradient(145deg, rgba(180, 139, 104, 0.72) 0%, rgba(150, 114, 82, 0.68) 100%)",
+    glassAccentBorder: "rgba(255, 237, 213, 0.55)",
+    glassAccentShadow: "0 10px 24px rgba(77, 57, 39, 0.35), inset 0 1px 1px rgba(255, 255, 255, 0.35)",
+    glassAccentHoverShadow: "0 14px 32px rgba(77, 57, 39, 0.42), 0 0 40px rgba(180, 139, 104, 0.45), inset 0 1px 1px rgba(255, 255, 255, 0.4)",
+
+    glassAccentMossBg: "linear-gradient(145deg, rgba(129, 139, 126, 0.7) 0%, rgba(107, 116, 104, 0.64) 100%)",
+    glassAccentMossBorder: "rgba(255, 255, 255, 0.5)",
+    glassAccentMossShadow: "0 10px 24px rgba(58, 65, 55, 0.32), inset 0 1px 1px rgba(255, 255, 255, 0.28)",
+    glassAccentMossHoverShadow: "0 14px 32px rgba(58, 65, 55, 0.4), 0 0 36px rgba(129, 139, 126, 0.45), inset 0 1px 1px rgba(255, 255, 255, 0.32)",
+
+    glassInputBg: "linear-gradient(135deg, rgba(129, 139, 126, 0.22) 0%, rgba(111, 121, 110, 0.16) 100%)",
+    glassInputBorder: "rgba(255, 255, 255, 0.35)",
+    glassInputShadow: "inset 0 2px 4px rgba(38, 44, 36, 0.25)",
+    glassInputFocusBg: "linear-gradient(135deg, rgba(129, 139, 126, 0.32) 0%, rgba(111, 121, 110, 0.26) 100%)",
+    glassInputFocusBorder: "rgba(180, 139, 104, 0.55)",
+    glassInputFocusShadow: "0 0 0 4px rgba(180, 139, 104, 0.25), inset 0 1px 2px rgba(38, 44, 36, 0.2)",
+    glassInputPlaceholder: "rgba(90, 97, 88, 0.7)",
+
     // Neuro Surfaces
-    neuroCardBg: "linear-gradient(145deg, rgba(79, 63, 115, 0.35) 0%, rgba(60, 46, 90, 0.4) 100%)",
-    neuroCardShadow: "16px 16px 32px rgba(15, 10, 31, 0.5), -16px -16px 32px rgba(95, 79, 135, 0.25), inset 2px 2px 4px rgba(95, 79, 135, 0.2), inset -2px -2px 4px rgba(15, 10, 31, 0.2)",
-    neuroCardBorder: "rgba(168, 159, 239, 0.25)",
-    
-    neuroButtonBg: "linear-gradient(145deg, rgba(79, 63, 115, 0.4) 0%, rgba(60, 46, 90, 0.45) 100%)",
-    neuroButtonShadow: "12px 12px 24px rgba(15, 10, 31, 0.4), -12px -12px 24px rgba(95, 79, 135, 0.3), inset 2px 2px 4px rgba(95, 79, 135, 0.25), inset -1px -1px 2px rgba(15, 10, 31, 0.15)",
-    neuroButtonBorder: "rgba(168, 159, 239, 0.3)",
-    neuroButtonHoverShadow: "16px 16px 32px rgba(15, 10, 31, 0.55), -16px -16px 32px rgba(95, 79, 135, 0.4), inset 2px 2px 4px rgba(95, 79, 135, 0.28), inset -1px -1px 2px rgba(15, 10, 31, 0.18), 0 0 24px rgba(168, 159, 239, 0.3), 0 0 48px rgba(168, 159, 239, 0.15)",
-    neuroButtonActiveShadow: "inset 10px 10px 20px rgba(15, 10, 31, 0.5), inset -10px -10px 20px rgba(95, 79, 135, 0.2), inset 3px 3px 6px rgba(15, 10, 31, 0.4)",
-    
-    neuroInputBg: "linear-gradient(145deg, rgba(60, 46, 90, 0.42) 0%, rgba(79, 63, 115, 0.38) 100%)",
-    neuroInputShadow: "inset 10px 10px 20px rgba(15, 10, 31, 0.45), inset -10px -10px 20px rgba(95, 79, 135, 0.2), inset 3px 3px 6px rgba(15, 10, 31, 0.35)",
-    neuroInputBorder: "rgba(168, 159, 239, 0.25)",
-    neuroInputFocusBorder: "rgba(168, 159, 239, 0.6)",
-    neuroInputFocusShadow: "0 0 0 4px rgba(168, 159, 239, 0.3), inset 0 1px 2px 0 rgba(32, 24, 51, 0.2)",
-    neuroInputPlaceholder: "rgba(199, 201, 230, 0.6)",
-    
-    neuroAccentBg: "linear-gradient(145deg, rgba(227, 201, 255, 0.4) 0%, rgba(168, 159, 239, 0.36) 100%)",
-    neuroAccentShadow: "16px 16px 32px rgba(15, 10, 31, 0.5), -16px -16px 32px rgba(95, 79, 135, 0.4), inset 3px 3px 6px rgba(227, 201, 255, 0.3), inset -2px -2px 4px rgba(15, 10, 31, 0.18), 0 2px 8px rgba(227, 201, 255, 0.15)",
-    neuroAccentBorder: "rgba(227, 201, 255, 0.45)",
-    neuroAccentHoverShadow: "20px 20px 40px rgba(15, 10, 31, 0.6), -20px -20px 40px rgba(95, 79, 135, 0.5), inset 3px 3px 6px rgba(227, 201, 255, 0.35), inset -2px -2px 4px rgba(15, 10, 31, 0.2), 0 4px 16px rgba(227, 201, 255, 0.25), 0 0 30px rgba(227, 201, 255, 0.4), 0 0 60px rgba(227, 201, 255, 0.2)",
-    neuroAccentActiveShadow: "inset 10px 10px 20px rgba(15, 10, 31, 0.5), inset -10px -10px 20px rgba(95, 79, 135, 0.25), inset 3px 3px 6px rgba(15, 10, 31, 0.35)",
-    
+    neuroCardBg: "linear-gradient(145deg, rgba(129, 139, 126, 0.55) 0%, rgba(107, 116, 104, 0.52) 100%)",
+    neuroCardShadow: "16px 16px 28px rgba(58, 65, 55, 0.35), -16px -16px 28px rgba(248, 246, 240, 0.35), inset 2px 2px 4px rgba(255, 255, 255, 0.25), inset -2px -2px 4px rgba(58, 65, 55, 0.18)",
+    neuroCardBorder: "rgba(255, 255, 255, 0.45)",
+
+    neuroButtonBg: "linear-gradient(145deg, rgba(129, 139, 126, 0.58) 0%, rgba(107, 116, 104, 0.55) 100%)",
+    neuroButtonShadow: "12px 12px 24px rgba(58, 65, 55, 0.35), -12px -12px 24px rgba(248, 246, 240, 0.28), inset 2px 2px 4px rgba(255, 255, 255, 0.25), inset -1px -1px 2px rgba(58, 65, 55, 0.18)",
+    neuroButtonBorder: "rgba(255, 255, 255, 0.45)",
+    neuroButtonHoverShadow: "16px 16px 32px rgba(58, 65, 55, 0.45), -16px -16px 32px rgba(248, 246, 240, 0.32), inset 2px 2px 4px rgba(255, 255, 255, 0.28), inset -1px -1px 2px rgba(58, 65, 55, 0.2), 0 0 24px rgba(180, 139, 104, 0.25)",
+    neuroButtonActiveShadow: "inset 10px 10px 20px rgba(58, 65, 55, 0.4), inset -10px -10px 20px rgba(248, 246, 240, 0.22), inset 3px 3px 6px rgba(58, 65, 55, 0.32)",
+
+    neuroInputBg: "linear-gradient(145deg, rgba(129, 139, 126, 0.45) 0%, rgba(107, 116, 104, 0.4) 100%)",
+    neuroInputShadow: "inset 10px 10px 18px rgba(58, 65, 55, 0.35), inset -10px -10px 18px rgba(248, 246, 240, 0.25), inset 3px 3px 6px rgba(58, 65, 55, 0.28)",
+    neuroInputBorder: "rgba(255, 255, 255, 0.4)",
+    neuroInputFocusBorder: "rgba(180, 139, 104, 0.6)",
+    neuroInputFocusShadow: "0 0 0 4px rgba(180, 139, 104, 0.22), inset 0 1px 2px rgba(38, 44, 36, 0.2)",
+    neuroInputPlaceholder: "rgba(90, 97, 88, 0.7)",
+
+    neuroAccentBg: "linear-gradient(145deg, rgba(180, 139, 104, 0.6) 0%, rgba(150, 114, 82, 0.56) 100%)",
+    neuroAccentShadow: "16px 16px 32px rgba(77, 57, 39, 0.35), -16px -16px 32px rgba(248, 246, 240, 0.28), inset 3px 3px 6px rgba(255, 255, 255, 0.28), inset -2px -2px 4px rgba(77, 57, 39, 0.18), 0 2px 8px rgba(255, 237, 213, 0.18)",
+    neuroAccentBorder: "rgba(255, 237, 213, 0.6)",
+    neuroAccentHoverShadow: "20px 20px 40px rgba(77, 57, 39, 0.42), -20px -20px 40px rgba(248, 246, 240, 0.32), inset 3px 3px 6px rgba(255, 255, 255, 0.3), inset -2px -2px 4px rgba(77, 57, 39, 0.2), 0 4px 16px rgba(180, 139, 104, 0.35), 0 0 30px rgba(180, 139, 104, 0.35)",
+    neuroAccentActiveShadow: "inset 10px 10px 20px rgba(77, 57, 39, 0.35), inset -10px -10px 20px rgba(248, 246, 240, 0.22), inset 3px 3px 6px rgba(77, 57, 39, 0.26)",
+
     // Misc
-    dividerBg: "linear-gradient(90deg, rgba(227, 201, 255, 0) 0%, rgba(227, 201, 255, 0.4) 50%, rgba(227, 201, 255, 0) 100%)",
-    dividerShadow: "0 1px 2px rgba(168, 159, 239, 0.1), 0 -1px 2px rgba(168, 159, 239, 0.05)",
-    headingShadow: "0 2px 8px rgba(15, 10, 31, 0.6), 0 1px 3px rgba(0, 0, 0, 0.4)",
-    backdropFilter: "blur(16px) brightness(1.1)",
-    lightSpotGradient1: "radial-gradient(circle, rgba(227, 201, 255, 0.4) 0%, transparent 70%)",
-    lightSpotGradient2: "radial-gradient(circle, rgba(154, 226, 211, 0.35) 0%, transparent 70%)",
-    scrollbarTrackBg: "linear-gradient(135deg, rgba(60, 46, 90, 0.3) 0%, rgba(32, 24, 51, 0.25) 100%)",
-    scrollbarThumbBg: "linear-gradient(135deg, rgba(227, 201, 255, 0.4) 0%, rgba(168, 159, 239, 0.35) 100%)",
+    dividerBg: "linear-gradient(90deg, rgba(255, 255, 255, 0) 0%, rgba(255, 237, 213, 0.5) 50%, rgba(255, 255, 255, 0) 100%)",
+    dividerShadow: "0 1px 2px rgba(58, 65, 55, 0.08), 0 -1px 2px rgba(58, 65, 55, 0.04)",
+    headingShadow: "0 2px 8px rgba(58, 65, 55, 0.35), 0 1px 3px rgba(0, 0, 0, 0.25)",
+    backdropFilter: "blur(8px) brightness(1.02)",
+    lightSpotGradient1: "radial-gradient(circle, rgba(255, 237, 213, 0.28) 0%, transparent 70%)",
+    lightSpotGradient2: "radial-gradient(circle, rgba(180, 139, 104, 0.18) 0%, transparent 70%)",
+    scrollbarTrackBg: "linear-gradient(135deg, rgba(111, 121, 110, 0.28) 0%, rgba(92, 101, 92, 0.22) 100%)",
+    scrollbarThumbBg: "linear-gradient(135deg, rgba(180, 139, 104, 0.4) 0%, rgba(150, 114, 82, 0.35) 100%)",
+    glassCardDarkBg: "linear-gradient(145deg, rgba(129, 139, 126, 0.48) 0%, rgba(107, 116, 104, 0.46) 100%)",
+    glassCardDarkShadow: "10px 14px 26px rgba(58, 65, 55, 0.38), inset 0 1px 1px rgba(255, 255, 255, 0.22)",
+    glassCardDarkBorder: "1px solid rgba(255, 255, 255, 0.38)",
+    glowViolet: "rgba(129, 139, 126, 0.35)",
+    glowVioletSoft: "rgba(129, 139, 126, 0.18)",
+    glowMint: "rgba(180, 139, 104, 0.35)",
+    glowMintSoft: "rgba(180, 139, 104, 0.18)",
+    iconGradient: "linear-gradient(135deg, #818b7e 0%, #6b7568 100%)",
+    iconGradientAlt: "linear-gradient(135deg, #b48b68 0%, #9a6f4d 100%)",
   },
   high_contrast: {
     name: "High Contrast",
@@ -690,15 +699,15 @@ const handleLogout = async () => {
         }
 
         .glass-card-dark {
-          background: ${currentTheme === 'glassmorphism' ? 'linear-gradient(135deg, rgba(79, 63, 115, 0.3) 10%, rgba(60, 46, 90, 0.2) 100%)' :
+          background: ${currentTheme === 'glassmorphism' ? theme.glassCardDarkBg :
             currentTheme === 'high_contrast' ? '#1A1A1A' :
             currentTheme === 'light' ? '#F3F4F6' :
             currentTheme === 'dark' ? 'rgba(15, 10, 31, 0.95)' :
             currentTheme === 'nature' ? 'linear-gradient(135deg, rgba(102, 123, 104, 0.4) 0%, rgba(104, 65, 47, 0.3) 100%)' :
             '#FFFFFF'};
           ${theme.backdropFilter && (currentTheme === 'glassmorphism' || currentTheme === 'nature') ? `backdrop-filter: ${theme.backdropFilter}; -webkit-backdrop-filter: ${theme.backdropFilter};` : ''}
-          border: ${currentTheme === 'high_contrast' ? '3px solid #FFFFFF' : '1px solid var(--glass-card-border)'};
-          box-shadow: ${currentTheme === 'glassmorphism' ? '0 8px 32px 0 rgba(32, 24, 51, 0.7), inset 0 1px 1px 0 rgba(255, 255, 255, 0.15)' :
+          border: ${currentTheme === 'high_contrast' ? '3px solid #FFFFFF' : currentTheme === 'glassmorphism' ? theme.glassCardDarkBorder : '1px solid var(--glass-card-border)'};
+          box-shadow: ${currentTheme === 'glassmorphism' ? theme.glassCardDarkShadow :
             currentTheme === 'high_contrast' ? '0 0 0 3px #FFD700' :
             currentTheme === 'light' ? '0 2px 8px rgba(0, 0, 0, 0.06)' :
             currentTheme === 'dark' ? '0 8px 24px rgba(0, 0, 0, 0.6)' :
@@ -839,13 +848,13 @@ const handleLogout = async () => {
         }
 
         .neuro-badge {
-          background: ${currentTheme === 'glassmorphism' ? 'linear-gradient(145deg, rgba(60, 46, 90, 0.38) 0%, rgba(79, 63, 115, 0.42) 100%)' :
+          background: ${currentTheme === 'glassmorphism' ? theme.neuroCardBg :
             currentTheme === 'light' ? 'linear-gradient(145deg, #fefeff 0%, #f9f8ff 100%)' :
             'linear-gradient(145deg, rgba(30, 27, 46, 0.92) 0%, rgba(15, 10, 31, 0.96) 100%)'};
-          box-shadow: ${currentTheme === 'glassmorphism' ? '6px 6px 12px rgba(15, 10, 31, 0.35), -6px -6px 12px rgba(95, 79, 135, 0.3), inset 1px 1px 2px rgba(95, 79, 135, 0.2), inset -1px -1px 2px rgba(15, 10, 31, 0.15)' :
+          box-shadow: ${currentTheme === 'glassmorphism' ? theme.neuroCardShadow :
             currentTheme === 'light' ? '5px 5px 10px rgba(222, 221, 255, 0.5), -5px -5px 10px rgba(255, 255, 255, 0.9), inset 1px 1px 2px rgba(255, 255, 255, 0.7)' :
             '6px 6px 12px rgba(0, 0, 0, 0.5), -6px -6px 12px rgba(60, 50, 85, 0.3), inset 1px 1px 2px rgba(60, 50, 85, 0.2)'};
-          border: 1px solid ${currentTheme === 'glassmorphism' ? 'rgba(168, 159, 239, 0.28)' :
+          border: 1px solid ${currentTheme === 'glassmorphism' ? theme.neuroCardBorder :
             currentTheme === 'light' ? 'rgba(231, 231, 255, 0.5)' :
             'rgba(167, 139, 250, 0.22)'};
         }
@@ -869,34 +878,34 @@ const handleLogout = async () => {
         }
 
         .neuro-surface {
-          background: ${currentTheme === 'glassmorphism' ? 'linear-gradient(145deg, rgba(60, 46, 90, 0.32) 0%, rgba(79, 63, 115, 0.28) 100%)' :
+          background: ${currentTheme === 'glassmorphism' ? theme.neuroInputBg :
             currentTheme === 'light' ? 'linear-gradient(145deg, #fefeff 0%, #FFFFFF 100%)' :
             'linear-gradient(145deg, rgba(15, 10, 31, 0.92) 0%, rgba(30, 27, 46, 0.88) 100%)'};
-          box-shadow: ${currentTheme === 'glassmorphism' ? 'inset 3px 3px 6px rgba(15, 10, 31, 0.25), inset -3px -3px 6px rgba(95, 79, 135, 0.15)' :
+          box-shadow: ${currentTheme === 'glassmorphism' ? theme.neuroInputShadow :
             currentTheme === 'light' ? 'inset 3px 3px 6px rgba(222, 221, 255, 0.4), inset -3px -3px 6px rgba(255, 255, 255, 1)' :
             'inset 3px 3px 6px rgba(0, 0, 0, 0.35), inset -3px -3px 6px rgba(60, 50, 85, 0.2)'};
         }
 
         .neuro-icon-well {
-          background: ${currentTheme === 'glassmorphism' ? 'linear-gradient(145deg, rgba(60, 46, 90, 0.48) 0%, rgba(79, 63, 115, 0.42) 100%)' :
+          background: ${currentTheme === 'glassmorphism' ? theme.neuroInputBg :
             currentTheme === 'light' ? 'linear-gradient(145deg, #f3f2ff 0%, #f9f8ff 100%)' :
             'linear-gradient(145deg, rgba(15, 10, 31, 0.96) 0%, rgba(30, 27, 46, 0.92) 100%)'};
-          box-shadow: ${currentTheme === 'glassmorphism' ? 'inset 8px 8px 16px rgba(15, 10, 31, 0.45), inset -8px -8px 16px rgba(95, 79, 135, 0.22), inset 2px 2px 4px rgba(15, 10, 31, 0.35), 1px 1px 2px rgba(168, 159, 239, 0.12)' :
+          box-shadow: ${currentTheme === 'glassmorphism' ? theme.neuroInputShadow :
             currentTheme === 'light' ? 'inset 6px 6px 12px rgba(222, 221, 255, 0.5), inset -6px -6px 12px rgba(255, 255, 255, 0.9), inset 2px 2px 4px rgba(222, 221, 255, 0.4)' :
             'inset 8px 8px 16px rgba(0, 0, 0, 0.5), inset -8px -8px 16px rgba(60, 50, 85, 0.28), inset 2px 2px 4px rgba(0, 0, 0, 0.4)'};
-          border: 1px solid ${currentTheme === 'glassmorphism' ? 'rgba(168, 159, 239, 0.22)' :
+          border: 1px solid ${currentTheme === 'glassmorphism' ? theme.neuroInputBorder :
             currentTheme === 'light' ? 'rgba(231, 231, 255, 0.4)' :
             'rgba(167, 139, 250, 0.22)'};
         }
 
         .neuro-accent-extreme {
-          background: ${currentTheme === 'glassmorphism' ? 'linear-gradient(145deg, rgba(227, 201, 255, 0.48) 0%, rgba(168, 159, 239, 0.42) 100%)' :
+          background: ${currentTheme === 'glassmorphism' ? theme.neuroAccentBg :
             currentTheme === 'light' ? 'linear-gradient(145deg, #bfbcfc 0%, #d1cfff 100%)' :
             'linear-gradient(145deg, rgba(167, 139, 250, 0.45) 0%, rgba(139, 92, 246, 0.4) 100%)'};
-          box-shadow: ${currentTheme === 'glassmorphism' ? '20px 20px 40px rgba(15, 10, 31, 0.6), -20px -20px 40px rgba(95, 79, 135, 0.5), inset 4px 4px 8px rgba(227, 201, 255, 0.35), inset -3px -3px 6px rgba(15, 10, 31, 0.25), 0 3px 16px rgba(227, 201, 255, 0.25)' :
+          box-shadow: ${currentTheme === 'glassmorphism' ? theme.neuroAccentShadow :
             currentTheme === 'light' ? '16px 16px 32px rgba(191, 188, 252, 0.55), -16px -16px 32px rgba(209, 207, 255, 0.4), inset 3px 3px 6px rgba(255, 255, 255, 0.35), inset -3px -3px 6px rgba(137, 139, 188, 0.3), 0 3px 16px rgba(191, 188, 252, 0.3)' :
             '20px 20px 40px rgba(0, 0, 0, 0.65), -20px -20px 40px rgba(60, 50, 85, 0.5), inset 4px 4px 8px rgba(167, 139, 250, 0.35), inset -3px -3px 6px rgba(0, 0, 0, 0.25), 0 3px 16px rgba(167, 139, 250, 0.28)'};
-          border: 1px solid ${currentTheme === 'glassmorphism' ? 'rgba(227, 201, 255, 0.5)' :
+          border: 1px solid ${currentTheme === 'glassmorphism' ? theme.neuroAccentBorder :
             currentTheme === 'light' ? 'rgba(137, 139, 188, 0.5)' :
             'rgba(167, 139, 250, 0.4)'};
         }
@@ -927,16 +936,16 @@ const handleLogout = async () => {
 
         ${currentTheme !== 'high_contrast' && currentTheme !== 'minimal' ? `
         .glow-violet {
-          box-shadow: 
-            0 0 15px ${currentTheme === 'nature' ? 'rgba(248, 211, 197, 0.35)' : currentTheme === 'light' ? 'rgba(191, 188, 252, 0.35)' : 'rgba(168, 159, 239, 0.35)'},
-            0 0 30px ${currentTheme === 'nature' ? 'rgba(248, 211, 197, 0.15)' : currentTheme === 'light' ? 'rgba(191, 188, 252, 0.15)' : 'rgba(168, 159, 239, 0.15)'},
+          box-shadow:
+            0 0 15px ${currentTheme === 'nature' ? 'rgba(248, 211, 197, 0.35)' : currentTheme === 'light' ? 'rgba(191, 188, 252, 0.35)' : theme.glowViolet},
+            0 0 30px ${currentTheme === 'nature' ? 'rgba(248, 211, 197, 0.15)' : currentTheme === 'light' ? 'rgba(191, 188, 252, 0.15)' : theme.glowVioletSoft},
             inset 0 1px 0 rgba(255, 255, 255, 0.2);
         }
 
         .glow-mint {
-          box-shadow: 
-            0 0 15px ${currentTheme === 'light' ? 'rgba(240, 203, 220, 0.35)' : 'rgba(154, 226, 211, 0.35)'},
-            0 0 30px ${currentTheme === 'light' ? 'rgba(240, 203, 220, 0.15)' : 'rgba(154, 226, 211, 0.15)'},
+          box-shadow:
+            0 0 15px ${currentTheme === 'light' ? 'rgba(240, 203, 220, 0.35)' : theme.glowMint},
+            0 0 30px ${currentTheme === 'light' ? 'rgba(240, 203, 220, 0.15)' : theme.glowMintSoft},
             inset 0 1px 0 rgba(255, 255, 255, 0.2);
         }
         ` : ''}
@@ -957,7 +966,7 @@ const handleLogout = async () => {
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
           ` : `
-            background: linear-gradient(135deg, #E3C9FF 0%, #A89FEF 100%);
+            background: ${theme.iconGradient};
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
           `}
@@ -975,7 +984,7 @@ const handleLogout = async () => {
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
           ` : `
-            background: linear-gradient(135deg, #9AE2D3 0%, #6BC4B4 100%);
+            background: ${theme.iconGradientAlt};
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
           `}
@@ -992,8 +1001,8 @@ const handleLogout = async () => {
         ::-webkit-scrollbar-track {
           background: ${theme.scrollbarTrackBg};
           ${currentTheme !== 'high_contrast' && currentTheme !== 'minimal' ? 'border-radius: 10px;' : ''}
-          ${currentTheme === 'high_contrast' ? 'border: 3px solid #FFFFFF;' : 
-            currentTheme === 'glassmorphism' ? 'border: 1px solid rgba(227, 201, 255, 0.15);' :
+          ${currentTheme === 'high_contrast' ? 'border: 3px solid #FFFFFF;' :
+            currentTheme === 'glassmorphism' ? `border: 1px solid ${theme.glassCardBorder};` :
             currentTheme === 'nature' ? 'border: 1px solid rgba(143, 163, 136, 0.15);' :
             currentTheme === 'dark' ? 'border: 1px solid rgba(167, 139, 250, 0.2);' : ''}
         }
@@ -1001,8 +1010,8 @@ const handleLogout = async () => {
         ::-webkit-scrollbar-thumb {
           background: ${theme.scrollbarThumbBg};
           ${currentTheme !== 'high_contrast' && currentTheme !== 'minimal' ? 'border-radius: 10px;' : ''}
-          ${currentTheme === 'high_contrast' ? 'border: 3px solid #FFFFFF; box-shadow: 0 0 0 3px #FFD700;' : 
-            currentTheme === 'glassmorphism' ? 'border: 1px solid rgba(227, 201, 255, 0.3); box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.2);' :
+          ${currentTheme === 'high_contrast' ? 'border: 3px solid #FFFFFF; box-shadow: 0 0 0 3px #FFD700;' :
+            currentTheme === 'glassmorphism' ? 'border: 1px solid rgba(255, 255, 255, 0.35); box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.3);' :
             currentTheme === 'light' ? 'border: 2px solid #f3f2ff;' :
             currentTheme === 'dark' ? 'border: 1px solid rgba(167, 139, 250, 0.3);' :
             currentTheme === 'nature' ? 'border: 1px solid rgba(251, 216, 202, 0.3); box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.15);' :
@@ -1011,26 +1020,26 @@ const handleLogout = async () => {
 
         ::-webkit-scrollbar-thumb:hover {
           background: ${currentTheme === 'high_contrast' ? '#FFF700' :
-            currentTheme === 'glassmorphism' ? 'linear-gradient(135deg, rgba(227, 201, 255, 0.55) 0%, rgba(168, 159, 239, 0.5) 100%)' :
+            currentTheme === 'glassmorphism' ? 'linear-gradient(135deg, rgba(180, 139, 104, 0.55) 0%, rgba(150, 114, 82, 0.5) 100%)' :
             currentTheme === 'light' ? 'linear-gradient(135deg, #bfbcfc 0%, #d1cfff 100%)' :
             currentTheme === 'dark' ? 'linear-gradient(135deg, rgba(167, 139, 250, 0.6) 0%, rgba(139, 92, 246, 0.5) 100%)' :
             currentTheme === 'nature' ? 'linear-gradient(135deg, rgba(251, 216, 202, 0.55) 0%, rgba(143, 163, 136, 0.5) 100%)' :
             '#6366F1'};
           ${currentTheme === 'high_contrast' ? 'box-shadow: 0 0 0 3px #FFF700;' :
-            currentTheme === 'glassmorphism' ? 'box-shadow: 0 0 8px rgba(168, 159, 239, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.3);' :
+            currentTheme === 'glassmorphism' ? 'box-shadow: 0 0 8px rgba(58, 65, 55, 0.35), inset 0 1px 1px rgba(255, 255, 255, 0.3);' :
             currentTheme === 'nature' ? 'box-shadow: 0 0 8px rgba(251, 216, 202, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.2);' :
             currentTheme === 'dark' ? 'box-shadow: 0 0 6px rgba(167, 139, 250, 0.3);' : ''}
         }
 
         ${currentTheme === 'glassmorphism' ? `
         ::-webkit-scrollbar-thumb:active {
-          background: linear-gradient(135deg, rgba(227, 201, 255, 0.65) 0%, rgba(168, 159, 239, 0.6) 100%);
+          background: linear-gradient(135deg, rgba(180, 139, 104, 0.65) 0%, rgba(150, 114, 82, 0.6) 100%);
         }
         ` : ''}
 
         * {
           scrollbar-width: ${currentTheme === 'high_contrast' ? 'auto' : 'thin'};
-          scrollbar-color: ${currentTheme === 'glassmorphism' ? 'rgba(227, 201, 255, 0.4) rgba(60, 46, 90, 0.3)' :
+          scrollbar-color: ${currentTheme === 'glassmorphism' ? 'rgba(180, 139, 104, 0.45) rgba(111, 121, 110, 0.3)' :
             currentTheme === 'high_contrast' ? '#FFD700 #000000' :
             currentTheme === 'light' ? '#d1cfff #f3f2ff' :
             currentTheme === 'dark' ? 'rgba(167, 139, 250, 0.4) rgba(15, 10, 31, 0.6)' :
@@ -1051,6 +1060,27 @@ const handleLogout = async () => {
         }
         ` : ''}
       `}</style>
+
+      <div className="absolute top-6 right-6 z-20 flex items-center gap-3">
+        <div
+          className="rounded-2xl px-5 py-2 shadow-lg"
+          style={{
+            background: theme.glassCardBg,
+            border: `1px solid ${theme.glassCardBorder}`,
+            boxShadow: theme.glassButtonShadow,
+            color: theme.textPrimary,
+            textShadow: theme.headingShadow,
+          }}
+        >
+          Studio Violet
+        </div>
+        <img
+          src="/wax seal.svg"
+          alt="Wax seal"
+          className="h-14 w-14 drop-shadow-2xl"
+          style={{ filter: "drop-shadow(6px 10px 14px rgba(58,65,55,0.35))" }}
+        />
+      </div>
 
       {theme.showFloatingFlowers && (
         <>
