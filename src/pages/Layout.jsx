@@ -12,7 +12,7 @@ const THEMES = {
   glassmorphism: {
     name: "Studio Violet (Default)",
     description: "Ethereal glass effects with violet hues",
-    background: "linear-gradient(rgba(255,255,255,0.92), rgba(255,255,255,0.92)), url('/background.png')",
+    background: "linear-gradient(rgba(255,255,255,0.3), rgba(255,255,255,0.3)), url('/background.png')",
     showFloatingFlowers: false,
     showLightSpots: false,
     floatingFlowerImage: "/background.png",
@@ -1060,27 +1060,6 @@ const handleLogout = async () => {
         }
         ` : ''}
       `}</style>
-
-      <div className="absolute top-6 right-6 z-20 flex items-center gap-3">
-        <div
-          className="rounded-2xl px-5 py-2 shadow-lg"
-          style={{
-            background: theme.glassCardBg,
-            border: `1px solid ${theme.glassCardBorder}`,
-            boxShadow: theme.glassButtonShadow,
-            color: theme.textPrimary,
-            textShadow: theme.headingShadow,
-          }}
-        >
-          Studio Violet
-        </div>
-        <img
-          src="/wax seal.svg"
-          alt="Wax seal"
-          className="h-14 w-14 drop-shadow-2xl"
-          style={{ filter: "drop-shadow(6px 10px 14px rgba(58,65,55,0.35))" }}
-        />
-      </div>
 
       {theme.showFloatingFlowers && (
         <>
