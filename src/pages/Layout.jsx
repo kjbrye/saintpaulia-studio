@@ -1015,8 +1015,113 @@ const handleLogout = async () => {
             'rgba(167, 139, 250, 0.4)'};
         }
 
+        /* Crystal glass treatment for hero widgets */
+        .crystal-glass-widget {
+          position: relative;
+          background: ${currentTheme === 'high_contrast'
+            ? 'linear-gradient(135deg, #000000 0%, #0f0f0f 45%, #000000 100%)'
+            : currentTheme === 'dark'
+              ? 'linear-gradient(145deg, rgba(38, 30, 58, 0.9) 0%, rgba(18, 12, 34, 0.82) 45%, rgba(28, 20, 44, 0.86) 100%), radial-gradient(circle at 22% 28%, rgba(255, 255, 255, 0.08), transparent 45%), radial-gradient(circle at 78% 68%, rgba(167, 139, 250, 0.14), transparent 40%)'
+              : 'linear-gradient(145deg, rgba(255, 255, 255, 0.86) 0%, rgba(236, 233, 255, 0.82) 40%, rgba(191, 188, 252, 0.78) 100%), radial-gradient(circle at 25% 30%, rgba(255, 255, 255, 0.45), transparent 45%), radial-gradient(circle at 70% 70%, rgba(180, 139, 104, 0.22), transparent 45%)'};
+          border: 5px solid ${currentTheme === 'high_contrast' ? '#FFFFFF' : currentTheme === 'dark' ? 'rgba(167, 139, 250, 0.55)' : 'rgba(255, 255, 255, 0.8)'};
+          border-top-color: ${currentTheme === 'high_contrast' ? '#FFFFFF' : currentTheme === 'dark' ? 'rgba(255, 255, 255, 0.6)' : 'rgba(255, 255, 255, 0.95)'};
+          border-left-color: ${currentTheme === 'high_contrast' ? '#FFFFFF' : currentTheme === 'dark' ? 'rgba(255, 255, 255, 0.5)' : 'rgba(255, 255, 255, 0.9)'};
+          border-right-color: ${currentTheme === 'high_contrast' ? '#FFD700' : currentTheme === 'dark' ? 'rgba(64, 47, 98, 0.65)' : 'rgba(159, 147, 216, 0.65)'};
+          border-bottom-color: ${currentTheme === 'high_contrast' ? '#FFD700' : currentTheme === 'dark' ? 'rgba(52, 38, 78, 0.7)' : 'rgba(148, 130, 202, 0.72)'};
+          box-shadow:
+            ${currentTheme === 'high_contrast' ? '0 0 0 3px #FFD700,' : '0 12px 30px rgba(0, 0, 0, 0.25),'}
+            inset 0 2px 8px rgba(255, 255, 255, 0.18),
+            inset 0 -10px 24px ${currentTheme === 'dark' ? 'rgba(12, 8, 24, 0.5)' : 'rgba(84, 70, 128, 0.25)'},
+            inset 8px 0 18px ${currentTheme === 'dark' ? 'rgba(255, 255, 255, 0.08)' : 'rgba(255, 255, 255, 0.3)'},
+            inset -8px 0 18px ${currentTheme === 'dark' ? 'rgba(60, 40, 98, 0.45)' : 'rgba(140, 122, 195, 0.28)'};
+          backdrop-filter: blur(18px) saturate(1.35);
+          -webkit-backdrop-filter: blur(18px) saturate(1.35);
+          overflow: hidden;
+          transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+        }
+
+        .crystal-glass-widget::before {
+          content: '';
+          position: absolute;
+          inset: 10px;
+          border-radius: calc(1.5rem - 6px);
+          background: linear-gradient(145deg,
+            ${currentTheme === 'high_contrast' ? 'rgba(255, 255, 255, 0.18)' : currentTheme === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(255, 255, 255, 0.35)'} 0%,
+            transparent 45%,
+            ${currentTheme === 'high_contrast' ? 'rgba(255, 215, 0, 0.35)' : currentTheme === 'dark' ? 'rgba(167, 139, 250, 0.18)' : 'rgba(180, 139, 104, 0.2)'} 100%);
+          mix-blend-mode: screen;
+          pointer-events: none;
+        }
+
+        .crystal-glass-widget::after {
+          content: '';
+          position: absolute;
+          inset: 0;
+          border-radius: inherit;
+          background: radial-gradient(circle at 30% 20%, rgba(255, 255, 255, 0.28), transparent 35%);
+          opacity: ${currentTheme === 'high_contrast' ? '0.3' : '0.5'};
+          pointer-events: none;
+        }
+
+        .crystal-glass-widget:hover {
+          transform: translateY(-6px) scale(1.01);
+          box-shadow:
+            ${currentTheme === 'high_contrast' ? '0 0 0 3px #FFD700, 0 0 30px rgba(255, 215, 0, 0.6),' : '0 18px 36px rgba(0, 0, 0, 0.32),'}
+            inset 0 3px 10px rgba(255, 255, 255, 0.22),
+            inset 0 -10px 26px ${currentTheme === 'dark' ? 'rgba(16, 12, 30, 0.6)' : 'rgba(92, 78, 138, 0.32)'},
+            inset 10px 0 22px ${currentTheme === 'dark' ? 'rgba(255, 255, 255, 0.12)' : 'rgba(255, 255, 255, 0.35)'},
+            inset -10px 0 22px ${currentTheme === 'dark' ? 'rgba(75, 56, 116, 0.5)' : 'rgba(150, 132, 206, 0.35)'};
+        }
+
+        .crystal-glass-accent {
+          position: relative;
+          background: ${currentTheme === 'high_contrast'
+            ? 'linear-gradient(135deg, #FFD700 0%, #ffb800 100%)'
+            : currentTheme === 'dark'
+              ? 'linear-gradient(145deg, rgba(167, 139, 250, 0.92) 0%, rgba(139, 92, 246, 0.85) 50%, rgba(98, 73, 173, 0.88) 100%), radial-gradient(circle at 20% 25%, rgba(255, 255, 255, 0.12), transparent 45%), radial-gradient(circle at 75% 75%, rgba(180, 139, 104, 0.25), transparent 40%)'
+              : 'linear-gradient(145deg, rgba(191, 188, 252, 0.92) 0%, rgba(209, 207, 255, 0.88) 40%, rgba(255, 237, 213, 0.85) 100%), radial-gradient(circle at 18% 24%, rgba(255, 255, 255, 0.42), transparent 45%), radial-gradient(circle at 78% 72%, rgba(180, 139, 104, 0.28), transparent 40%)'};
+          border: 5px solid ${currentTheme === 'high_contrast' ? '#FFFFFF' : currentTheme === 'dark' ? 'rgba(255, 255, 255, 0.7)' : 'rgba(255, 255, 255, 0.9)'};
+          border-top-color: ${currentTheme === 'high_contrast' ? '#FFFFFF' : currentTheme === 'dark' ? 'rgba(255, 255, 255, 0.9)' : 'rgba(255, 255, 255, 1)'};
+          border-left-color: ${currentTheme === 'high_contrast' ? '#FFFFFF' : currentTheme === 'dark' ? 'rgba(232, 231, 255, 0.9)' : 'rgba(255, 255, 255, 0.95)'};
+          border-right-color: ${currentTheme === 'high_contrast' ? '#000000' : currentTheme === 'dark' ? 'rgba(73, 52, 127, 0.65)' : 'rgba(167, 139, 250, 0.55)'};
+          border-bottom-color: ${currentTheme === 'high_contrast' ? '#000000' : currentTheme === 'dark' ? 'rgba(68, 48, 112, 0.7)' : 'rgba(180, 139, 104, 0.65)'};
+          box-shadow:
+            ${currentTheme === 'high_contrast' ? '0 0 0 3px #FFD700,' : '0 14px 32px rgba(0, 0, 0, 0.28),'}
+            inset 0 3px 10px rgba(255, 255, 255, 0.24),
+            inset 0 -10px 26px ${currentTheme === 'dark' ? 'rgba(36, 22, 64, 0.55)' : 'rgba(180, 139, 104, 0.32)'},
+            inset 12px 0 20px ${currentTheme === 'dark' ? 'rgba(255, 255, 255, 0.12)' : 'rgba(255, 255, 255, 0.38)'},
+            inset -12px 0 20px ${currentTheme === 'dark' ? 'rgba(84, 64, 126, 0.52)' : 'rgba(167, 139, 250, 0.42)'};
+          color: ${currentTheme === 'high_contrast' ? '#000000' : 'var(--text-primary)'};
+          backdrop-filter: blur(18px) saturate(1.4);
+          -webkit-backdrop-filter: blur(18px) saturate(1.4);
+          overflow: hidden;
+          transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+        }
+
+        .crystal-glass-accent::before {
+          content: '';
+          position: absolute;
+          inset: 12px;
+          border-radius: calc(1.5rem - 8px);
+          background: linear-gradient(135deg,
+            ${currentTheme === 'high_contrast' ? 'rgba(255, 255, 255, 0.25)' : currentTheme === 'dark' ? 'rgba(255, 255, 255, 0.14)' : 'rgba(255, 255, 255, 0.4)'} 0%,
+            transparent 50%,
+            ${currentTheme === 'high_contrast' ? 'rgba(0, 0, 0, 0.25)' : currentTheme === 'dark' ? 'rgba(73, 52, 127, 0.28)' : 'rgba(180, 139, 104, 0.24)'} 100%);
+          pointer-events: none;
+        }
+
+        .crystal-glass-accent:hover {
+          transform: translateY(-6px) scale(1.01);
+          box-shadow:
+            ${currentTheme === 'high_contrast' ? '0 0 0 3px #FFD700, 0 0 36px rgba(255, 215, 0, 0.7),' : '0 18px 40px rgba(0, 0, 0, 0.35),'}
+            inset 0 4px 12px rgba(255, 255, 255, 0.26),
+            inset 0 -12px 30px ${currentTheme === 'dark' ? 'rgba(44, 28, 78, 0.65)' : 'rgba(180, 139, 104, 0.36)'},
+            inset 14px 0 22px ${currentTheme === 'dark' ? 'rgba(255, 255, 255, 0.14)' : 'rgba(255, 255, 255, 0.42)'},
+            inset -14px 0 22px ${currentTheme === 'dark' ? 'rgba(92, 68, 140, 0.6)' : 'rgba(167, 139, 250, 0.5)'};
+        }
+
         /* Universal text color classes */
-        .text-moonlight { 
+        .text-moonlight {
           color: var(--text-primary); 
           ${currentTheme !== 'high_contrast' && currentTheme !== 'light' && currentTheme !== 'minimal' ? 'text-shadow: 0 1px 2px rgba(32, 24, 51, 0.3);' : ''} 
         }

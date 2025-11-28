@@ -314,7 +314,7 @@ export default function Collection() {
             onDismiss={dismissTooltip}>
 
                 <Link to={createPageUrl("AddPlant")}>
-                  <div className="neuro-accent-raised rounded-3xl p-8 cursor-pointer group h-full flex flex-col items-center justify-center text-center">
+                  <div className="crystal-glass-accent rounded-3xl p-8 cursor-pointer group h-full flex flex-col items-center justify-center text-center">
                     <div className="w-16 h-16 rounded-2xl flex items-center justify-center mb-4 neuro-icon-well group-hover:scale-110 transition-transform"
                 style={{
                   background: "rgba(255, 255, 255, 0.1)",
@@ -336,7 +336,7 @@ export default function Collection() {
               </ContextualTooltip> :
 
           <Link to={createPageUrl("AddPlant")}>
-                <div className="neuro-accent-raised rounded-3xl p-8 cursor-pointer group h-full flex flex-col items-center justify-center text-center">
+                <div className="crystal-glass-accent rounded-3xl p-8 cursor-pointer group h-full flex flex-col items-center justify-center text-center">
                   <div className="mb-4 opacity-70 rounded-2xl w-16 h-16 flex items-center justify-center neuro-icon-well group-hover:scale-110 transition-transform"
               style={{
                 background: "rgba(255, 255, 255, 0.1)",
