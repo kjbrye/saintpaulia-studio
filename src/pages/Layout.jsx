@@ -61,11 +61,37 @@ const THEMES = {
     neuroCardShadow: "16px 16px 28px rgba(58, 65, 55, 0.35), -16px -16px 28px rgba(248, 246, 240, 0.35), inset 2px 2px 4px rgba(255, 255, 255, 0.25), inset -2px -2px 4px rgba(58, 65, 55, 0.18)",
     neuroCardBorder: "rgba(255, 255, 255, 0.48)",
 
-    neuroButtonBg: "linear-gradient(145deg, rgba(129, 139, 126, 0.82) 0%, rgba(107, 116, 104, 0.78) 100%)",
-    neuroButtonShadow: "12px 12px 24px rgba(58, 65, 55, 0.35), -12px -12px 24px rgba(248, 246, 240, 0.28), inset 2px 2px 4px rgba(255, 255, 255, 0.25), inset -1px -1px 2px rgba(58, 65, 55, 0.18)",
-    neuroButtonBorder: "rgba(255, 255, 255, 0.48)",
-    neuroButtonHoverShadow: "16px 16px 32px rgba(58, 65, 55, 0.45), -16px -16px 32px rgba(248, 246, 240, 0.32), inset 2px 2px 4px rgba(255, 255, 255, 0.28), inset -1px -1px 2px rgba(58, 65, 55, 0.2), 0 0 24px rgba(180, 139, 104, 0.25)",
-    neuroButtonActiveShadow: "inset 10px 10px 20px rgba(58, 65, 55, 0.4), inset -10px -10px 20px rgba(248, 246, 240, 0.22), inset 3px 3px 6px rgba(58, 65, 55, 0.32)",
+    // Crystal Glass Navigation Buttons
+    neuroButtonBg: "linear-gradient(145deg, rgba(255, 255, 255, 0.45) 0%, rgba(220, 230, 225, 0.38) 25%, rgba(180, 195, 188, 0.42) 50%, rgba(160, 175, 168, 0.48) 100%)",
+    neuroButtonShadow: `
+      0 8px 32px rgba(0, 0, 0, 0.25),
+      0 2px 8px rgba(0, 0, 0, 0.15),
+      inset 0 3px 6px rgba(255, 255, 255, 0.7),
+      inset 0 -3px 8px rgba(80, 90, 85, 0.25),
+      inset 3px 0 6px rgba(255, 255, 255, 0.4),
+      inset -3px 0 6px rgba(80, 90, 85, 0.15),
+      inset 0 1px 1px rgba(255, 255, 255, 0.9),
+      0 1px 0 rgba(255, 255, 255, 0.6)
+    `,
+    neuroButtonBorder: "rgba(255, 255, 255, 0.7)",
+    neuroButtonHoverShadow: `
+      0 12px 40px rgba(0, 0, 0, 0.3),
+      0 4px 12px rgba(0, 0, 0, 0.2),
+      inset 0 4px 8px rgba(255, 255, 255, 0.8),
+      inset 0 -4px 10px rgba(80, 90, 85, 0.3),
+      inset 4px 0 8px rgba(255, 255, 255, 0.5),
+      inset -4px 0 8px rgba(80, 90, 85, 0.2),
+      inset 0 1px 2px rgba(255, 255, 255, 1),
+      0 1px 0 rgba(255, 255, 255, 0.7),
+      0 0 20px rgba(180, 139, 104, 0.3)
+    `,
+    neuroButtonActiveShadow: `
+      inset 0 4px 12px rgba(80, 90, 85, 0.4),
+      inset 0 -2px 6px rgba(255, 255, 255, 0.3),
+      inset 2px 2px 8px rgba(80, 90, 85, 0.35),
+      inset -2px -2px 8px rgba(255, 255, 255, 0.2),
+      0 2px 8px rgba(0, 0, 0, 0.2)
+    `,
 
     neuroInputBg: "linear-gradient(145deg, rgba(129, 139, 126, 0.7) 0%, rgba(107, 116, 104, 0.65) 100%)",
     neuroInputShadow: "inset 10px 10px 18px rgba(58, 65, 55, 0.35), inset -10px -10px 18px rgba(248, 246, 240, 0.25), inset 3px 3px 6px rgba(58, 65, 55, 0.28)",
@@ -859,18 +885,54 @@ const handleLogout = async () => {
         .neuro-button {
           background: var(--neuro-button-bg);
           box-shadow: var(--neuro-button-shadow);
-          border: ${currentTheme === 'high_contrast' ? '3px' : '1px'} solid var(--neuro-button-border);
+          border: ${currentTheme === 'high_contrast' ? '3px solid var(--neuro-button-border)' : '4px solid var(--neuro-button-border)'};
+          border-top-color: ${currentTheme === 'high_contrast' ? 'var(--neuro-button-border)' : 'rgba(255, 255, 255, 0.9)'};
+          border-left-color: ${currentTheme === 'high_contrast' ? 'var(--neuro-button-border)' : 'rgba(255, 255, 255, 0.8)'};
+          border-right-color: ${currentTheme === 'high_contrast' ? 'var(--neuro-button-border)' : 'rgba(140, 150, 145, 0.6)'};
+          border-bottom-color: ${currentTheme === 'high_contrast' ? 'var(--neuro-button-border)' : 'rgba(120, 130, 125, 0.7)'};
+          backdrop-filter: blur(12px) saturate(1.2);
+          -webkit-backdrop-filter: blur(12px) saturate(1.2);
           transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+          position: relative;
+          overflow: hidden;
+        }
+
+        .neuro-button::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          height: 50%;
+          background: linear-gradient(180deg, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0.05) 100%);
+          pointer-events: none;
+          border-radius: inherit;
+        }
+
+        .neuro-button::after {
+          content: '';
+          position: absolute;
+          top: 2px;
+          left: 2px;
+          right: 2px;
+          bottom: 2px;
+          border-radius: calc(1.5rem - 4px);
+          border: 1px solid rgba(255, 255, 255, 0.3);
+          border-bottom-color: transparent;
+          border-right-color: transparent;
+          pointer-events: none;
         }
 
         .neuro-button:hover {
           box-shadow: var(--neuro-button-hover-shadow);
-          transform: translateY(-2px);
+          transform: translateY(-3px);
+          border-top-color: ${currentTheme === 'high_contrast' ? 'var(--neuro-button-border)' : 'rgba(255, 255, 255, 1)'};
+          border-left-color: ${currentTheme === 'high_contrast' ? 'var(--neuro-button-border)' : 'rgba(255, 255, 255, 0.9)'};
         }
 
         .neuro-button:active, .neuro-pressed {
           box-shadow: var(--neuro-button-active-shadow);
-          transform: translateY(2px);
+          transform: translateY(1px);
         }
 
         .neuro-input {
