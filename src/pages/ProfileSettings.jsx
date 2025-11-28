@@ -721,13 +721,12 @@ export default function ProfileSettings() {
           <AlertTriangle className="w-6 h-6 flex-shrink-0 mt-1" style={{ color: "#FCA5A5" }} />
           <div>
             <h3 className="mb-2 text-lg font-bold" style={{
-              color: currentTheme === 'light' || currentTheme === 'minimal' ? "#7F1D1D" : "#FCA5A5",
+              color: currentTheme === 'light' || currentTheme === 'minimal' ? "#7F1D1D" : "#FEE2E2",
               fontFamily: "'Playfair Display', Georgia, serif"
             }}>Danger Zone 
             </h3>
-            <p className="text-sm mb-4" style={{ 
-              color: currentTheme === 'light' || currentTheme === 'minimal' ? "#991B1B" : "#FCA5A5", 
-              opacity: 0.9 
+            <p className="text-sm mb-4" style={{
+              color: currentTheme === 'light' || currentTheme === 'minimal' ? "#991B1B" : "#FECACA"
             }}>
               Permanently delete all your plant data and start fresh. This action cannot be undone.
             </p>
@@ -736,14 +735,13 @@ export default function ProfileSettings() {
               background: "rgba(0, 0, 0, 0.2)",
               border: "1px solid rgba(239, 68, 68, 0.3)"
             }}>
-              <p className="text-xs font-semibold mb-2" style={{ 
-                color: currentTheme === 'light' || currentTheme === 'minimal' ? "#7F1D1D" : "#FCA5A5" 
+              <p className="text-xs font-semibold mb-2" style={{
+                color: currentTheme === 'light' || currentTheme === 'minimal' ? "#7F1D1D" : "#FEE2E2"
               }}>
                 This will permanently delete:
               </p>
-              <ul className="text-xs space-y-1" style={{ 
-                color: currentTheme === 'light' || currentTheme === 'minimal' ? "#991B1B" : "#FCA5A5", 
-                opacity: 0.9 
+              <ul className="text-xs space-y-1" style={{
+                color: currentTheme === 'light' || currentTheme === 'minimal' ? "#991B1B" : "#FECACA"
               }}>
                 <li>• All plants in your collection</li>
                 <li>• All care logs, health observations, and journal entries</li>
@@ -761,7 +759,7 @@ export default function ProfileSettings() {
           style={{
             background: "linear-gradient(135deg, rgba(239, 68, 68, 0.4) 0%, rgba(220, 38, 38, 0.3) 100%)",
             border: "1px solid rgba(239, 68, 68, 0.5)",
-            color: currentTheme === 'light' || currentTheme === 'minimal' ? "#7F1D1D" : "#FCA5A5",
+            color: currentTheme === 'light' || currentTheme === 'minimal' ? "#7F1D1D" : "#FEE2E2",
             boxShadow: "0 2px 12px rgba(239, 68, 68, 0.3)"
           }}>
 
