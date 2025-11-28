@@ -13,7 +13,7 @@ import AIInsights from "../components/hybridization/AIInsights";
 import GenealogyTree from "../components/hybridization/GenealogyTree";
 import TraitInheritancePrediction from "../components/hybridization/TraitInheritancePrediction";
 
-const LOGO_URL = "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/690e3cd78523fb5fba0a8466/632f6e485_PlantLogos.png";
+const LOGO_URL = "/wax seal.svg";
 
 const statusConfig = {
   planning: { color: "from-purple-200 to-purple-300", text: "Planning", textColor: "#9333EA", bg: "rgba(147, 51, 234, 0.2)", border: "rgba(147, 51, 234, 0.3)" },

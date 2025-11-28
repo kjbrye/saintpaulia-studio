@@ -8,7 +8,7 @@ import { createPageUrl } from "@/utils";
 import DatePicker from "../components/ui/DatePicker";
 import { toast } from "sonner";
 
-const LOGO_URL = "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/690e3cd78523fb5fba0a8466/632f6e485_PlantLogos.png";
+const LOGO_URL = "/wax seal.svg";
 
 export default function EditSupply() {
   const navigate = useNavigate();

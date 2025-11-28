@@ -13,7 +13,7 @@ const statusConfig = {
   discarded: { icon: X, color: "from-gray-200 to-gray-300", text: "Discarded", textColor: "#6B7280" }
 };
 
-const LOGO_URL = "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/690e3cd78523fb5fba0a8466/632f6e485_PlantLogos.png";
+const LOGO_URL = "/wax seal.svg";
 
 export default function OffspringGrid({ offspring, onEdit, projectId }) {
   const queryClient = useQueryClient();

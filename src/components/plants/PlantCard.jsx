@@ -6,7 +6,7 @@ import { base44 } from "@/api/base44Client";
 import { Droplets, Sparkles, Scissors, Package, Heart, AlertCircle } from "lucide-react";
 import HealthStatusBadge from "../health/HealthStatusBadge";
 
-const LOGO_URL = "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/690e3cd78523fb5fba0a8466/632f6e485_PlantLogos.png";
+const LOGO_URL = "/wax seal.svg";
 
 const getCareStatus = (lastCareDate, daysThreshold) => {
   if (!lastCareDate) return { status: "overdue", days: null };
