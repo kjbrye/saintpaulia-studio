@@ -1,10 +1,11 @@
 
 import React from "react";
 import { base44 } from "@/api/base44Client";
+import { supabase } from "../lib/supabaseClient";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
-import { Beaker, Library, Star, TrendingUp, Calendar, Droplets, Plus, User, BarChart3, Bug, Package, Flower2, Info } from "lucide-react";
+import { Beaker, Library, Star, TrendingUp, Calendar, Droplets, Plus, User, BarChart3, Bug, Package, Flower2, Info, LogOut } from "lucide-react";
 import StatsCard from "../components/plants/StatsCard";
 import RecentActivityWidget from "../components/dashboard/RecentActivityWidget";
 import ContextualTooltip from "../components/onboarding/ContextualTooltip";
@@ -23,6 +24,16 @@ const getCareStatus = (lastCareDate, daysThreshold) => {
 
 export default function Collection() {
   const { isTooltipDismissed, dismissTooltip } = useTooltips();
+
+  const handleLogout = async () => {
+    const { error } = await supabase.auth.signOut();
+    if (error) {
+      console.error("Error during sign out:", error);
+      alert("Sign-out error: " + error.message);
+      return;
+    }
+    window.location.reload();
+  };
 
   const { data: plants = [] } = useQuery({
     queryKey: ['plants'],
@@ -183,6 +194,21 @@ export default function Collection() {
                   </div>
                 </button>
               </Link>
+
+              <button
+                onClick={handleLogout}
+                className="neuro-button px-5 py-3 rounded-2xl font-semibold flex items-center gap-3 group"
+                title="Log out"
+              >
+                <div className="w-9 h-9 rounded-full overflow-hidden neuro-icon-well flex items-center justify-center">
+                  <LogOut className="w-4 h-4" style={{ color: "#C4B5FD", strokeWidth: 2 }} />
+                </div>
+                <div className="hidden sm:block text-left">
+                  <p className="text-sm font-semibold" style={{ color: "var(--text-primary)" }}>
+                    Log Out
+                  </p>
+                </div>
+              </button>
 
             </div>
           </div>

@@ -6,7 +6,6 @@ import { useQuery } from "@tanstack/react-query";
 import { TooltipProvider } from "@/components/onboarding/TooltipManager";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
-import { supabase } from "../lib/supabaseClient";
 
 const THEMES = {
   glassmorphism: {
@@ -510,20 +509,6 @@ export default function Layout({ children }) {
       setCurrentTheme(user.theme);
     }
   }, [user]);
-const handleLogout = async () => {
-  console.log("Logout button clicked");
-
-  const { error } = await supabase.auth.signOut();
-
-  if (error) {
-    console.error("Error during sign out:", error);
-    alert("Sign-out error: " + error.message);
-    return;
-  }
-
-  // Force AuthGate to re-check the session
-  window.location.reload();
-};
 
   const theme = THEMES[currentTheme] || THEMES.glassmorphism;
 
@@ -1260,27 +1245,6 @@ const handleLogout = async () => {
           </div>
         </div>
       </footer>
-      <button
-  onClick={handleLogout}
-  style={{
-    position: "fixed",
-    bottom: "1rem",
-    left: "1rem",
-    zIndex: 9999,
-    fontSize: "11px",
-    padding: "4px 8px",
-    borderRadius: "6px",
-    background: "rgba(15, 23, 42, 0.75)",
-    color: "#e5e7eb",
-    border: "1px solid rgba(148, 163, 184, 0.6)",
-    cursor: "pointer",
-    backdropFilter: "blur(8px)",
-    opacity: 0.8,
-  }}
-  title="Log out"
->
-  Log out
-</button>
     </div>
     </TooltipProvider>
   );
