@@ -259,7 +259,7 @@ export default function AuthScreen() {
           style={{
             margin: "1.5rem 0 1rem",
             height: "1px",
-            background: "linear-gradient(90deg, rgba(255, 255, 255, 0) 0%, rgba(255, 237, 213, 0.5) 50%, rgba(255, 255, 255, 0) 100%)",
+            background: "linear-gradient(90deg, rgba(184, 115, 51, 0) 0%, rgba(184, 115, 51, 0.5) 50%, rgba(184, 115, 51, 0) 100%)",
           }}
         />
 

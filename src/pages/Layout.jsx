@@ -106,8 +106,8 @@ const THEMES = {
     neuroAccentActiveShadow: "inset 10px 10px 20px rgba(77, 57, 39, 0.35), inset -10px -10px 20px rgba(248, 246, 240, 0.22), inset 3px 3px 6px rgba(77, 57, 39, 0.26)",
 
     // Misc
-    dividerBg: "linear-gradient(90deg, rgba(255, 255, 255, 0) 0%, rgba(255, 237, 213, 0.5) 50%, rgba(255, 255, 255, 0) 100%)",
-    dividerShadow: "0 1px 2px rgba(58, 65, 55, 0.08), 0 -1px 2px rgba(58, 65, 55, 0.04)",
+    dividerBg: "linear-gradient(90deg, rgba(184, 115, 51, 0) 0%, rgba(184, 115, 51, 0.5) 50%, rgba(184, 115, 51, 0) 100%)",
+    dividerShadow: "0 1px 2px rgba(139, 90, 43, 0.12), 0 -1px 2px rgba(139, 90, 43, 0.06)",
     headingShadow: "0 2px 8px rgba(58, 65, 55, 0.35), 0 1px 3px rgba(0, 0, 0, 0.25)",
     backdropFilter: "blur(24px) brightness(1.03) saturate(1.25)",
     lightSpotGradient1: "radial-gradient(circle, rgba(255, 237, 213, 0.28) 0%, transparent 70%)",
