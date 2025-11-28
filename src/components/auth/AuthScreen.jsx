@@ -61,6 +61,26 @@ export default function AuthScreen() {
     }
   }
 
+  async function handleForgotPassword() {
+    if (!email) {
+      setMessage("Please enter your email address first.");
+      return;
+    }
+    setLoading(true);
+    setMessage("");
+
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(email);
+      if (error) throw error;
+      setMessage("Check your email for password reset instructions.");
+    } catch (err) {
+      console.error(err);
+      setMessage(err.message || "Something went wrong.");
+    } finally {
+      setLoading(false);
+    }
+  }
+
   const inputStyle = (inputName) => ({
     padding: "0.65rem 0.9rem",
     borderRadius: "0.6rem",
@@ -205,6 +225,31 @@ export default function AuthScreen() {
               style={inputStyle("password")}
             />
           </label>
+
+          {mode === "signin" && (
+            <button
+              type="button"
+              onClick={handleForgotPassword}
+              disabled={loading}
+              style={{
+                background: "none",
+                border: "none",
+                color: theme.textMuted,
+                fontSize: "0.85rem",
+                cursor: loading ? "default" : "pointer",
+                fontFamily: "'Inter', sans-serif",
+                textAlign: "right",
+                padding: 0,
+                marginTop: "-0.5rem",
+                transition: "color 0.2s ease",
+                opacity: loading ? 0.6 : 1,
+              }}
+              onMouseEnter={(e) => !loading && (e.target.style.color = theme.accentPrimary)}
+              onMouseLeave={(e) => e.target.style.color = theme.textMuted}
+            >
+              Forgot password?
+            </button>
+          )}
 
           <button
             type="submit"
