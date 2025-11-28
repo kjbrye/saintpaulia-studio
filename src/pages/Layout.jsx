@@ -56,29 +56,29 @@ const THEMES = {
     glassInputFocusShadow: "0 0 0 4px rgba(180, 139, 104, 0.25), inset 0 1px 2px rgba(38, 44, 36, 0.2)",
     glassInputPlaceholder: "rgba(90, 97, 88, 0.7)",
 
-    // Neuro Surfaces
-    neuroCardBg: "linear-gradient(145deg, rgba(129, 139, 126, 0.8) 0%, rgba(107, 116, 104, 0.76) 100%)",
-    neuroCardShadow: "16px 16px 28px rgba(58, 65, 55, 0.35), -16px -16px 28px rgba(248, 246, 240, 0.35), inset 2px 2px 4px rgba(255, 255, 255, 0.25), inset -2px -2px 4px rgba(58, 65, 55, 0.18)",
-    neuroCardBorder: "rgba(255, 255, 255, 0.48)",
+    // Neuro Surfaces - Crystal Glass Effect
+    neuroCardBg: "linear-gradient(145deg, rgba(129, 139, 126, 0.85) 0%, rgba(107, 116, 104, 0.82) 100%)",
+    neuroCardShadow: "18px 20px 36px rgba(58, 65, 55, 0.45), -12px -14px 28px rgba(248, 246, 240, 0.32), 0 4px 8px rgba(0, 0, 0, 0.15)",
+    neuroCardBorder: "rgba(255, 255, 255, 0.58)",
 
-    neuroButtonBg: "linear-gradient(145deg, rgba(129, 139, 126, 0.82) 0%, rgba(107, 116, 104, 0.78) 100%)",
-    neuroButtonShadow: "12px 12px 24px rgba(58, 65, 55, 0.35), -12px -12px 24px rgba(248, 246, 240, 0.28), inset 2px 2px 4px rgba(255, 255, 255, 0.25), inset -1px -1px 2px rgba(58, 65, 55, 0.18)",
-    neuroButtonBorder: "rgba(255, 255, 255, 0.48)",
-    neuroButtonHoverShadow: "16px 16px 32px rgba(58, 65, 55, 0.45), -16px -16px 32px rgba(248, 246, 240, 0.32), inset 2px 2px 4px rgba(255, 255, 255, 0.28), inset -1px -1px 2px rgba(58, 65, 55, 0.2), 0 0 24px rgba(180, 139, 104, 0.25)",
-    neuroButtonActiveShadow: "inset 10px 10px 20px rgba(58, 65, 55, 0.4), inset -10px -10px 20px rgba(248, 246, 240, 0.22), inset 3px 3px 6px rgba(58, 65, 55, 0.32)",
+    neuroButtonBg: "linear-gradient(145deg, rgba(129, 139, 126, 0.88) 0%, rgba(107, 116, 104, 0.85) 100%)",
+    neuroButtonShadow: "14px 14px 28px rgba(58, 65, 55, 0.42), -10px -10px 24px rgba(248, 246, 240, 0.3), 0 4px 6px rgba(0, 0, 0, 0.12)",
+    neuroButtonBorder: "rgba(255, 255, 255, 0.58)",
+    neuroButtonHoverShadow: "18px 18px 36px rgba(58, 65, 55, 0.52), -14px -14px 32px rgba(248, 246, 240, 0.35), 0 0 28px rgba(180, 139, 104, 0.3), 0 6px 10px rgba(0, 0, 0, 0.15)",
+    neuroButtonActiveShadow: "inset 12px 12px 24px rgba(58, 65, 55, 0.45), inset -12px -12px 24px rgba(248, 246, 240, 0.25), inset 4px 4px 8px rgba(58, 65, 55, 0.35)",
 
-    neuroInputBg: "linear-gradient(145deg, rgba(129, 139, 126, 0.7) 0%, rgba(107, 116, 104, 0.65) 100%)",
-    neuroInputShadow: "inset 10px 10px 18px rgba(58, 65, 55, 0.35), inset -10px -10px 18px rgba(248, 246, 240, 0.25), inset 3px 3px 6px rgba(58, 65, 55, 0.28)",
-    neuroInputBorder: "rgba(255, 255, 255, 0.45)",
-    neuroInputFocusBorder: "rgba(180, 139, 104, 0.6)",
-    neuroInputFocusShadow: "0 0 0 4px rgba(180, 139, 104, 0.22), inset 0 1px 2px rgba(38, 44, 36, 0.2)",
+    neuroInputBg: "linear-gradient(145deg, rgba(129, 139, 126, 0.75) 0%, rgba(107, 116, 104, 0.72) 100%)",
+    neuroInputShadow: "inset 12px 12px 22px rgba(58, 65, 55, 0.4), inset -12px -12px 22px rgba(248, 246, 240, 0.28), inset 4px 4px 8px rgba(58, 65, 55, 0.32)",
+    neuroInputBorder: "rgba(255, 255, 255, 0.55)",
+    neuroInputFocusBorder: "rgba(180, 139, 104, 0.7)",
+    neuroInputFocusShadow: "0 0 0 4px rgba(180, 139, 104, 0.28), inset 0 1px 2px rgba(38, 44, 36, 0.2)",
     neuroInputPlaceholder: "rgba(90, 97, 88, 0.7)",
 
-    neuroAccentBg: "linear-gradient(145deg, rgba(180, 139, 104, 0.85) 0%, rgba(150, 114, 82, 0.8) 100%)",
-    neuroAccentShadow: "16px 16px 32px rgba(77, 57, 39, 0.35), -16px -16px 32px rgba(248, 246, 240, 0.28), inset 3px 3px 6px rgba(255, 255, 255, 0.28), inset -2px -2px 4px rgba(77, 57, 39, 0.18), 0 2px 8px rgba(255, 237, 213, 0.18)",
-    neuroAccentBorder: "rgba(255, 237, 213, 0.6)",
-    neuroAccentHoverShadow: "20px 20px 40px rgba(77, 57, 39, 0.42), -20px -20px 40px rgba(248, 246, 240, 0.32), inset 3px 3px 6px rgba(255, 255, 255, 0.3), inset -2px -2px 4px rgba(77, 57, 39, 0.2), 0 4px 16px rgba(180, 139, 104, 0.35), 0 0 30px rgba(180, 139, 104, 0.35)",
-    neuroAccentActiveShadow: "inset 10px 10px 20px rgba(77, 57, 39, 0.35), inset -10px -10px 20px rgba(248, 246, 240, 0.22), inset 3px 3px 6px rgba(77, 57, 39, 0.26)",
+    neuroAccentBg: "linear-gradient(145deg, rgba(180, 139, 104, 0.9) 0%, rgba(150, 114, 82, 0.88) 100%)",
+    neuroAccentShadow: "18px 18px 36px rgba(77, 57, 39, 0.45), -14px -14px 32px rgba(248, 246, 240, 0.32), 0 4px 12px rgba(255, 237, 213, 0.22)",
+    neuroAccentBorder: "rgba(255, 237, 213, 0.7)",
+    neuroAccentHoverShadow: "22px 22px 44px rgba(77, 57, 39, 0.52), -18px -18px 38px rgba(248, 246, 240, 0.38), 0 6px 20px rgba(180, 139, 104, 0.42), 0 0 36px rgba(180, 139, 104, 0.4)",
+    neuroAccentActiveShadow: "inset 12px 12px 24px rgba(77, 57, 39, 0.4), inset -12px -12px 24px rgba(248, 246, 240, 0.25), inset 4px 4px 8px rgba(77, 57, 39, 0.3)",
 
     // Misc
     dividerBg: "linear-gradient(90deg, rgba(255, 255, 255, 0) 0%, rgba(255, 237, 213, 0.5) 50%, rgba(255, 255, 255, 0) 100%)",
@@ -849,22 +849,34 @@ const handleLogout = async () => {
         }
         ` : ''}
 
-        /* NEUMORPHISM STYLES */
+        /* NEUMORPHISM STYLES - Crystal Glass Effect */
         .neuro-card {
           background: var(--neuro-card-bg);
-          box-shadow: var(--neuro-card-shadow);
-          border: ${currentTheme === 'high_contrast' ? '4px' : '1px'} solid var(--neuro-card-border);
+          box-shadow: var(--neuro-card-shadow),
+            inset 0 1px 2px rgba(255, 255, 255, 0.4),
+            inset 0 -1px 1px rgba(0, 0, 0, 0.1),
+            inset 2px 0 2px rgba(255, 255, 255, 0.15),
+            inset -2px 0 2px rgba(0, 0, 0, 0.05);
+          border: ${currentTheme === 'high_contrast' ? '4px' : '3px'} solid var(--neuro-card-border);
+          border-top-color: ${currentTheme === 'high_contrast' ? 'var(--neuro-card-border)' : 'rgba(255, 255, 255, 0.65)'};
+          border-left-color: ${currentTheme === 'high_contrast' ? 'var(--neuro-card-border)' : 'rgba(255, 255, 255, 0.55)'};
         }
 
         .neuro-button {
           background: var(--neuro-button-bg);
-          box-shadow: var(--neuro-button-shadow);
-          border: ${currentTheme === 'high_contrast' ? '3px' : '1px'} solid var(--neuro-button-border);
+          box-shadow: var(--neuro-button-shadow),
+            inset 0 1px 1px rgba(255, 255, 255, 0.35),
+            inset 0 -1px 1px rgba(0, 0, 0, 0.08);
+          border: ${currentTheme === 'high_contrast' ? '3px' : '2.5px'} solid var(--neuro-button-border);
+          border-top-color: ${currentTheme === 'high_contrast' ? 'var(--neuro-button-border)' : 'rgba(255, 255, 255, 0.6)'};
+          border-left-color: ${currentTheme === 'high_contrast' ? 'var(--neuro-button-border)' : 'rgba(255, 255, 255, 0.5)'};
           transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .neuro-button:hover {
-          box-shadow: var(--neuro-button-hover-shadow);
+          box-shadow: var(--neuro-button-hover-shadow),
+            inset 0 1px 2px rgba(255, 255, 255, 0.45),
+            inset 0 -1px 1px rgba(0, 0, 0, 0.1);
           transform: translateY(-2px);
         }
 
@@ -875,8 +887,11 @@ const handleLogout = async () => {
 
         .neuro-input {
           background: var(--neuro-input-bg);
-          box-shadow: var(--neuro-input-shadow);
-          border: ${currentTheme === 'high_contrast' ? '3px' : '1px'} solid var(--neuro-input-border);
+          box-shadow: var(--neuro-input-shadow),
+            inset 0 1px 1px rgba(255, 255, 255, 0.25);
+          border: ${currentTheme === 'high_contrast' ? '3px' : '2px'} solid var(--neuro-input-border);
+          border-top-color: ${currentTheme === 'high_contrast' ? 'var(--neuro-input-border)' : 'rgba(255, 255, 255, 0.55)'};
+          border-left-color: ${currentTheme === 'high_contrast' ? 'var(--neuro-input-border)' : 'rgba(255, 255, 255, 0.45)'};
           color: var(--text-primary);
         }
 
@@ -885,8 +900,9 @@ const handleLogout = async () => {
         }
 
         .neuro-input:focus {
-          box-shadow: var(--neuro-input-focus-shadow);
-          border: ${currentTheme === 'high_contrast' ? '3px' : currentTheme === 'light' || currentTheme === 'minimal' ? '2px' : '1px'} solid var(--neuro-input-focus-border);
+          box-shadow: var(--neuro-input-focus-shadow),
+            inset 0 1px 1px rgba(255, 255, 255, 0.3);
+          border: ${currentTheme === 'high_contrast' ? '3px' : currentTheme === 'light' || currentTheme === 'minimal' ? '2px' : '2px'} solid var(--neuro-input-focus-border);
           outline: none;
         }
 
@@ -896,23 +912,35 @@ const handleLogout = async () => {
             'linear-gradient(145deg, rgba(30, 27, 46, 0.92) 0%, rgba(15, 10, 31, 0.96) 100%)'};
           box-shadow: ${currentTheme === 'glassmorphism' ? theme.neuroCardShadow :
             currentTheme === 'light' ? '5px 5px 10px rgba(222, 221, 255, 0.5), -5px -5px 10px rgba(255, 255, 255, 0.9), inset 1px 1px 2px rgba(255, 255, 255, 0.7)' :
-            '6px 6px 12px rgba(0, 0, 0, 0.5), -6px -6px 12px rgba(60, 50, 85, 0.3), inset 1px 1px 2px rgba(60, 50, 85, 0.2)'};
-          border: 1px solid ${currentTheme === 'glassmorphism' ? theme.neuroCardBorder :
+            '6px 6px 12px rgba(0, 0, 0, 0.5), -6px -6px 12px rgba(60, 50, 85, 0.3), inset 1px 1px 2px rgba(60, 50, 85, 0.2)'},
+            inset 0 1px 1px rgba(255, 255, 255, 0.35),
+            inset 0 -1px 1px rgba(0, 0, 0, 0.08);
+          border: ${currentTheme === 'high_contrast' ? '3px' : '2px'} solid ${currentTheme === 'glassmorphism' ? theme.neuroCardBorder :
             currentTheme === 'light' ? 'rgba(231, 231, 255, 0.5)' :
             'rgba(167, 139, 250, 0.22)'};
+          border-top-color: ${currentTheme === 'high_contrast' ? 'inherit' : 'rgba(255, 255, 255, 0.55)'};
+          border-left-color: ${currentTheme === 'high_contrast' ? 'inherit' : 'rgba(255, 255, 255, 0.45)'};
         }
 
         .neuro-accent-raised {
           background: var(--neuro-accent-bg);
-          box-shadow: var(--neuro-accent-shadow);
-          border: 1px solid var(--neuro-accent-border);
+          box-shadow: var(--neuro-accent-shadow),
+            inset 0 2px 3px rgba(255, 255, 255, 0.45),
+            inset 0 -1px 2px rgba(0, 0, 0, 0.12),
+            inset 2px 0 2px rgba(255, 255, 255, 0.2),
+            inset -2px 0 2px rgba(0, 0, 0, 0.06);
+          border: ${currentTheme === 'high_contrast' ? '4px' : '3px'} solid var(--neuro-accent-border);
+          border-top-color: ${currentTheme === 'high_contrast' ? 'var(--neuro-accent-border)' : 'rgba(255, 255, 255, 0.7)'};
+          border-left-color: ${currentTheme === 'high_contrast' ? 'var(--neuro-accent-border)' : 'rgba(255, 255, 255, 0.6)'};
           transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
           ${currentTheme === 'light' || currentTheme === 'minimal' ? 'color: #1a1a2e !important;' : ''}
         }
 
         .neuro-accent-raised:hover {
           transform: translateY(-3px);
-          box-shadow: var(--neuro-accent-hover-shadow);
+          box-shadow: var(--neuro-accent-hover-shadow),
+            inset 0 2px 4px rgba(255, 255, 255, 0.5),
+            inset 0 -1px 2px rgba(0, 0, 0, 0.15);
         }
 
         .neuro-accent-raised:active {
@@ -926,7 +954,11 @@ const handleLogout = async () => {
             'linear-gradient(145deg, rgba(15, 10, 31, 0.92) 0%, rgba(30, 27, 46, 0.88) 100%)'};
           box-shadow: ${currentTheme === 'glassmorphism' ? theme.neuroInputShadow :
             currentTheme === 'light' ? 'inset 3px 3px 6px rgba(222, 221, 255, 0.4), inset -3px -3px 6px rgba(255, 255, 255, 1)' :
-            'inset 3px 3px 6px rgba(0, 0, 0, 0.35), inset -3px -3px 6px rgba(60, 50, 85, 0.2)'};
+            'inset 3px 3px 6px rgba(0, 0, 0, 0.35), inset -3px -3px 6px rgba(60, 50, 85, 0.2)'},
+            inset 0 1px 1px rgba(255, 255, 255, 0.25);
+          border: ${currentTheme === 'high_contrast' ? '3px' : '2px'} solid ${currentTheme === 'high_contrast' ? '#FFFFFF' : 'rgba(255, 255, 255, 0.35)'};
+          border-top-color: ${currentTheme === 'high_contrast' ? '#FFFFFF' : 'rgba(255, 255, 255, 0.5)'};
+          border-left-color: ${currentTheme === 'high_contrast' ? '#FFFFFF' : 'rgba(255, 255, 255, 0.4)'};
         }
 
         .neuro-icon-well {
@@ -935,10 +967,13 @@ const handleLogout = async () => {
             'linear-gradient(145deg, rgba(15, 10, 31, 0.96) 0%, rgba(30, 27, 46, 0.92) 100%)'};
           box-shadow: ${currentTheme === 'glassmorphism' ? theme.neuroInputShadow :
             currentTheme === 'light' ? 'inset 6px 6px 12px rgba(222, 221, 255, 0.5), inset -6px -6px 12px rgba(255, 255, 255, 0.9), inset 2px 2px 4px rgba(222, 221, 255, 0.4)' :
-            'inset 8px 8px 16px rgba(0, 0, 0, 0.5), inset -8px -8px 16px rgba(60, 50, 85, 0.28), inset 2px 2px 4px rgba(0, 0, 0, 0.4)'};
-          border: 1px solid ${currentTheme === 'glassmorphism' ? theme.neuroInputBorder :
+            'inset 8px 8px 16px rgba(0, 0, 0, 0.5), inset -8px -8px 16px rgba(60, 50, 85, 0.28), inset 2px 2px 4px rgba(0, 0, 0, 0.4)'},
+            inset 0 1px 1px rgba(255, 255, 255, 0.2);
+          border: ${currentTheme === 'high_contrast' ? '3px' : '2px'} solid ${currentTheme === 'glassmorphism' ? theme.neuroInputBorder :
             currentTheme === 'light' ? 'rgba(231, 231, 255, 0.4)' :
             'rgba(167, 139, 250, 0.22)'};
+          border-top-color: ${currentTheme === 'high_contrast' ? 'inherit' : 'rgba(255, 255, 255, 0.45)'};
+          border-left-color: ${currentTheme === 'high_contrast' ? 'inherit' : 'rgba(255, 255, 255, 0.35)'};
         }
 
         .neuro-accent-extreme {
@@ -947,10 +982,14 @@ const handleLogout = async () => {
             'linear-gradient(145deg, rgba(167, 139, 250, 0.45) 0%, rgba(139, 92, 246, 0.4) 100%)'};
           box-shadow: ${currentTheme === 'glassmorphism' ? theme.neuroAccentShadow :
             currentTheme === 'light' ? '16px 16px 32px rgba(191, 188, 252, 0.55), -16px -16px 32px rgba(209, 207, 255, 0.4), inset 3px 3px 6px rgba(255, 255, 255, 0.35), inset -3px -3px 6px rgba(137, 139, 188, 0.3), 0 3px 16px rgba(191, 188, 252, 0.3)' :
-            '20px 20px 40px rgba(0, 0, 0, 0.65), -20px -20px 40px rgba(60, 50, 85, 0.5), inset 4px 4px 8px rgba(167, 139, 250, 0.35), inset -3px -3px 6px rgba(0, 0, 0, 0.25), 0 3px 16px rgba(167, 139, 250, 0.28)'};
-          border: 1px solid ${currentTheme === 'glassmorphism' ? theme.neuroAccentBorder :
+            '20px 20px 40px rgba(0, 0, 0, 0.65), -20px -20px 40px rgba(60, 50, 85, 0.5), inset 4px 4px 8px rgba(167, 139, 250, 0.35), inset -3px -3px 6px rgba(0, 0, 0, 0.25), 0 3px 16px rgba(167, 139, 250, 0.28)'},
+            inset 0 2px 3px rgba(255, 255, 255, 0.4),
+            inset 0 -1px 2px rgba(0, 0, 0, 0.1);
+          border: ${currentTheme === 'high_contrast' ? '4px' : '3px'} solid ${currentTheme === 'glassmorphism' ? theme.neuroAccentBorder :
             currentTheme === 'light' ? 'rgba(137, 139, 188, 0.5)' :
             'rgba(167, 139, 250, 0.4)'};
+          border-top-color: ${currentTheme === 'high_contrast' ? 'inherit' : 'rgba(255, 255, 255, 0.65)'};
+          border-left-color: ${currentTheme === 'high_contrast' ? 'inherit' : 'rgba(255, 255, 255, 0.55)'};
         }
 
         /* Universal text color classes */
