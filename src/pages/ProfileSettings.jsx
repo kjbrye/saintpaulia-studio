@@ -14,7 +14,7 @@ const THEME_OPTIONS = [
 {
   value: "glassmorphism",
   label: "Studio Violet (Default)",
-  description: "Ethereal glass effects with violet hues",
+  description: "Ethereal glass effects over vintage botanical illustrations",
   preview: "linear-gradient(135deg, #201833 0%, #4F3F73 100%)"
 },
 {
