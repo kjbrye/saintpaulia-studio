@@ -13,7 +13,7 @@ import BloomAnalytics from "../components/analytics/BloomAnalytics";
 import CollectionBreakdown from "../components/analytics/CollectionBreakdown";
 import CareStreakTracker from "../components/analytics/CareStreakTracker";
 
-const LOGO_URL = "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/690e3cd78523fb5fba0a8466/632f6e485_PlantLogos.png";
+const LOGO_URL = "/wax seal.svg";
 
 export default function AnalyticsDashboard() {
   const [timeRange, setTimeRange] = useState("6months"); // 1month, 3months, 6months, 1year, all

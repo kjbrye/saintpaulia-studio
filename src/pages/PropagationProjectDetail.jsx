@@ -13,7 +13,7 @@ import EnvironmentalChart from "../components/propagation/EnvironmentalChart";
 import WateringScheduleManager from "../components/propagation/WateringScheduleManager";
 import BatchManager from "../components/propagation/BatchManager";
 
-const LOGO_URL = "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/690e3cd78523fb5fba0a8466/632f6e485_PlantLogos.png";
+const LOGO_URL = "/wax seal.svg";
 
 export default function PropagationProjectDetail() {
   const navigate = useNavigate();

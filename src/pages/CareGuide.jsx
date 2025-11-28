@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { ArrowLeft, Leaf, Droplets, Sun, Thermometer, Wind, Sparkles, AlertCircle, HelpCircle, ChevronDown, BookOpen, Lightbulb } from "lucide-react";
 import { createPageUrl } from "@/utils";
 
-const LOGO_URL = "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/690e3cd78523fb5fba0a8466/632f6e485_PlantLogos.png";
+const LOGO_URL = "/wax seal.svg";
 
 export default function CareGuide() {
   const navigate = useNavigate();

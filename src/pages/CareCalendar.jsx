@@ -8,7 +8,7 @@ import { ArrowLeft, ChevronLeft, ChevronRight, Calendar as CalendarIcon, Droplet
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameMonth, isSameDay, addMonths, subMonths, isToday, isPast, isFuture, startOfWeek, endOfWeek, addDays, differenceInDays } from "date-fns";
 import QuickCareButtons from "../components/plants/QuickCareButtons";
 
-const LOGO_URL = "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/690e3cd78523fb5fba0a8466/632f6e485_PlantLogos.png";
+const LOGO_URL = "/wax seal.svg";
 
 const CARE_TYPES = {
   watering: { 

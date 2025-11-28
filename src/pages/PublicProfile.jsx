@@ -7,7 +7,7 @@ import { ArrowLeft, User, Leaf, Beaker } from "lucide-react";
 import { createPageUrl } from "@/utils";
 import PlantCard from "../components/plants/PlantCard";
 
-const LOGO_URL = "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/690e3cd78523fb5fba0a8466/632f6e485_PlantLogos.png";
+const LOGO_URL = "/wax seal.svg";
 
 export default function PublicProfile() {
   const navigate = useNavigate();
