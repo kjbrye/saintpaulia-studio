@@ -323,7 +323,7 @@ export default function Collection() {
                       <Plus className="w-8 h-8" style={{ color: "#F0EBFF", strokeWidth: 2.5 }} />
                     </div>
                     <p className="text-lg font-bold" style={{
-                  color: "#F0EBFF",
+                  color: "#FFFFFF",
                   fontFamily: "'Playfair Display', Georgia, serif"
                 }}>
                       Add Violet
@@ -345,7 +345,7 @@ export default function Collection() {
                     <Plus className="w-8 h-8" style={{ color: "#F0EBFF", strokeWidth: 2.5 }} />
                   </div>
                   <p className="text-lg font-bold" style={{
-                color: "#F0EBFF",
+                color: "#FFFFFF",
                 fontFamily: "'Playfair Display', Georgia, serif"
               }}>
                     Add Violet
