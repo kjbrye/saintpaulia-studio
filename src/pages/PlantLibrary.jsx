@@ -491,9 +491,9 @@ export default function PlantLibrary() {
               className={`neuro-button px-6 py-4 rounded-3xl font-semibold flex items-center justify-center gap-2 ${
                 hasActiveFilters ? "neuro-accent-raised" : ""
               }`}
-              style={{ color: hasActiveFilters 
+              style={{ color: hasActiveFilters
                 ? ((currentTheme === 'light' || currentTheme === 'minimal') ? "#FFFFFF" : "#A7F3D0")
-                : ((currentTheme === 'light' || currentTheme === 'minimal') ? 'var(--text-secondary)' : "#DDD6FE") }}
+                : ((currentTheme === 'light' || currentTheme === 'minimal') ? '#4C1D95' : "#6D28D9") }}
             >
               <Filter className="w-5 h-5" style={{ strokeWidth: 2 }} />
               <span className="hidden sm:inline">Filters</span>
@@ -515,7 +515,7 @@ export default function PlantLibrary() {
             <button
               onClick={() => setShowCollectionManager(true)}
               className="neuro-button px-6 py-4 rounded-3xl font-semibold flex items-center justify-center gap-2"
-              style={{ color: (currentTheme === 'light' || currentTheme === 'minimal') ? 'var(--text-secondary)' : "#DDD6FE" }}
+              style={{ color: (currentTheme === 'light' || currentTheme === 'minimal') ? '#4C1D95' : "#6D28D9" }}
             >
               <Folder className="w-5 h-5" style={{ strokeWidth: 2 }} />
               <span className="hidden sm:inline">Collections</span>
@@ -523,7 +523,7 @@ export default function PlantLibrary() {
             <button
               onClick={() => setShowLocationManager(true)}
               className="neuro-button px-6 py-4 rounded-3xl font-semibold flex items-center justify-center gap-2"
-              style={{ color: (currentTheme === 'light' || currentTheme === 'minimal') ? 'var(--text-secondary)' : "#DDD6FE" }}
+              style={{ color: (currentTheme === 'light' || currentTheme === 'minimal') ? '#4C1D95' : "#6D28D9" }}
             >
               <MapPin className="w-5 h-5" style={{ strokeWidth: 2 }} />
               <span className="hidden sm:inline">Locations</span>
@@ -540,9 +540,9 @@ export default function PlantLibrary() {
               className={`neuro-button px-6 py-4 rounded-3xl font-semibold flex items-center justify-center gap-2 ${
                 compareMode ? "neuro-accent-raised" : ""
               }`}
-              style={{ color: compareMode 
+              style={{ color: compareMode
                 ? ((currentTheme === 'light' || currentTheme === 'minimal') ? "#FFFFFF" : "#F0EBFF")
-                : ((currentTheme === 'light' || currentTheme === 'minimal') ? 'var(--text-secondary)' : "#DDD6FE") }}
+                : ((currentTheme === 'light' || currentTheme === 'minimal') ? '#4C1D95' : "#6D28D9") }}
             >
               <GitCompare className="w-5 h-5" style={{ strokeWidth: 2 }} />
               <span className="hidden sm:inline">Compare</span>
@@ -559,16 +559,16 @@ export default function PlantLibrary() {
               className={`neuro-button px-6 py-4 rounded-3xl font-semibold flex items-center justify-center gap-2 ${
                 bulkMode ? "neuro-accent-raised" : ""
               }`}
-              style={{ color: bulkMode 
+              style={{ color: bulkMode
                 ? ((currentTheme === 'light' || currentTheme === 'minimal') ? "#FFFFFF" : "#A7F3D0")
-                : ((currentTheme === 'light' || currentTheme === 'minimal') ? 'var(--text-secondary)' : "#DDD6FE") }}
+                : ((currentTheme === 'light' || currentTheme === 'minimal') ? '#4C1D95' : "#6D28D9") }}
             >
               <CheckSquare className="w-5 h-5" style={{ strokeWidth: 2 }} />
               <span className="hidden sm:inline">Bulk Care</span>
             </button>
             <Link to={createPageUrl("PrintLabels")}>
               <button className="neuro-button px-6 py-4 rounded-3xl font-semibold flex items-center justify-center gap-2"
-                style={{ color: (currentTheme === 'light' || currentTheme === 'minimal') ? 'var(--text-secondary)' : "#DDD6FE" }}>
+                style={{ color: (currentTheme === 'light' || currentTheme === 'minimal') ? '#4C1D95' : "#6D28D9" }}>
                 <Tag className="w-5 h-5" style={{ strokeWidth: 2 }} />
                 <span className="hidden sm:inline">Print Labels</span>
               </button>
