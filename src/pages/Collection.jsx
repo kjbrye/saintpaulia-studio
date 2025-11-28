@@ -4,7 +4,7 @@ import { base44 } from "@/api/base44Client";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
-import { Beaker, Library, ArrowRight, Star, TrendingUp, Calendar, Droplets, Plus, User, BarChart3, Bug, Package, Flower2, Info } from "lucide-react";
+import { Beaker, Library, Star, TrendingUp, Calendar, Droplets, Plus, User, BarChart3, Bug, Package, Flower2, Info } from "lucide-react";
 import StatsCard from "../components/plants/StatsCard";
 import RecentActivityWidget from "../components/dashboard/RecentActivityWidget";
 import ContextualTooltip from "../components/onboarding/ContextualTooltip";
@@ -206,25 +206,19 @@ export default function Collection() {
               delay={1000}>
 
                   <Link to={createPageUrl("PlantLibrary")}>
-                <button className="neuro-button w-full px-6 py-5 rounded-3xl font-semibold flex items-center justify-between gap-2"
+                <button className="neuro-button w-full px-6 py-5 rounded-3xl font-semibold flex items-center justify-center gap-3"
                 style={{ color: 'var(--text-secondary)' }}>
-                  <div className="flex items-center gap-3">
-                    <Library className="w-5 h-5" style={{ strokeWidth: 2 }} />
-                    <span>Library</span>
-                  </div>
-                  <ArrowRight className="w-5 h-5" style={{ strokeWidth: 2 }} />
+                  <Library className="w-5 h-5" style={{ strokeWidth: 2 }} />
+                  <span>Library</span>
                 </button>
               </Link>
                 </ContextualTooltip> :
 
             <Link to={createPageUrl("PlantLibrary")}>
-                <button className="neuro-button w-full px-6 py-5 rounded-3xl font-semibold flex items-center justify-between gap-2"
+                <button className="neuro-button w-full px-6 py-5 rounded-3xl font-semibold flex items-center justify-center gap-3"
               style={{ color: 'var(--text-secondary)' }}>
-                  <div className="flex items-center gap-3">
-                    <Library className="w-5 h-5" style={{ strokeWidth: 2 }} />
-                    <span>Library</span>
-                  </div>
-                  <ArrowRight className="w-5 h-5" style={{ strokeWidth: 2 }} />
+                  <Library className="w-5 h-5" style={{ strokeWidth: 2 }} />
+                  <span>Library</span>
                 </button>
               </Link>
             }
@@ -239,77 +233,56 @@ export default function Collection() {
               delay={1500}>
 
                   <Link to={createPageUrl("CareCalendar")}>
-                <button className="neuro-button w-full px-6 py-5 rounded-3xl font-semibold flex items-center justify-between gap-2"
+                <button className="neuro-button w-full px-6 py-5 rounded-3xl font-semibold flex items-center justify-center gap-3"
                 style={{ color: 'var(--text-secondary)' }}>
-                  <div className="flex items-center gap-3">
-                    <Calendar className="w-5 h-5" style={{ strokeWidth: 2 }} />
-                    <span>Calendar</span>
-                  </div>
-                  <ArrowRight className="w-5 h-5" style={{ strokeWidth: 2 }} />
+                  <Calendar className="w-5 h-5" style={{ strokeWidth: 2 }} />
+                  <span>Calendar</span>
                 </button>
               </Link>
                 </ContextualTooltip> :
 
             <Link to={createPageUrl("CareCalendar")}>
-                <button className="neuro-button w-full px-6 py-5 rounded-3xl font-semibold flex items-center justify-between gap-2"
+                <button className="neuro-button w-full px-6 py-5 rounded-3xl font-semibold flex items-center justify-center gap-3"
               style={{ color: 'var(--text-secondary)' }}>
-                  <div className="flex items-center gap-3">
-                    <Calendar className="w-5 h-5" style={{ strokeWidth: 2 }} />
-                    <span>Calendar</span>
-                  </div>
-                  <ArrowRight className="w-5 h-5" style={{ strokeWidth: 2 }} />
+                  <Calendar className="w-5 h-5" style={{ strokeWidth: 2 }} />
+                  <span>Calendar</span>
                 </button>
               </Link>
             }
               
               <Link to={createPageUrl("Projects")}>
-                <button className="neuro-button w-full px-6 py-5 rounded-3xl font-semibold flex items-center justify-between gap-2"
+                <button className="neuro-button w-full px-6 py-5 rounded-3xl font-semibold flex items-center justify-center gap-3"
               style={{ color: 'var(--text-secondary)' }}>
-                  <div className="flex items-center gap-3">
-                    <Beaker className="w-5 h-5" style={{ strokeWidth: 2 }} />
-                    <span>Projects</span>
-                  </div>
-                  <ArrowRight className="w-5 h-5" style={{ strokeWidth: 2 }} />
+                  <Beaker className="w-5 h-5" style={{ strokeWidth: 2 }} />
+                  <span>Projects</span>
                 </button>
               </Link>
               <Link to={createPageUrl("AnalyticsDashboard")}>
-                <button className="neuro-button w-full px-6 py-5 rounded-3xl font-semibold flex items-center justify-between gap-2"
+                <button className="neuro-button w-full px-6 py-5 rounded-3xl font-semibold flex items-center justify-center gap-3"
               style={{ color: 'var(--text-secondary)' }}>
-                  <div className="flex items-center gap-3">
-                    <BarChart3 className="w-5 h-5" style={{ strokeWidth: 2 }} />
-                    <span>Analytics</span>
-                  </div>
-                  <ArrowRight className="w-5 h-5" style={{ strokeWidth: 2 }} />
+                  <BarChart3 className="w-5 h-5" style={{ strokeWidth: 2 }} />
+                  <span>Analytics</span>
                 </button>
               </Link>
               <Link to={createPageUrl("Wishlist")}>
-                <button className="neuro-button w-full px-6 py-5 rounded-3xl font-semibold flex items-center justify-between gap-2"
+                <button className="neuro-button w-full px-6 py-5 rounded-3xl font-semibold flex items-center justify-center gap-3"
               style={{ color: 'var(--text-secondary)' }}>
-                  <div className="flex items-center gap-3">
-                    <Star className="w-5 h-5" style={{ strokeWidth: 2 }} />
-                    <span>Wishlist</span>
-                  </div>
-                  <ArrowRight className="w-5 h-5" style={{ strokeWidth: 2 }} />
+                  <Star className="w-5 h-5" style={{ strokeWidth: 2 }} />
+                  <span>Wishlist</span>
                 </button>
               </Link>
               <Link to={createPageUrl("SupplyInventory")}>
-                <button className="neuro-button w-full px-6 py-5 rounded-3xl font-semibold flex items-center justify-between gap-2"
+                <button className="neuro-button w-full px-6 py-5 rounded-3xl font-semibold flex items-center justify-center gap-3"
               style={{ color: 'var(--text-secondary)' }}>
-                  <div className="flex items-center gap-3">
-                    <Package className="w-5 h-5" style={{ strokeWidth: 2 }} />
-                    <span>Supplies</span>
-                  </div>
-                  <ArrowRight className="w-5 h-5" style={{ strokeWidth: 2 }} />
+                  <Package className="w-5 h-5" style={{ strokeWidth: 2 }} />
+                  <span>Supplies</span>
                 </button>
               </Link>
               <Link to={createPageUrl("Info")}>
-                <button className="neuro-button w-full px-6 py-5 rounded-3xl font-semibold flex items-center justify-between gap-2"
+                <button className="neuro-button w-full px-6 py-5 rounded-3xl font-semibold flex items-center justify-center gap-3"
               style={{ color: 'var(--text-secondary)' }}>
-                  <div className="flex items-center gap-3">
-                    <Info className="w-5 h-5" style={{ strokeWidth: 2 }} />
-                    <span>Info</span>
-                  </div>
-                  <ArrowRight className="w-5 h-5" style={{ strokeWidth: 2 }} />
+                  <Info className="w-5 h-5" style={{ strokeWidth: 2 }} />
+                  <span>Info</span>
                 </button>
               </Link>
             </div>
