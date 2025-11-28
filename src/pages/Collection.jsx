@@ -314,21 +314,21 @@ export default function Collection() {
             onDismiss={dismissTooltip}>
 
                 <Link to={createPageUrl("AddPlant")}>
-                  <div className="neuro-accent-raised rounded-3xl p-8 cursor-pointer group h-full flex flex-col items-center justify-center text-center">
-                    <div className="w-16 h-16 rounded-2xl flex items-center justify-center mb-4 neuro-icon-well group-hover:scale-110 transition-transform"
+                  <div className="crystal-glass-accent rounded-3xl p-8 cursor-pointer group h-full flex flex-col items-center justify-center text-center">
+                    <div className="w-16 h-16 rounded-2xl flex items-center justify-center mb-4 neuro-icon-well group-hover:scale-110 transition-transform relative z-10"
                 style={{
-                  background: "rgba(255, 255, 255, 0.1)",
-                  border: "1px solid rgba(255, 255, 255, 0.2)"
+                  background: "rgba(255, 255, 255, 0.15)",
+                  border: "2px solid rgba(255, 255, 255, 0.25)"
                 }}>
                       <Plus className="w-8 h-8" style={{ color: "#F0EBFF", strokeWidth: 2.5 }} />
                     </div>
-                    <p className="text-lg font-bold" style={{
+                    <p className="text-lg font-bold relative z-10" style={{
                   color: "#F0EBFF",
                   fontFamily: "'Playfair Display', Georgia, serif"
                 }}>
                       Add Violet
                     </p>
-                    <p className="text-xs mt-1" style={{ color: "#F0EBFF", opacity: 0.8 }}>
+                    <p className="text-xs mt-1 relative z-10" style={{ color: "#F0EBFF", opacity: 0.9 }}>
                       Expand your collection
                     </p>
                   </div>
@@ -336,21 +336,21 @@ export default function Collection() {
               </ContextualTooltip> :
 
           <Link to={createPageUrl("AddPlant")}>
-                <div className="neuro-accent-raised rounded-3xl p-8 cursor-pointer group h-full flex flex-col items-center justify-center text-center">
-                  <div className="mb-4 opacity-70 rounded-2xl w-16 h-16 flex items-center justify-center neuro-icon-well group-hover:scale-110 transition-transform"
+                <div className="crystal-glass-accent rounded-3xl p-8 cursor-pointer group h-full flex flex-col items-center justify-center text-center">
+                  <div className="mb-4 rounded-2xl w-16 h-16 flex items-center justify-center neuro-icon-well group-hover:scale-110 transition-transform relative z-10"
               style={{
-                background: "rgba(255, 255, 255, 0.1)",
-                border: "1px solid rgba(255, 255, 255, 0.2)"
+                background: "rgba(255, 255, 255, 0.15)",
+                border: "2px solid rgba(255, 255, 255, 0.25)"
               }}>
                     <Plus className="w-8 h-8" style={{ color: "#F0EBFF", strokeWidth: 2.5 }} />
                   </div>
-                  <p className="text-lg font-bold" style={{
+                  <p className="text-lg font-bold relative z-10" style={{
                 color: "#F0EBFF",
                 fontFamily: "'Playfair Display', Georgia, serif"
               }}>
                     Add Violet
                   </p>
-                  <p className="text-xs mt-1" style={{ color: "#F0EBFF", opacity: 0.8 }}>
+                  <p className="text-xs mt-1 relative z-10" style={{ color: "#F0EBFF", opacity: 0.9 }}>
                     Expand your collection
                   </p>
                 </div>
