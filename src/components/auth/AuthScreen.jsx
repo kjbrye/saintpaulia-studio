@@ -1,12 +1,36 @@
 import React, { useState } from "react";
 import { supabase } from "../../lib/supabaseClient";
 
+// Botanical theme colors from Layout.jsx
+const theme = {
+  textPrimary: "#2f352e",
+  textSecondary: "#4a5247",
+  textMuted: "#6c7469",
+  accentPrimary: "#b48b68",
+  accentSecondary: "#d6c7ad",
+  accentGlow: "#f0e2c8",
+  glassCardBg: "linear-gradient(145deg, rgba(129, 139, 126, 0.82) 0%, rgba(111, 121, 110, 0.78) 100%)",
+  glassCardBorder: "rgba(255, 255, 255, 0.55)",
+  glassCardShadow: "16px 22px 36px rgba(58, 65, 55, 0.45), -10px -12px 20px rgba(255, 255, 255, 0.25), 0 4px 8px rgba(0, 0, 0, 0.15)",
+  glassInputBg: "linear-gradient(135deg, rgba(129, 139, 126, 0.58) 0%, rgba(111, 121, 110, 0.52) 100%)",
+  glassInputBorder: "rgba(255, 255, 255, 0.4)",
+  glassInputShadow: "inset 0 2px 4px rgba(38, 44, 36, 0.25)",
+  glassInputFocusBorder: "rgba(180, 139, 104, 0.55)",
+  glassInputFocusShadow: "0 0 0 4px rgba(180, 139, 104, 0.25), inset 0 1px 2px rgba(38, 44, 36, 0.2)",
+  glassAccentBg: "linear-gradient(145deg, rgba(180, 139, 104, 0.9) 0%, rgba(150, 114, 82, 0.88) 100%)",
+  glassAccentBorder: "rgba(255, 237, 213, 0.7)",
+  glassAccentShadow: "0 14px 28px rgba(77, 57, 39, 0.42), 0 4px 8px rgba(0, 0, 0, 0.15)",
+  glassAccentHoverShadow: "0 18px 38px rgba(77, 57, 39, 0.5), 0 0 48px rgba(180, 139, 104, 0.5), 0 6px 12px rgba(0, 0, 0, 0.18)",
+};
+
 export default function AuthScreen() {
   const [mode, setMode] = useState("signin"); // "signin" | "signup"
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
+  const [focusedInput, setFocusedInput] = useState(null);
+  const [isButtonHovered, setIsButtonHovered] = useState(false);
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -37,6 +61,20 @@ export default function AuthScreen() {
     }
   }
 
+  const inputStyle = (inputName) => ({
+    padding: "0.65rem 0.9rem",
+    borderRadius: "0.6rem",
+    border: `1.5px solid ${focusedInput === inputName ? theme.glassInputFocusBorder : theme.glassInputBorder}`,
+    background: theme.glassInputBg,
+    color: theme.textPrimary,
+    fontSize: "0.95rem",
+    fontFamily: "'Inter', sans-serif",
+    outline: "none",
+    boxShadow: focusedInput === inputName ? theme.glassInputFocusShadow : theme.glassInputShadow,
+    transition: "all 0.2s ease",
+    backdropFilter: "blur(8px)",
+  });
+
   return (
     <div
       style={{
@@ -44,80 +82,152 @@ export default function AuthScreen() {
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        background: "#050816",
-        color: "#f5f5f5",
-        fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, sans-serif",
+        background: "linear-gradient(rgba(255,255,255,0.3), rgba(255,255,255,0.3)), url('/background.png')",
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundAttachment: "fixed",
+        fontFamily: "'Inter', sans-serif",
       }}
     >
+      {/* Decorative botanical flourish */}
+      <div
+        style={{
+          position: "absolute",
+          top: "5%",
+          left: "50%",
+          transform: "translateX(-50%)",
+          width: "120px",
+          height: "60px",
+          opacity: 0.4,
+          background: `radial-gradient(ellipse, ${theme.accentPrimary} 0%, transparent 70%)`,
+          filter: "blur(20px)",
+        }}
+      />
+
       <div
         style={{
           width: "100%",
           maxWidth: 420,
-          padding: "2rem",
-          borderRadius: "1rem",
-          background: "rgba(15, 23, 42, 0.95)",
-          boxShadow: "0 20px 50px rgba(0,0,0,0.6)",
-          border: "1px solid rgba(148, 163, 184, 0.4)",
+          padding: "2.5rem",
+          borderRadius: "1.25rem",
+          background: theme.glassCardBg,
+          boxShadow: theme.glassCardShadow,
+          border: `2px solid ${theme.glassCardBorder}`,
+          backdropFilter: "blur(24px) brightness(1.03) saturate(1.25)",
+          position: "relative",
+          overflow: "hidden",
         }}
       >
-        <h1 style={{ fontSize: "1.6rem", marginBottom: "0.5rem" }}>
+        {/* Inner glow effect */}
+        <div
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            height: "80px",
+            background: "linear-gradient(to bottom, rgba(255,255,255,0.15) 0%, transparent 100%)",
+            borderRadius: "1.25rem 1.25rem 0 0",
+            pointerEvents: "none",
+          }}
+        />
+
+        <h1
+          style={{
+            fontSize: "1.8rem",
+            marginBottom: "0.5rem",
+            color: theme.textPrimary,
+            fontFamily: "'Playfair Display', serif",
+            fontWeight: 600,
+            textShadow: "0 2px 8px rgba(58, 65, 55, 0.35), 0 1px 3px rgba(0, 0, 0, 0.25)",
+            position: "relative",
+          }}
+        >
           Saintpaulia Studio
         </h1>
-        <p style={{ marginBottom: "1.5rem", color: "#cbd5f5" }}>
+        <p
+          style={{
+            marginBottom: "1.75rem",
+            color: theme.textSecondary,
+            fontSize: "0.95rem",
+            lineHeight: 1.5,
+          }}
+        >
           {mode === "signin"
-            ? "Log in to your African violet studio."
+            ? "Welcome back to your African violet studio."
             : "Create an account to start tracking your violets."}
         </p>
 
-        <form onSubmit={handleSubmit} style={{ display: "grid", gap: "0.75rem" }}>
-          <label style={{ display: "grid", gap: "0.25rem", fontSize: "0.9rem" }}>
-            <span>Email</span>
+        <form onSubmit={handleSubmit} style={{ display: "grid", gap: "1rem" }}>
+          <label style={{ display: "grid", gap: "0.35rem" }}>
+            <span
+              style={{
+                fontSize: "0.85rem",
+                fontWeight: 500,
+                color: theme.textSecondary,
+                letterSpacing: "0.02em",
+              }}
+            >
+              Email
+            </span>
             <input
               type="email"
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              style={{
-                padding: "0.5rem 0.75rem",
-                borderRadius: "0.5rem",
-                border: "1px solid rgba(148, 163, 184, 0.6)",
-                background: "rgba(15, 23, 42, 0.8)",
-                color: "#f9fafb",
-              }}
+              onFocus={() => setFocusedInput("email")}
+              onBlur={() => setFocusedInput(null)}
+              placeholder="your@email.com"
+              style={inputStyle("email")}
             />
           </label>
 
-          <label style={{ display: "grid", gap: "0.25rem", fontSize: "0.9rem" }}>
-            <span>Password</span>
+          <label style={{ display: "grid", gap: "0.35rem" }}>
+            <span
+              style={{
+                fontSize: "0.85rem",
+                fontWeight: 500,
+                color: theme.textSecondary,
+                letterSpacing: "0.02em",
+              }}
+            >
+              Password
+            </span>
             <input
               type="password"
               required
               minLength={6}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              style={{
-                padding: "0.5rem 0.75rem",
-                borderRadius: "0.5rem",
-                border: "1px solid rgba(148, 163, 184, 0.6)",
-                background: "rgba(15, 23, 42, 0.8)",
-                color: "#f9fafb",
-              }}
+              onFocus={() => setFocusedInput("password")}
+              onBlur={() => setFocusedInput(null)}
+              placeholder="Enter your password"
+              style={inputStyle("password")}
             />
           </label>
 
           <button
             type="submit"
             disabled={loading}
+            onMouseEnter={() => setIsButtonHovered(true)}
+            onMouseLeave={() => setIsButtonHovered(false)}
             style={{
-              marginTop: "0.5rem",
-              padding: "0.6rem 0.75rem",
+              marginTop: "0.75rem",
+              padding: "0.75rem 1rem",
               borderRadius: "0.75rem",
-              border: "none",
+              border: `2px solid ${theme.glassAccentBorder}`,
               cursor: loading ? "default" : "pointer",
               fontWeight: 600,
-              background:
-                "linear-gradient(135deg, rgba(96, 165, 250, 0.9), rgba(129, 140, 248, 0.9))",
-              color: "#0b1020",
+              fontSize: "1rem",
+              fontFamily: "'Inter', sans-serif",
+              background: theme.glassAccentBg,
+              color: "#fff",
+              textShadow: "0 1px 2px rgba(77, 57, 39, 0.4)",
+              boxShadow: isButtonHovered && !loading ? theme.glassAccentHoverShadow : theme.glassAccentShadow,
+              transition: "all 0.25s ease",
+              transform: isButtonHovered && !loading ? "translateY(-1px)" : "translateY(0)",
+              opacity: loading ? 0.7 : 1,
+              letterSpacing: "0.02em",
             }}
           >
             {loading
@@ -131,14 +241,27 @@ export default function AuthScreen() {
         {message && (
           <p
             style={{
-              marginTop: "0.75rem",
+              marginTop: "1rem",
               fontSize: "0.85rem",
-              color: "#e5e7eb",
+              color: message.includes("Check your email") ? theme.accentPrimary : "#8b5a3c",
+              padding: "0.75rem",
+              borderRadius: "0.5rem",
+              background: "rgba(180, 139, 104, 0.15)",
+              border: "1px solid rgba(180, 139, 104, 0.3)",
             }}
           >
             {message}
           </p>
         )}
+
+        {/* Decorative divider */}
+        <div
+          style={{
+            margin: "1.5rem 0 1rem",
+            height: "1px",
+            background: "linear-gradient(90deg, rgba(255, 255, 255, 0) 0%, rgba(255, 237, 213, 0.5) 50%, rgba(255, 255, 255, 0) 100%)",
+          }}
+        />
 
         <button
           type="button"
@@ -147,14 +270,18 @@ export default function AuthScreen() {
             setMessage("");
           }}
           style={{
-            marginTop: "1rem",
+            width: "100%",
             background: "none",
             border: "none",
-            color: "#93c5fd",
-            fontSize: "0.85rem",
+            color: theme.accentPrimary,
+            fontSize: "0.9rem",
             cursor: "pointer",
-            textDecoration: "underline",
+            fontFamily: "'Inter', sans-serif",
+            fontWeight: 500,
+            transition: "color 0.2s ease",
           }}
+          onMouseEnter={(e) => e.target.style.color = "#9a6f4d"}
+          onMouseLeave={(e) => e.target.style.color = theme.accentPrimary}
         >
           {mode === "signin"
             ? "Need an account? Sign up"
