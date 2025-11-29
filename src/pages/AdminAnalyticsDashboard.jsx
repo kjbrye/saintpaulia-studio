@@ -4,7 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { ArrowLeft, TrendingUp, Users, Library, Activity, Calendar, BarChart3 } from "lucide-react";
-import { AreaChart, Area, BarChart, Bar, LineChart, Line, PieChart as RechartsPieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
+import { AreaChart, Area, BarChart, Bar, LineChart, Line, PieChart as RechartsPieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 import { format, subDays, startOfMonth, endOfMonth, eachDayOfInterval, eachMonthOfInterval, startOfYear } from "date-fns";
 
 const COLORS = ["#C4B5FD", "#A7F3D0", "#FCD34D", "#FCA5A5", "#7DD3FC", "#F0ABFC", "#E9D5FF"];
@@ -13,10 +13,12 @@ export default function AdminAnalyticsDashboard() {
   const navigate = useNavigate();
   const [timeRange, setTimeRange] = useState("30days");
 
-  const { data: currentUser, isLoading: isLoadingUser } = useQuery({
+  const { data: currentUser, isLoading: isLoadingUser, isError: isAuthError } = useQuery({
     queryKey: ['currentUser'],
     queryFn: () => base44.auth.me(),
   });
+
+  const isAdmin = currentUser?.role === 'admin';
 
   // Redirect if not admin
   React.useEffect(() => {
@@ -26,23 +28,23 @@ export default function AdminAnalyticsDashboard() {
     }
   }, [currentUser, navigate]);
 
-  // Fetch all data
+  // Fetch all data - only when user is confirmed admin
   const { data: allUsers = [] } = useQuery({
     queryKey: ['allUsers'],
     queryFn: () => base44.entities.User.list(),
-    initialData: []
+    enabled: isAdmin,
   });
 
   const { data: allPlants = [] } = useQuery({
     queryKey: ['allPlants'],
     queryFn: () => base44.entities.Plant.list(),
-    initialData: []
+    enabled: isAdmin,
   });
 
   const { data: allCareLogs = [] } = useQuery({
     queryKey: ['allCareLogs'],
     queryFn: () => base44.entities.CareLog.list(),
-    initialData: []
+    enabled: isAdmin,
   });
 
   // Analytics calculations
@@ -70,7 +72,7 @@ export default function AdminAnalyticsDashboard() {
       const months = eachMonthOfInterval({ start: startDate, end: now });
       months.forEach(month => {
         const monthEnd = endOfMonth(month);
-        const usersAtMonth = allUsers.filter(u => new Date(u.created_date) <= monthEnd).length;
+        const usersAtMonth = allUsers.filter(u => u.created_date && new Date(u.created_date) <= monthEnd).length;
         userGrowthData.push({
           date: format(month, "MMM yyyy"),
           users: usersAtMonth
@@ -79,7 +81,7 @@ export default function AdminAnalyticsDashboard() {
     } else {
       const days = eachDayOfInterval({ start: startDate, end: now });
       days.forEach(day => {
-        const usersAtDay = allUsers.filter(u => new Date(u.created_date) <= day).length;
+        const usersAtDay = allUsers.filter(u => u.created_date && new Date(u.created_date) <= day).length;
         userGrowthData.push({
           date: format(day, "MMM d"),
           users: usersAtDay
@@ -95,6 +97,7 @@ export default function AdminAnalyticsDashboard() {
         const monthStart = startOfMonth(month);
         const monthEnd = endOfMonth(month);
         const plantsInMonth = allPlants.filter(p => {
+          if (!p.created_date) return false;
           const created = new Date(p.created_date);
           return created >= monthStart && created <= monthEnd;
         }).length;
@@ -107,6 +110,7 @@ export default function AdminAnalyticsDashboard() {
       const days = eachDayOfInterval({ start: startDate, end: now });
       days.forEach(day => {
         const plantsOnDay = allPlants.filter(p => {
+          if (!p.created_date) return false;
           const created = new Date(p.created_date);
           return format(created, "yyyy-MM-dd") === format(day, "yyyy-MM-dd");
         }).length;
@@ -125,6 +129,7 @@ export default function AdminAnalyticsDashboard() {
         const monthStart = startOfMonth(month);
         const monthEnd = endOfMonth(month);
         const careInMonth = allCareLogs.filter(c => {
+          if (!c.care_date) return false;
           const careDate = new Date(c.care_date);
           return careDate >= monthStart && careDate <= monthEnd;
         }).length;
@@ -137,6 +142,7 @@ export default function AdminAnalyticsDashboard() {
       const days = eachDayOfInterval({ start: startDate, end: now });
       days.forEach(day => {
         const careOnDay = allCareLogs.filter(c => {
+          if (!c.care_date) return false;
           const careDate = new Date(c.care_date);
           return format(careDate, "yyyy-MM-dd") === format(day, "yyyy-MM-dd");
         }).length;
@@ -194,8 +200,48 @@ export default function AdminAnalyticsDashboard() {
     );
   }
 
-  if (!currentUser || currentUser.role !== 'admin') {
-    return null;
+  if (isAuthError || !currentUser) {
+    return (
+      <div className="min-h-screen py-8 px-4 flex items-center justify-center">
+        <div className="text-center glass-card rounded-3xl p-8 max-w-md">
+          <h2 className="text-xl font-bold mb-4" style={{ color: "var(--text-primary)" }}>
+            Authentication Required
+          </h2>
+          <p className="mb-6" style={{ color: "var(--text-secondary)" }}>
+            Please log in to access the admin dashboard.
+          </p>
+          <button
+            onClick={() => navigate(createPageUrl("Login"))}
+            className="glass-accent-lavender px-6 py-3 rounded-2xl font-semibold"
+            style={{ color: "#F0EBFF" }}
+          >
+            Go to Login
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  if (!isAdmin) {
+    return (
+      <div className="min-h-screen py-8 px-4 flex items-center justify-center">
+        <div className="text-center glass-card rounded-3xl p-8 max-w-md">
+          <h2 className="text-xl font-bold mb-4" style={{ color: "var(--text-primary)" }}>
+            Access Denied
+          </h2>
+          <p className="mb-6" style={{ color: "var(--text-secondary)" }}>
+            Admin privileges are required to view this page.
+          </p>
+          <button
+            onClick={() => navigate(createPageUrl("Collection"))}
+            className="glass-accent-lavender px-6 py-3 rounded-2xl font-semibold"
+            style={{ color: "#F0EBFF" }}
+          >
+            Go to Collection
+          </button>
+        </div>
+      </div>
+    );
   }
 
   return (
