@@ -312,6 +312,8 @@ VITE_HCAPTCHA_SECRET_KEY=your_hcaptcha_key  # Optional
 import { Component } from "@/components/Component";  // src/
 ```
 
+> Note: ESLint enforces using the `@/` import alias and warns when importing the raw Supabase client or using deep relative imports. Prefer `base44` (`@/api/base44Client`) for data operations.
+
 ### Key Patterns to Follow
 
 1. **Use TanStack Query** for all data fetching - never fetch in useEffect

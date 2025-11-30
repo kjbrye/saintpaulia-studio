@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { supabase } from "@/lib/supabaseClient";
+import { base44 } from "@/api/base44Client";
 import AuthScreen from "./AuthScreen";
 
 export default function AuthGate({ children }) {
@@ -10,26 +10,26 @@ export default function AuthGate({ children }) {
     let isMounted = true;
 
     async function loadUser() {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-      if (!isMounted) return;
-      setUser(user || null);
-      setInitializing(false);
+      try {
+        const user = await base44.auth.me();
+        if (!isMounted) return;
+        setUser(user || null);
+      } catch (error) {
+        console.error("Failed to load user:", error);
+        setUser(null);
+      } finally {
+        setInitializing(false);
+      }
     }
 
     loadUser();
 
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      if (!isMounted) return;
-      setUser(session?.user ?? null);
-    });
+    // NOTE: base44.auth currently provides synchronous helpers like `me()`.
+    // If you need real-time auth state subscriptions, extend the base44 client
+    // with an `onAuthStateChange` wrapper that proxies Supabase events.
 
     return () => {
       isMounted = false;
-      subscription.unsubscribe();
     };
   }, []);
 

@@ -42,6 +42,21 @@ export default [
           varsIgnorePattern: '^React$',
         },
       ],
+      // Encourage using the project import alias and discourage deep relative imports
+      'no-restricted-imports': [
+        'warn',
+        {
+          paths: [
+            {
+              name: '@/lib/supabaseClient',
+              message:
+                "Import `base44` from '@/api/base44Client' instead of importing the raw Supabase client.",
+            },
+          ],
+          // Warn on deep relative imports that cross multiple folders (encourage '@/...' alias)
+          patterns: ['../../**', '../../../**'],
+        },
+      ],
     },
   },
   {

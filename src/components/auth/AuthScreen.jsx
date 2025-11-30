@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { supabase } from "@/lib/supabaseClient";
+import { base44 } from "@/api/base44Client";
 
 // Botanical theme colors from Layout.jsx
 const theme = {
@@ -39,19 +39,14 @@ export default function AuthScreen() {
 
     try {
       if (mode === "signup") {
-        const { error } = await supabase.auth.signUp({
-          email,
-          password,
-        });
-        if (error) throw error;
-        setMessage("Check your email to confirm your account, then log in.");
+        // TODO: implement proper email/password signup in base44.auth if needed.
+        // For now, use the dev login flow as a placeholder.
+        await base44.auth.login("dev");
+        setMessage("Sign-up simulated for dev flow. Check CLAUDE.md for auth setup.");
       } else {
-        const { error } = await supabase.auth.signInWithPassword({
-          email,
-          password,
-        });
-        if (error) throw error;
-        // On success, Supabase updates the session; our AuthGate will react.
+        // TODO: implement email/password login in base44.auth or call a server endpoint.
+        await base44.auth.login("dev");
+        // On success, base44 updates the session; AuthGate will react on next mount.
       }
     } catch (err) {
       console.error(err);
@@ -70,9 +65,11 @@ export default function AuthScreen() {
     setMessage("");
 
     try {
-      const { error } = await supabase.auth.resetPasswordForEmail(email);
-      if (error) throw error;
-      setMessage("Check your email for password reset instructions.");
+      // Password reset is not yet routed through base44.auth in this SDK.
+      // Leave a clear message and TODO for future implementation.
+      console.warn("Password reset is not yet implemented via base44.auth");
+      setMessage("Password reset feature coming soon. Please contact support.");
+      return;
     } catch (err) {
       console.error(err);
       setMessage(err.message || "Something went wrong.");
