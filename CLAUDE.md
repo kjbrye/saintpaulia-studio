@@ -346,6 +346,125 @@ const result = await base44.integrations.Core.UploadFile({ file });
 const imageUrl = result.file_url;
 ```
 
+## Claude Haiku LLM Integration
+
+Claude Haiku 4.5 can be enabled for AI-powered features like plant care suggestions and data extraction.
+
+### Configuration
+
+Set these environment variables in `.env.local`:
+
+```env
+# Enable Claude Haiku for LLM operations
+VITE_CLAUDE_HAIKU=true
+VITE_CLAUDE_MODEL=claude-haiku-4.5
+VITE_CLAUDE_API_KEY=sk-ant-your-api-key-here
+```
+
+**How to get your Claude API key:**
+1. Go to [console.anthropic.com](https://console.anthropic.com)
+2. Create an account or sign in
+3. Navigate to API Keys
+4. Create a new API key and copy it
+5. Paste it into `VITE_CLAUDE_API_KEY` in `.env.local`
+
+### Usage
+
+Once enabled, all `InvokeLLM` calls will use Claude Haiku:
+
+```javascript
+import { base44 } from "@/api/base44Client";
+
+// Simple text response
+const result = await base44.integrations.Core.InvokeLLM({
+  prompt: "What are signs of a healthy African violet?",
+});
+console.log(result.response); // Claude's response
+
+// Structured JSON response
+const structured = await base44.integrations.Core.InvokeLLM({
+  prompt: "Extract plant care information from this description",
+  response_json_schema: {
+    type: "object",
+    properties: {
+      water_frequency: { type: "string" },
+      light_requirements: { type: "string" },
+    },
+  },
+});
+console.log(structured.data); // Parsed JSON response
+```
+
+### Default Behavior
+
+If Claude Haiku is **disabled** (VITE_CLAUDE_HAIKU=false) or not configured:
+- LLM calls return mock responses with helpful messages
+- No API calls are made
+- Console logs indicate mock mode
+
+## Data Layer Standards & Checklist
+
+### Canonical Query Keys
+
+Use these exact keys for consistency and correct cache invalidation:
+
+| Feature | Query Key | Example |
+|---------|-----------|---------|
+| All plants | `['plants']` | `useQuery({ queryKey: ['plants'], queryFn: () => Plant.list() })` |
+| Single plant | `['plant', id]` | `useQuery({ queryKey: ['plant', plantId], ... })` |
+| Plant care logs | `['careLogs', plantId]` | `useQuery({ queryKey: ['careLogs', plantId], ... })` |
+| Plant health logs | `['healthLogs', plantId]` | `useQuery({ queryKey: ['healthLogs', plantId], ... })` |
+| Collections | `['collections']` | `useQuery({ queryKey: ['collections'], ... })` |
+| Supplies | `['supplies']` | `useQuery({ queryKey: ['supplies'], ... })` |
+| Current user | `['currentUser']` | `useQuery({ queryKey: ['currentUser'], ... })` |
+| Propagation projects | `['propagationProjects']` | `useQuery({ queryKey: ['propagationProjects'], ... })` |
+
+### Mutation + Invalidation Checklist
+
+Every mutation MUST follow this pattern:
+
+```javascript
+const queryClient = useQueryClient();
+const mutation = useMutation({
+  mutationFn: (data) => base44.entities.Plant.create(data),
+  onSuccess: () => {
+    // ✅ Always invalidate the parent query key(s)
+    queryClient.invalidateQueries({ queryKey: ['plants'] });
+    // If viewing detail and created within context, also invalidate detail:
+    // queryClient.invalidateQueries({ queryKey: ['plant', data.id] });
+  },
+  onError: (error) => {
+    console.error('Mutation failed:', error);
+    // Optionally show error toast
+  },
+});
+```
+
+**When to invalidate which keys:**
+- Creating a plant → invalidate `['plants']`
+- Updating a plant → invalidate `['plant', id]` and `['plants']`
+- Deleting a plant → invalidate `['plants']`
+- Adding care log → invalidate `['careLogs', plantId]`
+- Creating collection → invalidate `['collections']`
+
+### Do Not
+
+- ❌ Use direct `supabase.from()` or `supabase.auth.*` calls (use `base44.entities.*` instead)
+- ❌ Use `useEffect` for server data (use `useQuery` instead)
+- ❌ Forget to invalidate query keys after mutations (causes stale UI)
+- ❌ Use inconsistent query key formats (follow the table above)
+
+## TypeScript Policy
+
+**Current status**: This project is primarily JavaScript/JSX. TypeScript support is minimal.
+
+**Rules:**
+1. All new code should use `.js` or `.jsx` extensions
+2. If TypeScript becomes necessary in the future, a formal decision will be made and documented here
+3. Existing `.ts` files (e.g., `src/utils/index.ts`) should be migrated to `.js` or the project should adopt TypeScript repo-wide
+
+**For now**: Write JavaScript with clear variable names and JSDoc comments for documentation.
+
 ## Common Query Keys
 
 ```javascript

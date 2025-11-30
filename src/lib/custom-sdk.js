@@ -73,6 +73,24 @@ if (serviceRoleClient) {
 
 let serviceRoleFallbackWarned = false;
 
+// Claude Haiku LLM Configuration
+const claudeEnabled = getEnvVar("VITE_CLAUDE_HAIKU", "false") === "true";
+const claudeModel = getEnvVar("VITE_CLAUDE_MODEL", "claude-haiku-4.5");
+const claudeApiKey = getEnvVar("VITE_CLAUDE_API_KEY", "");
+
+// Dynamic Claude client initialization (only if enabled)
+let claudeClient = null;
+if (claudeEnabled && claudeApiKey) {
+  claudeClient = {
+    apiKey: claudeApiKey,
+    model: claudeModel,
+    baseUrl: "https://api.anthropic.com/v1",
+  };
+  console.log(`✓ Claude Haiku (${claudeModel}) enabled for LLM operations`);
+} else if (claudeEnabled && !claudeApiKey) {
+  console.warn("Claude Haiku is enabled but VITE_CLAUDE_API_KEY is not set");
+}
+
 /**
  * Base Entity class that provides CRUD operations compatible with Base44 SDK
  */
@@ -1091,34 +1109,111 @@ export function createCustomClient() {
           response_json_schema = null,
           file_urls = null,
         }) => {
-          console.warn("InvokeLLM called with:", {
+          console.log("InvokeLLM called with:", {
             prompt,
             add_context_from_internet,
             response_json_schema,
             file_urls,
+            claudeEnabled,
+            model: claudeModel,
           });
 
-          // TODO: Replace with actual OpenAI API call
-          // Example implementation:
-          // const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
-          // const response = await openai.chat.completions.create({
-          //   model: "gpt-4",
-          //   messages: [{ role: "user", content: prompt }],
-          //   response_format: response_json_schema ? { type: "json_object" } : undefined
-          // });
+          // If Claude is enabled and configured, use it
+          if (claudeEnabled && claudeClient && claudeApiKey) {
+            try {
+              const systemPrompt = `You are a helpful AI assistant for Saintpaulia Studio, an app for African violet collectors. 
+Respond helpfully and accurately about plant care, propagation, and cultivation.${
+                response_json_schema
+                  ? `\n\nIMPORTANT: You MUST respond with valid JSON matching this schema:\n${JSON.stringify(
+                      response_json_schema,
+                      null,
+                      2
+                    )}`
+                  : ""
+              }`;
 
+              const messages = [
+                {
+                  role: "user",
+                  content: prompt,
+                },
+              ];
+
+              const requestBody = {
+                model: claudeModel,
+                max_tokens: 1024,
+                system: systemPrompt,
+                messages: messages,
+              };
+
+              const response = await fetch(`${claudeClient.baseUrl}/messages`, {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                  "x-api-key": claudeApiKey,
+                  "anthropic-version": "2023-06-01",
+                },
+                body: JSON.stringify(requestBody),
+              });
+
+              if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(
+                  `Claude API error: ${response.status} ${JSON.stringify(errorData)}`
+                );
+              }
+
+              const data = await response.json();
+              const responseText =
+                data.content?.[0]?.type === "text" ? data.content[0].text : "";
+
+              if (response_json_schema) {
+                try {
+                  // Parse JSON response
+                  const jsonMatch = responseText.match(/\{[\s\S]*\}/);
+                  const parsedData = jsonMatch ? JSON.parse(jsonMatch[0]) : {};
+                  return {
+                    data: parsedData,
+                    model: claudeModel,
+                    usage: data.usage,
+                  };
+                } catch (parseError) {
+                  console.error("Failed to parse Claude JSON response:", parseError);
+                  return {
+                    data: { error: "Invalid JSON in response" },
+                    raw_response: responseText,
+                  };
+                }
+              } else {
+                return {
+                  response: responseText,
+                  model: claudeModel,
+                  usage: data.usage,
+                };
+              }
+            } catch (error) {
+              console.error("Claude LLM error:", error);
+              return {
+                error: `Claude LLM failed: ${error.message}`,
+                fallback: "Mock response due to LLM error",
+              };
+            }
+          }
+
+          // Fallback: mock response when Claude is disabled or not configured
+          console.warn("Claude Haiku not enabled. Using mock LLM response.");
           if (response_json_schema) {
             return {
               data: {
                 message:
                   "This would be structured data matching the provided schema",
-                note: "LLM integration not yet implemented",
+                note: "Claude Haiku not enabled. Set VITE_CLAUDE_HAIKU=true and VITE_CLAUDE_API_KEY to enable.",
               },
             };
           } else {
             return {
               response:
-                "This would be the LLM response text. LLM integration not yet implemented.",
+                "This would be the LLM response text. Enable Claude Haiku by setting VITE_CLAUDE_HAIKU=true in .env.local and provide VITE_CLAUDE_API_KEY.",
             };
           }
         },
