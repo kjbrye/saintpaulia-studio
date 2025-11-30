@@ -318,15 +318,15 @@ export default function AuthScreen() {
             width: "100%",
             background: "none",
             border: "none",
-            color: theme.accentPrimary,
+            color: "#FFFFFF",
             fontSize: "0.9rem",
             cursor: "pointer",
             fontFamily: "'Inter', sans-serif",
             fontWeight: 500,
             transition: "color 0.2s ease",
           }}
-          onMouseEnter={(e) => e.target.style.color = "#9a6f4d"}
-          onMouseLeave={(e) => e.target.style.color = theme.accentPrimary}
+          onMouseEnter={(e) => e.target.style.color = "rgba(255, 255, 255, 0.8)"}
+          onMouseLeave={(e) => e.target.style.color = "#FFFFFF"}
         >
           {mode === "signin"
             ? "Need an account? Sign up"

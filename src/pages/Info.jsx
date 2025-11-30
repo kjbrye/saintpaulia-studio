@@ -170,7 +170,7 @@ export default function Info() {
                     Complete guide covering light, watering, soil, temperature, humidity, fertilizing, common problems, and expert tips.
                   </p>
                   <div className="flex items-center gap-2 text-base font-semibold" style={{ color: "#A7F3D0" }}>
-                    <span className="text-pink-300">Read the Guide</span>
+                    <span className="text-white">Read the Guide</span>
                     <ChevronRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                   </div>
                 </div>
@@ -195,7 +195,7 @@ export default function Info() {
                     Explore the complete AVSA registry with 19,000+ registered cultivars. Search by name, hybridizer, or characteristics.
                   </p>
                   <div className="flex items-center gap-2 text-base font-semibold" style={{ color: "#F0EBFF" }}>
-                    <span className="text-violet-400">Browse Database</span>
+                    <span className="text-white">Browse Database</span>
                     <ChevronRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                   </div>
                 </div>
@@ -225,7 +225,7 @@ export default function Info() {
                   New to the app? Follow our step-by-step guide to learn all the features.
                 </p>
                 <div className="flex items-center gap-2 text-sm font-semibold" style={{ color: "#F0EBFF" }}>
-                  <span className="text-violet-400">Show Me Around</span>
+                  <span className="text-white">Show Me Around</span>
                   <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                 </div>
               </div>

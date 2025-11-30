@@ -1227,15 +1227,15 @@ export default function Layout({ children }) {
                     Made with love for the African Violet community
                   </p>
                   <div className="flex flex-wrap gap-3 mt-2 text-xs">
-                    <Link to={createPageUrl("TermsOfService")} className="hover:underline" style={{ color: theme.accentPrimary }}>
+                    <Link to={createPageUrl("TermsOfService")} className="hover:underline" style={{ color: currentTheme === 'glassmorphism' ? '#FFFFFF' : theme.accentPrimary }}>
                       Terms of Service
                     </Link>
                     <span style={{ color: theme.textSecondary, opacity: 0.5 }}>•</span>
-                    <Link to={createPageUrl("PrivacyPolicy")} className="hover:underline" style={{ color: theme.accentPrimary }}>
+                    <Link to={createPageUrl("PrivacyPolicy")} className="hover:underline" style={{ color: currentTheme === 'glassmorphism' ? '#FFFFFF' : theme.accentPrimary }}>
                       Privacy Policy
                     </Link>
                     <span style={{ color: theme.textSecondary, opacity: 0.5 }}>•</span>
-                    <Link to={createPageUrl("ContactUs")} className="hover:underline" style={{ color: theme.accentPrimary }}>
+                    <Link to={createPageUrl("ContactUs")} className="hover:underline" style={{ color: currentTheme === 'glassmorphism' ? '#FFFFFF' : theme.accentPrimary }}>
                       Contact Us
                     </Link>
                   </div>
