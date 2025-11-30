@@ -1,7 +1,6 @@
 
 import React from "react";
 import { base44 } from "@/api/base44Client";
-import { supabase } from "../lib/supabaseClient";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
@@ -26,13 +25,13 @@ export default function Collection() {
   const { isTooltipDismissed, dismissTooltip } = useTooltips();
 
   const handleLogout = async () => {
-    const { error } = await supabase.auth.signOut();
-    if (error) {
+    try {
+      await base44.auth.logout();
+      window.location.reload();
+    } catch (error) {
       console.error("Error during sign out:", error);
       alert("Sign-out error: " + error.message);
-      return;
     }
-    window.location.reload();
   };
 
   const { data: plants = [] } = useQuery({

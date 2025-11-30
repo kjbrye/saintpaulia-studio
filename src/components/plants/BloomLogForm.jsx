@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { X, Upload, Loader2, Plus } from "lucide-react";
-import { supabase } from "@/lib/supabaseClient";
+import { base44 } from "@/api/base44Client";
+import { BloomLog } from "@/api/entities";
 import { UploadFile } from "@/api/integrations";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import DatePicker from "../ui/DatePicker";
@@ -20,31 +21,24 @@ export default function BloomLogForm({ plantId, bloomLog, onClose }) {
 
   const mutation = useMutation({
     mutationFn: async (logData) => {
-      const { data: authData, error: authError } = await supabase.auth.getUser();
-      if (authError || !authData?.user) {
+      const user = await base44.auth.me();
+      if (!user) {
         throw new Error("You must be signed in to log blooms.");
       }
 
       if (bloomLog) {
         // Update existing bloom log
-        const { error } = await supabase
-          .from('bloom_log')
-          .update(logData)
-          .eq('id', bloomLog.id);
-
-        if (error) throw error;
+        await BloomLog.update(bloomLog.id, logData);
         return;
       }
 
       // Create new bloom log with user context
-      const { error } = await supabase.from('bloom_log').insert({
+      await BloomLog.create({
         ...logData,
         plant_id: plantId,
-        user_id: authData.user.id,
-        created_by: authData.user.email
+        user_id: user.id,
+        created_by: user.email
       });
-
-      if (error) throw error;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['bloomLogs', plantId] });

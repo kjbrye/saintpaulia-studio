@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import ReactDOM from "react-dom";
 import { ArrowLeft, Plus, Loader2, AlertTriangle, Package, X, Upload } from "lucide-react";
-import { supabase } from "@/lib/supabaseClient";
+import { base44 } from "@/api/base44Client";
+import { Supply, CareLog, Plant } from "@/api/entities";
 import { UploadFile } from "@/api/integrations";
 import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 import { format } from "date-fns";
@@ -16,29 +17,13 @@ export default function CareLogForm({ plantId, plant, careType, onClose }) {
 
   const { data: supplies = [] } = useQuery({
     queryKey: ['supplies'],
-    queryFn: async () => {
-      const { data, error } = await supabase.from('supply').select('*');
-      if (error) throw error;
-      return data || [];
-    },
+    queryFn: () => Supply.list(),
     initialData: []
   });
 
   const { data: currentUser } = useQuery({
     queryKey: ['currentUser'],
-    queryFn: async () => {
-      const { data: authData, error: authError } = await supabase.auth.getUser();
-      if (authError || !authData?.user) return null;
-
-      const { data, error } = await supabase
-        .from('users')
-        .select('*')
-        .eq('id', authData.user.id)
-        .maybeSingle();
-
-      if (error) throw error;
-      return data;
-    },
+    queryFn: () => base44.auth.me(),
   });
 
   const currentTheme = currentUser?.theme || "glassmorphism";
@@ -59,15 +44,13 @@ export default function CareLogForm({ plantId, plant, careType, onClose }) {
 
   const createMutation = useMutation({
     mutationFn: async (careData) => {
-      const { data: authData, error: authError } = await supabase.auth.getUser();
-      if (authError || !authData?.user) {
+      const user = currentUser || await base44.auth.me();
+      if (!user) {
         throw new Error("You must be signed in to log care.");
       }
 
-      const user = currentUser || { id: authData.user.id, email: authData.user.email };
-
-      // Create care log entry
-      const { error: careLogError } = await supabase.from('care_log').insert({
+      // Create care log entry using base44
+      const careLogData = {
         plant_id: plantId,
         user_id: user.id,
         created_by: user.email,
@@ -80,11 +63,9 @@ export default function CareLogForm({ plantId, plant, careType, onClose }) {
         notes: careData.notes,
         photos: careData.photos,
         supplies_used: careData.supplies_used
-      });
+      };
 
-      if (careLogError) {
-        throw careLogError;
-      }
+      await CareLog.create(careLogData);
 
       // Update plant's last care date
       const updateData = {};
@@ -101,14 +82,7 @@ export default function CareLogForm({ plantId, plant, careType, onClose }) {
       }
 
       if (Object.keys(updateData).length > 0) {
-        const { error: plantUpdateError } = await supabase
-          .from('plant')
-          .update(updateData)
-          .eq('id', plantId);
-
-        if (plantUpdateError) {
-          throw plantUpdateError;
-        }
+        await Plant.update(plantId, updateData);
       }
 
       // Log supply usage and update quantities
@@ -119,8 +93,8 @@ export default function CareLogForm({ plantId, plant, careType, onClose }) {
             const usageAmount = parseFloat(quantity_used);
             if (!supply || !Number.isFinite(usageAmount) || usageAmount <= 0) return;
 
-            // Create usage log
-            const { error: usageError } = await supabase.from('supply_usage_log').insert({
+            // Create usage log via base44
+            await base44.entities.SupplyUsageLog.create({
               supply_id: supply_id,
               quantity_used: usageAmount,
               usage_date: new Date(careData.care_date).toISOString(),
@@ -129,22 +103,9 @@ export default function CareLogForm({ plantId, plant, careType, onClose }) {
               notes: careData.notes || undefined
             });
 
-            if (usageError) {
-              throw usageError;
-            }
-
             // Update supply quantity
             const newQuantity = Math.max(0, supply.quantity - usageAmount);
-            const { error: supplyUpdateError } = await supabase
-              .from('supply')
-              .update({
-                quantity: newQuantity
-              })
-              .eq('id', supply_id);
-
-            if (supplyUpdateError) {
-              throw supplyUpdateError;
-            }
+            await Supply.update(supply_id, { quantity: newQuantity });
           })
         );
       }
