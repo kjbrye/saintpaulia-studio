@@ -42,11 +42,7 @@ export default [
           varsIgnorePattern: '^React$',
         },
       ],
-      // Encourage using the project import alias and discourage importing the raw Supabase client.
-      // NOTE: avoid broad deep-relative patterns because they produce noisy warnings for legitimate
-      // local relative imports (e.g., '../ui', '../shared'). We only restrict the raw Supabase
-      // client import here. If stricter rules are desired, add targeted overrides for specific
-      // directories rather than a global deep-relative pattern.
+      // Encourage using the project import alias and discourage deep relative imports
       'no-restricted-imports': [
         'warn',
         {
@@ -57,6 +53,8 @@ export default [
                 "Import `base44` from '@/api/base44Client' instead of importing the raw Supabase client.",
             },
           ],
+          // Warn on deep relative imports that cross multiple folders (encourage '@/...' alias)
+          patterns: ['../../**', '../../../**'],
         },
       ],
     },

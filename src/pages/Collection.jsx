@@ -705,7 +705,7 @@ export default function Collection() {
           }}>
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-xl font-bold flex items-center gap-2" style={{
-                color: "var(--text-danger)",
+                color: "#FCA5A5",
                 fontFamily: "'Playfair Display', Georgia, serif"
               }}>
                   <Bug className="w-6 h-6" style={{ strokeWidth: 1.5 }} />
