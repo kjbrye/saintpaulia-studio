@@ -110,15 +110,15 @@ export default function PlantCard({ plant }) {
             e.preventDefault();
             toggleFavoriteMutation.mutate();
           }}
-          className="absolute top-3 right-3 z-10 neuro-button w-9 h-9 rounded-full flex items-center justify-center"
+          className="absolute top-4 right-4 z-10 neuro-button w-10 h-10 rounded-full flex items-center justify-center shadow-lg"
         >
-          <Heart 
-            className="w-5 h-5" 
-            style={{ 
-              color: plant.is_favorite ? "#FCA5A5" : "#DDD6FE", 
+          <Heart
+            className="w-5 h-5"
+            style={{
+              color: plant.is_favorite ? "#FCA5A5" : "#DDD6FE",
               strokeWidth: 2,
               fill: plant.is_favorite ? "#FCA5A5" : "none"
-            }} 
+            }}
           />
         </button>
 

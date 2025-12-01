@@ -21,6 +21,7 @@ const THEMES = {
     textSecondary: "#4a5247",
     textMuted: "#6c7469",
     textDark: "#11140f",
+    textDanger: "#8B2635",
 
     // Accent Colors
     accentPrimary: "#b48b68",
@@ -135,7 +136,8 @@ const THEMES = {
     textSecondary: "#FFFFFF",
     textMuted: "#E5E5E5",
     textDark: "#000000",
-    
+    textDanger: "#FF6B6B",
+
     accentPrimary: "#FFD700",
     accentSecondary: "#00FF00",
     accentGlow: "#FFD700",
@@ -209,7 +211,8 @@ const THEMES = {
     textSecondary: "#2d2d45",
     textMuted: "#4a4a6a",
     textDark: "#0f0a1f",
-    
+    textDanger: "#DC2626",
+
     accentPrimary: "#bfbcfc",
     accentSecondary: "#f0cbdc",
     accentGlow: "#d1cfff",
@@ -284,7 +287,8 @@ const THEMES = {
     textSecondary: "#E5E7EB",
     textMuted: "#D1D5DB",
     textDark: "#0F0A1F",
-    
+    textDanger: "#FCA5A5",
+
     accentPrimary: "#A78BFA",
     accentSecondary: "#34D399",
     accentGlow: "#8B5CF6",
@@ -358,7 +362,8 @@ const THEMES = {
     textSecondary: "#f5f7f3",
     textMuted: "#d8e4e1",
     textDark: "#68412f",
-    
+    textDanger: "#FCA5A5",
+
     accentPrimary: "#fbd8ca",
     accentSecondary: "#5a7a8b",
     accentGlow: "#8fa388",
@@ -432,7 +437,8 @@ const THEMES = {
     textSecondary: "#374151",
     textMuted: "#6B7280",
     textDark: "#111827",
-    
+    textDanger: "#DC2626",
+
     accentPrimary: "#6366F1",
     accentSecondary: "#10B981",
     accentGlow: "#4F46E5",
@@ -529,6 +535,7 @@ export default function Layout({ children }) {
           --text-secondary: ${theme.textSecondary};
           --text-muted: ${theme.textMuted};
           --text-dark: ${theme.textDark};
+          --text-danger: ${theme.textDanger};
           --accent: ${theme.accentPrimary};
           --accent-secondary: ${theme.accentSecondary};
           --accent-glow: ${theme.accentGlow};

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { X, Upload, Loader2, Sparkles, Plus } from "lucide-react";
+import { X, Upload, Loader2, Plus } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import DatePicker from "../ui/DatePicker";
@@ -22,7 +22,6 @@ const commonSymptoms = [
 export default function HealthLogForm({ plantId, onClose }) {
   const queryClient = useQueryClient();
   const [uploading, setUploading] = useState(false);
-  const [analyzingWithAI, setAnalyzingWithAI] = useState(false);
 
   const [formData, setFormData] = useState({
     observation_date: new Date().toISOString().split('T')[0],
@@ -34,43 +33,9 @@ export default function HealthLogForm({ plantId, onClose }) {
 
   const createMutation = useMutation({
     mutationFn: async (logData) => {
-      let aiAnalysis = null;
-      
-      // Get AI analysis if there are symptoms or concerning status
-      if (logData.symptoms.length > 0 || ["concerning", "critical"].includes(logData.health_status)) {
-        setAnalyzingWithAI(true);
-        
-        const prompt = `As an African violet plant care expert, analyze these symptoms and provide helpful advice:
-        
-Health Status: ${logData.health_status}
-Symptoms: ${logData.symptoms.join(", ")}
-Additional Notes: ${logData.notes || "None"}
-
-Please provide:
-1. Likely causes of these symptoms
-2. Recommended immediate actions
-3. Long-term care suggestions
-4. When to be concerned
-
-Keep your response practical and concise.`;
-
-        try {
-          const response = await base44.integrations.Core.InvokeLLM({
-            prompt,
-            add_context_from_internet: false
-          });
-          aiAnalysis = response;
-        } catch (error) {
-          console.error("AI analysis failed:", error);
-        }
-        
-        setAnalyzingWithAI(false);
-      }
-
       return base44.entities.HealthLog.create({
         ...logData,
-        plant_id: plantId,
-        ai_analysis: aiAnalysis
+        plant_id: plantId
       });
     },
     onSuccess: () => {
@@ -220,19 +185,6 @@ Keep your response practical and concise.`;
             </div>
           </div>
 
-          {/* AI Analysis Notice */}
-          {(formData.symptoms.length > 0 || ["concerning", "critical"].includes(formData.health_status)) && (
-            <div className="clay-card rounded-[14px] bg-gradient-to-br from-purple-100 to-pink-100 p-4 flex items-start gap-3">
-              <Sparkles className="w-5 h-5 text-purple-700 flex-shrink-0 mt-0.5" />
-              <div>
-                <p className="text-sm font-semibold text-purple-900 mb-1">AI Analysis Included</p>
-                <p className="text-xs text-purple-700">
-                  We'll analyze your observations and provide personalized care suggestions
-                </p>
-              </div>
-            </div>
-          )}
-
           {/* Submit Button */}
           <div className="flex gap-3">
             <button
@@ -244,15 +196,10 @@ Keep your response practical and concise.`;
             </button>
             <button
               type="submit"
-              disabled={createMutation.isPending || analyzingWithAI}
+              disabled={createMutation.isPending}
               className="clay-button flex-1 px-6 py-3 rounded-[16px] bg-gradient-to-br from-purple-300 to-purple-400 hover:from-purple-400 hover:to-purple-500 text-purple-900 font-semibold disabled:opacity-50 flex items-center justify-center gap-2"
             >
-              {analyzingWithAI ? (
-                <>
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                  Analyzing with AI...
-                </>
-              ) : createMutation.isPending ? (
+              {createMutation.isPending ? (
                 <>
                   <Loader2 className="w-4 h-4 animate-spin" />
                   Saving...
