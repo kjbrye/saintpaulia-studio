@@ -39,18 +39,33 @@ export default function AuthScreen() {
 
     try {
       if (mode === "signup") {
-        // TODO: implement proper email/password signup in base44.auth if needed.
-        // For now, use the dev login flow as a placeholder.
-        await base44.auth.login("dev");
-        setMessage("Sign-up simulated for dev flow. Check CLAUDE.md for auth setup.");
+        const result = await base44.auth.signUpWithPassword(email, password, {
+          full_name: email.split("@")[0], // Use email prefix as default name
+        });
+
+        if (result.requiresEmailConfirmation) {
+          setMessage("Check your email for a confirmation link to complete sign up.");
+        } else {
+          // Auto-confirmed, refresh to load the app
+          window.location.reload();
+        }
       } else {
-        // TODO: implement email/password login in base44.auth or call a server endpoint.
-        await base44.auth.login("dev");
-        // On success, base44 updates the session; AuthGate will react on next mount.
+        await base44.auth.loginWithPassword(email, password);
+        // On success, refresh to load the app with the authenticated session
+        window.location.reload();
       }
     } catch (err) {
       console.error(err);
-      setMessage(err.message || "Something went wrong.");
+      // Provide user-friendly error messages
+      if (err.message?.includes("Invalid login credentials")) {
+        setMessage("Invalid email or password. Please try again.");
+      } else if (err.message?.includes("Email not confirmed")) {
+        setMessage("Please confirm your email before logging in. Check your inbox.");
+      } else if (err.message?.includes("User already registered")) {
+        setMessage("An account with this email already exists. Try logging in instead.");
+      } else {
+        setMessage(err.message || "Something went wrong.");
+      }
     } finally {
       setLoading(false);
     }

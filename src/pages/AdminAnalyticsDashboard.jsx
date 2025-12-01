@@ -161,18 +161,20 @@ export default function AdminAnalyticsDashboard() {
       { name: "Grooming", value: allCareLogs.filter(c => c.care_type === "grooming").length }
     ].filter(d => d.value > 0);
 
-    // User engagement levels
-    const userEngagementData = allUsers.map(user => {
-      const userPlants = allPlants.filter(p => p.created_by === user.email).length;
-      const userCareLogs = allCareLogs.filter(c => c.created_by === user.email).length;
+    // User engagement levels - filter out users with null emails
+    const userEngagementData = allUsers
+      .filter(user => user.email)
+      .map(user => {
+        const userPlants = allPlants.filter(p => p.created_by === user.email).length;
+        const userCareLogs = allCareLogs.filter(c => c.created_by === user.email).length;
 
-      return {
-        email: user.email,
-        plants: userPlants,
-        careLogs: userCareLogs,
-        totalActivity: userPlants + userCareLogs
-      };
-    }).sort((a, b) => b.totalActivity - a.totalActivity).slice(0, 10);
+        return {
+          email: user.email,
+          plants: userPlants,
+          careLogs: userCareLogs,
+          totalActivity: userPlants + userCareLogs
+        };
+      }).sort((a, b) => b.totalActivity - a.totalActivity).slice(0, 10);
 
     return {
       totalUsers,

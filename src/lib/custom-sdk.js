@@ -658,6 +658,61 @@ export class UserEntity extends CustomEntity {
   }
 
   /**
+   * Sign in with email/password
+   * @param {string} email - User email
+   * @param {string} password - User password
+   * @returns {Promise<Object>} Auth result
+   */
+  async loginWithPassword(email, password) {
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+
+    if (error) {
+      console.error("Login failed:", error);
+      throw error;
+    }
+
+    console.log("Successfully signed in:", data);
+    return data;
+  }
+
+  /**
+   * Sign up with email/password
+   * @param {string} email - User email
+   * @param {string} password - User password
+   * @param {Object} metadata - Optional user metadata (full_name, etc.)
+   * @returns {Promise<Object>} Auth result
+   */
+  async signUpWithPassword(email, password, metadata = {}) {
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: metadata,
+      },
+    });
+
+    if (error) {
+      console.error("Sign up failed:", error);
+      throw error;
+    }
+
+    console.log("Sign up successful:", data);
+
+    // Check if email confirmation is required
+    if (data.user && !data.user.email_confirmed_at && !data.session) {
+      return {
+        ...data,
+        requiresEmailConfirmation: true,
+      };
+    }
+
+    return data;
+  }
+
+  /**
    * Sign in with OAuth provider or development mode
    * @param {string} provider - OAuth provider (google, github, etc.) or 'dev' for development
    * @returns {Promise<void>}
