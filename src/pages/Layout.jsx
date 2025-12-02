@@ -1238,6 +1238,10 @@ export default function Layout({ children }) {
                     <Link to={createPageUrl("ContactUs")} className="hover:underline" style={{ color: currentTheme === 'glassmorphism' ? '#FFFFFF' : theme.accentPrimary }}>
                       Contact Us
                     </Link>
+                    <span style={{ color: theme.textSecondary, opacity: 0.5 }}>•</span>
+                    <Link to={createPageUrl("NewsUpdates")} className="hover:underline" style={{ color: currentTheme === 'glassmorphism' ? '#FFFFFF' : theme.accentPrimary }}>
+                      News & Updates
+                    </Link>
                   </div>
                 </div>
               </div>

@@ -76,6 +76,8 @@ import ContactUs from "./ContactUs";
 
 import AdminAnalyticsDashboard from "./AdminAnalyticsDashboard";
 
+import NewsUpdates from "./NewsUpdates";
+
 import { BrowserRouter as Router, Route, Routes, useLocation } from 'react-router-dom';
 
 const PAGES = {
@@ -155,7 +157,9 @@ const PAGES = {
     ContactUs: ContactUs,
     
     AdminAnalyticsDashboard: AdminAnalyticsDashboard,
-    
+
+    NewsUpdates: NewsUpdates,
+
 }
 
 function _getCurrentPage(url) {
@@ -258,7 +262,9 @@ function PagesContent() {
                 <Route path="/ContactUs" element={<ContactUs />} />
                 
                 <Route path="/AdminAnalyticsDashboard" element={<AdminAnalyticsDashboard />} />
-                
+
+                <Route path="/NewsUpdates" element={<NewsUpdates />} />
+
             </Routes>
         </Layout>
     );

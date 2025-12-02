@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
-import { ArrowLeft, BookOpen, Sparkles, Heart, Beaker, Library, Calendar, BarChart3, Package, Star, HelpCircle, Lightbulb, CheckCircle, ChevronRight, X, RotateCcw, Database } from "lucide-react";
+import { ArrowLeft, BookOpen, Sparkles, Heart, Beaker, Library, Calendar, BarChart3, Package, Star, HelpCircle, Lightbulb, CheckCircle, ChevronRight, X, RotateCcw, Database, Newspaper } from "lucide-react";
 import { useTooltips } from "../components/onboarding/TooltipManager";
 import { toast } from "sonner";
 
@@ -259,6 +259,38 @@ export default function Info() {
             </div>
           </div>
         </div>
+
+        {/* News & Updates Link */}
+        <Link to={createPageUrl("NewsUpdates")}>
+          <div className="glass-card rounded-3xl p-6 mb-8 hover:shadow-2xl transition-all group cursor-pointer">
+            <div className="flex items-start gap-4">
+              <div
+                className="w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform"
+                style={{
+                  background: "rgba(196, 181, 253, 0.2)",
+                  border: "1px solid rgba(196, 181, 253, 0.4)"
+                }}
+              >
+                <Newspaper className="w-6 h-6" style={{ color: "#C4B5FD", strokeWidth: 1.8 }} />
+              </div>
+              <div className="flex-1">
+                <h3 className="text-xl font-bold mb-2" style={{
+                  color: "var(--text-primary)",
+                  fontFamily: "'Playfair Display', Georgia, serif"
+                }}>
+                  News & Updates
+                </h3>
+                <p className="text-sm mb-3" style={{ color: "var(--text-secondary)" }}>
+                  Stay informed about the latest features, improvements, and announcements from Saintpaulia Studio.
+                </p>
+                <div className="flex items-center gap-2 text-sm font-semibold" style={{ color: "#C4B5FD" }}>
+                  <span className="text-white">View Updates</span>
+                  <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                </div>
+              </div>
+            </div>
+          </div>
+        </Link>
 
         {/* About Section */}
         <div className="glass-card rounded-3xl p-8 mb-8">
