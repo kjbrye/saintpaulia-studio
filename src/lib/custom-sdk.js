@@ -73,22 +73,32 @@ if (serviceRoleClient) {
 
 let serviceRoleFallbackWarned = false;
 
-// Claude Haiku LLM Configuration
-const claudeEnabled = getEnvVar("VITE_CLAUDE_HAIKU", "false") === "true";
-const claudeModel = getEnvVar("VITE_CLAUDE_MODEL", "claude-haiku-4.5");
-const claudeApiKey = getEnvVar("VITE_CLAUDE_API_KEY", "");
+// ===== SECURITY: LLM, hCaptcha, and provider secrets now moved to server-side =====
+// Client-side LLM and hCaptcha will now call /api/llm and /api/verify-hcaptcha endpoints
+// These endpoints hold the actual provider secrets on the server (not exposed to client)
+// See api/routes/llm.js and api/routes/hcaptcha.js for server-side implementations
 
-// Dynamic Claude client initialization (only if enabled)
-let claudeClient = null;
-if (claudeEnabled && claudeApiKey) {
-  claudeClient = {
-    apiKey: claudeApiKey,
-    model: claudeModel,
-    baseUrl: "https://api.anthropic.com/v1",
-  };
-  console.log(`✓ Claude Haiku (${claudeModel}) enabled for LLM operations`);
-} else if (claudeEnabled && !claudeApiKey) {
-  console.warn("Claude Haiku is enabled but VITE_CLAUDE_API_KEY is not set");
+const INTERNAL_API_KEY = getEnvVar("VITE_INTERNAL_API_KEY", null); // Frontend-to-proxy shared token (public)
+if (!INTERNAL_API_KEY) {
+  console.warn(
+    "VITE_INTERNAL_API_KEY not set; LLM and hCaptcha proxies will be unavailable. " +
+    "Set this in your frontend .env.local and configure the same key in your server secrets."
+  );
+}
+
+// Warn if old VITE_ secrets are still present (should never happen in production)
+if (typeof import.meta !== "undefined" && import.meta.env) {
+  const hasOldSecrets = [
+    "VITE_CLAUDE_API_KEY",
+    "VITE_HCAPTCHA_SECRET_KEY",
+    "VITE_SUPABASE_SERVICE_ROLE_KEY"
+  ].some(key => import.meta.env[key]);
+  if (hasOldSecrets) {
+    console.error(
+      "SECURITY WARNING: Found server-only secrets in VITE_ env vars. " +
+      "These must be removed from client builds. Use server-side proxies instead."
+    );
+  }
 }
 
 /**
@@ -1097,16 +1107,18 @@ export function createCustomClient() {
     entities: createEntitiesProxy(),
     auth: new UserEntity(),
     functions: {
+      /**
+       * Verify hCaptcha token via server proxy (SECURITY: moved server-side)
+       * Client sends only the token; server performs verification with secret
+       * @param {string} token - hCaptcha response token
+       * @param {string} remoteip - Optional remote IP for verification
+       * @returns {Promise<Object>} Verification result
+       */
       verifyHcaptcha: async ({ token, remoteip = null }) => {
-        const secretKey = getEnvVar("VITE_HCAPTCHA_SECRET_KEY", null);
-
-        if (!secretKey) {
-          console.warn(
-            "hCaptcha secret key not configured (VITE_HCAPTCHA_SECRET_KEY)"
-          );
+        if (!INTERNAL_API_KEY) {
           return {
             success: false,
-            error: "hCaptcha not configured",
+            error: "hCaptcha verification not configured (server proxy unavailable)",
           };
         }
 
@@ -1118,35 +1130,22 @@ export function createCustomClient() {
         }
 
         try {
-          const params = new URLSearchParams({
-            secret: secretKey,
-            response: token,
-          });
-
-          if (remoteip) {
-            params.append("remoteip", remoteip);
-          }
-
-          const response = await fetch("https://api.hcaptcha.com/siteverify", {
+          const response = await fetch("/api/verify-hcaptcha", {
             method: "POST",
             headers: {
-              "Content-Type": "application/x-www-form-urlencoded",
+              "Content-Type": "application/json",
+              "x-internal-api-key": INTERNAL_API_KEY,
             },
-            body: params.toString(),
+            body: JSON.stringify({ token, remoteip }),
           });
 
           if (!response.ok) {
-            throw new Error(`hCaptcha API error: ${response.status}`);
+            const error = await response.text();
+            throw new Error(`hCaptcha proxy error: ${response.status} ${error}`);
           }
 
           const result = await response.json();
-
-          return {
-            success: result.success === true,
-            challenge_ts: result.challenge_ts,
-            hostname: result.hostname,
-            error: result["error-codes"]?.join(", ") || null,
-          };
+          return result;
         } catch (error) {
           console.error("hCaptcha verification failed:", error);
           return {
@@ -1158,117 +1157,62 @@ export function createCustomClient() {
     },
     integrations: {
       Core: {
+        /**
+         * Invoke LLM via server proxy (SECURITY: moved server-side)
+         * Client sends prompt; server performs LLM call with API secret
+         * @param {string} prompt - Prompt text
+         * @param {Object} response_json_schema - Optional JSON schema for structured response
+         * @returns {Promise<Object>} LLM response from proxy
+         */
         InvokeLLM: async ({
           prompt,
           add_context_from_internet = false,
           response_json_schema = null,
           file_urls = null,
         }) => {
-          console.log("InvokeLLM called with:", {
-            prompt,
-            add_context_from_internet,
-            response_json_schema,
-            file_urls,
-            claudeEnabled,
-            model: claudeModel,
-          });
-
-          // If Claude is enabled and configured, use it
-          if (claudeEnabled && claudeClient && claudeApiKey) {
-            try {
-              const systemPrompt = `You are a helpful AI assistant for Saintpaulia Studio, an app for African violet collectors. 
-Respond helpfully and accurately about plant care, propagation, and cultivation.${
-                response_json_schema
-                  ? `\n\nIMPORTANT: You MUST respond with valid JSON matching this schema:\n${JSON.stringify(
-                      response_json_schema,
-                      null,
-                      2
-                    )}`
-                  : ""
-              }`;
-
-              const messages = [
-                {
-                  role: "user",
-                  content: prompt,
-                },
-              ];
-
-              const requestBody = {
-                model: claudeModel,
-                max_tokens: 1024,
-                system: systemPrompt,
-                messages: messages,
-              };
-
-              const response = await fetch(`${claudeClient.baseUrl}/messages`, {
-                method: "POST",
-                headers: {
-                  "Content-Type": "application/json",
-                  "x-api-key": claudeApiKey,
-                  "anthropic-version": "2023-06-01",
-                },
-                body: JSON.stringify(requestBody),
-              });
-
-              if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(
-                  `Claude API error: ${response.status} ${JSON.stringify(errorData)}`
-                );
-              }
-
-              const data = await response.json();
-              const responseText =
-                data.content?.[0]?.type === "text" ? data.content[0].text : "";
-
-              if (response_json_schema) {
-                try {
-                  // Parse JSON response
-                  const jsonMatch = responseText.match(/\{[\s\S]*\}/);
-                  const parsedData = jsonMatch ? JSON.parse(jsonMatch[0]) : {};
-                  return {
-                    data: parsedData,
-                    model: claudeModel,
-                    usage: data.usage,
-                  };
-                } catch (parseError) {
-                  console.error("Failed to parse Claude JSON response:", parseError);
-                  return {
-                    data: { error: "Invalid JSON in response" },
-                    raw_response: responseText,
-                  };
-                }
-              } else {
-                return {
-                  response: responseText,
-                  model: claudeModel,
-                  usage: data.usage,
-                };
-              }
-            } catch (error) {
-              console.error("Claude LLM error:", error);
+          if (!INTERNAL_API_KEY) {
+            console.warn(
+              "InvokeLLM: Internal API key not configured. Returning mock response. " +
+              "Set VITE_INTERNAL_API_KEY in client env and deploy server proxy."
+            );
+            if (response_json_schema) {
               return {
-                error: `Claude LLM failed: ${error.message}`,
-                fallback: "Mock response due to LLM error",
+                data: { error: "LLM not configured", note: "Set up server proxy" },
+              };
+            } else {
+              return {
+                response: "LLM proxy not configured. Deploy /api/llm endpoint.",
               };
             }
           }
 
-          // Fallback: mock response when Claude is disabled or not configured
-          console.warn("Claude Haiku not enabled. Using mock LLM response.");
-          if (response_json_schema) {
-            return {
-              data: {
-                message:
-                  "This would be structured data matching the provided schema",
-                note: "Claude Haiku not enabled. Set VITE_CLAUDE_HAIKU=true and VITE_CLAUDE_API_KEY to enable.",
+          try {
+            const response = await fetch("/api/llm", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                "x-internal-api-key": INTERNAL_API_KEY,
               },
-            };
-          } else {
+              body: JSON.stringify({
+                prompt,
+                response_json_schema,
+                add_context_from_internet,
+                file_urls,
+              }),
+            });
+
+            if (!response.ok) {
+              const error = await response.text();
+              throw new Error(`LLM proxy error: ${response.status} ${error}`);
+            }
+
+            const data = await response.json();
+            return data;
+          } catch (error) {
+            console.error("LLM proxy call failed:", error);
             return {
-              response:
-                "This would be the LLM response text. Enable Claude Haiku by setting VITE_CLAUDE_HAIKU=true in .env.local and provide VITE_CLAUDE_API_KEY.",
+              error: `LLM failed: ${error.message}`,
+              fallback: "Please try again or contact support",
             };
           }
         },

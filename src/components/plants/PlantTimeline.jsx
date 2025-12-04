@@ -2,7 +2,6 @@
 import React from "react";
 import { format } from "date-fns";
 import { Calendar, Droplets, Leaf, Shovel, Scissors, Heart, Flower2, Clock } from "lucide-react";
-import ReactMarkdown from "react-markdown";
 
 import { useQuery } from "@tanstack/react-query";
 import { base44 } from "@/api/base44Client";
@@ -200,21 +199,6 @@ export default function PlantTimeline({ careLogs = [], healthLogs = [], bloomLog
                     <p className="text-sm mb-2" style={{ color: (currentTheme === 'light' || currentTheme === 'minimal') ? 'var(--text-secondary)' : "#DDD6FE", opacity: 0.9 }}>
                       {event.data.notes}
                     </p>
-                  )}
-                  {event.data.ai_analysis && (
-                    <div className="mt-3 glass-button rounded-2xl p-3">
-                      <p className="text-xs font-semibold mb-2" style={{ color: "#C4B5FD" }}>AI Analysis:</p>
-                      <ReactMarkdown 
-                        className="text-xs prose prose-sm max-w-none"
-                        components={{
-                          p: ({ children }) => <p className="my-1" style={{ color: (currentTheme === 'light' || currentTheme === 'minimal') ? 'var(--text-secondary)' : "#DDD6FE" }}>{children}</p>,
-                          ul: ({ children }) => <ul className="ml-4 my-1 list-disc" style={{ color: (currentTheme === 'light' || currentTheme === 'minimal') ? 'var(--text-secondary)' : "#DDD6FE" }}>{children}</ul>,
-                          li: ({ children }) => <li className="my-0.5">{children}</li>
-                        }}
-                      >
-                        {event.data.ai_analysis}
-                      </ReactMarkdown>
-                    </div>
                   )}
                 </div>
               </div>

@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { format } from "date-fns";
 import { ChevronDown, ChevronUp, Sparkles } from "lucide-react";
 import HealthStatusBadge from "./HealthStatusBadge";
-import ReactMarkdown from "react-markdown";
 
 export default function HealthTimeline({ logs }) {
   const [expandedLog, setExpandedLog] = useState(null);
@@ -104,31 +103,6 @@ export default function HealthTimeline({ logs }) {
                           <img src={photo} alt={`Observation ${i + 1}`} className="w-full h-full object-cover" />
                         </a>
                       ))}
-                    </div>
-                  </div>
-                )}
-
-                {log.ai_analysis && (
-                  <div className="clay-card rounded-[14px] bg-gradient-to-br from-purple-50 to-pink-50 p-4">
-                    <div className="flex items-center gap-2 mb-3">
-                      <Sparkles className="w-4 h-4 text-purple-700" />
-                      <p className="text-sm font-bold text-purple-900">AI Analysis & Recommendations</p>
-                    </div>
-                    <div className="prose prose-sm prose-purple max-w-none">
-                      <ReactMarkdown
-                        components={{
-                          p: ({ children }) => <p className="text-sm text-purple-800 mb-2">{children}</p>,
-                          ul: ({ children }) => <ul className="text-sm text-purple-800 ml-4 mb-2 list-disc">{children}</ul>,
-                          ol: ({ children }) => <ol className="text-sm text-purple-800 ml-4 mb-2 list-decimal">{children}</ol>,
-                          li: ({ children }) => <li className="mb-1">{children}</li>,
-                          strong: ({ children }) => <strong className="font-semibold text-purple-900">{children}</strong>,
-                          h1: ({ children }) => <h1 className="text-base font-bold text-purple-900 mb-2">{children}</h1>,
-                          h2: ({ children }) => <h2 className="text-sm font-bold text-purple-900 mb-1">{children}</h2>,
-                          h3: ({ children }) => <h3 className="text-sm font-semibold text-purple-900 mb-1">{children}</h3>,
-                        }}
-                      >
-                        {log.ai_analysis}
-                      </ReactMarkdown>
                     </div>
                   </div>
                 )}
