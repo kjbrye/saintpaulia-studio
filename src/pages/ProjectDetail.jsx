@@ -9,7 +9,6 @@ import OffspringForm from "../components/hybridization/OffspringForm";
 import OffspringGrid from "../components/hybridization/OffspringGrid";
 import HybridizationLogForm from "../components/hybridization/HybridizationLogForm";
 import HybridizationLogTimeline from "../components/hybridization/HybridizationLogTimeline";
-import AIInsights from "../components/hybridization/AIInsights";
 import GenealogyTree from "../components/hybridization/GenealogyTree";
 import TraitInheritancePrediction from "../components/hybridization/TraitInheritancePrediction";
 
@@ -372,16 +371,6 @@ export default function ProjectDetail() {
             <TraitInheritancePrediction 
               seedParent={seedParent}
               pollenParent={pollenParent}
-            />
-          )}
-
-          {/* AI Insights Section */}
-          {(normalizedOffspring.length > 0 || normalizedLogs.length > 0) && (
-            <AIInsights
-              project={project}
-              offspring={normalizedOffspring}
-              logs={normalizedLogs}
-              allPlants={allPlants}
             />
           )}
 
