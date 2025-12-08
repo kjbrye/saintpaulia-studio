@@ -1,16 +1,20 @@
 /**
  * Server-side LLM Proxy Endpoint
- * 
+ *
  * This endpoint securely proxies LLM requests from the frontend.
  * The actual LLM API key is stored server-side (not exposed to clients).
- * 
+ *
  * Deployment: Deploy as a serverless function (Vercel, Netlify) or Node.js API
- * 
+ *
  * Environment Variables (server-side only):
  * - CLAUDE_API_KEY: Your Claude API key (secret)
  * - CLAUDE_MODEL: Claude model to use (e.g., "claude-haiku-4.5")
  * - INTERNAL_API_KEY: Shared token between frontend and this proxy (for authentication)
- * 
+ *
+ * Rate Limiting:
+ * - 10 requests per minute per IP address
+ * - Returns 429 Too Many Requests when exceeded
+ *
  * Example usage from client:
  * ```
  * const response = await fetch('/api/llm', {
@@ -24,16 +28,23 @@
  * ```
  */
 
+import { applyRateLimit, RATE_LIMIT_PRESETS } from '../lib/rateLimit.js';
+
 export default async function handler(req, res) {
   // Only allow POST requests
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
+  // Apply rate limiting (10 requests/minute for LLM)
+  if (applyRateLimit(req, res, { ...RATE_LIMIT_PRESETS.llm, keyPrefix: 'llm' })) {
+    return; // Response already sent by applyRateLimit
+  }
+
   // Check internal API key for authentication
   const internalKey = req.headers['x-internal-api-key'];
   const expectedKey = process.env.INTERNAL_API_KEY;
-  
+
   if (!expectedKey || internalKey !== expectedKey) {
     return res.status(401).json({ error: 'Unauthorized' });
   }

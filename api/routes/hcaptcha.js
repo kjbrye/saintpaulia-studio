@@ -1,15 +1,19 @@
 /**
  * Server-side hCaptcha Verification Endpoint
- * 
+ *
  * This endpoint securely verifies hCaptcha tokens from the frontend.
  * The actual hCaptcha secret is stored server-side (not exposed to clients).
- * 
+ *
  * Deployment: Deploy as a serverless function (Vercel, Netlify) or Node.js API
- * 
+ *
  * Environment Variables (server-side only):
  * - HCAPTCHA_SECRET: Your hCaptcha secret key (secret)
  * - INTERNAL_API_KEY: Shared token between frontend and this proxy (for authentication)
- * 
+ *
+ * Rate Limiting:
+ * - 20 requests per minute per IP address
+ * - Returns 429 Too Many Requests when exceeded
+ *
  * Example usage from client:
  * ```
  * const response = await fetch('/api/verify-hcaptcha', {
@@ -23,10 +27,17 @@
  * ```
  */
 
+import { applyRateLimit, RATE_LIMIT_PRESETS } from '../lib/rateLimit.js';
+
 export default async function handler(req, res) {
   // Only allow POST requests
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
+  }
+
+  // Apply rate limiting (20 requests/minute for hCaptcha)
+  if (applyRateLimit(req, res, { ...RATE_LIMIT_PRESETS.hcaptcha, keyPrefix: 'hcaptcha' })) {
+    return; // Response already sent by applyRateLimit
   }
 
   // Check internal API key for authentication

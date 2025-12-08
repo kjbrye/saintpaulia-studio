@@ -4,7 +4,7 @@ import { createClient } from "@supabase/supabase-js";
 const getEnvVar = (key, defaultValue) => {
   // Prefer Vite-provided build-time vars (import.meta.env)
   try {
-    if (typeof import !== "undefined" && typeof import.meta !== "undefined" && import.meta.env) {
+    if (import.meta?.env) {
       const v = import.meta.env[key];
       if (v !== undefined && v !== null && v !== "") return v;
     }
