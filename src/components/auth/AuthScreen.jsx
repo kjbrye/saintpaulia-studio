@@ -1,5 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
+import HCaptcha from "@hcaptcha/react-hcaptcha";
 import { base44 } from "@/api/base44Client";
+
+// hCaptcha site key (public, safe for client)
+const HCAPTCHA_SITE_KEY = import.meta.env.VITE_HCAPTCHA_SITE_KEY;
+const HCAPTCHA_ENABLED = Boolean(HCAPTCHA_SITE_KEY);
 
 // Botanical theme colors from Layout.jsx
 const theme = {
@@ -31,6 +36,8 @@ export default function AuthScreen() {
   const [message, setMessage] = useState("");
   const [focusedInput, setFocusedInput] = useState(null);
   const [isButtonHovered, setIsButtonHovered] = useState(false);
+  const [captchaToken, setCaptchaToken] = useState(null);
+  const captchaRef = useRef(null);
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -38,6 +45,26 @@ export default function AuthScreen() {
     setMessage("");
 
     try {
+      // Verify hCaptcha for signup (required if hCaptcha is enabled)
+      if (mode === "signup" && HCAPTCHA_ENABLED) {
+        if (!captchaToken) {
+          setMessage("Please complete the CAPTCHA verification.");
+          setLoading(false);
+          return;
+        }
+
+        // Verify token with server
+        const verifyResult = await base44.functions.verifyHcaptcha({ token: captchaToken });
+        if (!verifyResult.success) {
+          setMessage("CAPTCHA verification failed. Please try again.");
+          // Reset captcha for retry
+          captchaRef.current?.resetCaptcha();
+          setCaptchaToken(null);
+          setLoading(false);
+          return;
+        }
+      }
+
       if (mode === "signup") {
         const result = await base44.auth.signUpWithPassword(email, password, {
           full_name: email.split("@")[0], // Use email prefix as default name
@@ -68,6 +95,11 @@ export default function AuthScreen() {
       }
     } finally {
       setLoading(false);
+      // Reset captcha after submission attempt
+      if (HCAPTCHA_ENABLED) {
+        captchaRef.current?.resetCaptcha();
+        setCaptchaToken(null);
+      }
     }
   }
 
@@ -263,6 +295,20 @@ export default function AuthScreen() {
             </button>
           )}
 
+          {/* hCaptcha verification for signup */}
+          {mode === "signup" && HCAPTCHA_ENABLED && (
+            <div style={{ display: "flex", justifyContent: "center", marginTop: "0.5rem" }}>
+              <HCaptcha
+                ref={captchaRef}
+                sitekey={HCAPTCHA_SITE_KEY}
+                onVerify={(token) => setCaptchaToken(token)}
+                onExpire={() => setCaptchaToken(null)}
+                onError={() => setCaptchaToken(null)}
+                theme="light"
+              />
+            </div>
+          )}
+
           <button
             type="submit"
             disabled={loading}
@@ -325,6 +371,11 @@ export default function AuthScreen() {
           onClick={() => {
             setMode(mode === "signin" ? "signup" : "signin");
             setMessage("");
+            // Reset captcha when switching modes
+            if (HCAPTCHA_ENABLED) {
+              captchaRef.current?.resetCaptcha();
+              setCaptchaToken(null);
+            }
           }}
           style={{
             width: "100%",

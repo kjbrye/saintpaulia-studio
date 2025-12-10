@@ -293,11 +293,18 @@ npm run lint         # Run ESLint
 Create `.env.local` from `.env.example`:
 
 ```env
+# Required - Supabase configuration
 VITE_SUPABASE_URL=your_supabase_url
 VITE_SUPABASE_ANON_KEY=your_anon_key
-VITE_SUPABASE_SERVICE_ROLE_KEY=your_service_role_key  # Optional
-VITE_HCAPTCHA_SECRET_KEY=your_hcaptcha_key  # Optional
+
+# Required - Server proxy authentication
+VITE_INTERNAL_API_KEY=your_internal_api_key
+
+# Optional - hCaptcha site key (public, for signup protection)
+VITE_HCAPTCHA_SITE_KEY=your_hcaptcha_site_key
 ```
+
+> **Note**: Secret keys (Supabase service role, Claude API, hCaptcha secret) should NEVER be set as VITE_ variables. These belong in server-side environment only. See `.env.example` for full documentation.
 
 ## Code Conventions
 
