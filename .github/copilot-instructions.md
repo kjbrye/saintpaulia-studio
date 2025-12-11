@@ -35,26 +35,57 @@ This file contains focused, actionable guidance for AI coding agents working in 
   - Auth examples: any `pages` that call `base44.auth` or `Layout.jsx` for theme/auth flow.
   - Query/mutation examples: search for `useQuery` and `useMutation` across `src/pages` and `src/components`.
 
-- **Build / dev / run**
-  - Install: `npm install`
-  - Dev server: `npm run dev` (Vite, default port shown in terminal)
-  - Build: `npm run build` and `npm run preview`
-  - Lint: `npm run lint`
-  - Environment: create `.env.local` from `.env.example` and set `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`, optionally `VITE_SUPABASE_SERVICE_ROLE_KEY`.
+<!-- Copilot / AI agent instructions for the Saintpaulia Studio repo -->
+# Saintpaulia Studio — Copilot instructions (concise)
 
-- **When editing code**
-  - Keep changes minimal and follow existing naming conventions (PascalCase for components and pages). Match import alias style `@/...`.
-  - When adding or changing data-layer code, update or reuse `base44.entities.*` helpers rather than querying Supabase directly.
-  - Add or update TanStack Query keys when changing queries so cache invalidation remains correct.
+This file captures the minimal, actionable knowledge an AI coding agent needs to be productive in this repo.
 
-- **Search hints** (quick grep targets)
-  - `base44` — finds SDK and usage sites
-  - `useQuery` / `useMutation` — find data patterns
-  - `src/components/ui` — for UI primitives to reuse
-  - `neuro-` — styling tokens and patterns
+**Big picture:** React + Vite frontend; Supabase backend accessed via a custom Base44-compatible SDK. Client code uses `base44` entity helpers exported from `src/api/*` and all server-sensitive calls (LLM/hCaptcha) are proxied by server endpoints in `api/routes/`.
 
-- **Do not**
-  - Directly edit database schemas or server-side policies here; this repo is frontend-only and relies on Supabase.
-  - Introduce new global CSS variables without checking `Layout.jsx` and the existing theme system.
+**Key locations:**
+- **Data / SDK:** `src/api/base44Client.js`, `src/api/entities.js`, `src/lib/custom-sdk.js`
+- **Supabase init:** `src/lib/supabaseClient.js`
+- **Pages / routing:** `src/pages/index.jsx`, individual pages in `src/pages/`
+- **UI primitives:** `src/components/ui/` (Radix-based)
+- **Server proxies:** `api/routes/llm.js`, `api/routes/hcaptcha.js` (see `api/README.md`)
 
-If anything in this file is unclear or you'd like more examples (e.g., a small sample mutation + invalidation patch), tell me which area to expand.
+**Essential patterns (do not deviate):**
+- Use `base44.entities.*` helpers for data access (e.g., `base44.entities.Plant.list()`), not raw Supabase queries.
+- Use TanStack Query (`useQuery`, `useMutation`, `useQueryClient`) for all client data fetching and mutations; invalidate exact query keys on success (e.g., `queryClient.invalidateQueries({ queryKey: ['plants'] })`).
+- No `useEffect` for server calls; prefer query hooks.
+- Mutations must update/refresh cache via `invalidateQueries` (examples across `src/pages` and `src/components`).
+
+**Auth & integrations:**
+- Use `base44.auth.*` for auth flows (`me()`, `login('dev')`, `logout()`, `isAuthenticated()`). See `src/api/base44Client.js` for helpers.
+- Uploads: `base44.integrations.Core.UploadFile({ file })` → returns `file_url`.
+
+**Security & environment variables (critical):**
+- LLM (Claude) and hCaptcha secrets are server-only. Do NOT add `CLAUDE_*` or `HCAPTCHA_SECRET` keys as `VITE_` variables.
+- Deploy server proxies (see `api/README.md`) and set server secrets as `INTERNAL_API_KEY`, `CLAUDE_API_KEY`, `HCAPTCHA_SECRET` in the host's secret manager.
+- Frontend receives a public/shared `VITE_INTERNAL_API_KEY` (same value as server `INTERNAL_API_KEY`) so it can call the proxy endpoints; that value is visible in builds and must not be used as a Claude secret.
+- `.env.example` documents which vars are server-only. `.env.local` should be ignored by git (see `.gitignore`).
+
+**Developer workflow / commands:**
+- Install: `npm install`
+- Dev: `npm run dev` (Vite; default http://localhost:5173)
+- Build: `npm run build`
+- Preview production build: `npm run preview`
+- Lint: `npm run lint`
+
+**Project-specific conventions & gotchas:**
+- IDs are UUID strings; timestamps are ISO strings. Sorting uses a `-` prefix to indicate descending (e.g., `-created_at`).
+- Several DB fields are JSON arrays (e.g., `photos`, `tags`, `expected_traits`) — code expects parsed arrays.
+- Styling: Tailwind + CSS variables; use `cn()` from `src/lib/utils.js` and `neuro-*` classes for glassmorphic tokens.
+
+**Files to reference when making changes:**
+- Data + entities: `src/api/entities.js`, `src/api/base44Client.js`
+- SDK glue: `src/lib/custom-sdk.js`, `src/lib/supabaseClient.js`
+- Server proxy examples: `api/routes/llm.js`, `api/routes/hcaptcha.js`, and `api/README.md`
+- Examples of queries/mutations: any page under `src/pages/` (search for `useQuery` / `useMutation`).
+
+**When editing code:**
+- Keep changes minimal and consistent with existing patterns (PascalCase for components/pages). Prefer small, focused PRs.
+- Update or add TanStack Query keys when changing data access so invalidation stays correct.
+- Do not change DB schemas or server policies in this frontend repository.
+
+If any behavior is unclear (query key naming, specific entity shape, or how a proxy endpoint should behave), ask for the preferred example page/feature to mirror. Please review `api/README.md` for secure proxy deployment steps.
