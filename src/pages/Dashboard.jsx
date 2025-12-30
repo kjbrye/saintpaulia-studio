@@ -5,13 +5,15 @@
 import { Link } from 'react-router-dom';
 import { Flower2, Sparkles, Droplets, BookOpen, Calendar, Plus, ChevronRight } from 'lucide-react';
 import { usePlants } from '../hooks/usePlants';
+import { useRecentCareLogs } from '../hooks/useCare';
 import { useAuth } from '../hooks/useAuth';
 import { plantNeedsCare, getOverdueCareTypes } from '../utils/careStatus';
-import { StatCard, ActionButton, PlantCareItem, BloomNotification } from '../components/dashboard';
+import { StatCard, ActionButton, PlantCareItem, BloomNotification, ActivityFeed, CollectionPreview } from '../components/dashboard';
 
 export default function Dashboard() {
   const { user } = useAuth();
   const { data: plants = [], isLoading, error } = usePlants();
+  const { data: recentActivity = [], isLoading: activityLoading } = useRecentCareLogs(5);
 
   // Derived data
   const plantsNeedingCare = plants.filter(plantNeedsCare).map(p => ({
@@ -21,27 +23,21 @@ export default function Dashboard() {
   const bloomingCount = plants.filter(p => p.is_blooming).length;
   const displayName = user?.email?.split('@')[0] || 'Gardener';
 
-  if (isLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <p className="text-muted">Loading your collection...</p>
-      </div>
-    );
-  }
+  if (isLoading) return (
+    <div className="min-h-screen flex items-center justify-center">
+      <p className="text-muted">Loading your collection...</p>
+    </div>
+  );
 
-  if (error) {
-    return (
-      <div className="min-h-screen flex items-center justify-center p-4">
-        <div className="card p-8 text-center max-w-md">
-          <p className="heading heading-lg mb-2">Failed to load</p>
-          <p className="text-muted mb-4">{error.message}</p>
-          <button className="btn btn-primary" onClick={() => window.location.reload()}>
-            Try Again
-          </button>
-        </div>
+  if (error) return (
+    <div className="min-h-screen flex items-center justify-center p-4">
+      <div className="card p-8 text-center max-w-md">
+        <p className="heading heading-lg mb-2">Failed to load</p>
+        <p className="text-muted mb-4">{error.message}</p>
+        <button className="btn btn-primary" onClick={() => window.location.reload()}>Try Again</button>
       </div>
-    );
-  }
+    </div>
+  );
 
   return (
     <div className="min-h-screen p-6 md:p-10">
@@ -136,11 +132,16 @@ export default function Dashboard() {
           </section>
         )}
 
+        {/* Activity Feed & Collection Preview - side by side on larger screens */}
+        {plants.length > 0 && (
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <ActivityFeed activities={recentActivity} isLoading={activityLoading} />
+            <CollectionPreview plants={plants} isLoading={isLoading} />
+          </div>
+        )}
+
         {/* Bloom Notification */}
-        <BloomNotification
-          count={bloomingCount}
-          latestPlant={plants.find(p => p.is_blooming)?.nickname}
-        />
+        <BloomNotification count={bloomingCount} latestPlant={plants.find(p => p.is_blooming)?.nickname} />
       </div>
     </div>
   );
