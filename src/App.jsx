@@ -13,6 +13,7 @@ import { AuthProvider, useAuth } from './hooks/useAuth';
 import Dashboard from './pages/Dashboard';
 import Library from './pages/Library';
 import PlantDetail from './pages/PlantDetail';
+import AddPlant from './pages/AddPlant';
 import Login from './pages/Login';
 
 // Create a client with sensible defaults
@@ -79,6 +80,16 @@ function AppRoutes() {
         }
       />
 
+      {/* Add Plant - must come before /plants/:id */}
+      <Route
+        path="/plants/new"
+        element={
+          <ProtectedRoute>
+            <AddPlant />
+          </ProtectedRoute>
+        }
+      />
+
       {/* Plant Detail */}
       <Route
         path="/plants/:id"
@@ -88,9 +99,6 @@ function AppRoutes() {
           </ProtectedRoute>
         }
       />
-
-      {/* Add more routes as you build features */}
-      {/* <Route path="/plants/new" element={<ProtectedRoute><AddPlant /></ProtectedRoute>} /> */}
       
       {/* Fallback */}
       <Route path="*" element={<Navigate to="/" replace />} />

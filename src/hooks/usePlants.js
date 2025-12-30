@@ -21,7 +21,7 @@ const MOCK_PLANTS = [
     last_fertilized: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
     last_groomed: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
     is_blooming: true,
-    acquired_date: '2024-03-15',
+    acquisition_date: '2024-03-15',
     notes: 'Beautiful purple blooms. Gift from Mom.',
     updated_at: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
   },
@@ -34,7 +34,7 @@ const MOCK_PLANTS = [
     last_fertilized: new Date(Date.now() - 20 * 24 * 60 * 60 * 1000).toISOString(), // overdue
     last_groomed: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
     is_blooming: false,
-    acquired_date: '2024-06-20',
+    acquisition_date: '2024-06-20',
     notes: 'Miniature variety. Loves bright indirect light.',
     updated_at: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
   },
@@ -47,7 +47,7 @@ const MOCK_PLANTS = [
     last_fertilized: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
     last_groomed: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
     is_blooming: true,
-    acquired_date: '2024-01-10',
+    acquisition_date: '2024-01-10',
     notes: null,
     updated_at: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
   },
@@ -60,7 +60,7 @@ const MOCK_PLANTS = [
     last_fertilized: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000).toISOString(),
     last_groomed: new Date(Date.now() - 12 * 24 * 60 * 60 * 1000).toISOString(), // overdue
     is_blooming: false,
-    acquired_date: '2023-11-05',
+    acquisition_date: '2023-11-05',
     notes: 'Semi-miniature with ruffled leaves.',
     updated_at: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
   },
@@ -73,7 +73,7 @@ const MOCK_PLANTS = [
     last_fertilized: new Date(Date.now() - 6 * 24 * 60 * 60 * 1000).toISOString(),
     last_groomed: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000).toISOString(),
     is_blooming: false,
-    acquired_date: '2024-08-01',
+    acquisition_date: '2024-08-01',
     notes: 'Pink flowers, compact growth.',
     updated_at: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000).toISOString(),
   },
@@ -130,7 +130,24 @@ export function useCreatePlant() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: plantsService.createPlant,
+    mutationFn: (plantData) => {
+      if (DEV_BYPASS) {
+        // Mock creation for development
+        const newPlant = {
+          ...plantData,
+          id: String(Date.now()),
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+          last_watered: null,
+          last_fertilized: null,
+          last_groomed: null,
+          is_blooming: false,
+        };
+        MOCK_PLANTS.push(newPlant);
+        return Promise.resolve(newPlant);
+      }
+      return plantsService.createPlant(plantData);
+    },
     onSuccess: () => {
       // Invalidate plant list to refetch
       queryClient.invalidateQueries({ queryKey: plantKeys.lists() });

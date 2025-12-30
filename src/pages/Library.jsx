@@ -41,7 +41,7 @@ export default function Library() {
             b.nickname || b.cultivar_name || ''
           );
         case 'acquired':
-          return new Date(b.acquired_date || 0) - new Date(a.acquired_date || 0);
+          return new Date(b.acquisition_date || 0) - new Date(a.acquisition_date || 0);
         case 'care':
           return plantNeedsCare(b) - plantNeedsCare(a);
         default: // 'updated'

@@ -54,10 +54,10 @@ export default function PlantHeader({ plant }) {
           </div>
 
           {/* Acquired Date */}
-          {plant.acquired_date && (
+          {plant.acquisition_date && (
             <div className="flex items-center gap-2 mt-4 text-small text-muted">
               <Calendar size={14} />
-              <span>Acquired {formatDate(plant.acquired_date)}</span>
+              <span>Acquired {formatDate(plant.acquisition_date)}</span>
             </div>
           )}
 
