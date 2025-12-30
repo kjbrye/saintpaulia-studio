@@ -7,3 +7,5 @@
 
 export { default as Button } from './Button';
 export { default as Card } from './Card';
+export { default as Seal } from './Seal';
+export { default as PlantPreview } from './PlantPreview';

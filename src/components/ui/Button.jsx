@@ -1,7 +1,7 @@
 /**
  * Button Component
- * 
- * Reusable neumorphic button with variants.
+ *
+ * Reusable button with variants.
  */
 
 import { forwardRef } from 'react';
@@ -15,22 +15,22 @@ const Button = forwardRef(function Button({
   disabled,
   ...props
 }, ref) {
-  const baseClasses = 'font-semibold transition-all duration-200 flex items-center justify-center gap-2';
-  
+  const baseClasses = 'btn font-semibold transition-all duration-150 flex items-center justify-center gap-2';
+
   const variantClasses = {
-    default: 'neuro-button text-[var(--text-secondary)] hover:text-[var(--text-primary)]',
-    primary: 'bg-gradient-to-r from-[var(--color-primary-600)] to-[var(--color-primary-500)] text-white shadow-lg hover:shadow-xl',
-    ghost: 'bg-transparent hover:bg-[var(--bg-card)] text-[var(--text-secondary)]',
+    default: 'btn-secondary',
+    primary: 'btn-primary',
+    ghost: 'btn-ghost',
   };
 
   const sizeClasses = {
-    sm: 'px-3 py-2 text-sm rounded-xl',
-    md: 'px-5 py-3 rounded-2xl',
-    lg: 'px-6 py-4 text-lg rounded-3xl',
+    sm: 'px-3 py-2 text-sm rounded-lg',
+    md: 'px-4 py-2.5 rounded-xl',
+    lg: 'px-6 py-3 text-base rounded-xl',
   };
 
-  const disabledClasses = disabled 
-    ? 'opacity-50 cursor-not-allowed pointer-events-none' 
+  const disabledClasses = disabled
+    ? 'opacity-50 cursor-not-allowed pointer-events-none'
     : '';
 
   return (

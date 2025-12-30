@@ -1,33 +1,29 @@
 /**
  * Card Component
- * 
- * Reusable neumorphic card with consistent styling.
+ *
+ * Paper-like card for content containers.
  */
 
 import { forwardRef } from 'react';
 import clsx from 'clsx';
 
-const Card = forwardRef(function Card({ 
-  children, 
+const Card = forwardRef(function Card({
+  children,
   className,
-  padding = 'md',
-  ...props 
+  variant = 'default',
+  ...props
 }, ref) {
-  const paddingClasses = {
-    none: '',
-    sm: 'p-4',
-    md: 'p-6',
-    lg: 'p-8',
+  const variantClasses = {
+    default: 'card',
+    elevated: 'card-elevated',
+    accent: 'card-accent',
+    interactive: 'card-interactive',
   };
 
   return (
     <div
       ref={ref}
-      className={clsx(
-        'neuro-card rounded-3xl',
-        paddingClasses[padding],
-        className
-      )}
+      className={clsx(variantClasses[variant], className)}
       {...props}
     >
       {children}
