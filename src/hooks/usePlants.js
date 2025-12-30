@@ -162,7 +162,23 @@ export function useUpdatePlant() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, updates }) => plantsService.updatePlant(id, updates),
+    mutationFn: ({ id, updates }) => {
+      if (DEV_BYPASS) {
+        // Mock update for development
+        const plantIndex = MOCK_PLANTS.findIndex((p) => p.id === id);
+        if (plantIndex === -1) {
+          return Promise.reject(new Error('Plant not found'));
+        }
+        const updatedPlant = {
+          ...MOCK_PLANTS[plantIndex],
+          ...updates,
+          updated_at: new Date().toISOString(),
+        };
+        MOCK_PLANTS[plantIndex] = updatedPlant;
+        return Promise.resolve(updatedPlant);
+      }
+      return plantsService.updatePlant(id, updates);
+    },
     onSuccess: (data, { id }) => {
       // Update the cache for this specific plant
       queryClient.setQueryData(plantKeys.detail(id), data);
@@ -179,7 +195,18 @@ export function useDeletePlant() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: plantsService.deletePlant,
+    mutationFn: (id) => {
+      if (DEV_BYPASS) {
+        // Mock delete for development
+        const plantIndex = MOCK_PLANTS.findIndex((p) => p.id === id);
+        if (plantIndex === -1) {
+          return Promise.reject(new Error('Plant not found'));
+        }
+        MOCK_PLANTS.splice(plantIndex, 1);
+        return Promise.resolve();
+      }
+      return plantsService.deletePlant(id);
+    },
     onSuccess: (_, id) => {
       // Remove from cache
       queryClient.removeQueries({ queryKey: plantKeys.detail(id) });

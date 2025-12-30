@@ -656,3 +656,28 @@ textarea.input {
 .animate-spin {
   animation: spin 1s linear infinite;
 }
+
+/* ===========================================
+   DANGER BUTTON
+   =========================================== */
+.btn-danger {
+  background: linear-gradient(165deg,
+    var(--color-error) 0%,
+    #c54545 50%,
+    var(--color-error) 100%
+  );
+  color: white;
+  border: 1px solid #c54545;
+  box-shadow:
+    4px 4px 10px rgba(216, 100, 100, 0.25),
+    -2px -2px 6px rgba(255, 255, 255, 0.5);
+}
+
+.btn-danger:hover {
+  transform: translateY(-2px);
+}
+
+.btn-danger:active {
+  box-shadow: inset 3px 3px 6px rgba(150, 50, 50, 0.4);
+  transform: scale(0.98);
+}
