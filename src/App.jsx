@@ -14,6 +14,7 @@ import Dashboard from './pages/Dashboard';
 import Library from './pages/Library';
 import PlantDetail from './pages/PlantDetail';
 import AddPlant from './pages/AddPlant';
+import CareLog from './pages/CareLog';
 import Login from './pages/Login';
 
 // Create a client with sensible defaults
@@ -76,6 +77,16 @@ function AppRoutes() {
         element={
           <ProtectedRoute>
             <Library />
+          </ProtectedRoute>
+        }
+      />
+
+      {/* Care Log */}
+      <Route
+        path="/care"
+        element={
+          <ProtectedRoute>
+            <CareLog />
           </ProtectedRoute>
         }
       />

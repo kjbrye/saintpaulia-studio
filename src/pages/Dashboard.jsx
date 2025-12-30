@@ -3,7 +3,7 @@
  */
 
 import { Link } from 'react-router-dom';
-import { Flower2, Sparkles, Droplets, BookOpen, Calendar, Plus, ChevronRight } from 'lucide-react';
+import { Flower2, Sparkles, Droplets, BookOpen, Plus, ChevronRight } from 'lucide-react';
 import { usePlants } from '../hooks/usePlants';
 import { useRecentCareLogs } from '../hooks/useCare';
 import { useAuth } from '../hooks/useAuth';
@@ -82,7 +82,7 @@ export default function Dashboard() {
         {/* Quick Actions */}
         <div className="flex flex-col sm:flex-row gap-4">
           <ActionButton icon={BookOpen} label="Library" to="/library" />
-          <ActionButton icon={Calendar} label="Calendar" to="/calendar" />
+          <ActionButton icon={Droplets} label="Care Log" to="/care" />
           <ActionButton icon={Plus} label="Add Plant" to="/plants/new" primary />
         </div>
 

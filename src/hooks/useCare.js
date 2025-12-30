@@ -103,8 +103,21 @@ export function useLogCare() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ plantId, careType, notes }) =>
-      careService.logCare(plantId, careType, notes),
+    mutationFn: ({ plantId, careType, notes }) => {
+      if (DEV_BYPASS) {
+        // Mock care log creation for development
+        const newLog = {
+          id: String(Date.now()),
+          plant_id: plantId,
+          care_type: careType,
+          care_date: new Date().toISOString(),
+          notes: notes || '',
+        };
+        MOCK_CARE_LOGS.unshift(newLog);
+        return Promise.resolve(newLog);
+      }
+      return careService.logCare(plantId, careType, notes);
+    },
     onSuccess: (_, { plantId }) => {
       // Invalidate care logs
       queryClient.invalidateQueries({ queryKey: careKeys.all });
