@@ -1,12 +1,63 @@
 /**
  * usePlants Hook
- * 
+ *
  * React Query wrapper for plant operations.
  * Components use this hook, never the service directly.
  */
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import * as plantsService from '../services/plants';
+
+// TODO: Remove DEV_BYPASS and MOCK_PLANTS before production
+const DEV_BYPASS = true;
+
+const MOCK_PLANTS = [
+  {
+    id: '1',
+    nickname: 'Violet Queen',
+    cultivar_name: 'Optimara EverGrace',
+    photo_url: null,
+    last_watered: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000).toISOString(), // 10 days ago
+    last_fertilized: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
+    last_groomed: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
+  },
+  {
+    id: '2',
+    nickname: 'Purple Haze',
+    cultivar_name: 'Rob\'s Dandy Lion',
+    photo_url: null,
+    last_watered: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
+    last_fertilized: new Date(Date.now() - 20 * 24 * 60 * 60 * 1000).toISOString(), // overdue
+    last_groomed: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
+  },
+  {
+    id: '3',
+    nickname: null,
+    cultivar_name: 'Buckeye Seductress',
+    photo_url: null,
+    last_watered: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
+    last_fertilized: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
+    last_groomed: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
+  },
+  {
+    id: '4',
+    nickname: 'Little Star',
+    cultivar_name: 'Ness\' Crinkle Blue',
+    photo_url: null,
+    last_watered: new Date(Date.now() - 8 * 24 * 60 * 60 * 1000).toISOString(), // overdue
+    last_fertilized: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000).toISOString(),
+    last_groomed: new Date(Date.now() - 12 * 24 * 60 * 60 * 1000).toISOString(), // overdue
+  },
+  {
+    id: '5',
+    nickname: 'Rosie',
+    cultivar_name: 'Optimara Little Maya',
+    photo_url: null,
+    last_watered: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
+    last_fertilized: new Date(Date.now() - 6 * 24 * 60 * 60 * 1000).toISOString(),
+    last_groomed: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000).toISOString(),
+  },
+];
 
 // Query key factory - keeps keys consistent across the app
 export const plantKeys = {
@@ -23,7 +74,12 @@ export const plantKeys = {
 export function usePlants(options = {}) {
   return useQuery({
     queryKey: plantKeys.list(options),
-    queryFn: () => plantsService.getPlants(options),
+    queryFn: () => {
+      if (DEV_BYPASS) {
+        return Promise.resolve(MOCK_PLANTS);
+      }
+      return plantsService.getPlants(options);
+    },
   });
 }
 

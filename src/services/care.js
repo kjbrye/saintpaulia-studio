@@ -81,3 +81,27 @@ export async function logCare(plantId, careType, notes = '') {
 
   return careLog;
 }
+
+/**
+ * Fetch recent care logs across all plants with plant info
+ * @param {number} limit - Max records to return (default: 10)
+ * @returns {Promise<Array>} Array of care log objects with plant data
+ */
+export async function getRecentCareLogs(limit = 10) {
+  const { data, error } = await supabase
+    .from('care_logs')
+    .select(`
+      *,
+      plants (
+        id,
+        nickname,
+        cultivar_name,
+        photo_url
+      )
+    `)
+    .order('care_date', { ascending: false })
+    .limit(limit);
+
+  if (error) throw error;
+  return data;
+}

@@ -8,25 +8,17 @@
  */
 
 export const colors = {
-  // Primary palette - deep purples
-  primary: {
-    50: '#F5F3FF',
-    100: '#EDE9FE',
-    200: '#DDD6FE',
-    300: '#C4B5FD',
-    400: '#A78BFA',
-    500: '#8B5CF6',
-    600: '#7C3AED',
-    700: '#6D28D9',
-    800: '#5B21B6',
-    900: '#4C1D95',
+  // Primary palette - Sage Greens
+  sage: {
+    500: '#778a68',
+    600: '#5d6e51',
+    700: '#4a5842',
   },
 
-  // Accent - soft lavender glow
-  accent: {
-    primary: '#A89FEF',
-    secondary: '#C4B5FD',
-    glow: '#B8ACF6',
+  // Accent - Copper
+  copper: {
+    500: '#b87750',
+    600: '#a66542',
   },
 
   // Semantic colors
@@ -37,16 +29,16 @@ export const colors = {
 
   // Text colors
   text: {
-    primary: '#F5F3FF',
-    secondary: '#C4B5FD',
-    muted: '#A78BFA',
+    primary: '#26332a',
+    secondary: '#4a5842',
+    muted: '#6b7866',
   },
 
   // Background colors
   background: {
-    base: '#1A1625',
-    card: 'rgba(45, 35, 66, 0.8)',
-    elevated: 'rgba(55, 45, 76, 0.9)',
+    base: '#f9f7f3',
+    card: 'rgba(119,138,104,0.12)',
+    elevated: 'rgba(119,138,104,0.18)',
   },
 };
 

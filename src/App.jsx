@@ -24,8 +24,16 @@ const queryClient = new QueryClient({
 });
 
 // Protected route wrapper
+// TODO: Remove DEV_BYPASS before production
+const DEV_BYPASS = true;
+
 function ProtectedRoute({ children }) {
   const { isAuthenticated, loading } = useAuth();
+
+  // Bypass auth for development preview
+  if (DEV_BYPASS) {
+    return children;
+  }
 
   if (loading) {
     return (
