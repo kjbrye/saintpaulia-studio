@@ -20,15 +20,23 @@ const MOCK_PLANTS = [
     last_watered: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000).toISOString(), // 10 days ago
     last_fertilized: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
     last_groomed: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
+    is_blooming: true,
+    acquired_date: '2024-03-15',
+    notes: 'Beautiful purple blooms. Gift from Mom.',
+    updated_at: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
   },
   {
     id: '2',
     nickname: 'Purple Haze',
-    cultivar_name: 'Rob\'s Dandy Lion',
+    cultivar_name: "Rob's Dandy Lion",
     photo_url: null,
     last_watered: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
     last_fertilized: new Date(Date.now() - 20 * 24 * 60 * 60 * 1000).toISOString(), // overdue
     last_groomed: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
+    is_blooming: false,
+    acquired_date: '2024-06-20',
+    notes: 'Miniature variety. Loves bright indirect light.',
+    updated_at: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
   },
   {
     id: '3',
@@ -38,15 +46,23 @@ const MOCK_PLANTS = [
     last_watered: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
     last_fertilized: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
     last_groomed: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
+    is_blooming: true,
+    acquired_date: '2024-01-10',
+    notes: null,
+    updated_at: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
   },
   {
     id: '4',
     nickname: 'Little Star',
-    cultivar_name: 'Ness\' Crinkle Blue',
+    cultivar_name: "Ness' Crinkle Blue",
     photo_url: null,
     last_watered: new Date(Date.now() - 8 * 24 * 60 * 60 * 1000).toISOString(), // overdue
     last_fertilized: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000).toISOString(),
     last_groomed: new Date(Date.now() - 12 * 24 * 60 * 60 * 1000).toISOString(), // overdue
+    is_blooming: false,
+    acquired_date: '2023-11-05',
+    notes: 'Semi-miniature with ruffled leaves.',
+    updated_at: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
   },
   {
     id: '5',
@@ -56,6 +72,10 @@ const MOCK_PLANTS = [
     last_watered: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
     last_fertilized: new Date(Date.now() - 6 * 24 * 60 * 60 * 1000).toISOString(),
     last_groomed: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000).toISOString(),
+    is_blooming: false,
+    acquired_date: '2024-08-01',
+    notes: 'Pink flowers, compact growth.',
+    updated_at: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000).toISOString(),
   },
 ];
 
@@ -89,7 +109,16 @@ export function usePlants(options = {}) {
 export function usePlant(id) {
   return useQuery({
     queryKey: plantKeys.detail(id),
-    queryFn: () => plantsService.getPlantById(id),
+    queryFn: () => {
+      if (DEV_BYPASS) {
+        const plant = MOCK_PLANTS.find((p) => p.id === id);
+        if (!plant) {
+          return Promise.reject(new Error('Plant not found'));
+        }
+        return Promise.resolve(plant);
+      }
+      return plantsService.getPlantById(id);
+    },
     enabled: !!id, // Don't fetch if no ID
   });
 }

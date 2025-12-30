@@ -11,6 +11,8 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AuthProvider, useAuth } from './hooks/useAuth';
 import Dashboard from './pages/Dashboard';
+import Library from './pages/Library';
+import PlantDetail from './pages/PlantDetail';
 import Login from './pages/Login';
 
 // Create a client with sensible defaults
@@ -67,10 +69,28 @@ function AppRoutes() {
         }
       />
       
+      {/* Library */}
+      <Route
+        path="/library"
+        element={
+          <ProtectedRoute>
+            <Library />
+          </ProtectedRoute>
+        }
+      />
+
+      {/* Plant Detail */}
+      <Route
+        path="/plants/:id"
+        element={
+          <ProtectedRoute>
+            <PlantDetail />
+          </ProtectedRoute>
+        }
+      />
+
       {/* Add more routes as you build features */}
-      {/* <Route path="/library" element={<ProtectedRoute><Library /></ProtectedRoute>} /> */}
       {/* <Route path="/plants/new" element={<ProtectedRoute><AddPlant /></ProtectedRoute>} /> */}
-      {/* <Route path="/plants/:id" element={<ProtectedRoute><PlantDetail /></ProtectedRoute>} /> */}
       
       {/* Fallback */}
       <Route path="*" element={<Navigate to="/" replace />} />
