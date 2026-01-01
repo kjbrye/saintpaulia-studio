@@ -23,10 +23,20 @@ const CARE_LABELS = {
   grooming: 'Grooming',
 };
 
+const FERTILIZER_LABELS = {
+  balanced: 'Balanced (20-20-20)',
+  bloom: 'Bloom Booster',
+  foliage: 'Foliage/Growth',
+  organic: 'Organic',
+  slow_release: 'Slow Release',
+  other: 'Other',
+};
+
 export default function CareLogItem({ log, showPlantName = false, plantName }) {
   const Icon = CARE_ICONS[log.care_type] || Droplets;
   const colors = CARE_COLORS[log.care_type] || CARE_COLORS.watering;
   const label = CARE_LABELS[log.care_type] || 'Care';
+  const fertilizerLabel = log.fertilizer_type ? FERTILIZER_LABELS[log.fertilizer_type] : null;
 
   const date = new Date(log.care_date);
   const formattedDate = date.toLocaleDateString('en-US', {
@@ -49,6 +59,9 @@ export default function CareLogItem({ log, showPlantName = false, plantName }) {
       <div className="flex-1 min-w-0">
         <p className="text-body font-medium">
           {label}
+          {fertilizerLabel && (
+            <span style={{ color: 'var(--purple-400)' }} className="font-normal"> - {fertilizerLabel}</span>
+          )}
           {showPlantName && plantName && (
             <span className="text-muted font-normal"> — {plantName}</span>
           )}

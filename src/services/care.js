@@ -50,17 +50,19 @@ export async function createCareLog(careLog) {
  * @param {string} plantId - Plant ID
  * @param {string} careType - Type of care ('watering', 'fertilizing', 'grooming')
  * @param {string} notes - Optional notes
+ * @param {string} fertilizerType - Optional fertilizer type (only for fertilizing)
  * @returns {Promise<Object>} Created care log object
  */
-export async function logCare(plantId, careType, notes = '') {
+export async function logCare(plantId, careType, notes = '', fertilizerType = null) {
   const now = new Date().toISOString();
-  
+
   // Create the care log
   const careLog = await createCareLog({
     plant_id: plantId,
     care_type: careType,
     care_date: now,
     notes,
+    fertilizer_type: careType === 'fertilizing' ? fertilizerType : null,
   });
 
   // Update the plant's last care date

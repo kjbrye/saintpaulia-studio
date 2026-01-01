@@ -22,9 +22,19 @@ const careConfig = {
   },
 };
 
+const FERTILIZER_LABELS = {
+  balanced: 'Balanced (20-20-20)',
+  bloom: 'Bloom Booster',
+  foliage: 'Foliage/Growth',
+  organic: 'Organic',
+  slow_release: 'Slow Release',
+  other: 'Other',
+};
+
 function CareLogItem({ log }) {
   const config = careConfig[log.care_type] || careConfig.watering;
   const Icon = config.icon;
+  const fertilizerLabel = log.fertilizer_type ? FERTILIZER_LABELS[log.fertilizer_type] : null;
 
   const formatDate = (dateStr) => {
     const date = new Date(dateStr);
@@ -50,7 +60,12 @@ function CareLogItem({ log }) {
         <Icon size={14} style={{ color: config.color }} />
       </div>
       <div className="flex-1 min-w-0">
-        <p className="text-body font-medium">{config.label}</p>
+        <p className="text-body font-medium">
+          {config.label}
+          {fertilizerLabel && (
+            <span style={{ color: 'var(--purple-400)' }} className="font-normal"> - {fertilizerLabel}</span>
+          )}
+        </p>
         {log.notes && (
           <p className="text-small text-muted truncate">{log.notes}</p>
         )}

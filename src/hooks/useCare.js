@@ -42,6 +42,7 @@ const MOCK_CARE_LOGS = [
     care_type: 'fertilizing',
     care_date: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(), // 2 days ago
     notes: 'Quarter strength',
+    fertilizer_type: 'balanced',
     plants: { id: '2', nickname: 'Purple Haze', cultivar_name: "Rob's Dandy Lion", photo_url: null },
   },
   {
@@ -103,7 +104,7 @@ export function useLogCare() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ plantId, careType, notes }) => {
+    mutationFn: ({ plantId, careType, notes, fertilizerType }) => {
       if (DEV_BYPASS) {
         // Mock care log creation for development
         const newLog = {
@@ -112,11 +113,12 @@ export function useLogCare() {
           care_type: careType,
           care_date: new Date().toISOString(),
           notes: notes || '',
+          fertilizer_type: careType === 'fertilizing' ? fertilizerType : null,
         };
         MOCK_CARE_LOGS.unshift(newLog);
         return Promise.resolve(newLog);
       }
-      return careService.logCare(plantId, careType, notes);
+      return careService.logCare(plantId, careType, notes, fertilizerType);
     },
     onSuccess: (_, { plantId }) => {
       // Invalidate care logs
