@@ -120,12 +120,27 @@ export function useLogCare() {
       }
       return careService.logCare(plantId, careType, notes, fertilizerType);
     },
-    onSuccess: (_, { plantId }) => {
+    onSuccess: (newLog, { plantId, careType }) => {
       // Invalidate care logs
       queryClient.invalidateQueries({ queryKey: careKeys.all });
-      // Invalidate the plant (last_watered etc. changed)
-      queryClient.invalidateQueries({ queryKey: plantKeys.detail(plantId) });
-      queryClient.invalidateQueries({ queryKey: plantKeys.lists() });
+
+      // Update the plant's last care date in the cache
+      const updateField = {
+        watering: 'last_watered',
+        fertilizing: 'last_fertilized',
+        grooming: 'last_groomed',
+      }[careType];
+
+      if (updateField) {
+        // Update the detail cache
+        queryClient.setQueryData(plantKeys.detail(plantId), (oldPlant) => {
+          if (!oldPlant) return oldPlant;
+          return { ...oldPlant, [updateField]: newLog.care_date };
+        });
+
+        // Invalidate lists to refetch
+        queryClient.invalidateQueries({ queryKey: plantKeys.lists() });
+      }
     },
   });
 }
