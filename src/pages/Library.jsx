@@ -6,6 +6,7 @@ import { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowLeft, Plus } from 'lucide-react';
 import { usePlants } from '../hooks/usePlants';
+import { useSettings } from '../hooks/useSettings.jsx';
 import { plantNeedsCare } from '../utils/careStatus';
 import PlantCard from '../components/library/PlantCard';
 import PlantListItem from '../components/library/PlantListItem';
@@ -13,8 +14,9 @@ import LibraryToolbar from '../components/library/LibraryToolbar';
 import { EmptyLibrary, NoResults } from '../components/library/EmptyState';
 
 export default function Library() {
+  const { settings } = useSettings();
   const [searchQuery, setSearchQuery] = useState('');
-  const [viewMode, setViewMode] = useState('grid');
+  const [viewMode, setViewMode] = useState(settings.defaultView);
   const [sortBy, setSortBy] = useState('updated');
 
   const { data: plants = [], isLoading, error } = usePlants();

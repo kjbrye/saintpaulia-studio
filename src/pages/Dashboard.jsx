@@ -3,7 +3,7 @@
  */
 
 import { Link } from 'react-router-dom';
-import { Flower2, Sparkles, Droplets, BookOpen, Plus, ChevronRight } from 'lucide-react';
+import { Flower2, Sparkles, Droplets, BookOpen, Plus, ChevronRight, Settings } from 'lucide-react';
 import { usePlants } from '../hooks/usePlants';
 import { useRecentCareLogs } from '../hooks/useCare';
 import { useAuth } from '../hooks/useAuth';
@@ -50,10 +50,15 @@ export default function Dashboard() {
             className="h-16 w-auto"
             style={{ filter: 'drop-shadow(3px 3px 6px rgba(0,0,0,0.2))' }}
           />
-          <div>
+          <div className="flex-1">
             <h1 className="heading heading-xl">Saintpaulia Studio</h1>
             <p className="text-body">Welcome back, {displayName}</p>
           </div>
+          <Link to="/settings">
+            <button className="icon-container">
+              <Settings size={20} color="var(--sage-600)" />
+            </button>
+          </Link>
         </header>
 
         {/* Stats Grid */}

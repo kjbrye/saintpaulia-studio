@@ -10,11 +10,13 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AuthProvider, useAuth } from './hooks/useAuth';
+import { SettingsProvider } from './hooks/useSettings.jsx';
 import Dashboard from './pages/Dashboard';
 import Library from './pages/Library';
 import PlantDetail from './pages/PlantDetail';
 import AddPlant from './pages/AddPlant';
 import CareLog from './pages/CareLog';
+import Settings from './pages/Settings';
 import Login from './pages/Login';
 
 // Create a client with sensible defaults
@@ -91,6 +93,16 @@ function AppRoutes() {
         }
       />
 
+      {/* Settings */}
+      <Route
+        path="/settings"
+        element={
+          <ProtectedRoute>
+            <Settings />
+          </ProtectedRoute>
+        }
+      />
+
       {/* Add Plant - must come before /plants/:id */}
       <Route
         path="/plants/new"
@@ -121,9 +133,11 @@ export default function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
-        <BrowserRouter>
-          <AppRoutes />
-        </BrowserRouter>
+        <SettingsProvider>
+          <BrowserRouter>
+            <AppRoutes />
+          </BrowserRouter>
+        </SettingsProvider>
       </AuthProvider>
     </QueryClientProvider>
   );
