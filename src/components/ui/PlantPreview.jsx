@@ -8,6 +8,7 @@ import { forwardRef } from 'react';
 import { Link } from 'react-router-dom';
 import { Droplets, Scissors, Sparkles } from 'lucide-react';
 import clsx from 'clsx';
+import { useSettings } from '../../hooks/useSettings.jsx';
 import { getOverdueCareTypes } from '../../utils/careStatus';
 
 const careIcons = {
@@ -22,8 +23,9 @@ const PlantPreview = forwardRef(function PlantPreview({
   className,
   ...props
 }, ref) {
+  const { careThresholds } = useSettings();
   const displayName = plant.nickname || plant.cultivar_name || 'Unnamed Plant';
-  const overdueCareTypes = needsCare ? getOverdueCareTypes(plant) : [];
+  const overdueCareTypes = needsCare ? getOverdueCareTypes(plant, careThresholds) : [];
 
   return (
     <Link to={`/plants/${plant.id}`} className="block">

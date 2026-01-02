@@ -43,33 +43,36 @@ export const CARE_THRESHOLDS = {
 /**
  * Get all care statuses for a plant
  * @param {Object} plant - Plant object with last_watered, last_fertilized, last_groomed
+ * @param {Object} thresholds - Optional custom thresholds { watering, fertilizing, grooming }
  * @returns {Object} Object with watering, fertilizing, grooming statuses
  */
-export function getPlantCareStatuses(plant) {
+export function getPlantCareStatuses(plant, thresholds = CARE_THRESHOLDS) {
   return {
-    watering: getCareStatus(plant.last_watered, CARE_THRESHOLDS.watering),
-    fertilizing: getCareStatus(plant.last_fertilized, CARE_THRESHOLDS.fertilizing),
-    grooming: getCareStatus(plant.last_groomed, CARE_THRESHOLDS.grooming),
+    watering: getCareStatus(plant.last_watered, thresholds.watering ?? CARE_THRESHOLDS.watering),
+    fertilizing: getCareStatus(plant.last_fertilized, thresholds.fertilizing ?? CARE_THRESHOLDS.fertilizing),
+    grooming: getCareStatus(plant.last_groomed, thresholds.grooming ?? CARE_THRESHOLDS.grooming),
   };
 }
 
 /**
  * Check if a plant needs any care
  * @param {Object} plant - Plant object
+ * @param {Object} thresholds - Optional custom thresholds { watering, fertilizing, grooming }
  * @returns {boolean} True if any care is overdue
  */
-export function plantNeedsCare(plant) {
-  const statuses = getPlantCareStatuses(plant);
+export function plantNeedsCare(plant, thresholds) {
+  const statuses = getPlantCareStatuses(plant, thresholds);
   return Object.values(statuses).some(s => s.status === 'overdue');
 }
 
 /**
  * Get list of overdue care types for a plant
  * @param {Object} plant - Plant object
+ * @param {Object} thresholds - Optional custom thresholds { watering, fertilizing, grooming }
  * @returns {Array<string>} Array of care types that are overdue
  */
-export function getOverdueCareTypes(plant) {
-  const statuses = getPlantCareStatuses(plant);
+export function getOverdueCareTypes(plant, thresholds) {
+  const statuses = getPlantCareStatuses(plant, thresholds);
   return Object.entries(statuses)
     .filter(([_, status]) => status.status === 'overdue')
     .map(([type]) => type);

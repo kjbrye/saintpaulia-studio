@@ -7,18 +7,20 @@ import { Flower2, Sparkles, Droplets, BookOpen, Plus, ChevronRight, Settings } f
 import { usePlants } from '../hooks/usePlants';
 import { useRecentCareLogs } from '../hooks/useCare';
 import { useAuth } from '../hooks/useAuth';
+import { useSettings } from '../hooks/useSettings.jsx';
 import { plantNeedsCare, getOverdueCareTypes } from '../utils/careStatus';
 import { StatCard, ActionButton, PlantCareItem, BloomNotification, ActivityFeed, CollectionPreview } from '../components/dashboard';
 
 export default function Dashboard() {
   const { user } = useAuth();
+  const { careThresholds } = useSettings();
   const { data: plants = [], isLoading, error } = usePlants();
   const { data: recentActivity = [], isLoading: activityLoading } = useRecentCareLogs(5);
 
   // Derived data
-  const plantsNeedingCare = plants.filter(plantNeedsCare).map(p => ({
+  const plantsNeedingCare = plants.filter(p => plantNeedsCare(p, careThresholds)).map(p => ({
     ...p,
-    overdueCareTypes: getOverdueCareTypes(p),
+    overdueCareTypes: getOverdueCareTypes(p, careThresholds),
   }));
   const bloomingCount = plants.filter(p => p.is_blooming).length;
   const displayName = user?.email?.split('@')[0] || 'Gardener';

@@ -51,5 +51,13 @@ export function useSettings() {
   if (!context) {
     throw new Error('useSettings must be used within a SettingsProvider');
   }
-  return context;
+
+  // Map settings to care thresholds format expected by careStatus utils
+  const careThresholds = {
+    watering: context.settings.wateringThreshold,
+    fertilizing: context.settings.fertilizingThreshold,
+    grooming: context.settings.groomingThreshold,
+  };
+
+  return { ...context, careThresholds };
 }

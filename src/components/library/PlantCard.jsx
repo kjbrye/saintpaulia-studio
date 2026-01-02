@@ -4,11 +4,13 @@
 
 import { Link } from 'react-router-dom';
 import { Flower2, Sparkles, Droplets } from 'lucide-react';
+import { useSettings } from '../../hooks/useSettings.jsx';
 import { plantNeedsCare } from '../../utils/careStatus';
 
 export default function PlantCard({ plant }) {
+  const { careThresholds } = useSettings();
   const displayName = plant.nickname || plant.cultivar_name || 'Unnamed Plant';
-  const needsCare = plantNeedsCare(plant);
+  const needsCare = plantNeedsCare(plant, careThresholds);
 
   return (
     <Link to={`/plants/${plant.id}`}>

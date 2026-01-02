@@ -7,6 +7,7 @@ import { Link, useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Pencil, Trash2, Check, Loader2, Flower2 } from 'lucide-react';
 import { usePlant, useUpdatePlant, useDeletePlant } from '../hooks/usePlants';
 import { useCareLogs, useLogCare } from '../hooks/useCare';
+import { useSettings } from '../hooks/useSettings.jsx';
 import { getPlantCareStatuses } from '../utils/careStatus';
 import {
   CareStatusCard,
@@ -52,6 +53,7 @@ const LOCATION_LABELS = {
 export default function PlantDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { careThresholds } = useSettings();
 
   // Data fetching
   const { data: plant, isLoading, error } = usePlant(id);
@@ -193,7 +195,7 @@ export default function PlantDetail() {
     );
   }
 
-  const careStatuses = getPlantCareStatuses(plant);
+  const careStatuses = getPlantCareStatuses(plant, careThresholds);
   const displayName = plant.nickname || plant.cultivar_name || 'Unnamed Plant';
 
   return (

@@ -14,7 +14,7 @@ import LibraryToolbar from '../components/library/LibraryToolbar';
 import { EmptyLibrary, NoResults } from '../components/library/EmptyState';
 
 export default function Library() {
-  const { settings } = useSettings();
+  const { settings, careThresholds } = useSettings();
   const [searchQuery, setSearchQuery] = useState('');
   const [viewMode, setViewMode] = useState(settings.defaultView);
   const [sortBy, setSortBy] = useState('updated');
@@ -45,14 +45,14 @@ export default function Library() {
         case 'acquired':
           return new Date(b.acquisition_date || 0) - new Date(a.acquisition_date || 0);
         case 'care':
-          return plantNeedsCare(b) - plantNeedsCare(a);
+          return plantNeedsCare(b, careThresholds) - plantNeedsCare(a, careThresholds);
         default: // 'updated'
           return new Date(b.updated_at || 0) - new Date(a.updated_at || 0);
       }
     });
 
     return result;
-  }, [plants, searchQuery, sortBy]);
+  }, [plants, searchQuery, sortBy, careThresholds]);
 
   if (isLoading) {
     return (
