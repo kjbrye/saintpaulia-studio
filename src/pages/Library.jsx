@@ -145,7 +145,7 @@ export default function Library() {
 
             {/* List View */}
             {filteredPlants.length > 0 && viewMode === 'list' && (
-              <div className="space-y-3">
+              <div className="flex flex-col gap-4">
                 {paginatedPlants.map((plant) => (
                   <PlantListItem key={plant.id} plant={plant} />
                 ))}
