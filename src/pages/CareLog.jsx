@@ -4,7 +4,7 @@
 
 import { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowLeft, Droplets, Scissors, Sparkles, Search } from 'lucide-react';
+import { ArrowLeft, Droplets, Scissors, Sparkles, Flower2, Search } from 'lucide-react';
 import { useRecentCareLogs } from '../hooks/useCare';
 import { usePlants } from '../hooks/usePlants';
 import { CareLogItem } from '../components/care';
@@ -14,6 +14,7 @@ const FILTER_OPTIONS = [
   { value: 'watering', label: 'Watering', icon: Droplets },
   { value: 'fertilizing', label: 'Fertilizing', icon: Sparkles },
   { value: 'grooming', label: 'Grooming', icon: Scissors },
+  { value: 'repotting', label: 'Repotting', icon: Flower2 },
 ];
 
 export default function CareLog() {

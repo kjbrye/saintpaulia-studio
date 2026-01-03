@@ -42,6 +42,20 @@ const LOCATION_OPTIONS = [
   { value: 'other', label: 'Other' },
 ];
 
+// Pot size options for select dropdown
+const POT_SIZE_OPTIONS = [
+  { value: '', label: 'Select size...' },
+  { value: '2"', label: '2" (Mini/Starter)' },
+  { value: '2.5"', label: '2.5"' },
+  { value: '3"', label: '3" (Semi-mini)' },
+  { value: '3.5"', label: '3.5"' },
+  { value: '4"', label: '4" (Standard)' },
+  { value: '4.5"', label: '4.5"' },
+  { value: '5"', label: '5" (Large)' },
+  { value: '6"', label: '6"' },
+  { value: '6"+', label: '6"+ (Extra Large)' },
+];
+
 const LOCATION_LABELS = {
   windowsill: 'Windowsill',
   shelf: 'Plant Shelf',
@@ -82,6 +96,7 @@ export default function PlantDetail() {
         source: plant.source || '',
         location: plant.location || '',
         status: plant.status || 'healthy',
+        pot_size: plant.pot_size || '',
         notes: plant.notes || '',
       });
     }
@@ -123,6 +138,7 @@ export default function PlantDetail() {
           acquisition_date: formData.acquisition_date || null,
           source: formData.source || null,
           location: formData.location || null,
+          pot_size: formData.pot_size || null,
           notes: formData.notes || null,
         },
       });
@@ -351,6 +367,15 @@ export default function PlantDetail() {
               onChange={(v) => updateField('status', v)}
               options={STATUS_OPTIONS}
             />
+
+            <EditableField
+              label="Pot Size"
+              value={isEditing ? formData?.pot_size : plant.pot_size}
+              displayValue={plant.pot_size || 'Not set'}
+              isEditing={isEditing}
+              onChange={(v) => updateField('pot_size', v)}
+              options={POT_SIZE_OPTIONS}
+            />
           </div>
 
           <div
@@ -398,6 +423,7 @@ export default function PlantDetail() {
               plantId={id}
               onLogCare={logCare}
               isPending={isPending}
+              currentPotSize={plant.pot_size}
             />
 
             {/* Care History */}

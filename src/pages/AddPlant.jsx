@@ -21,6 +21,7 @@ export default function AddPlant() {
     source: '',
     location: '',
     status: 'healthy',
+    pot_size: '',
     notes: '',
   });
 
@@ -59,6 +60,7 @@ export default function AddPlant() {
         source: formData.source.trim() || null,
         location: formData.location || null,
         status: formData.status,
+        pot_size: formData.pot_size || null,
         notes: formData.notes.trim() || null,
       });
 
@@ -183,6 +185,25 @@ export default function AddPlant() {
                 <option value="recovering">Recovering</option>
                 <option value="struggling">Struggling</option>
                 <option value="dormant">Dormant</option>
+              </select>
+            </FormField>
+
+            <FormField label="Pot Size">
+              <select
+                className="input w-full"
+                value={formData.pot_size}
+                onChange={(e) => updateField('pot_size', e.target.value)}
+              >
+                <option value="">Select size...</option>
+                <option value='2"'>2" (Mini/Starter)</option>
+                <option value='2.5"'>2.5"</option>
+                <option value='3"'>3" (Semi-mini)</option>
+                <option value='3.5"'>3.5"</option>
+                <option value='4"'>4" (Standard)</option>
+                <option value='4.5"'>4.5"</option>
+                <option value='5"'>5" (Large)</option>
+                <option value='6"'>6"</option>
+                <option value='6"+'>6"+ (Extra Large)</option>
               </select>
             </FormField>
           </div>

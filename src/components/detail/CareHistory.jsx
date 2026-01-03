@@ -2,7 +2,7 @@
  * CareHistory - List of recent care logs for this plant
  */
 
-import { Droplets, Sparkles, Scissors, Clock } from 'lucide-react';
+import { Droplets, Sparkles, Scissors, Clock, Flower2 } from 'lucide-react';
 
 const careConfig = {
   watering: {
@@ -20,6 +20,11 @@ const careConfig = {
     label: 'Groomed',
     color: 'var(--copper-500)',
   },
+  repotting: {
+    icon: Flower2,
+    label: 'Repotted',
+    color: 'var(--sage-700)',
+  },
 };
 
 const FERTILIZER_LABELS = {
@@ -35,6 +40,7 @@ function CareLogItem({ log }) {
   const config = careConfig[log.care_type] || careConfig.watering;
   const Icon = config.icon;
   const fertilizerLabel = log.fertilizer_type ? FERTILIZER_LABELS[log.fertilizer_type] : null;
+  const potSize = log.pot_size;
 
   const formatDate = (dateStr) => {
     const date = new Date(dateStr);
@@ -64,6 +70,9 @@ function CareLogItem({ log }) {
           {config.label}
           {fertilizerLabel && (
             <span style={{ color: 'var(--purple-400)' }} className="font-normal"> - {fertilizerLabel}</span>
+          )}
+          {potSize && (
+            <span style={{ color: 'var(--sage-600)' }} className="font-normal"> - {potSize}</span>
           )}
         </p>
         {log.notes && (

@@ -2,7 +2,7 @@
  * QuickCareActions - Buttons to quickly log care actions
  */
 
-import { Droplets, Sparkles, Scissors, Check, Loader2, ChevronDown } from 'lucide-react';
+import { Droplets, Sparkles, Scissors, Check, Loader2, ChevronDown, Flower2 } from 'lucide-react';
 import { useState, useRef, useEffect } from 'react';
 
 const careConfig = {
@@ -16,11 +16,19 @@ const careConfig = {
     label: 'Fertilize',
     activeLabel: 'Fertilized',
     hasOptions: true,
+    optionType: 'fertilizer',
   },
   grooming: {
     icon: Scissors,
     label: 'Groom',
     activeLabel: 'Groomed',
+  },
+  repotting: {
+    icon: Flower2,
+    label: 'Repot',
+    activeLabel: 'Repotted',
+    hasOptions: true,
+    optionType: 'potSize',
   },
 };
 
@@ -33,7 +41,19 @@ const FERTILIZER_OPTIONS = [
   { value: 'other', label: 'Other' },
 ];
 
-function CareButton({ careType, onLog, isLoading, recentlyLogged }) {
+const POT_SIZE_OPTIONS = [
+  { value: '2"', label: '2" (Mini/Starter)' },
+  { value: '2.5"', label: '2.5"' },
+  { value: '3"', label: '3" (Semi-mini)' },
+  { value: '3.5"', label: '3.5"' },
+  { value: '4"', label: '4" (Standard)' },
+  { value: '4.5"', label: '4.5"' },
+  { value: '5"', label: '5" (Large)' },
+  { value: '6"', label: '6"' },
+  { value: '6"+', label: '6"+ (Extra Large)' },
+];
+
+function CareButton({ careType, onLog, isLoading, recentlyLogged, currentPotSize }) {
   const [showOptions, setShowOptions] = useState(false);
   const optionsRef = useRef(null);
   const config = careConfig[careType];
@@ -61,9 +81,13 @@ function CareButton({ careType, onLog, isLoading, recentlyLogged }) {
     }
   };
 
-  const handleOptionSelect = (fertilizerType) => {
+  const handleOptionSelect = (selectedValue) => {
     setShowOptions(false);
-    onLog(careType, fertilizerType);
+    if (config.optionType === 'potSize') {
+      onLog(careType, null, selectedValue); // potSize as third param
+    } else {
+      onLog(careType, selectedValue); // fertilizerType as second param
+    }
   };
 
   if (recentlyLogged) {
@@ -74,6 +98,10 @@ function CareButton({ careType, onLog, isLoading, recentlyLogged }) {
       </button>
     );
   }
+
+  // Get options based on type
+  const options = config.optionType === 'potSize' ? POT_SIZE_OPTIONS : FERTILIZER_OPTIONS;
+  const dropdownTitle = config.optionType === 'potSize' ? 'Select new pot size' : 'Select fertilizer type';
 
   return (
     <div className="relative flex-1" ref={optionsRef}>
@@ -91,33 +119,49 @@ function CareButton({ careType, onLog, isLoading, recentlyLogged }) {
         {config.hasOptions && <ChevronDown size={14} />}
       </button>
 
-      {/* Fertilizer Options Dropdown */}
+      {/* Options Dropdown */}
       {showOptions && (
         <div className="absolute top-full left-0 right-0 mt-2 z-10">
           <div className="card p-2 shadow-lg">
-            <p className="text-xs text-muted px-3 py-1 mb-1">Select fertilizer type</p>
-            {FERTILIZER_OPTIONS.map(option => (
+            <p className="text-xs text-muted px-3 py-1 mb-1">{dropdownTitle}</p>
+
+            {/* Show current pot size if repotting */}
+            {config.optionType === 'potSize' && currentPotSize && (
+              <p className="text-xs px-3 py-1 mb-1 rounded" style={{ color: 'var(--sage-600)', background: 'var(--sage-100)' }}>
+                Current: {currentPotSize}
+              </p>
+            )}
+
+            {options.map(option => (
               <button
                 key={option.value}
                 onClick={() => handleOptionSelect(option.value)}
                 className="w-full text-left px-3 py-2 text-small rounded-lg transition-colors"
-                style={{ ':hover': { background: 'var(--sage-100)' } }}
+                style={{
+                  color: config.optionType === 'potSize' && option.value === currentPotSize ? 'var(--sage-400)' : undefined
+                }}
                 onMouseEnter={(e) => e.target.style.background = 'var(--sage-100)'}
                 onMouseLeave={(e) => e.target.style.background = 'transparent'}
               >
                 {option.label}
+                {config.optionType === 'potSize' && option.value === currentPotSize && (
+                  <span className="text-xs text-muted ml-2">(current)</span>
+                )}
               </button>
             ))}
-            <div style={{ borderTop: '1px solid var(--sage-200)', marginTop: '4px', paddingTop: '4px' }}>
-              <button
-                onClick={() => handleOptionSelect(null)}
-                className="w-full text-left px-3 py-2 text-small text-muted rounded-lg transition-colors"
-                onMouseEnter={(e) => e.target.style.background = 'var(--sage-100)'}
-                onMouseLeave={(e) => e.target.style.background = 'transparent'}
-              >
-                Skip / Not sure
-              </button>
-            </div>
+
+            {config.optionType === 'fertilizer' && (
+              <div style={{ borderTop: '1px solid var(--sage-200)', marginTop: '4px', paddingTop: '4px' }}>
+                <button
+                  onClick={() => handleOptionSelect(null)}
+                  className="w-full text-left px-3 py-2 text-small text-muted rounded-lg transition-colors"
+                  onMouseEnter={(e) => e.target.style.background = 'var(--sage-100)'}
+                  onMouseLeave={(e) => e.target.style.background = 'transparent'}
+                >
+                  Skip / Not sure
+                </button>
+              </div>
+            )}
           </div>
         </div>
       )}
@@ -125,14 +169,14 @@ function CareButton({ careType, onLog, isLoading, recentlyLogged }) {
   );
 }
 
-export default function QuickCareActions({ plantId, onLogCare, isPending }) {
+export default function QuickCareActions({ plantId, onLogCare, isPending, currentPotSize }) {
   const [recentlyLogged, setRecentlyLogged] = useState({});
   const [loadingType, setLoadingType] = useState(null);
 
-  const handleLog = async (careType, fertilizerType = null) => {
+  const handleLog = async (careType, fertilizerType = null, potSize = null) => {
     setLoadingType(careType);
     try {
-      await onLogCare({ plantId, careType, notes: '', fertilizerType });
+      await onLogCare({ plantId, careType, notes: '', fertilizerType, potSize });
       setRecentlyLogged((prev) => ({ ...prev, [careType]: true }));
       // Reset after 3 seconds
       setTimeout(() => {
@@ -164,6 +208,13 @@ export default function QuickCareActions({ plantId, onLogCare, isPending }) {
           onLog={handleLog}
           isLoading={loadingType === 'grooming' || isPending}
           recentlyLogged={recentlyLogged.grooming}
+        />
+        <CareButton
+          careType="repotting"
+          onLog={handleLog}
+          isLoading={loadingType === 'repotting' || isPending}
+          recentlyLogged={recentlyLogged.repotting}
+          currentPotSize={currentPotSize}
         />
       </div>
     </div>

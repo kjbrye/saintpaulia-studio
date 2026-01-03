@@ -20,6 +20,8 @@ const MOCK_PLANTS = [
     last_watered: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000).toISOString(), // 10 days ago
     last_fertilized: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
     last_groomed: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
+    last_repotted: new Date(Date.now() - 90 * 24 * 60 * 60 * 1000).toISOString(), // 90 days ago
+    pot_size: '4"',
     is_blooming: true,
     acquisition_date: '2024-03-15',
     notes: 'Beautiful purple blooms. Gift from Mom.',
@@ -33,6 +35,8 @@ const MOCK_PLANTS = [
     last_watered: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
     last_fertilized: new Date(Date.now() - 20 * 24 * 60 * 60 * 1000).toISOString(), // overdue
     last_groomed: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
+    last_repotted: null,
+    pot_size: '3"',
     is_blooming: false,
     acquisition_date: '2024-06-20',
     notes: 'Miniature variety. Loves bright indirect light.',

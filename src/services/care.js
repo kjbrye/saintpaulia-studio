@@ -47,13 +47,15 @@ export async function createCareLog(careLog) {
 
 /**
  * Log a quick care action and update the plant's last care date
+ * For repotting, also updates the plant's pot_size
  * @param {string} plantId - Plant ID
- * @param {string} careType - Type of care ('watering', 'fertilizing', 'grooming')
+ * @param {string} careType - Type of care ('watering', 'fertilizing', 'grooming', 'repotting')
  * @param {string} notes - Optional notes
  * @param {string} fertilizerType - Optional fertilizer type (only for fertilizing)
+ * @param {string} potSize - Optional pot size (only for repotting)
  * @returns {Promise<Object>} Created care log object
  */
-export async function logCare(plantId, careType, notes = '', fertilizerType = null) {
+export async function logCare(plantId, careType, notes = '', fertilizerType = null, potSize = null) {
   const now = new Date().toISOString();
 
   // Create the care log
@@ -63,6 +65,7 @@ export async function logCare(plantId, careType, notes = '', fertilizerType = nu
     care_date: now,
     notes,
     fertilizer_type: careType === 'fertilizing' ? fertilizerType : null,
+    pot_size: careType === 'repotting' ? potSize : null,
   });
 
   // Update the plant's last care date
@@ -70,12 +73,24 @@ export async function logCare(plantId, careType, notes = '', fertilizerType = nu
     watering: 'last_watered',
     fertilizing: 'last_fertilized',
     grooming: 'last_groomed',
+    repotting: 'last_repotted',
   }[careType];
 
+  // Build update object
+  const plantUpdate = {};
   if (updateField) {
+    plantUpdate[updateField] = now;
+  }
+
+  // If repotting, also update pot_size on the plant
+  if (careType === 'repotting' && potSize) {
+    plantUpdate.pot_size = potSize;
+  }
+
+  if (Object.keys(plantUpdate).length > 0) {
     const { error } = await supabase
       .from('plants')
-      .update({ [updateField]: now })
+      .update(plantUpdate)
       .eq('id', plantId);
 
     if (error) throw error;

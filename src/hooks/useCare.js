@@ -104,7 +104,7 @@ export function useLogCare() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ plantId, careType, notes, fertilizerType }) => {
+    mutationFn: ({ plantId, careType, notes, fertilizerType, potSize }) => {
       if (DEV_BYPASS) {
         // Mock care log creation for development
         const newLog = {
@@ -114,13 +114,14 @@ export function useLogCare() {
           care_date: new Date().toISOString(),
           notes: notes || '',
           fertilizer_type: careType === 'fertilizing' ? fertilizerType : null,
+          pot_size: careType === 'repotting' ? potSize : null,
         };
         MOCK_CARE_LOGS.unshift(newLog);
         return Promise.resolve(newLog);
       }
-      return careService.logCare(plantId, careType, notes, fertilizerType);
+      return careService.logCare(plantId, careType, notes, fertilizerType, potSize);
     },
-    onSuccess: (newLog, { plantId, careType }) => {
+    onSuccess: (newLog, { plantId, careType, potSize }) => {
       // Invalidate care logs
       queryClient.invalidateQueries({ queryKey: careKeys.all });
 
@@ -129,13 +130,21 @@ export function useLogCare() {
         watering: 'last_watered',
         fertilizing: 'last_fertilized',
         grooming: 'last_groomed',
+        repotting: 'last_repotted',
       }[careType];
 
-      if (updateField) {
+      if (updateField || (careType === 'repotting' && potSize)) {
         // Update the detail cache
         queryClient.setQueryData(plantKeys.detail(plantId), (oldPlant) => {
           if (!oldPlant) return oldPlant;
-          return { ...oldPlant, [updateField]: newLog.care_date };
+          const updates = {};
+          if (updateField) {
+            updates[updateField] = newLog.care_date;
+          }
+          if (careType === 'repotting' && potSize) {
+            updates.pot_size = potSize;
+          }
+          return { ...oldPlant, ...updates };
         });
 
         // Invalidate lists to refetch
