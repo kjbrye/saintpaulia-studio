@@ -2,9 +2,9 @@
  * Library Page - Plant collection browser
  */
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowLeft, Plus } from 'lucide-react';
+import { ArrowLeft, Plus, ChevronLeft, ChevronRight } from 'lucide-react';
 import { usePlants } from '../hooks/usePlants';
 import { useSettings } from '../hooks/useSettings.jsx';
 import { plantNeedsCare } from '../utils/careStatus';
@@ -18,8 +18,10 @@ export default function Library() {
   const [searchQuery, setSearchQuery] = useState('');
   const [viewMode, setViewMode] = useState(settings.defaultView);
   const [sortBy, setSortBy] = useState('updated');
+  const [currentPage, setCurrentPage] = useState(1);
 
   const { data: plants = [], isLoading, error } = usePlants();
+  const plantsPerPage = settings.plantsPerPage;
 
   // Filter and sort
   const filteredPlants = useMemo(() => {
@@ -53,6 +55,16 @@ export default function Library() {
 
     return result;
   }, [plants, searchQuery, sortBy, careThresholds]);
+
+  // Reset to page 1 when search or sort changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery, sortBy, plantsPerPage]);
+
+  // Pagination
+  const totalPages = Math.ceil(filteredPlants.length / plantsPerPage);
+  const startIndex = (currentPage - 1) * plantsPerPage;
+  const paginatedPlants = filteredPlants.slice(startIndex, startIndex + plantsPerPage);
 
   if (isLoading) {
     return (
@@ -125,7 +137,7 @@ export default function Library() {
             {/* Grid View */}
             {filteredPlants.length > 0 && viewMode === 'grid' && (
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
-                {filteredPlants.map((plant) => (
+                {paginatedPlants.map((plant) => (
                   <PlantCard key={plant.id} plant={plant} />
                 ))}
               </div>
@@ -134,17 +146,46 @@ export default function Library() {
             {/* List View */}
             {filteredPlants.length > 0 && viewMode === 'list' && (
               <div className="space-y-3">
-                {filteredPlants.map((plant) => (
+                {paginatedPlants.map((plant) => (
                   <PlantListItem key={plant.id} plant={plant} />
                 ))}
               </div>
             )}
 
-            {/* Footer Count */}
+            {/* Pagination & Footer */}
             {filteredPlants.length > 0 && (
-              <p className="text-center text-muted mt-8">
-                Showing {filteredPlants.length} of {plants.length} plants
-              </p>
+              <div className="mt-8 space-y-4">
+                {/* Pagination Controls */}
+                {totalPages > 1 && (
+                  <div className="flex items-center justify-center gap-4">
+                    <button
+                      className="btn btn-secondary btn-small"
+                      onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                      disabled={currentPage === 1}
+                    >
+                      <ChevronLeft size={16} />
+                      Previous
+                    </button>
+                    <span className="text-body">
+                      Page {currentPage} of {totalPages}
+                    </span>
+                    <button
+                      className="btn btn-secondary btn-small"
+                      onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                      disabled={currentPage === totalPages}
+                    >
+                      Next
+                      <ChevronRight size={16} />
+                    </button>
+                  </div>
+                )}
+
+                {/* Count */}
+                <p className="text-center text-muted">
+                  Showing {startIndex + 1}–{Math.min(startIndex + plantsPerPage, filteredPlants.length)} of {filteredPlants.length} plants
+                  {filteredPlants.length !== plants.length && ` (${plants.length} total)`}
+                </p>
+              </div>
             )}
           </>
         )}
