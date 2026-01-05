@@ -1,28 +1,27 @@
 /**
- * Dashboard Page - Thin orchestrator (under 150 lines)
+ * Dashboard Page - Calming "garden view" landing page
+ * Thin orchestrator (under 150 lines)
  */
 
 import { Link } from 'react-router-dom';
-import { Flower2, Sparkles, Droplets, BookOpen, Plus, ChevronRight, Settings } from 'lucide-react';
+import { Flower2, BookOpen, Droplets, Plus, ChevronRight, Settings, Heart } from 'lucide-react';
 import { usePlants } from '../hooks/usePlants';
-import { useRecentCareLogs } from '../hooks/useCare';
 import { useAuth } from '../hooks/useAuth';
 import { useSettings } from '../hooks/useSettings.jsx';
 import { plantNeedsCare, getOverdueCareTypes } from '../utils/careStatus';
-import { StatCard, ActionButton, PlantCareItem, BloomNotification, ActivityFeed, CollectionPreview } from '../components/dashboard';
+import { ActionButton, PlantCareItem, CollectionOverviewCard, BloomingHighlight } from '../components/dashboard';
 
 export default function Dashboard() {
   const { user } = useAuth();
   const { careThresholds } = useSettings();
   const { data: plants = [], isLoading, error } = usePlants();
-  const { data: recentActivity = [], isLoading: activityLoading } = useRecentCareLogs(5);
 
   // Derived data
   const plantsNeedingCare = plants.filter(p => plantNeedsCare(p, careThresholds)).map(p => ({
     ...p,
     overdueCareTypes: getOverdueCareTypes(p, careThresholds),
   }));
-  const bloomingCount = plants.filter(p => p.is_blooming).length;
+  const bloomingPlants = plants.filter(p => p.is_blooming);
   const displayName = user?.email?.split('@')[0] || 'Gardener';
 
   if (isLoading) return (
@@ -43,7 +42,7 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen p-6 md:p-10">
-      <div className="max-w-5xl mx-auto space-y-8">
+      <div className="max-w-4xl mx-auto space-y-10">
         {/* Header */}
         <header className="flex items-center gap-5">
           <img
@@ -63,29 +62,6 @@ export default function Dashboard() {
           </Link>
         </header>
 
-        {/* Stats Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
-          <StatCard
-            label="Total Plants"
-            value={plants.length}
-            color="sage-700"
-            icon={Flower2}
-          />
-          <StatCard
-            label="Blooming"
-            value={bloomingCount}
-            color="purple-400"
-            icon={Sparkles}
-          />
-          <StatCard
-            label="Need Care"
-            value={plantsNeedingCare.length}
-            color="copper-500"
-            icon={Droplets}
-            accent="warning"
-          />
-        </div>
-
         {/* Quick Actions */}
         <div className="flex flex-col sm:flex-row gap-4">
           <ActionButton icon={BookOpen} label="Library" to="/library" />
@@ -93,21 +69,37 @@ export default function Dashboard() {
           <ActionButton icon={Plus} label="Add Plant" to="/plants/new" primary />
         </div>
 
-        {/* Needs Attention Section */}
+        {/* Collection Overview Card */}
+        {plants.length > 0 && (
+          <CollectionOverviewCard
+            plants={plants}
+            bloomingCount={bloomingPlants.length}
+            needsCareCount={plantsNeedingCare.length}
+          />
+        )}
+
+        {/* Blooming Highlight (conditional) */}
+        <BloomingHighlight bloomingPlants={bloomingPlants} />
+
+        {/* Needs a little love Section (conditional) */}
         {plantsNeedingCare.length > 0 && (
-          <section className="card p-8">
-            <div className="flex items-center justify-between mb-6">
-              <div className="flex items-center gap-3">
-                <div className="status-indicator" />
-                <h2 className="heading heading-lg">Needs Attention</h2>
+          <section className="card p-10">
+            <div className="flex items-center justify-between mb-8">
+              <div className="flex items-center gap-4">
+                <div className="icon-container-cream" style={{ width: 48, height: 48 }}>
+                  <Heart size={24} style={{ color: 'var(--copper-500)' }} />
+                </div>
+                <h2 className="heading heading-lg">Needs a little love</h2>
               </div>
-              <Link to="/library?filter=needs-care" className="btn btn-secondary btn-small">
-                View all <ChevronRight size={16} />
-              </Link>
+              {plantsNeedingCare.length > 3 && (
+                <Link to="/library?filter=needs-care" className="btn btn-secondary btn-small">
+                  View all <ChevronRight size={16} />
+                </Link>
+              )}
             </div>
 
-            <div className="card-inset p-4 space-y-3">
-              {plantsNeedingCare.slice(0, 5).map(plant => (
+            <div className="space-y-4">
+              {plantsNeedingCare.slice(0, 3).map(plant => (
                 <PlantCareItem key={plant.id} {...plant} />
               ))}
             </div>
@@ -129,26 +121,6 @@ export default function Dashboard() {
             </Link>
           </section>
         )}
-
-        {/* All Caught Up */}
-        {plants.length > 0 && plantsNeedingCare.length === 0 && (
-          <section className="card p-8 text-center">
-            <div className="status-indicator-success mx-auto mb-4" />
-            <h2 className="heading heading-md">All Caught Up!</h2>
-            <p className="text-muted">Your collection is thriving.</p>
-          </section>
-        )}
-
-        {/* Activity Feed & Collection Preview - side by side on larger screens */}
-        {plants.length > 0 && (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <ActivityFeed activities={recentActivity} isLoading={activityLoading} />
-            <CollectionPreview plants={plants} isLoading={isLoading} />
-          </div>
-        )}
-
-        {/* Bloom Notification */}
-        <BloomNotification count={bloomingCount} latestPlant={plants.find(p => p.is_blooming)?.nickname} />
       </div>
     </div>
   );

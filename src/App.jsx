@@ -135,7 +135,20 @@ export default function App() {
       <AuthProvider>
         <SettingsProvider>
           <BrowserRouter>
-            <AppRoutes />
+            <div className="relative min-h-screen">
+              {/* Background layer with reduced opacity */}
+              <div
+                className="fixed inset-0 -z-10"
+                style={{
+                  backgroundImage: 'url(/Background.png)',
+                  backgroundSize: 'cover',
+                  backgroundPosition: 'center',
+                  backgroundRepeat: 'no-repeat',
+                  opacity: 0.3
+                }}
+              />
+              <AppRoutes />
+            </div>
           </BrowserRouter>
         </SettingsProvider>
       </AuthProvider>
