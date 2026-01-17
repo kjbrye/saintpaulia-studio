@@ -36,7 +36,10 @@ export default function BloomingHighlight({ bloomingPlants = [] }) {
 
         {/* Content */}
         <div className="flex-1">
-          <p className="text-5xl font-bold text-[var(--purple-500)]" style={{ fontFamily: 'var(--font-heading)' }}>{bloomingPlants.length}</p>
+          <div className="flex items-baseline gap-3">
+            <p className="text-5xl font-bold text-[var(--purple-500)]" style={{ fontFamily: 'var(--font-heading)' }}>{bloomingPlants.length}</p>
+            <p className="heading heading-lg text-[var(--purple-500)]">Blooming</p>
+          </div>
           <p className="text-body text-[var(--purple-600)] mt-1">
             {formatBloomingNames(bloomingPlants)}
           </p>
