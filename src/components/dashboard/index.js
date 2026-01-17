@@ -11,3 +11,4 @@ export { default as ActivityFeed } from './ActivityFeed';
 export { default as ActivityItem } from './ActivityItem';
 export { default as CollectionPreview } from './CollectionPreview';
 export { default as CollectionOverviewCard } from './CollectionOverviewCard';
+export { default as CareStatsSummary } from './CareStatsSummary';

@@ -9,7 +9,7 @@ import { usePlants } from '../hooks/usePlants';
 import { useAuth } from '../hooks/useAuth';
 import { useSettings } from '../hooks/useSettings.jsx';
 import { plantNeedsCare, getOverdueCareTypes } from '../utils/careStatus';
-import { ActionButton, PlantCareItem, CollectionOverviewCard, BloomingHighlight } from '../components/dashboard';
+import { ActionButton, PlantCareItem, CollectionOverviewCard, BloomingHighlight, CareStatsSummary } from '../components/dashboard';
 
 export default function Dashboard() {
   const { user } = useAuth();
@@ -77,6 +77,9 @@ export default function Dashboard() {
             needsCareCount={plantsNeedingCare.length}
           />
         )}
+
+        {/* Care Statistics Summary */}
+        <CareStatsSummary plants={plants} careThresholds={careThresholds} />
 
         {/* Blooming Highlight (conditional) */}
         <BloomingHighlight bloomingPlants={bloomingPlants} />

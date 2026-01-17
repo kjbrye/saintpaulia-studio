@@ -77,3 +77,74 @@ export function getOverdueCareTypes(plant, thresholds) {
     .filter(([_, status]) => status.status === 'overdue')
     .map(([type]) => type);
 }
+
+/**
+ * Calculate collection-wide care statistics
+ * @param {Array} plants - Array of plant objects
+ * @param {Object} thresholds - Optional custom thresholds
+ * @returns {Object} Collection statistics
+ */
+export function getCollectionCareStats(plants, thresholds = CARE_THRESHOLDS) {
+  if (!plants || plants.length === 0) {
+    return {
+      totalPlants: 0,
+      healthyCount: 0,
+      healthPercentage: 100,
+      careBreakdown: {
+        watering: { overdue: 0, soon: 0, good: 0 },
+        fertilizing: { overdue: 0, soon: 0, good: 0 },
+        grooming: { overdue: 0, soon: 0, good: 0 },
+      },
+      mostNeglectedCareType: null,
+      bestMaintainedCareType: null,
+    };
+  }
+
+  const careBreakdown = {
+    watering: { overdue: 0, soon: 0, good: 0 },
+    fertilizing: { overdue: 0, soon: 0, good: 0 },
+    grooming: { overdue: 0, soon: 0, good: 0 },
+  };
+
+  let healthyCount = 0;
+
+  plants.forEach((plant) => {
+    const statuses = getPlantCareStatuses(plant, thresholds);
+    let isHealthy = true;
+
+    Object.entries(statuses).forEach(([careType, statusObj]) => {
+      careBreakdown[careType][statusObj.status]++;
+      if (statusObj.status === 'overdue') {
+        isHealthy = false;
+      }
+    });
+
+    if (isHealthy) {
+      healthyCount++;
+    }
+  });
+
+  // Find most neglected (highest overdue count) and best maintained (lowest overdue count)
+  const careTypes = Object.keys(careBreakdown);
+  const sortedByOverdue = careTypes.sort(
+    (a, b) => careBreakdown[b].overdue - careBreakdown[a].overdue
+  );
+
+  const mostNeglectedCareType = careBreakdown[sortedByOverdue[0]].overdue > 0
+    ? sortedByOverdue[0]
+    : null;
+
+  const sortedByGood = careTypes.sort(
+    (a, b) => careBreakdown[b].good - careBreakdown[a].good
+  );
+  const bestMaintainedCareType = sortedByGood[0];
+
+  return {
+    totalPlants: plants.length,
+    healthyCount,
+    healthPercentage: Math.round((healthyCount / plants.length) * 100),
+    careBreakdown,
+    mostNeglectedCareType,
+    bestMaintainedCareType,
+  };
+}
