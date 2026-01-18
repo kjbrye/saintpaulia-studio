@@ -1,8 +1,42 @@
 /**
- * LibraryToolbar - Search, view toggle, and sort controls
+ * LibraryToolbar - Search, view toggle, sort, and filter controls
  */
 
-import { Search, Grid3X3, List } from 'lucide-react';
+import { Search, Grid3X3, List, Filter, X } from 'lucide-react';
+
+const STATUS_OPTIONS = [
+  { value: 'all', label: 'All Plants' },
+  { value: 'needs-care', label: 'Needs Care' },
+  { value: 'healthy', label: 'Healthy' },
+];
+
+const BLOOMING_OPTIONS = [
+  { value: 'all', label: 'All' },
+  { value: 'blooming', label: 'Blooming' },
+  { value: 'not-blooming', label: 'Not Blooming' },
+];
+
+const CARE_TYPE_OPTIONS = [
+  { value: 'all', label: 'All Care Types' },
+  { value: 'watering', label: 'Needs Watering' },
+  { value: 'fertilizing', label: 'Needs Fertilizing' },
+  { value: 'grooming', label: 'Needs Grooming' },
+];
+
+function FilterChip({ label, active, onClick }) {
+  return (
+    <button
+      onClick={onClick}
+      className="px-3 py-1.5 rounded-lg text-small font-medium transition-all"
+      style={{
+        background: active ? 'var(--sage-600)' : 'var(--sage-100)',
+        color: active ? 'white' : 'var(--sage-600)',
+      }}
+    >
+      {label}
+    </button>
+  );
+}
 
 export default function LibraryToolbar({
   searchQuery,
@@ -11,9 +45,24 @@ export default function LibraryToolbar({
   onViewModeChange,
   sortBy,
   onSortChange,
+  statusFilter,
+  onStatusFilterChange,
+  bloomingFilter,
+  onBloomingFilterChange,
+  careTypeFilter,
+  onCareTypeFilterChange,
 }) {
+  const hasActiveFilters = statusFilter !== 'all' || bloomingFilter !== 'all' || careTypeFilter !== 'all';
+
+  const clearAllFilters = () => {
+    onStatusFilterChange('all');
+    onBloomingFilterChange('all');
+    onCareTypeFilterChange('all');
+  };
+
   return (
-    <div className="card p-4 mb-6">
+    <div className="card p-4 mb-6 space-y-4">
+      {/* Row 1: Search, View Toggle, Sort */}
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
         {/* Search Input */}
         <div className="flex-1 relative">
@@ -62,6 +111,66 @@ export default function LibraryToolbar({
             <option value="care">Needs Care</option>
           </select>
         </div>
+      </div>
+
+      {/* Row 2: Filters */}
+      <div className="flex flex-wrap items-center gap-3">
+        <div className="flex items-center gap-2 mr-2">
+          <Filter size={16} style={{ color: 'var(--sage-500)' }} />
+          <span className="text-small font-medium" style={{ color: 'var(--sage-600)' }}>Filter:</span>
+        </div>
+
+        {/* Status Filter */}
+        <div className="flex gap-1.5">
+          {STATUS_OPTIONS.map((option) => (
+            <FilterChip
+              key={option.value}
+              label={option.label}
+              active={statusFilter === option.value}
+              onClick={() => onStatusFilterChange(option.value)}
+            />
+          ))}
+        </div>
+
+        <span className="text-sage-300">|</span>
+
+        {/* Blooming Filter */}
+        <div className="flex gap-1.5">
+          {BLOOMING_OPTIONS.map((option) => (
+            <FilterChip
+              key={option.value}
+              label={option.label}
+              active={bloomingFilter === option.value}
+              onClick={() => onBloomingFilterChange(option.value)}
+            />
+          ))}
+        </div>
+
+        <span className="text-sage-300">|</span>
+
+        {/* Care Type Filter */}
+        <div className="flex gap-1.5 flex-wrap">
+          {CARE_TYPE_OPTIONS.map((option) => (
+            <FilterChip
+              key={option.value}
+              label={option.label}
+              active={careTypeFilter === option.value}
+              onClick={() => onCareTypeFilterChange(option.value)}
+            />
+          ))}
+        </div>
+
+        {/* Clear All Filters */}
+        {hasActiveFilters && (
+          <button
+            onClick={clearAllFilters}
+            className="ml-auto flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-small font-medium transition-all"
+            style={{ background: 'var(--copper-100)', color: 'var(--copper-600)' }}
+          >
+            <X size={14} />
+            Clear Filters
+          </button>
+        )}
       </div>
     </div>
   );

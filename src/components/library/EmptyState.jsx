@@ -28,7 +28,20 @@ export function EmptyLibrary() {
   );
 }
 
-export function NoResults({ searchQuery }) {
+export function NoResults({ searchQuery, hasFilters }) {
+  const getMessage = () => {
+    if (searchQuery && hasFilters) {
+      return `No plants match "${searchQuery}" with the current filters. Try adjusting your search or filters.`;
+    }
+    if (searchQuery) {
+      return `No plants match "${searchQuery}". Try a different search term.`;
+    }
+    if (hasFilters) {
+      return 'No plants match the current filters. Try adjusting your filter selection.';
+    }
+    return 'No plants found.';
+  };
+
   return (
     <div className="card p-12 text-center">
       <div
@@ -38,9 +51,7 @@ export function NoResults({ searchQuery }) {
         <Search size={32} style={{ color: 'var(--sage-500)' }} />
       </div>
       <h2 className="heading heading-lg mb-2">No plants found</h2>
-      <p className="text-muted">
-        No plants match "{searchQuery}". Try a different search term.
-      </p>
+      <p className="text-muted">{getMessage()}</p>
     </div>
   );
 }

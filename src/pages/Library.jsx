@@ -3,11 +3,11 @@
  */
 
 import { useState, useMemo, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { ArrowLeft, Plus, ChevronLeft, ChevronRight } from 'lucide-react';
 import { usePlants } from '../hooks/usePlants';
 import { useSettings } from '../hooks/useSettings.jsx';
-import { plantNeedsCare } from '../utils/careStatus';
+import { plantNeedsCare, getPlantCareStatuses } from '../utils/careStatus';
 import PlantCard from '../components/library/PlantCard';
 import PlantListItem from '../components/library/PlantListItem';
 import LibraryToolbar from '../components/library/LibraryToolbar';
@@ -15,10 +15,17 @@ import { EmptyLibrary, NoResults } from '../components/library/EmptyState';
 
 export default function Library() {
   const { settings, careThresholds } = useSettings();
+  const [searchParams] = useSearchParams();
   const [searchQuery, setSearchQuery] = useState('');
   const [viewMode, setViewMode] = useState(settings.defaultView);
   const [sortBy, setSortBy] = useState('updated');
   const [currentPage, setCurrentPage] = useState(1);
+
+  // Filter state
+  const initialFilter = searchParams.get('filter') || 'all';
+  const [statusFilter, setStatusFilter] = useState(initialFilter === 'needs-care' ? 'needs-care' : 'all');
+  const [bloomingFilter, setBloomingFilter] = useState('all');
+  const [careTypeFilter, setCareTypeFilter] = useState('all');
 
   const { data: plants = [], isLoading, error } = usePlants();
   const plantsPerPage = settings.plantsPerPage;
@@ -35,6 +42,28 @@ export default function Library() {
           p.nickname?.toLowerCase().includes(query) ||
           p.cultivar_name?.toLowerCase().includes(query)
       );
+    }
+
+    // Status filter (needs care / healthy)
+    if (statusFilter === 'needs-care') {
+      result = result.filter((p) => plantNeedsCare(p, careThresholds));
+    } else if (statusFilter === 'healthy') {
+      result = result.filter((p) => !plantNeedsCare(p, careThresholds));
+    }
+
+    // Blooming filter
+    if (bloomingFilter === 'blooming') {
+      result = result.filter((p) => p.is_blooming);
+    } else if (bloomingFilter === 'not-blooming') {
+      result = result.filter((p) => !p.is_blooming);
+    }
+
+    // Care type filter (specific care needed)
+    if (careTypeFilter !== 'all') {
+      result = result.filter((p) => {
+        const statuses = getPlantCareStatuses(p, careThresholds);
+        return statuses[careTypeFilter]?.status === 'overdue';
+      });
     }
 
     // Sort
@@ -54,12 +83,12 @@ export default function Library() {
     });
 
     return result;
-  }, [plants, searchQuery, sortBy, careThresholds]);
+  }, [plants, searchQuery, sortBy, careThresholds, statusFilter, bloomingFilter, careTypeFilter]);
 
-  // Reset to page 1 when search or sort changes
+  // Reset to page 1 when search, sort, or filters change
   useEffect(() => {
     setCurrentPage(1);
-  }, [searchQuery, sortBy, plantsPerPage]);
+  }, [searchQuery, sortBy, plantsPerPage, statusFilter, bloomingFilter, careTypeFilter]);
 
   // Pagination
   const totalPages = Math.ceil(filteredPlants.length / plantsPerPage);
@@ -127,11 +156,17 @@ export default function Library() {
               onViewModeChange={setViewMode}
               sortBy={sortBy}
               onSortChange={setSortBy}
+              statusFilter={statusFilter}
+              onStatusFilterChange={setStatusFilter}
+              bloomingFilter={bloomingFilter}
+              onBloomingFilterChange={setBloomingFilter}
+              careTypeFilter={careTypeFilter}
+              onCareTypeFilterChange={setCareTypeFilter}
             />
 
-            {/* No search results */}
-            {filteredPlants.length === 0 && searchQuery && (
-              <NoResults searchQuery={searchQuery} />
+            {/* No search/filter results */}
+            {filteredPlants.length === 0 && (searchQuery || statusFilter !== 'all' || bloomingFilter !== 'all' || careTypeFilter !== 'all') && (
+              <NoResults searchQuery={searchQuery} hasFilters={statusFilter !== 'all' || bloomingFilter !== 'all' || careTypeFilter !== 'all'} />
             )}
 
             {/* Grid View */}
