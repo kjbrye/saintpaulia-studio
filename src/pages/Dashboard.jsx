@@ -4,7 +4,7 @@
  */
 
 import { Link } from 'react-router-dom';
-import { Flower2, BookOpen, Droplets, Plus, ChevronRight, Settings, Heart } from 'lucide-react';
+import { Flower2, BookOpen, Droplets, Plus, ChevronRight, Settings, Heart, Info } from 'lucide-react';
 import { usePlants } from '../hooks/usePlants';
 import { useAuth } from '../hooks/useAuth';
 import { useSettings } from '../hooks/useSettings.jsx';
@@ -55,11 +55,18 @@ export default function Dashboard() {
             <h1 className="heading heading-xl">Saintpaulia Studio</h1>
             <p className="text-body">Welcome back, {displayName}</p>
           </div>
-          <Link to="/settings">
-            <button className="icon-container">
-              <Settings size={20} color="var(--sage-600)" />
-            </button>
-          </Link>
+          <div className="flex items-center gap-2">
+            <Link to="/about">
+              <button className="icon-container">
+                <Info size={20} color="var(--sage-600)" />
+              </button>
+            </Link>
+            <Link to="/settings">
+              <button className="icon-container">
+                <Settings size={20} color="var(--sage-600)" />
+              </button>
+            </Link>
+          </div>
         </header>
 
         {/* Quick Actions */}

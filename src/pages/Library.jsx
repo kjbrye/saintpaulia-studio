@@ -7,7 +7,7 @@ import { Link, useSearchParams } from 'react-router-dom';
 import { ArrowLeft, Plus, ChevronLeft, ChevronRight } from 'lucide-react';
 import { usePlants } from '../hooks/usePlants';
 import { useSettings } from '../hooks/useSettings.jsx';
-import { plantNeedsCare, getPlantCareStatuses } from '../utils/careStatus';
+import { plantNeedsCare } from '../utils/careStatus';
 import PlantCard from '../components/library/PlantCard';
 import PlantListItem from '../components/library/PlantListItem';
 import LibraryToolbar from '../components/library/LibraryToolbar';
@@ -22,10 +22,11 @@ export default function Library() {
   const [currentPage, setCurrentPage] = useState(1);
 
   // Filter state
-  const initialFilter = searchParams.get('filter') || 'all';
-  const [statusFilter, setStatusFilter] = useState(initialFilter === 'needs-care' ? 'needs-care' : 'all');
+  const initialCareFilter = searchParams.get('filter') === 'needs-care' ? 'needs-care' : 'all';
+  const [potSizeFilter, setPotSizeFilter] = useState('all');
+  const [bloomColorFilter, setBloomColorFilter] = useState('all');
   const [bloomingFilter, setBloomingFilter] = useState('all');
-  const [careTypeFilter, setCareTypeFilter] = useState('all');
+  const [careFilter, setCareFilter] = useState(initialCareFilter);
 
   const { data: plants = [], isLoading, error } = usePlants();
   const plantsPerPage = settings.plantsPerPage;
@@ -44,11 +45,14 @@ export default function Library() {
       );
     }
 
-    // Status filter (needs care / healthy)
-    if (statusFilter === 'needs-care') {
-      result = result.filter((p) => plantNeedsCare(p, careThresholds));
-    } else if (statusFilter === 'healthy') {
-      result = result.filter((p) => !plantNeedsCare(p, careThresholds));
+    // Pot size filter
+    if (potSizeFilter !== 'all') {
+      result = result.filter((p) => p.pot_size === potSizeFilter);
+    }
+
+    // Bloom color filter
+    if (bloomColorFilter !== 'all') {
+      result = result.filter((p) => p.bloom_color === bloomColorFilter);
     }
 
     // Blooming filter
@@ -58,12 +62,11 @@ export default function Library() {
       result = result.filter((p) => !p.is_blooming);
     }
 
-    // Care type filter (specific care needed)
-    if (careTypeFilter !== 'all') {
-      result = result.filter((p) => {
-        const statuses = getPlantCareStatuses(p, careThresholds);
-        return statuses[careTypeFilter]?.status === 'overdue';
-      });
+    // Care filter (needs care / up to date)
+    if (careFilter === 'needs-care') {
+      result = result.filter((p) => plantNeedsCare(p, careThresholds));
+    } else if (careFilter === 'up-to-date') {
+      result = result.filter((p) => !plantNeedsCare(p, careThresholds));
     }
 
     // Sort
@@ -83,17 +86,24 @@ export default function Library() {
     });
 
     return result;
-  }, [plants, searchQuery, sortBy, careThresholds, statusFilter, bloomingFilter, careTypeFilter]);
+  }, [plants, searchQuery, sortBy, careThresholds, potSizeFilter, bloomColorFilter, bloomingFilter, careFilter]);
 
   // Reset to page 1 when search, sort, or filters change
   useEffect(() => {
     setCurrentPage(1);
-  }, [searchQuery, sortBy, plantsPerPage, statusFilter, bloomingFilter, careTypeFilter]);
+  }, [searchQuery, sortBy, plantsPerPage, potSizeFilter, bloomColorFilter, bloomingFilter, careFilter]);
 
   // Pagination
   const totalPages = Math.ceil(filteredPlants.length / plantsPerPage);
   const startIndex = (currentPage - 1) * plantsPerPage;
   const paginatedPlants = filteredPlants.slice(startIndex, startIndex + plantsPerPage);
+
+  // Check if any filters are active
+  const hasActiveFilters =
+    potSizeFilter !== 'all' ||
+    bloomColorFilter !== 'all' ||
+    bloomingFilter !== 'all' ||
+    careFilter !== 'all';
 
   if (isLoading) {
     return (
@@ -156,17 +166,19 @@ export default function Library() {
               onViewModeChange={setViewMode}
               sortBy={sortBy}
               onSortChange={setSortBy}
-              statusFilter={statusFilter}
-              onStatusFilterChange={setStatusFilter}
+              potSizeFilter={potSizeFilter}
+              onPotSizeFilterChange={setPotSizeFilter}
+              bloomColorFilter={bloomColorFilter}
+              onBloomColorFilterChange={setBloomColorFilter}
               bloomingFilter={bloomingFilter}
               onBloomingFilterChange={setBloomingFilter}
-              careTypeFilter={careTypeFilter}
-              onCareTypeFilterChange={setCareTypeFilter}
+              careFilter={careFilter}
+              onCareFilterChange={setCareFilter}
             />
 
             {/* No search/filter results */}
-            {filteredPlants.length === 0 && (searchQuery || statusFilter !== 'all' || bloomingFilter !== 'all' || careTypeFilter !== 'all') && (
-              <NoResults searchQuery={searchQuery} hasFilters={statusFilter !== 'all' || bloomingFilter !== 'all' || careTypeFilter !== 'all'} />
+            {filteredPlants.length === 0 && (searchQuery || hasActiveFilters) && (
+              <NoResults searchQuery={searchQuery} hasFilters={hasActiveFilters} />
             )}
 
             {/* Grid View */}

@@ -56,6 +56,32 @@ const POT_SIZE_OPTIONS = [
   { value: '6"+', label: '6"+ (Extra Large)' },
 ];
 
+// Bloom color options for select dropdown
+const BLOOM_COLOR_OPTIONS = [
+  { value: '', label: 'Select color...' },
+  { value: 'pink', label: 'Pink' },
+  { value: 'purple', label: 'Purple' },
+  { value: 'blue', label: 'Blue' },
+  { value: 'white', label: 'White' },
+  { value: 'red', label: 'Red' },
+  { value: 'lavender', label: 'Lavender' },
+  { value: 'coral', label: 'Coral' },
+  { value: 'bi-color', label: 'Bi-color' },
+  { value: 'multi', label: 'Multi-color' },
+];
+
+const BLOOM_COLOR_LABELS = {
+  pink: 'Pink',
+  purple: 'Purple',
+  blue: 'Blue',
+  white: 'White',
+  red: 'Red',
+  lavender: 'Lavender',
+  coral: 'Coral',
+  'bi-color': 'Bi-color',
+  multi: 'Multi-color',
+};
+
 const LOCATION_LABELS = {
   windowsill: 'Windowsill',
   shelf: 'Plant Shelf',
@@ -97,6 +123,7 @@ export default function PlantDetail() {
         location: plant.location || '',
         status: plant.status || 'healthy',
         pot_size: plant.pot_size || '',
+        bloom_color: plant.bloom_color || '',
         notes: plant.notes || '',
       });
     }
@@ -139,6 +166,7 @@ export default function PlantDetail() {
           source: formData.source || null,
           location: formData.location || null,
           pot_size: formData.pot_size || null,
+          bloom_color: formData.bloom_color || null,
           notes: formData.notes || null,
         },
       });
@@ -375,6 +403,15 @@ export default function PlantDetail() {
               isEditing={isEditing}
               onChange={(v) => updateField('pot_size', v)}
               options={POT_SIZE_OPTIONS}
+            />
+
+            <EditableField
+              label="Bloom Color"
+              value={isEditing ? formData?.bloom_color : plant.bloom_color}
+              displayValue={BLOOM_COLOR_LABELS[plant.bloom_color] || 'Not set'}
+              isEditing={isEditing}
+              onChange={(v) => updateField('bloom_color', v)}
+              options={BLOOM_COLOR_OPTIONS}
             />
           </div>
 

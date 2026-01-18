@@ -4,23 +4,30 @@
 
 import { Search, Grid3X3, List, Filter, X } from 'lucide-react';
 
-const STATUS_OPTIONS = [
-  { value: 'all', label: 'All Plants' },
-  { value: 'needs-care', label: 'Needs Care' },
-  { value: 'healthy', label: 'Healthy' },
+const POT_SIZE_OPTIONS = [
+  { value: 'all', label: 'All Sizes' },
+  { value: '2"', label: '2"' },
+  { value: '2.5"', label: '2.5"' },
+  { value: '3"', label: '3"' },
+  { value: '3.5"', label: '3.5"' },
+  { value: '4"', label: '4"' },
+  { value: '4.5"', label: '4.5"' },
+  { value: '5"', label: '5"' },
+  { value: '6"', label: '6"' },
+  { value: '6"+', label: '6"+' },
 ];
 
-const BLOOMING_OPTIONS = [
-  { value: 'all', label: 'All' },
-  { value: 'blooming', label: 'Blooming' },
-  { value: 'not-blooming', label: 'Not Blooming' },
-];
-
-const CARE_TYPE_OPTIONS = [
-  { value: 'all', label: 'All Care Types' },
-  { value: 'watering', label: 'Needs Watering' },
-  { value: 'fertilizing', label: 'Needs Fertilizing' },
-  { value: 'grooming', label: 'Needs Grooming' },
+const BLOOM_COLOR_OPTIONS = [
+  { value: 'all', label: 'All Colors' },
+  { value: 'pink', label: 'Pink' },
+  { value: 'purple', label: 'Purple' },
+  { value: 'blue', label: 'Blue' },
+  { value: 'white', label: 'White' },
+  { value: 'red', label: 'Red' },
+  { value: 'lavender', label: 'Lavender' },
+  { value: 'coral', label: 'Coral' },
+  { value: 'bi-color', label: 'Bi-color' },
+  { value: 'multi', label: 'Multi-color' },
 ];
 
 function FilterChip({ label, active, onClick }) {
@@ -45,19 +52,26 @@ export default function LibraryToolbar({
   onViewModeChange,
   sortBy,
   onSortChange,
-  statusFilter,
-  onStatusFilterChange,
+  potSizeFilter,
+  onPotSizeFilterChange,
+  bloomColorFilter,
+  onBloomColorFilterChange,
   bloomingFilter,
   onBloomingFilterChange,
-  careTypeFilter,
-  onCareTypeFilterChange,
+  careFilter,
+  onCareFilterChange,
 }) {
-  const hasActiveFilters = statusFilter !== 'all' || bloomingFilter !== 'all' || careTypeFilter !== 'all';
+  const hasActiveFilters =
+    potSizeFilter !== 'all' ||
+    bloomColorFilter !== 'all' ||
+    bloomingFilter !== 'all' ||
+    careFilter !== 'all';
 
   const clearAllFilters = () => {
-    onStatusFilterChange('all');
+    onPotSizeFilterChange('all');
+    onBloomColorFilterChange('all');
     onBloomingFilterChange('all');
-    onCareTypeFilterChange('all');
+    onCareFilterChange('all');
   };
 
   return (
@@ -117,47 +131,77 @@ export default function LibraryToolbar({
       <div className="flex flex-wrap items-center gap-3">
         <div className="flex items-center gap-2 mr-2">
           <Filter size={16} style={{ color: 'var(--sage-500)' }} />
-          <span className="text-small font-medium" style={{ color: 'var(--sage-600)' }}>Filter:</span>
+          <span className="text-small font-medium" style={{ color: 'var(--sage-600)' }}>
+            Filter:
+          </span>
         </div>
 
-        {/* Status Filter */}
-        <div className="flex gap-1.5">
-          {STATUS_OPTIONS.map((option) => (
-            <FilterChip
-              key={option.value}
-              label={option.label}
-              active={statusFilter === option.value}
-              onClick={() => onStatusFilterChange(option.value)}
-            />
+        {/* Pot Size Dropdown */}
+        <select
+          className="input input-small"
+          value={potSizeFilter}
+          onChange={(e) => onPotSizeFilterChange(e.target.value)}
+        >
+          {POT_SIZE_OPTIONS.map((option) => (
+            <option key={option.value} value={option.value}>
+              {option.label}
+            </option>
           ))}
+        </select>
+
+        {/* Bloom Color Dropdown */}
+        <select
+          className="input input-small"
+          value={bloomColorFilter}
+          onChange={(e) => onBloomColorFilterChange(e.target.value)}
+        >
+          {BLOOM_COLOR_OPTIONS.map((option) => (
+            <option key={option.value} value={option.value}>
+              {option.label}
+            </option>
+          ))}
+        </select>
+
+        <span className="text-sage-300">|</span>
+
+        {/* Blooming Filter Chips */}
+        <div className="flex gap-1.5">
+          <FilterChip
+            label="All"
+            active={bloomingFilter === 'all'}
+            onClick={() => onBloomingFilterChange('all')}
+          />
+          <FilterChip
+            label="Blooming"
+            active={bloomingFilter === 'blooming'}
+            onClick={() => onBloomingFilterChange('blooming')}
+          />
+          <FilterChip
+            label="Not Blooming"
+            active={bloomingFilter === 'not-blooming'}
+            onClick={() => onBloomingFilterChange('not-blooming')}
+          />
         </div>
 
         <span className="text-sage-300">|</span>
 
-        {/* Blooming Filter */}
+        {/* Care Filter Chips */}
         <div className="flex gap-1.5">
-          {BLOOMING_OPTIONS.map((option) => (
-            <FilterChip
-              key={option.value}
-              label={option.label}
-              active={bloomingFilter === option.value}
-              onClick={() => onBloomingFilterChange(option.value)}
-            />
-          ))}
-        </div>
-
-        <span className="text-sage-300">|</span>
-
-        {/* Care Type Filter */}
-        <div className="flex gap-1.5 flex-wrap">
-          {CARE_TYPE_OPTIONS.map((option) => (
-            <FilterChip
-              key={option.value}
-              label={option.label}
-              active={careTypeFilter === option.value}
-              onClick={() => onCareTypeFilterChange(option.value)}
-            />
-          ))}
+          <FilterChip
+            label="All"
+            active={careFilter === 'all'}
+            onClick={() => onCareFilterChange('all')}
+          />
+          <FilterChip
+            label="Needs Care"
+            active={careFilter === 'needs-care'}
+            onClick={() => onCareFilterChange('needs-care')}
+          />
+          <FilterChip
+            label="Up to Date"
+            active={careFilter === 'up-to-date'}
+            onClick={() => onCareFilterChange('up-to-date')}
+          />
         </div>
 
         {/* Clear All Filters */}

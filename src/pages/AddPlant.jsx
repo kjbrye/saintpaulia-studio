@@ -22,6 +22,7 @@ export default function AddPlant() {
     location: '',
     status: 'healthy',
     pot_size: '',
+    bloom_color: '',
     notes: '',
   });
 
@@ -61,6 +62,7 @@ export default function AddPlant() {
         location: formData.location || null,
         status: formData.status,
         pot_size: formData.pot_size || null,
+        bloom_color: formData.bloom_color || null,
         notes: formData.notes.trim() || null,
       });
 
@@ -204,6 +206,25 @@ export default function AddPlant() {
                 <option value='5"'>5" (Large)</option>
                 <option value='6"'>6"</option>
                 <option value='6"+'>6"+ (Extra Large)</option>
+              </select>
+            </FormField>
+
+            <FormField label="Bloom Color">
+              <select
+                className="input w-full"
+                value={formData.bloom_color}
+                onChange={(e) => updateField('bloom_color', e.target.value)}
+              >
+                <option value="">Select color...</option>
+                <option value="pink">Pink</option>
+                <option value="purple">Purple</option>
+                <option value="blue">Blue</option>
+                <option value="white">White</option>
+                <option value="red">Red</option>
+                <option value="lavender">Lavender</option>
+                <option value="coral">Coral</option>
+                <option value="bi-color">Bi-color</option>
+                <option value="multi">Multi-color</option>
               </select>
             </FormField>
           </div>

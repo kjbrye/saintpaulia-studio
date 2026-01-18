@@ -18,6 +18,7 @@ import AddPlant from './pages/AddPlant';
 import CareLog from './pages/CareLog';
 import Settings from './pages/Settings';
 import Login from './pages/Login';
+import About from './pages/About';
 
 // Create a client with sensible defaults
 const queryClient = new QueryClient({
@@ -62,7 +63,8 @@ function AppRoutes() {
     <Routes>
       {/* Public routes */}
       <Route path="/login" element={<Login />} />
-      
+      <Route path="/about" element={<About />} />
+
       {/* Protected routes */}
       <Route
         path="/"
