@@ -100,11 +100,11 @@ export default function Dashboard() {
             {/* Care Overview - spans 2 columns */}
             <CareOverviewPanel stats={stats} />
 
-            {/* Quick Actions */}
-            <QuickActionsPanel />
-
             {/* Collection Stats */}
             <CollectionStatsPanel plants={plants} bloomingPlants={bloomingPlants} />
+
+            {/* Quick Actions */}
+            <QuickActionsPanel />
 
             {/* Recent Activity */}
             <RecentActivityPanel careLogs={recentLogs} isLoading={logsLoading} />
