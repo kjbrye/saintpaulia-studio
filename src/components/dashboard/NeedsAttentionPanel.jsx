@@ -8,11 +8,12 @@ import { Flower2, Sparkles, ChevronRight } from 'lucide-react';
 function StatRow({ icon: Icon, label, count, linkTo, iconColor }) {
   return (
     <Link to={linkTo} className="list-item-compact">
+      <div className="care-indicator-dot care-indicator-dot-good" />
       <Icon size={16} style={{ color: iconColor }} />
       <span className="flex-1 text-small font-medium" style={{ color: 'var(--sage-700)' }}>
         {label}
       </span>
-      <span className="font-semibold" style={{ color: 'var(--sage-800)' }}>
+      <span className="font-semibold text-small" style={{ color: 'var(--sage-800)' }}>
         {count}
       </span>
       <ChevronRight size={14} style={{ color: 'var(--sage-400)' }} />
