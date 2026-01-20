@@ -19,3 +19,4 @@ export { default as QuickActionsPanel } from './QuickActionsPanel';
 export { default as RecentActivityPanel } from './RecentActivityPanel';
 export { default as StatsPanel } from './StatsPanel';
 export { default as BloomingPanel } from './BloomingPanel';
+export { default as CareOverviewPanel } from './CareOverviewPanel';

@@ -17,6 +17,7 @@ import {
   RecentActivityPanel,
   StatsPanel,
   BloomingPanel,
+  CareOverviewPanel,
 } from '../components/dashboard';
 
 export default function Dashboard() {
@@ -102,13 +103,8 @@ export default function Dashboard() {
 
           {/* Command Center Grid */}
           <div className="dashboard-grid">
-            {/* Stats Panel - spans 2 columns */}
-            <StatsPanel
-              totalPlants={plants.length}
-              bloomingCount={bloomingPlants.length}
-              needsCareCount={plantsNeedingCare.length}
-              healthPercentage={stats.healthPercentage}
-            />
+            {/* Care Overview - spans 2 columns */}
+            <CareOverviewPanel stats={stats} />
 
             {/* Quick Actions */}
             <QuickActionsPanel />

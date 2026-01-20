@@ -991,3 +991,160 @@ textarea.input {
   opacity: 0.6;
   cursor: not-allowed;
 }
+
+/* ===========================================
+   CARE OVERVIEW PANEL
+   =========================================== */
+.care-overview-panel {
+  padding: 24px;
+}
+
+.care-overview-title {
+  font-family: var(--font-heading);
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--sage-800);
+  margin-bottom: 20px;
+}
+
+.care-overview-content {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+@media (min-width: 640px) {
+  .care-overview-content {
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 32px;
+  }
+}
+
+/* Circular progress */
+.care-overview-circle {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.care-overview-circle svg {
+  display: block;
+}
+
+.care-overview-circle-content {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-bottom: 40px;
+}
+
+.care-overview-percentage {
+  font-family: var(--font-heading);
+  font-size: 36px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.care-overview-circle-label {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 8px;
+}
+
+.care-overview-health-label {
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--sage-700);
+}
+
+.care-overview-count {
+  font-family: var(--font-body);
+  font-size: 13px;
+  color: var(--sage-500);
+}
+
+/* Care progress bars */
+.care-progress-list {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 0;
+}
+
+.care-progress-row {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.care-progress-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.care-progress-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-body);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--sage-800);
+}
+
+.care-progress-count {
+  font-family: var(--font-body);
+  font-size: 13px;
+  color: var(--sage-600);
+  white-space: nowrap;
+}
+
+.care-progress-bar-track {
+  display: flex;
+  height: 10px;
+  border-radius: 5px;
+  overflow: hidden;
+  background: var(--sage-200);
+}
+
+.care-progress-bar-fill {
+  background: var(--sage-500);
+  transition: width 0.5s ease;
+}
+
+.care-progress-bar-remaining {
+  background: var(--copper-500);
+  transition: width 0.5s ease;
+}
+
+/* Care tip */
+.care-overview-tip {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 20px;
+  padding: 14px 16px;
+  background: rgba(255, 255, 255, 0.4);
+  border-radius: var(--radius-md);
+  font-family: var(--font-body);
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--copper-600);
+}
+
+.care-overview-tip-success {
+  color: var(--sage-700);
+}
