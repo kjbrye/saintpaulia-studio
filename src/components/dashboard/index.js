@@ -14,9 +14,8 @@ export { default as CollectionOverviewCard } from './CollectionOverviewCard';
 export { default as CareStatsSummary } from './CareStatsSummary';
 
 // Command Center Panels
-export { default as NeedsAttentionPanel } from './NeedsAttentionPanel';
+export { default as CollectionStatsPanel } from './CollectionStatsPanel';
 export { default as QuickActionsPanel } from './QuickActionsPanel';
 export { default as RecentActivityPanel } from './RecentActivityPanel';
 export { default as StatsPanel } from './StatsPanel';
-export { default as BloomingPanel } from './BloomingPanel';
 export { default as CareOverviewPanel } from './CareOverviewPanel';

@@ -9,14 +9,12 @@ import { usePlants } from '../hooks/usePlants';
 import { useAuth } from '../hooks/useAuth';
 import { useSettings } from '../hooks/useSettings.jsx';
 import { useRecentCareLogs } from '../hooks/useCare';
-import { plantNeedsCare, getOverdueCareTypes, getCollectionCareStats } from '../utils/careStatus';
+import { getCollectionCareStats } from '../utils/careStatus';
 import HeaderBar from '../components/ui/HeaderBar';
 import {
-  NeedsAttentionPanel,
+  CollectionStatsPanel,
   QuickActionsPanel,
   RecentActivityPanel,
-  StatsPanel,
-  BloomingPanel,
   CareOverviewPanel,
 } from '../components/dashboard';
 
@@ -27,10 +25,6 @@ export default function Dashboard() {
   const { data: recentLogs = [], isLoading: logsLoading } = useRecentCareLogs(10);
 
   // Derived data
-  const plantsNeedingCare = plants.filter(p => plantNeedsCare(p, careThresholds)).map(p => ({
-    ...p,
-    overdueCareTypes: getOverdueCareTypes(p, careThresholds),
-  }));
   const bloomingPlants = plants.filter(p => p.is_blooming);
   const stats = getCollectionCareStats(plants, careThresholds);
   const displayName = user?.email?.split('@')[0] || 'Gardener';
@@ -109,14 +103,11 @@ export default function Dashboard() {
             {/* Quick Actions */}
             <QuickActionsPanel />
 
-            {/* Needs Attention */}
-            <NeedsAttentionPanel plantsNeedingCare={plantsNeedingCare} />
+            {/* Collection Stats */}
+            <CollectionStatsPanel plants={plants} bloomingPlants={bloomingPlants} />
 
             {/* Recent Activity */}
             <RecentActivityPanel careLogs={recentLogs} isLoading={logsLoading} />
-
-            {/* Blooming Panel (conditional) */}
-            <BloomingPanel bloomingPlants={bloomingPlants} />
           </div>
         </div>
       </main>
