@@ -1158,12 +1158,6 @@ textarea.input {
   gap: 10px;
 }
 
-@media (min-width: 768px) {
-  .stats-rows-container {
-    grid-column: span 2;
-  }
-}
-
 .stat-row {
   display: flex;
   align-items: center;

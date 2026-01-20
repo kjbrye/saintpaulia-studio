@@ -42,7 +42,7 @@ function ActivityItem({ log }) {
 export default function RecentActivityPanel({ careLogs = [], isLoading = false }) {
   if (isLoading) {
     return (
-      <div className="panel">
+      <div className="panel panel-wide">
         <div className="panel-header">
           <span className="panel-title">Recent Activity</span>
         </div>
@@ -55,7 +55,7 @@ export default function RecentActivityPanel({ careLogs = [], isLoading = false }
 
   if (careLogs.length === 0) {
     return (
-      <div className="panel">
+      <div className="panel panel-wide">
         <div className="panel-header">
           <span className="panel-title">Recent Activity</span>
         </div>
@@ -70,7 +70,7 @@ export default function RecentActivityPanel({ careLogs = [], isLoading = false }
   }
 
   return (
-    <div className="panel">
+    <div className="panel panel-wide">
       <div className="panel-header">
         <span className="panel-title">Recent Activity</span>
       </div>
