@@ -104,7 +104,7 @@ export default function Dashboard() {
             <QuickActionsPanel />
 
             {/* Collection Stats */}
-            <CollectionStatsPanel totalPlants={plants.length} bloomingCount={bloomingPlants.length} />
+            <CollectionStatsPanel plants={plants} bloomingPlants={bloomingPlants} />
 
             {/* Recent Activity */}
             <RecentActivityPanel careLogs={recentLogs} isLoading={logsLoading} />
