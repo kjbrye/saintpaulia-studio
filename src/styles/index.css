@@ -708,6 +708,19 @@ textarea.input {
   }
 }
 
+/* Right column stack for Collection Stats + Quick Actions */
+.dashboard-right-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+@media (min-width: 768px) {
+  .dashboard-right-stack {
+    gap: 20px;
+  }
+}
+
 /* Command center panel */
 .panel {
   background: var(--gradient-sage-card);
