@@ -109,8 +109,8 @@ export default function Dashboard() {
             {/* Quick Actions */}
             <QuickActionsPanel />
 
-            {/* Needs Attention */}
-            <NeedsAttentionPanel plantsNeedingCare={plantsNeedingCare} />
+            {/* Collection Stats */}
+            <NeedsAttentionPanel totalPlants={plants.length} bloomingCount={bloomingPlants.length} />
 
             {/* Recent Activity */}
             <RecentActivityPanel careLogs={recentLogs} isLoading={logsLoading} />
