@@ -103,11 +103,11 @@ export default function Dashboard() {
             {/* Collection Stats */}
             <CollectionStatsPanel plants={plants} bloomingPlants={bloomingPlants} />
 
+            {/* Recent Activity - spans 2 columns */}
+            <RecentActivityPanel careLogs={recentLogs} isLoading={logsLoading} />
+
             {/* Quick Actions */}
             <QuickActionsPanel />
-
-            {/* Recent Activity */}
-            <RecentActivityPanel careLogs={recentLogs} isLoading={logsLoading} />
           </div>
         </div>
       </main>
