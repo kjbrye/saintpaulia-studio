@@ -1,16 +1,17 @@
 /**
- * Library Page - Plant collection browser
+ * Library Page - Plant collection browser with batch selection
  */
 
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, useCallback } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
-import { ArrowLeft, Plus, ChevronLeft, ChevronRight } from 'lucide-react';
+import { ArrowLeft, Plus, ChevronLeft, ChevronRight, CheckSquare, Square } from 'lucide-react';
 import { usePlants } from '../hooks/usePlants';
 import { useSettings } from '../hooks/useSettings.jsx';
 import { plantNeedsCare } from '../utils/careStatus';
 import PlantCard from '../components/library/PlantCard';
 import PlantListItem from '../components/library/PlantListItem';
 import LibraryToolbar from '../components/library/LibraryToolbar';
+import BatchActionsToolbar from '../components/library/BatchActionsToolbar';
 import { EmptyLibrary, NoResults } from '../components/library/EmptyState';
 
 export default function Library() {
@@ -22,11 +23,17 @@ export default function Library() {
   const [currentPage, setCurrentPage] = useState(1);
 
   // Filter state
-  const initialCareFilter = searchParams.get('filter') === 'needs-care' ? 'needs-care' : 'all';
+  const initialCareFilter = searchParams.get('filter') === 'needs-care' ? 'needs-care' :
+                            searchParams.get('filter') === 'blooming' ? 'all' : 'all';
+  const initialBloomingFilter = searchParams.get('filter') === 'blooming' ? 'blooming' : 'all';
   const [potSizeFilter, setPotSizeFilter] = useState('all');
   const [bloomColorFilter, setBloomColorFilter] = useState('all');
-  const [bloomingFilter, setBloomingFilter] = useState('all');
+  const [bloomingFilter, setBloomingFilter] = useState(initialBloomingFilter);
   const [careFilter, setCareFilter] = useState(initialCareFilter);
+
+  // Selection state
+  const [selectionMode, setSelectionMode] = useState(false);
+  const [selectedIds, setSelectedIds] = useState(new Set());
 
   const { data: plants = [], isLoading, error } = usePlants();
   const plantsPerPage = settings.plantsPerPage;
@@ -93,6 +100,13 @@ export default function Library() {
     setCurrentPage(1);
   }, [searchQuery, sortBy, plantsPerPage, potSizeFilter, bloomColorFilter, bloomingFilter, careFilter]);
 
+  // Clear selection when exiting selection mode
+  useEffect(() => {
+    if (!selectionMode) {
+      setSelectedIds(new Set());
+    }
+  }, [selectionMode]);
+
   // Pagination
   const totalPages = Math.ceil(filteredPlants.length / plantsPerPage);
   const startIndex = (currentPage - 1) * plantsPerPage;
@@ -104,6 +118,32 @@ export default function Library() {
     bloomColorFilter !== 'all' ||
     bloomingFilter !== 'all' ||
     careFilter !== 'all';
+
+  // Selection handlers
+  const handleToggleSelect = useCallback((plantId) => {
+    setSelectedIds(prev => {
+      const next = new Set(prev);
+      if (next.has(plantId)) {
+        next.delete(plantId);
+      } else {
+        next.add(plantId);
+      }
+      return next;
+    });
+  }, []);
+
+  const handleSelectAll = useCallback(() => {
+    setSelectedIds(new Set(filteredPlants.map(p => p.id)));
+  }, [filteredPlants]);
+
+  const handleClearSelection = useCallback(() => {
+    setSelectedIds(new Set());
+    setSelectionMode(false);
+  }, []);
+
+  const toggleSelectionMode = useCallback(() => {
+    setSelectionMode(prev => !prev);
+  }, []);
 
   if (isLoading) {
     return (
@@ -144,12 +184,29 @@ export default function Library() {
             <h1 className="heading heading-xl">Plant Library</h1>
           </div>
 
-          <Link to="/plants/new">
-            <button className="btn btn-primary">
-              <Plus size={20} />
-              Add Plant
-            </button>
-          </Link>
+          <div className="flex items-center gap-3">
+            {/* Selection mode toggle */}
+            {plants.length > 0 && (
+              <button
+                onClick={toggleSelectionMode}
+                className={`icon-container ${selectionMode ? 'active' : ''}`}
+                title={selectionMode ? 'Exit selection mode' : 'Select multiple plants'}
+              >
+                {selectionMode ? (
+                  <CheckSquare size={20} style={{ color: 'var(--sage-600)' }} />
+                ) : (
+                  <Square size={20} style={{ color: 'var(--sage-600)' }} />
+                )}
+              </button>
+            )}
+
+            <Link to="/plants/new">
+              <button className="btn btn-primary">
+                <Plus size={18} />
+                Add Plant
+              </button>
+            </Link>
+          </div>
         </header>
 
         {/* Empty state - no plants at all */}
@@ -158,6 +215,16 @@ export default function Library() {
         {/* Has plants */}
         {plants.length > 0 && (
           <>
+            {/* Batch Actions Toolbar */}
+            {selectionMode && (
+              <BatchActionsToolbar
+                selectedIds={Array.from(selectedIds)}
+                onClearSelection={handleClearSelection}
+                onSelectAll={handleSelectAll}
+                totalCount={filteredPlants.length}
+              />
+            )}
+
             {/* Toolbar */}
             <LibraryToolbar
               searchQuery={searchQuery}
@@ -185,7 +252,13 @@ export default function Library() {
             {filteredPlants.length > 0 && viewMode === 'grid' && (
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
                 {paginatedPlants.map((plant) => (
-                  <PlantCard key={plant.id} plant={plant} />
+                  <PlantCard
+                    key={plant.id}
+                    plant={plant}
+                    selectionMode={selectionMode}
+                    isSelected={selectedIds.has(plant.id)}
+                    onToggleSelect={handleToggleSelect}
+                  />
                 ))}
               </div>
             )}
@@ -194,7 +267,13 @@ export default function Library() {
             {filteredPlants.length > 0 && viewMode === 'list' && (
               <div className="flex flex-col gap-4">
                 {paginatedPlants.map((plant) => (
-                  <PlantListItem key={plant.id} plant={plant} />
+                  <PlantListItem
+                    key={plant.id}
+                    plant={plant}
+                    selectionMode={selectionMode}
+                    isSelected={selectedIds.has(plant.id)}
+                    onToggleSelect={handleToggleSelect}
+                  />
                 ))}
               </div>
             )}

@@ -11,6 +11,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AuthProvider, useAuth } from './hooks/useAuth';
 import { SettingsProvider } from './hooks/useSettings.jsx';
+import AppShell from './components/AppShell';
 import Dashboard from './pages/Dashboard';
 import Library from './pages/Library';
 import PlantDetail from './pages/PlantDetail';
@@ -137,20 +138,22 @@ export default function App() {
       <AuthProvider>
         <SettingsProvider>
           <BrowserRouter>
-            <div className="relative min-h-screen">
-              {/* Background layer with reduced opacity */}
-              <div
-                className="fixed inset-0 -z-10"
-                style={{
-                  backgroundImage: 'url(/Background.png)',
-                  backgroundSize: 'cover',
-                  backgroundPosition: 'center',
-                  backgroundRepeat: 'no-repeat',
-                  opacity: 0.3
-                }}
-              />
-              <AppRoutes />
-            </div>
+            <AppShell>
+              <div className="relative min-h-screen">
+                {/* Background layer with reduced opacity */}
+                <div
+                  className="fixed inset-0 -z-10"
+                  style={{
+                    backgroundImage: 'url(/Background.png)',
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center',
+                    backgroundRepeat: 'no-repeat',
+                    opacity: 0.3
+                  }}
+                />
+                <AppRoutes />
+              </div>
+            </AppShell>
           </BrowserRouter>
         </SettingsProvider>
       </AuthProvider>
