@@ -691,6 +691,8 @@ textarea.input {
   display: grid;
   grid-template-columns: 1fr;
   gap: 16px;
+  grid-auto-flow: dense;
+  align-items: start;
 }
 
 @media (min-width: 768px) {
