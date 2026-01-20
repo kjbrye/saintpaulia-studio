@@ -100,13 +100,13 @@ export default function Dashboard() {
             {/* Care Overview - spans 2 columns */}
             <CareOverviewPanel stats={stats} />
 
-            {/* Quick Actions */}
-            <QuickActionsPanel />
+            {/* Right column stack - Collection Stats + Quick Actions */}
+            <div className="dashboard-right-stack">
+              <CollectionStatsPanel plants={plants} bloomingPlants={bloomingPlants} />
+              <QuickActionsPanel />
+            </div>
 
-            {/* Collection Stats */}
-            <CollectionStatsPanel plants={plants} bloomingPlants={bloomingPlants} />
-
-            {/* Recent Activity */}
+            {/* Recent Activity - spans 2 columns */}
             <RecentActivityPanel careLogs={recentLogs} isLoading={logsLoading} />
           </div>
         </div>

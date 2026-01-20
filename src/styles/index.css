@@ -691,6 +691,8 @@ textarea.input {
   display: grid;
   grid-template-columns: 1fr;
   gap: 16px;
+  grid-auto-flow: dense;
+  align-items: start;
 }
 
 @media (min-width: 768px) {
@@ -703,6 +705,19 @@ textarea.input {
 @media (min-width: 1200px) {
   .dashboard-grid {
     grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* Right column stack for Collection Stats + Quick Actions */
+.dashboard-right-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+@media (min-width: 768px) {
+  .dashboard-right-stack {
+    gap: 20px;
   }
 }
 
