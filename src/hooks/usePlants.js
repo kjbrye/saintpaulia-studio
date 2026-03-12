@@ -7,6 +7,7 @@
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import * as plantsService from '../services/plants';
+import { useAuth } from './useAuth';
 
 // Query key factory - keeps keys consistent across the app
 export const plantKeys = {
@@ -21,9 +22,11 @@ export const plantKeys = {
  * Fetch all plants
  */
 export function usePlants(options = {}) {
+  const { isAuthenticated } = useAuth();
   return useQuery({
     queryKey: plantKeys.list(options),
     queryFn: () => plantsService.getPlants(options),
+    enabled: isAuthenticated,
   });
 }
 
@@ -31,10 +34,11 @@ export function usePlants(options = {}) {
  * Fetch a single plant by ID
  */
 export function usePlant(id) {
+  const { isAuthenticated } = useAuth();
   return useQuery({
     queryKey: plantKeys.detail(id),
     queryFn: () => plantsService.getPlantById(id),
-    enabled: !!id, // Don't fetch if no ID
+    enabled: !!id && isAuthenticated,
   });
 }
 

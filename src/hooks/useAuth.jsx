@@ -6,6 +6,7 @@
  */
 
 import { useState, useEffect, useCallback, createContext, useContext } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 import * as authService from '../services/auth';
 
 const AuthContext = createContext(null);
@@ -16,6 +17,7 @@ const AuthContext = createContext(null);
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const queryClient = useQueryClient();
 
   useEffect(() => {
     // Get initial session
@@ -28,10 +30,12 @@ export function AuthProvider({ children }) {
     const subscription = authService.onAuthStateChange((event, session) => {
       setUser(session?.user ?? null);
       setLoading(false);
+      // Clear cached data on sign-in/out so queries re-fetch with correct auth
+      queryClient.invalidateQueries();
     });
 
     return () => subscription.unsubscribe();
-  }, []);
+  }, [queryClient]);
 
   const signIn = useCallback(async (email, password) => {
     const { user } = await authService.signIn(email, password);
@@ -45,7 +49,8 @@ export function AuthProvider({ children }) {
 
   const signOut = useCallback(async () => {
     await authService.signOut();
-  }, []);
+    queryClient.clear();
+  }, [queryClient]);
 
   const value = {
     user,

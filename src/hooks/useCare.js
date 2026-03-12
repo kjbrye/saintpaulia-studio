@@ -7,6 +7,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import * as careService from '../services/care';
 import { plantKeys } from './usePlants';
+import { useAuth } from './useAuth';
 
 // Query key factory
 export const careKeys = {
@@ -20,9 +21,11 @@ export const careKeys = {
  * Fetch care logs, optionally filtered by plant
  */
 export function useCareLogs({ plantId, limit = 50 } = {}) {
+  const { isAuthenticated } = useAuth();
   return useQuery({
     queryKey: careKeys.log({ plantId, limit }),
     queryFn: () => careService.getCareLogs({ plantId, limit }),
+    enabled: isAuthenticated,
   });
 }
 
@@ -30,9 +33,11 @@ export function useCareLogs({ plantId, limit = 50 } = {}) {
  * Fetch recent care logs across all plants
  */
 export function useRecentCareLogs(limit = 10) {
+  const { isAuthenticated } = useAuth();
   return useQuery({
     queryKey: careKeys.recent(limit),
     queryFn: () => careService.getRecentCareLogs(limit),
+    enabled: isAuthenticated,
   });
 }
 
