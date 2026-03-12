@@ -3,11 +3,12 @@
  */
 
 import { Link, useLocation } from 'react-router-dom';
-import { Settings, Info, Search, Plus } from 'lucide-react';
+import { Settings, Info, Search, Plus, Scissors, FlaskConical } from 'lucide-react';
 
 export default function HeaderBar({ onSearchClick }) {
   const location = useLocation();
-  const isDashboard = location.pathname === '/';
+
+  const isActive = (path) => location.pathname.startsWith(path);
 
   return (
     <header className="header-bar">
@@ -36,6 +37,24 @@ export default function HeaderBar({ onSearchClick }) {
 
       {/* Navigation */}
       <nav className="header-nav">
+        <Link to="/propagation">
+          <button
+            className="icon-container"
+            title="Propagation"
+            style={isActive('/propagation') ? { background: 'var(--sage-200)' } : undefined}
+          >
+            <Scissors size={18} style={{ color: isActive('/propagation') ? 'var(--purple-500)' : 'var(--sage-600)' }} />
+          </button>
+        </Link>
+        <Link to="/breeding">
+          <button
+            className="icon-container"
+            title="Breeding"
+            style={isActive('/breeding') ? { background: 'var(--sage-200)' } : undefined}
+          >
+            <FlaskConical size={18} style={{ color: isActive('/breeding') ? 'var(--purple-500)' : 'var(--sage-600)' }} />
+          </button>
+        </Link>
         <Link to="/plants/new">
           <button className="icon-container" title="Add Plant">
             <Plus size={18} style={{ color: 'var(--sage-600)' }} />

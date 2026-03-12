@@ -3,7 +3,7 @@
  */
 
 import { Link } from 'react-router-dom';
-import { BookOpen, Droplets, Plus, BarChart3 } from 'lucide-react';
+import { BookOpen, Droplets, Plus, Scissors, FlaskConical } from 'lucide-react';
 
 export default function QuickActionsPanel() {
   return (
@@ -26,6 +26,16 @@ export default function QuickActionsPanel() {
           <Droplets size={18} />
           <span className="flex-1 text-left">Care Log</span>
           <span className="kbd">C</span>
+        </Link>
+        <Link to="/propagation" className="quick-action-btn w-full">
+          <Scissors size={18} />
+          <span className="flex-1 text-left">Propagation</span>
+          <span className="kbd">P</span>
+        </Link>
+        <Link to="/breeding" className="quick-action-btn w-full">
+          <FlaskConical size={18} />
+          <span className="flex-1 text-left">Breeding</span>
+          <span className="kbd">B</span>
         </Link>
       </div>
       <div className="panel-footer">

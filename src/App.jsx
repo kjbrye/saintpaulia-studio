@@ -20,6 +20,10 @@ import CareLog from './pages/CareLog';
 import Settings from './pages/Settings';
 import Login from './pages/Login';
 import About from './pages/About';
+import Propagation from './pages/Propagation';
+import PropagationDetail from './pages/PropagationDetail';
+import Breeding from './pages/Breeding';
+import CrossDetail from './pages/CrossDetail';
 import NotFound from './pages/NotFound';
 import ErrorBoundary from './components/ui/ErrorBoundary';
 
@@ -96,6 +100,42 @@ function AppRoutes() {
         element={
           <ProtectedRoute>
             <Settings />
+          </ProtectedRoute>
+        }
+      />
+
+      {/* Propagation */}
+      <Route
+        path="/propagation"
+        element={
+          <ProtectedRoute>
+            <Propagation />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/propagation/:id"
+        element={
+          <ProtectedRoute>
+            <PropagationDetail />
+          </ProtectedRoute>
+        }
+      />
+
+      {/* Breeding */}
+      <Route
+        path="/breeding"
+        element={
+          <ProtectedRoute>
+            <Breeding />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/breeding/:id"
+        element={
+          <ProtectedRoute>
+            <CrossDetail />
           </ProtectedRoute>
         }
       />

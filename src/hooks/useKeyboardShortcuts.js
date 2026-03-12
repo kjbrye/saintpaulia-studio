@@ -59,6 +59,14 @@ export function useKeyboardShortcuts({ onOpenCommandPalette }) {
         e.preventDefault();
         navigate('/');
         break;
+      case 'p':
+        e.preventDefault();
+        navigate('/propagation');
+        break;
+      case 'b':
+        e.preventDefault();
+        navigate('/breeding');
+        break;
       case 's':
         e.preventDefault();
         navigate('/settings');
