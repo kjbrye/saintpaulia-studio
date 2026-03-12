@@ -5,7 +5,7 @@
  * Components never call Supabase directly - they use hooks that call these functions.
  */
 
-import { supabase } from '../api/supabase';
+import { supabase, requireUserId } from '../api/supabase';
 
 /**
  * Fetch all plants for the current user
@@ -46,9 +46,10 @@ export async function getPlantById(id) {
  * @returns {Promise<Object>} Created plant object
  */
 export async function createPlant(plant) {
+  const user_id = await requireUserId();
   const { data, error } = await supabase
     .from('plants')
-    .insert(plant)
+    .insert({ ...plant, user_id })
     .select()
     .single();
 

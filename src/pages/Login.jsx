@@ -7,14 +7,16 @@
 import { useState } from 'react';
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
+import { resetPassword } from '../services/auth';
 import { Card, Button } from '../components/ui';
 
 export default function Login() {
   const { isAuthenticated, loading, signIn, signUp } = useAuth();
-  const [mode, setMode] = useState('signin'); // 'signin' or 'signup'
+  const [mode, setMode] = useState('signin'); // 'signin', 'signup', or 'reset'
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [message, setMessage] = useState('');
   const [submitting, setSubmitting] = useState(false);
 
   // Already logged in — redirect to dashboard
@@ -25,13 +27,22 @@ export default function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
+    setMessage('');
     setSubmitting(true);
 
     try {
-      if (mode === 'signin') {
+      if (mode === 'reset') {
+        await resetPassword(email);
+        setMessage('Check your email for a password reset link.');
+      } else if (mode === 'signin') {
         await signIn(email, password);
       } else {
-        await signUp(email, password);
+        const result = await signUp(email, password);
+        // If email confirmation is required, the user won't be auto-signed in
+        if (result.user && !result.session) {
+          setMessage('Check your email to confirm your account before signing in.');
+          setMode('signin');
+        }
       }
     } catch (err) {
       setError(err.message || 'Something went wrong');
@@ -57,7 +68,11 @@ export default function Login() {
             Saintpaulia Studio
           </h1>
           <p className="text-[var(--text-muted)]">
-            {mode === 'signin' ? 'Welcome back' : 'Create your account'}
+            {mode === 'reset'
+              ? 'Enter your email to reset your password'
+              : mode === 'signin'
+                ? 'Welcome back'
+                : 'Create your account'}
           </p>
         </div>
 
@@ -81,24 +96,33 @@ export default function Login() {
             />
           </div>
 
-          <div>
-            <label 
-              htmlFor="password" 
-              className="block text-sm font-medium text-[var(--text-secondary)] mb-2"
-            >
-              Password
-            </label>
-            <input
-              id="password"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              minLength={6}
-              className="w-full px-4 py-3 rounded-xl neuro-inset bg-transparent text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--accent-primary)]"
-              placeholder="••••••••"
-            />
-          </div>
+          {mode !== 'reset' && (
+            <div>
+              <label
+                htmlFor="password"
+                className="block text-sm font-medium text-[var(--text-secondary)] mb-2"
+              >
+                Password
+              </label>
+              <input
+                id="password"
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                minLength={6}
+                className="w-full px-4 py-3 rounded-xl neuro-inset bg-transparent text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--accent-primary)]"
+                placeholder="••••••••"
+              />
+            </div>
+          )}
+
+          {/* Success message */}
+          {message && (
+            <div className="p-3 rounded-xl bg-[rgba(34,197,94,0.15)] border border-[rgba(34,197,94,0.3)]">
+              <p className="text-sm" style={{ color: 'var(--sage-700)' }}>{message}</p>
+            </div>
+          )}
 
           {/* Error message */}
           {error && (
@@ -115,30 +139,52 @@ export default function Login() {
             className="w-full"
             disabled={submitting}
           >
-            {submitting 
-              ? 'Loading...' 
-              : mode === 'signin' 
-                ? 'Sign In' 
-                : 'Create Account'
+            {submitting
+              ? 'Loading...'
+              : mode === 'reset'
+                ? 'Send Reset Link'
+                : mode === 'signin'
+                  ? 'Sign In'
+                  : 'Create Account'
             }
           </Button>
         </form>
 
         {/* Toggle mode */}
-        <div className="mt-6 text-center">
+        <div className="mt-6 text-center space-y-2">
           <p className="text-[var(--text-muted)] text-sm">
-            {mode === 'signin' ? "Don't have an account?" : 'Already have an account?'}
+            {mode === 'reset'
+              ? 'Remember your password?'
+              : mode === 'signin'
+                ? "Don't have an account?"
+                : 'Already have an account?'}
             <button
               type="button"
               onClick={() => {
                 setMode(mode === 'signin' ? 'signup' : 'signin');
                 setError('');
+                setMessage('');
               }}
               className="ml-2 text-[var(--accent-secondary)] hover:text-[var(--accent-primary)] font-medium"
             >
-              {mode === 'signin' ? 'Sign Up' : 'Sign In'}
+              {mode === 'reset' ? 'Sign In' : mode === 'signin' ? 'Sign Up' : 'Sign In'}
             </button>
           </p>
+          {mode === 'signin' && (
+            <p>
+              <button
+                type="button"
+                onClick={() => {
+                  setMode('reset');
+                  setError('');
+                  setMessage('');
+                }}
+                className="text-sm text-[var(--text-muted)] hover:text-[var(--accent-primary)]"
+              >
+                Forgot your password?
+              </button>
+            </p>
+          )}
         </div>
       </Card>
     </div>

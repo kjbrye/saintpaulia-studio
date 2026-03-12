@@ -66,6 +66,18 @@ export async function signOut() {
 }
 
 /**
+ * Send a password reset email
+ * @param {string} email
+ * @returns {Promise<void>}
+ */
+export async function resetPassword(email) {
+  const { error } = await supabase.auth.resetPasswordForEmail(email, {
+    redirectTo: `${window.location.origin}/login`,
+  });
+  if (error) throw error;
+}
+
+/**
  * Subscribe to auth state changes
  * @param {Function} callback - Called with (event, session) on auth changes
  * @returns {Object} Subscription object with unsubscribe method

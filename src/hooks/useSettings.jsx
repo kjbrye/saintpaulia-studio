@@ -1,10 +1,11 @@
 /**
  * useSettings Hook
  *
- * Provides app settings with localStorage persistence.
+ * Provides app settings with Supabase persistence and localStorage cache.
  */
 
-import { useState, useEffect, createContext, useContext } from 'react';
+import { useState, useEffect, useCallback, createContext, useContext, useRef } from 'react';
+import * as settingsService from '../services/settings';
 
 const DEFAULT_SETTINGS = {
   wateringThreshold: 7,
@@ -19,25 +20,49 @@ const STORAGE_KEY = 'saintpaulia-settings';
 const SettingsContext = createContext(null);
 
 export function SettingsProvider({ children }) {
-  const [settings, setSettings] = useState(DEFAULT_SETTINGS);
-
-  // Load from localStorage on mount
-  useEffect(() => {
+  const [settings, setSettings] = useState(() => {
+    // Load from localStorage for instant display
     const saved = localStorage.getItem(STORAGE_KEY);
     if (saved) {
       try {
-        setSettings({ ...DEFAULT_SETTINGS, ...JSON.parse(saved) });
-      } catch (e) {
-        console.error('Failed to parse settings:', e);
+        return { ...DEFAULT_SETTINGS, ...JSON.parse(saved) };
+      } catch {
+        // fall through to defaults
       }
     }
+    return DEFAULT_SETTINGS;
+  });
+
+  const saveTimeout = useRef(null);
+
+  // Sync from Supabase on mount (overrides localStorage if remote exists)
+  useEffect(() => {
+    settingsService.getSettings().then((remote) => {
+      if (remote) {
+        const merged = { ...DEFAULT_SETTINGS, ...remote };
+        setSettings(merged);
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(merged));
+      }
+    }).catch(() => {
+      // Supabase unavailable — localStorage values are fine
+    });
   }, []);
 
-  const updateSetting = (key, value) => {
-    const newSettings = { ...settings, [key]: value };
-    setSettings(newSettings);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(newSettings));
-  };
+  const updateSetting = useCallback((key, value) => {
+    setSettings((prev) => {
+      const next = { ...prev, [key]: value };
+      // Update localStorage immediately
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+      // Debounce Supabase save
+      clearTimeout(saveTimeout.current);
+      saveTimeout.current = setTimeout(() => {
+        settingsService.saveSettings(next).catch((err) => {
+          console.error('Failed to save settings:', err);
+        });
+      }, 500);
+      return next;
+    });
+  }, []);
 
   return (
     <SettingsContext.Provider value={{ settings, updateSetting }}>

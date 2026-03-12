@@ -8,81 +8,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import * as plantsService from '../services/plants';
 
-// TODO: Remove DEV_BYPASS and MOCK_PLANTS before production
-const DEV_BYPASS = true;
-
-const MOCK_PLANTS = [
-  {
-    id: '1',
-    nickname: 'Violet Queen',
-    cultivar_name: 'Optimara EverGrace',
-    photo_url: null,
-    last_watered: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000).toISOString(), // 10 days ago
-    last_fertilized: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
-    last_groomed: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
-    last_repotted: new Date(Date.now() - 90 * 24 * 60 * 60 * 1000).toISOString(), // 90 days ago
-    pot_size: '4"',
-    is_blooming: true,
-    acquisition_date: '2024-03-15',
-    notes: 'Beautiful purple blooms. Gift from Mom.',
-    updated_at: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
-  },
-  {
-    id: '2',
-    nickname: 'Purple Haze',
-    cultivar_name: "Rob's Dandy Lion",
-    photo_url: null,
-    last_watered: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
-    last_fertilized: new Date(Date.now() - 20 * 24 * 60 * 60 * 1000).toISOString(), // overdue
-    last_groomed: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
-    last_repotted: null,
-    pot_size: '3"',
-    is_blooming: false,
-    acquisition_date: '2024-06-20',
-    notes: 'Miniature variety. Loves bright indirect light.',
-    updated_at: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
-  },
-  {
-    id: '3',
-    nickname: null,
-    cultivar_name: 'Buckeye Seductress',
-    photo_url: null,
-    last_watered: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
-    last_fertilized: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
-    last_groomed: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
-    is_blooming: true,
-    acquisition_date: '2024-01-10',
-    notes: null,
-    updated_at: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
-  },
-  {
-    id: '4',
-    nickname: 'Little Star',
-    cultivar_name: "Ness' Crinkle Blue",
-    photo_url: null,
-    last_watered: new Date(Date.now() - 8 * 24 * 60 * 60 * 1000).toISOString(), // overdue
-    last_fertilized: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000).toISOString(),
-    last_groomed: new Date(Date.now() - 12 * 24 * 60 * 60 * 1000).toISOString(), // overdue
-    is_blooming: false,
-    acquisition_date: '2023-11-05',
-    notes: 'Semi-miniature with ruffled leaves.',
-    updated_at: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
-  },
-  {
-    id: '5',
-    nickname: 'Rosie',
-    cultivar_name: 'Optimara Little Maya',
-    photo_url: null,
-    last_watered: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
-    last_fertilized: new Date(Date.now() - 6 * 24 * 60 * 60 * 1000).toISOString(),
-    last_groomed: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000).toISOString(),
-    is_blooming: false,
-    acquisition_date: '2024-08-01',
-    notes: 'Pink flowers, compact growth.',
-    updated_at: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000).toISOString(),
-  },
-];
-
 // Query key factory - keeps keys consistent across the app
 export const plantKeys = {
   all: ['plants'],
@@ -98,12 +23,7 @@ export const plantKeys = {
 export function usePlants(options = {}) {
   return useQuery({
     queryKey: plantKeys.list(options),
-    queryFn: () => {
-      if (DEV_BYPASS) {
-        return Promise.resolve(MOCK_PLANTS);
-      }
-      return plantsService.getPlants(options);
-    },
+    queryFn: () => plantsService.getPlants(options),
   });
 }
 
@@ -113,16 +33,7 @@ export function usePlants(options = {}) {
 export function usePlant(id) {
   return useQuery({
     queryKey: plantKeys.detail(id),
-    queryFn: () => {
-      if (DEV_BYPASS) {
-        const plant = MOCK_PLANTS.find((p) => p.id === id);
-        if (!plant) {
-          return Promise.reject(new Error('Plant not found'));
-        }
-        return Promise.resolve(plant);
-      }
-      return plantsService.getPlantById(id);
-    },
+    queryFn: () => plantsService.getPlantById(id),
     enabled: !!id, // Don't fetch if no ID
   });
 }
@@ -134,24 +45,7 @@ export function useCreatePlant() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (plantData) => {
-      if (DEV_BYPASS) {
-        // Mock creation for development
-        const newPlant = {
-          ...plantData,
-          id: String(Date.now()),
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString(),
-          last_watered: null,
-          last_fertilized: null,
-          last_groomed: null,
-          is_blooming: false,
-        };
-        MOCK_PLANTS.push(newPlant);
-        return Promise.resolve(newPlant);
-      }
-      return plantsService.createPlant(plantData);
-    },
+    mutationFn: (plantData) => plantsService.createPlant(plantData),
     onSuccess: () => {
       // Invalidate plant list to refetch
       queryClient.invalidateQueries({ queryKey: plantKeys.lists() });
@@ -166,23 +60,7 @@ export function useUpdatePlant() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, updates }) => {
-      if (DEV_BYPASS) {
-        // Mock update for development
-        const plantIndex = MOCK_PLANTS.findIndex((p) => p.id === id);
-        if (plantIndex === -1) {
-          return Promise.reject(new Error('Plant not found'));
-        }
-        const updatedPlant = {
-          ...MOCK_PLANTS[plantIndex],
-          ...updates,
-          updated_at: new Date().toISOString(),
-        };
-        MOCK_PLANTS[plantIndex] = updatedPlant;
-        return Promise.resolve(updatedPlant);
-      }
-      return plantsService.updatePlant(id, updates);
-    },
+    mutationFn: ({ id, updates }) => plantsService.updatePlant(id, updates),
     onSuccess: (data, { id }) => {
       // Update the cache for this specific plant
       queryClient.setQueryData(plantKeys.detail(id), data);
@@ -199,18 +77,7 @@ export function useDeletePlant() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (id) => {
-      if (DEV_BYPASS) {
-        // Mock delete for development
-        const plantIndex = MOCK_PLANTS.findIndex((p) => p.id === id);
-        if (plantIndex === -1) {
-          return Promise.reject(new Error('Plant not found'));
-        }
-        MOCK_PLANTS.splice(plantIndex, 1);
-        return Promise.resolve();
-      }
-      return plantsService.deletePlant(id);
-    },
+    mutationFn: (id) => plantsService.deletePlant(id),
     onSuccess: (_, id) => {
       // Remove from cache
       queryClient.removeQueries({ queryKey: plantKeys.detail(id) });

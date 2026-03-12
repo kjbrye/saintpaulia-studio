@@ -4,7 +4,7 @@
  * All care log database operations live here.
  */
 
-import { supabase } from '../api/supabase';
+import { supabase, requireUserId } from '../api/supabase';
 
 /**
  * Fetch care logs, optionally filtered by plant
@@ -35,9 +35,10 @@ export async function getCareLogs({ plantId, limit = 50 } = {}) {
  * @returns {Promise<Object>} Created care log object
  */
 export async function createCareLog(careLog) {
+  const user_id = await requireUserId();
   const { data, error } = await supabase
     .from('care_logs')
-    .insert(careLog)
+    .insert({ ...careLog, user_id })
     .select()
     .single();
 

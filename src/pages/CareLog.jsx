@@ -32,7 +32,7 @@ export default function CareLog() {
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
 
-  const { data: careLogs = [], isLoading } = useRecentCareLogs(100);
+  const { data: careLogs = [], isLoading, error } = useRecentCareLogs(100);
   const { data: plants = [] } = usePlants();
 
   // Sort plants alphabetically for the dropdown
@@ -315,7 +315,18 @@ export default function CareLog() {
         </div>
 
         {/* Care Logs */}
-        {isLoading ? (
+        {error ? (
+          <div className="card p-8 text-center">
+            <p className="heading heading-lg mb-2">Failed to load</p>
+            <p className="text-muted mb-4">{error.message}</p>
+            <button
+              className="btn btn-primary"
+              onClick={() => window.location.reload()}
+            >
+              Try Again
+            </button>
+          </div>
+        ) : isLoading ? (
           <div className="card p-8 text-center">
             <p className="text-muted">Loading care history...</p>
           </div>
