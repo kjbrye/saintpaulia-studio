@@ -20,6 +20,7 @@ import CareLog from './pages/CareLog';
 import Settings from './pages/Settings';
 import Login from './pages/Login';
 import About from './pages/About';
+import NotFound from './pages/NotFound';
 import ErrorBoundary from './components/ui/ErrorBoundary';
 
 // Create a client with sensible defaults
@@ -119,8 +120,8 @@ function AppRoutes() {
         }
       />
       
-      {/* Fallback */}
-      <Route path="*" element={<Navigate to="/" replace />} />
+      {/* 404 */}
+      <Route path="*" element={<NotFound />} />
     </Routes>
   );
 }

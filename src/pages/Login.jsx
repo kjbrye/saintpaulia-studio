@@ -91,7 +91,7 @@ export default function Login() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="w-full px-4 py-3 rounded-xl neuro-inset bg-transparent text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--accent-primary)]"
+              className="input w-full"
               placeholder="you@example.com"
             />
           </div>
@@ -111,7 +111,7 @@ export default function Login() {
                 onChange={(e) => setPassword(e.target.value)}
                 required
                 minLength={6}
-                className="w-full px-4 py-3 rounded-xl neuro-inset bg-transparent text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--accent-primary)]"
+                className="input w-full"
                 placeholder="••••••••"
               />
             </div>
@@ -165,7 +165,7 @@ export default function Login() {
                 setError('');
                 setMessage('');
               }}
-              className="ml-2 text-[var(--accent-secondary)] hover:text-[var(--accent-primary)] font-medium"
+              className="ml-2 text-[var(--sage-600)] hover:text-[var(--sage-700)] font-medium"
             >
               {mode === 'reset' ? 'Sign In' : mode === 'signin' ? 'Sign Up' : 'Sign In'}
             </button>
@@ -179,7 +179,7 @@ export default function Login() {
                   setError('');
                   setMessage('');
                 }}
-                className="text-sm text-[var(--text-muted)] hover:text-[var(--accent-primary)]"
+                className="text-sm text-[var(--text-muted)] hover:text-[var(--sage-700)]"
               >
                 Forgot your password?
               </button>
