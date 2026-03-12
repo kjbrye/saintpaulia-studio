@@ -20,6 +20,7 @@ import CareLog from './pages/CareLog';
 import Settings from './pages/Settings';
 import Login from './pages/Login';
 import About from './pages/About';
+import ErrorBoundary from './components/ui/ErrorBoundary';
 
 // Create a client with sensible defaults
 const queryClient = new QueryClient({
@@ -130,22 +131,24 @@ export default function App() {
       <AuthProvider>
         <SettingsProvider>
           <BrowserRouter>
-            <AppShell>
-              <div className="relative min-h-screen">
-                {/* Background layer with reduced opacity */}
-                <div
-                  className="fixed inset-0 -z-10"
-                  style={{
-                    backgroundImage: 'url(/Background.png)',
-                    backgroundSize: 'cover',
-                    backgroundPosition: 'center',
-                    backgroundRepeat: 'no-repeat',
-                    opacity: 0.3
-                  }}
-                />
-                <AppRoutes />
-              </div>
-            </AppShell>
+            <ErrorBoundary>
+              <AppShell>
+                <div className="relative min-h-screen">
+                  {/* Background layer with reduced opacity */}
+                  <div
+                    className="fixed inset-0 -z-10"
+                    style={{
+                      backgroundImage: 'url(/Background.png)',
+                      backgroundSize: 'cover',
+                      backgroundPosition: 'center',
+                      backgroundRepeat: 'no-repeat',
+                      opacity: 0.3
+                    }}
+                  />
+                  <AppRoutes />
+                </div>
+              </AppShell>
+            </ErrorBoundary>
           </BrowserRouter>
         </SettingsProvider>
       </AuthProvider>
