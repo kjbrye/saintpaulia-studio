@@ -61,7 +61,7 @@ export default function Login() {
 
   return (
     <div className="min-h-screen flex items-center justify-center px-4">
-      <Card className="w-full max-w-md">
+      <Card className="w-full max-w-md p-8 sm:p-10">
         {/* Header */}
         <div className="text-center mb-8">
           <h1 className="heading text-3xl font-bold text-[var(--text-primary)] mb-2">
