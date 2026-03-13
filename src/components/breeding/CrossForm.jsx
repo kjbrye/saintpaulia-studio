@@ -2,9 +2,10 @@
  * CrossForm - Form to create a new breeding cross
  */
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { Loader2, Plus } from 'lucide-react';
 import FormField from '../ui/FormField';
+import { describeRelationship, calculateInbreedingCoefficient, getCoiRisk } from '../../utils/lineage';
 
 export default function CrossForm({ plants = [], onSubmit, onCancel, isPending }) {
   const [formData, setFormData] = useState({
@@ -97,6 +98,12 @@ export default function CrossForm({ plants = [], onSubmit, onCancel, isPending }
         </FormField>
       </div>
 
+      <RelationshipWarning
+        podParentId={formData.pod_parent_id}
+        pollenParentId={formData.pollen_parent_id}
+        plants={plants}
+      />
+
       <FormField label="Cross Date" required error={errors.cross_date}>
         <input
           type="date"
@@ -153,5 +160,46 @@ export default function CrossForm({ plants = [], onSubmit, onCancel, isPending }
         </button>
       </div>
     </form>
+  );
+}
+
+function RelationshipWarning({ podParentId, pollenParentId, plants }) {
+  const result = useMemo(() => {
+    if (!podParentId || !pollenParentId || podParentId === pollenParentId) return null;
+
+    const plantMap = new Map();
+    for (const p of plants) plantMap.set(p.id, p);
+
+    const relationship = describeRelationship(podParentId, pollenParentId, plantMap);
+    const coi = calculateInbreedingCoefficient(podParentId, pollenParentId, plantMap);
+    const coiRisk = getCoiRisk(coi);
+
+    // Only show if there's a meaningful relationship
+    if (relationship === 'No known relationship' && coi === 0) return null;
+
+    return { relationship, coi, coiRisk };
+  }, [podParentId, pollenParentId, plants]);
+
+  if (!result) return null;
+
+  return (
+    <div
+      className="rounded-lg p-3 flex items-center gap-3"
+      style={{
+        background: result.coi >= 0.125 ? 'var(--copper-100, #fef3c7)' : 'var(--sage-50)',
+        border: `1px solid ${result.coi >= 0.125 ? 'var(--copper-300, #fcd34d)' : 'var(--sage-200)'}`,
+      }}
+    >
+      <div className="flex-1 min-w-0">
+        <p className="text-small font-medium" style={{ color: 'var(--sage-800)' }}>
+          {result.relationship}
+        </p>
+        {result.coi > 0 && (
+          <p className="text-small" style={{ color: result.coiRisk.color }}>
+            Inbreeding coefficient: {(result.coi * 100).toFixed(1)}% ({result.coiRisk.label})
+          </p>
+        )}
+      </div>
+    </div>
   );
 }

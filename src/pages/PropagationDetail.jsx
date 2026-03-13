@@ -7,20 +7,25 @@ import { Link, useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Trash2, Scissors, Sprout, Leaf, Flower2, Check, Plus, Minus } from 'lucide-react';
 import { format } from 'date-fns';
 import { usePropagation, useUpdatePropagation, useDeletePropagation } from '../hooks/usePropagation';
+import { usePropagationJournal, useCreateJournalEntry, useDeleteJournalEntry, journalKeys } from '../hooks/useJournal';
 import HeaderBar from '../components/ui/HeaderBar';
 import { StageIndicator } from '../components/propagation';
 import { PROPAGATION_STAGES, METHOD_LABELS } from '../components/propagation/PropagationCard';
+import NotesLog from '../components/ui/NotesLog';
 
 export default function PropagationDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
-  const [editingNotes, setEditingNotes] = useState(false);
-  const [notesValue, setNotesValue] = useState('');
 
   const { data: propagation, isLoading, error } = usePropagation(id);
   const updatePropagation = useUpdatePropagation();
   const deletePropagation = useDeletePropagation();
+
+  // Journal entries
+  const { data: journalEntries = [], isLoading: journalLoading } = usePropagationJournal(id);
+  const createJournalEntry = useCreateJournalEntry();
+  const deleteJournalEntry = useDeleteJournalEntry();
 
   const isPending = updatePropagation.isPending || deletePropagation.isPending;
 
@@ -36,11 +41,6 @@ export default function PropagationDetail() {
   const handlePlantletCount = (delta) => {
     const newCount = Math.max(0, (propagation.plantlet_count || 0) + delta);
     handleUpdate({ plantlet_count: newCount });
-  };
-
-  const handleSaveNotes = () => {
-    handleUpdate({ notes: notesValue.trim() || null });
-    setEditingNotes(false);
   };
 
   if (isLoading) {
@@ -206,46 +206,18 @@ export default function PropagationDetail() {
             </div>
           </div>
 
-          {/* Notes */}
-          <div className="card p-6 mb-6">
-            <div className="flex items-center justify-between mb-3">
-              <h2 className="heading heading-md">Notes</h2>
-              {!editingNotes && (
-                <button
-                  className="btn btn-secondary btn-small"
-                  onClick={() => {
-                    setNotesValue(propagation.notes || '');
-                    setEditingNotes(true);
-                  }}
-                >
-                  Edit
-                </button>
-              )}
-            </div>
-            {editingNotes ? (
-              <div className="space-y-3">
-                <textarea
-                  className="input w-full"
-                  style={{ minHeight: 100, resize: 'vertical' }}
-                  value={notesValue}
-                  onChange={(e) => setNotesValue(e.target.value)}
-                  autoFocus
-                />
-                <div className="flex gap-2">
-                  <button className="btn btn-primary btn-small" onClick={handleSaveNotes} disabled={isPending}>
-                    Save
-                  </button>
-                  <button className="btn btn-secondary btn-small" onClick={() => setEditingNotes(false)}>
-                    Cancel
-                  </button>
-                </div>
-              </div>
-            ) : (
-              <p className="text-body text-muted">
-                {propagation.notes || 'No notes yet.'}
-              </p>
-            )}
-          </div>
+          {/* Journal Notes */}
+          <NotesLog
+            entries={journalEntries}
+            onAdd={async (content) => {
+              await createJournalEntry.mutateAsync({ propagation_id: id, content });
+            }}
+            onDelete={(entryId) => {
+              deleteJournalEntry.mutate({ id: entryId, parentKey: journalKeys.forPropagation(id) });
+            }}
+            isLoading={journalLoading}
+            isPending={createJournalEntry.isPending || deleteJournalEntry.isPending}
+          />
         </div>
 
         {/* Delete Confirmation */}

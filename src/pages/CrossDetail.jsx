@@ -1,52 +1,92 @@
 /**
- * CrossDetail Page - Individual breeding cross view with LineageView
+ * CrossDetail Page - Individual breeding cross view with stage timeline and offspring
  */
 
 import { useState } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Trash2, Heart, Sprout, Leaf, Flower2, Package, Sun, Plus, Minus } from 'lucide-react';
+import { ArrowLeft, Trash2, Archive, RotateCcw, X } from 'lucide-react';
 import { format } from 'date-fns';
-import { useCross, useUpdateCross, useDeleteCross, useRemoveOffspring } from '../hooks/useBreeding';
+import {
+  useCross, useUpdateCross, useDeleteCross, useRemoveOffspring,
+  useAddOffspring, useStageLogs, useAdvanceStage, useUpdateCrossStatus,
+} from '../hooks/useBreeding';
+import { usePlants, useCreatePlant } from '../hooks/usePlants';
+import { useCrossJournal, useCreateJournalEntry, useDeleteJournalEntry, journalKeys } from '../hooks/useJournal';
 import HeaderBar from '../components/ui/HeaderBar';
-import { StageIndicator } from '../components/propagation';
-import { LineageView } from '../components/breeding';
+import { StageTimeline, StageAdvanceModal, OffspringList, LineageView } from '../components/breeding';
 import { BREEDING_STAGES } from '../components/breeding/CrossCard';
+import NotesLog from '../components/ui/NotesLog';
 
 export default function CrossDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
-  const [editingNotes, setEditingNotes] = useState(false);
-  const [notesValue, setNotesValue] = useState('');
+  const [advanceTarget, setAdvanceTarget] = useState(null);
 
   const { data: cross, isLoading, error } = useCross(id);
+  const { data: stageLogs = [] } = useStageLogs(id);
+  const { data: plants = [] } = usePlants();
   const updateCross = useUpdateCross();
   const deleteCross = useDeleteCross();
   const removeOffspring = useRemoveOffspring();
+  const addOffspring = useAddOffspring();
+  const createPlant = useCreatePlant();
+  const advanceStage = useAdvanceStage();
+  const updateStatus = useUpdateCrossStatus();
 
-  const isPending = updateCross.isPending || deleteCross.isPending || removeOffspring.isPending;
+  // Journal entries
+  const { data: journalEntries = [], isLoading: journalLoading } = useCrossJournal(id);
+  const createJournalEntry = useCreateJournalEntry();
+  const deleteJournalEntry = useDeleteJournalEntry();
 
-  const handleUpdate = (updates) => {
-    updateCross.mutate({ id, updates });
-  };
+  const isPending = updateCross.isPending || deleteCross.isPending || removeOffspring.isPending
+    || addOffspring.isPending || createPlant.isPending || advanceStage.isPending || updateStatus.isPending;
 
   const handleDelete = async () => {
     await deleteCross.mutateAsync(id);
     navigate('/breeding');
   };
 
-  const handleCountChange = (field, delta) => {
-    const newCount = Math.max(0, (cross[field] || 0) + delta);
-    handleUpdate({ [field]: newCount });
+  const handleAdvanceConfirm = async ({ stage, notes, data }) => {
+    // If stage data includes counts, also update them on the cross
+    const stageData = { ...data };
+    if (stageData.seed_count != null) {
+      await updateCross.mutateAsync({ id, updates: { seed_count: stageData.seed_count } });
+    }
+    if (stageData.germination_count != null) {
+      await updateCross.mutateAsync({ id, updates: { germination_count: stageData.germination_count } });
+    }
+
+    await advanceStage.mutateAsync({ crossId: id, stage, notes, data: stageData });
+    setAdvanceTarget(null);
   };
 
-  const handleRemoveOffspring = (offspringId) => {
-    removeOffspring.mutate({ id: offspringId, cross_id: id });
+  const handleMarkFailed = () => {
+    setAdvanceTarget({ key: 'failed', label: 'Failed', icon: X });
   };
 
-  const handleSaveNotes = () => {
-    handleUpdate({ notes: notesValue.trim() || null });
-    setEditingNotes(false);
+  const handleArchive = () => {
+    updateStatus.mutate({ id, status: 'archived' });
+  };
+
+  const handleReactivate = () => {
+    updateStatus.mutate({ id, status: 'active' });
+  };
+
+  const handleCreateAndLink = async (crossId, plantName) => {
+    const podName = cross.pod_parent_name || 'Unknown';
+    const pollenName = cross.pollen_parent_name || 'Unknown';
+    const plant = await createPlant.mutateAsync({
+      cultivar_name: plantName,
+      source: `Hybrid: ${podName} × ${pollenName}`,
+      notes: `Cross from ${cross.cross_date}${cross.goals ? `. Goal: ${cross.goals}` : ''}`,
+      pod_parent_id: cross.pod_parent_id || null,
+      pollen_parent_id: cross.pollen_parent_id || null,
+      pod_parent_name: podName,
+      pollen_parent_name: pollenName,
+      generation: 1,
+    });
+    await addOffspring.mutateAsync({ cross_id: crossId, plant_id: plant.id });
   };
 
   if (isLoading) {
@@ -77,12 +117,19 @@ export default function CrossDetail() {
     );
   }
 
-  const isFailed = cross.stage === 'failed';
-  const isComplete = cross.stage === 'blooming';
+  const isFailed = cross.status === 'failed' || cross.stage === 'failed';
+  const isComplete = cross.status === 'complete' || cross.stage === 'blooming';
+  const isArchived = cross.status === 'archived';
   const podName = cross.pod_parent?.cultivar_name || cross.pod_parent?.nickname || cross.pod_parent_name || 'Unknown';
   const pollenName = cross.pollen_parent?.cultivar_name || cross.pollen_parent?.nickname || cross.pollen_parent_name || 'Unknown';
 
-  const stageIndex = BREEDING_STAGES.findIndex(s => s.key === cross.stage);
+  const statusBadge = isArchived
+    ? { label: 'Archived', style: { background: 'var(--sage-200)', color: 'var(--sage-700)' } }
+    : isFailed
+    ? { label: 'Failed', style: { background: 'var(--color-error)', color: 'white' } }
+    : isComplete
+    ? { label: 'Complete', style: { background: 'var(--color-success)', color: 'white' } }
+    : null;
 
   return (
     <div className="min-h-screen">
@@ -96,61 +143,49 @@ export default function CrossDetail() {
                 <ArrowLeft size={20} style={{ color: 'var(--sage-600)' }} />
               </button>
               <div>
-                <h1 className="heading heading-xl">
-                  {podName} <span className="text-[var(--purple-400)]">×</span> {pollenName}
-                </h1>
+                <div className="flex items-center gap-2">
+                  <h1 className="heading heading-xl">
+                    {podName} <span className="text-[var(--purple-400)]">×</span> {pollenName}
+                  </h1>
+                  {statusBadge && (
+                    <span className="badge" style={statusBadge.style}>{statusBadge.label}</span>
+                  )}
+                </div>
                 <p className="text-body text-muted">
                   Crossed {format(new Date(cross.cross_date), 'MMMM d, yyyy')}
                 </p>
               </div>
             </div>
-            <button
-              className="icon-container"
-              onClick={() => setShowDeleteConfirm(true)}
-              title="Delete cross"
-            >
-              <Trash2 size={18} style={{ color: 'var(--color-error)' }} />
-            </button>
-          </header>
-
-          {/* Stage Progress */}
-          <div className="card p-6 mb-6">
-            <h2 className="heading heading-md mb-4">Progress</h2>
-            <StageIndicator
-              currentStage={cross.stage}
-              stages={BREEDING_STAGES}
-              failed={isFailed}
-            />
-            <div className="mt-3">
-              <span
-                className="text-small font-semibold"
-                style={{ color: isFailed ? 'var(--color-error)' : isComplete ? 'var(--color-success)' : 'var(--purple-400)' }}
+            <div className="flex items-center gap-1">
+              {(isComplete || isFailed) && !isArchived && (
+                <button
+                  className="icon-container"
+                  onClick={handleArchive}
+                  title="Archive cross"
+                  disabled={isPending}
+                >
+                  <Archive size={18} style={{ color: 'var(--sage-500)' }} />
+                </button>
+              )}
+              {isArchived && (
+                <button
+                  className="icon-container"
+                  onClick={handleReactivate}
+                  title="Unarchive cross"
+                  disabled={isPending}
+                >
+                  <RotateCcw size={18} style={{ color: 'var(--sage-500)' }} />
+                </button>
+              )}
+              <button
+                className="icon-container"
+                onClick={() => setShowDeleteConfirm(true)}
+                title="Delete cross"
               >
-                {isFailed ? 'Failed' : BREEDING_STAGES.find(s => s.key === cross.stage)?.label}
-              </span>
+                <Trash2 size={18} style={{ color: 'var(--color-error)' }} />
+              </button>
             </div>
-
-            {!isComplete && !isFailed && (
-              <div className="flex flex-wrap items-center gap-2 mt-4 pt-4" style={{ borderTop: '1px solid var(--sage-200)' }}>
-                {BREEDING_STAGES.map((stage, i) => {
-                  const currentIdx = BREEDING_STAGES.findIndex(s => s.key === cross.stage);
-                  if (i <= currentIdx) return null;
-                  const Icon = stage.icon;
-                  return (
-                    <button
-                      key={stage.key}
-                      className="btn btn-secondary btn-small flex items-center gap-1.5"
-                      onClick={() => handleUpdate({ stage: stage.key })}
-                      disabled={isPending}
-                    >
-                      <Icon size={14} />
-                      {stage.label}
-                    </button>
-                  );
-                })}
-              </div>
-            )}
-          </div>
+          </header>
 
           {/* Goals */}
           {cross.goals && (
@@ -160,62 +195,58 @@ export default function CrossDetail() {
             </div>
           )}
 
-          {/* Counts */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
-            <div className="card p-5">
-              <p className="text-label text-muted mb-2">Seed Count</p>
-              <div className="flex items-center gap-2">
+          {/* Stage Timeline */}
+          <div className="card p-6 mb-6">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="heading heading-md">Stage Progress</h2>
+              {!isComplete && !isFailed && !isArchived && (
                 <button
-                  className="icon-container"
-                  style={{ width: 32, height: 32 }}
-                  onClick={() => handleCountChange('seed_count', -1)}
-                  disabled={isPending || (cross.seed_count || 0) <= 0}
-                >
-                  <Minus size={14} style={{ color: 'var(--sage-600)' }} />
-                </button>
-                <span className="heading heading-lg w-10 text-center">
-                  {cross.seed_count || 0}
-                </span>
-                <button
-                  className="icon-container"
-                  style={{ width: 32, height: 32 }}
-                  onClick={() => handleCountChange('seed_count', 1)}
+                  className="btn btn-secondary btn-small"
+                  onClick={handleMarkFailed}
                   disabled={isPending}
                 >
-                  <Plus size={14} style={{ color: 'var(--sage-600)' }} />
+                  <X size={14} /> Mark Failed
                 </button>
-              </div>
-            </div>
-
-            <div className="card p-5">
-              <p className="text-label text-muted mb-2">Germination Count</p>
-              <div className="flex items-center gap-2">
-                <button
-                  className="icon-container"
-                  style={{ width: 32, height: 32 }}
-                  onClick={() => handleCountChange('germination_count', -1)}
-                  disabled={isPending || (cross.germination_count || 0) <= 0}
-                >
-                  <Minus size={14} style={{ color: 'var(--sage-600)' }} />
-                </button>
-                <span className="heading heading-lg w-10 text-center">
-                  {cross.germination_count || 0}
-                </span>
-                <button
-                  className="icon-container"
-                  style={{ width: 32, height: 32 }}
-                  onClick={() => handleCountChange('germination_count', 1)}
-                  disabled={isPending}
-                >
-                  <Plus size={14} style={{ color: 'var(--sage-600)' }} />
-                </button>
-              </div>
-              {cross.seed_count > 0 && cross.germination_count > 0 && (
-                <p className="text-small text-muted mt-2">
-                  {Math.round((cross.germination_count / cross.seed_count) * 100)}% germination rate
-                </p>
               )}
             </div>
+            <StageTimeline
+              cross={cross}
+              stageLogs={stageLogs}
+              onAdvance={(stage) => setAdvanceTarget(stage)}
+              isPending={isPending}
+            />
+          </div>
+
+          {/* Counts summary */}
+          {(cross.seed_count > 0 || cross.germination_count > 0) && (
+            <div className="grid grid-cols-2 gap-4 mb-6">
+              <div className="card p-4 text-center">
+                <p className="text-label text-muted mb-1">Seeds</p>
+                <p className="heading heading-lg">{cross.seed_count || 0}</p>
+              </div>
+              <div className="card p-4 text-center">
+                <p className="text-label text-muted mb-1">Germinated</p>
+                <p className="heading heading-lg">{cross.germination_count || 0}</p>
+                {cross.seed_count > 0 && cross.germination_count > 0 && (
+                  <p className="text-small text-muted">
+                    {Math.round((cross.germination_count / cross.seed_count) * 100)}% rate
+                  </p>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* Offspring */}
+          <div className="mb-6">
+            <OffspringList
+              offspring={cross.offspring || []}
+              plants={plants}
+              crossId={id}
+              onAddOffspring={(data) => addOffspring.mutateAsync(data)}
+              onRemoveOffspring={(offspringId) => removeOffspring.mutate({ id: offspringId, cross_id: id })}
+              onCreateAndLink={handleCreateAndLink}
+              isPending={isPending}
+            />
           </div>
 
           {/* Lineage View */}
@@ -223,52 +254,35 @@ export default function CrossDetail() {
             <h2 className="heading heading-md mb-4">Lineage</h2>
             <LineageView
               cross={cross}
-              onRemoveOffspring={handleRemoveOffspring}
+              onRemoveOffspring={(offspringId) => removeOffspring.mutate({ id: offspringId, cross_id: id })}
               isPending={isPending}
             />
           </div>
 
-          {/* Notes */}
-          <div className="card p-6 mb-6">
-            <div className="flex items-center justify-between mb-3">
-              <h2 className="heading heading-md">Notes</h2>
-              {!editingNotes && (
-                <button
-                  className="btn btn-secondary btn-small"
-                  onClick={() => {
-                    setNotesValue(cross.notes || '');
-                    setEditingNotes(true);
-                  }}
-                >
-                  Edit
-                </button>
-              )}
-            </div>
-            {editingNotes ? (
-              <div className="space-y-3">
-                <textarea
-                  className="input w-full"
-                  style={{ minHeight: 100, resize: 'vertical' }}
-                  value={notesValue}
-                  onChange={(e) => setNotesValue(e.target.value)}
-                  autoFocus
-                />
-                <div className="flex gap-2">
-                  <button className="btn btn-primary btn-small" onClick={handleSaveNotes} disabled={isPending}>
-                    Save
-                  </button>
-                  <button className="btn btn-secondary btn-small" onClick={() => setEditingNotes(false)}>
-                    Cancel
-                  </button>
-                </div>
-              </div>
-            ) : (
-              <p className="text-body text-muted">
-                {cross.notes || 'No notes yet.'}
-              </p>
-            )}
-          </div>
+          {/* Journal Notes */}
+          <NotesLog
+            entries={journalEntries}
+            onAdd={async (content) => {
+              await createJournalEntry.mutateAsync({ cross_id: id, content });
+            }}
+            onDelete={(entryId) => {
+              deleteJournalEntry.mutate({ id: entryId, parentKey: journalKeys.forCross(id) });
+            }}
+            isLoading={journalLoading}
+            isPending={createJournalEntry.isPending || deleteJournalEntry.isPending}
+          />
         </div>
+
+        {/* Stage Advance Modal */}
+        {advanceTarget && (
+          <StageAdvanceModal
+            cross={cross}
+            targetStage={advanceTarget}
+            onConfirm={handleAdvanceConfirm}
+            onCancel={() => setAdvanceTarget(null)}
+            isPending={advanceStage.isPending}
+          />
+        )}
 
         {/* Delete Confirmation */}
         {showDeleteConfirm && (
@@ -279,7 +293,7 @@ export default function CrossDetail() {
             <div className="card p-8 max-w-md w-full">
               <h2 className="heading heading-lg mb-2">Delete Cross?</h2>
               <p className="text-muted mb-6">
-                Are you sure you want to delete this cross? All offspring records will also be removed. This cannot be undone.
+                Are you sure you want to delete this cross? All stage logs and offspring records will also be removed. This cannot be undone.
               </p>
               <div className="flex justify-end gap-3">
                 <button className="btn btn-secondary" onClick={() => setShowDeleteConfirm(false)}>

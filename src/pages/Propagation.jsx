@@ -43,13 +43,19 @@ export default function Propagation() {
     deletePropagation.mutate(id);
   };
 
-  const handleComplete = async (propagationId, plantName, propagation) => {
-    // Create the new plant in the library
-    await createPlant.mutateAsync({
-      cultivar_name: plantName,
-      source: `Propagation from ${propagation.parent_plant_name || 'unknown parent'}`,
-      notes: `Propagated via ${propagation.method || 'unknown'} method, started ${propagation.cutting_date}`,
-    });
+  const handleComplete = async (propagationId, plantName, count, propagation) => {
+    const source = `Propagation from ${propagation.parent_plant_name || 'unknown parent'}`;
+    const notes = `Propagated via ${propagation.method || 'unknown'} method, started ${propagation.cutting_date}`;
+
+    // Create plants in the library (one or many)
+    for (let i = 0; i < count; i++) {
+      const name = count > 1 ? `${plantName} #${i + 1}` : plantName;
+      await createPlant.mutateAsync({
+        cultivar_name: name,
+        source,
+        notes,
+      });
+    }
 
     // Mark the propagation as complete
     await updatePropagation.mutateAsync({ id: propagationId, updates: { stage: 'complete' } });

@@ -67,6 +67,10 @@ export function useKeyboardShortcuts({ onOpenCommandPalette }) {
         e.preventDefault();
         navigate('/breeding');
         break;
+      case 'g':
+        e.preventDefault();
+        navigate('/lineage');
+        break;
       case 's':
         e.preventDefault();
         navigate('/settings');

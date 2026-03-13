@@ -17,6 +17,7 @@ import {
   Heart,
   Scissors,
   FlaskConical,
+  GitFork,
 } from 'lucide-react';
 import { usePlants } from '../../hooks/usePlants';
 
@@ -26,6 +27,7 @@ const ACTIONS = [
   { id: 'care-log', label: 'Go to Care Log', icon: Droplets, path: '/care', shortcut: 'C' },
   { id: 'propagation', label: 'Go to Propagation', icon: Scissors, path: '/propagation', shortcut: 'P' },
   { id: 'breeding', label: 'Go to Breeding', icon: FlaskConical, path: '/breeding', shortcut: 'B' },
+  { id: 'lineage', label: 'Go to Lineage', icon: GitFork, path: '/lineage', shortcut: 'G' },
   { id: 'settings', label: 'Go to Settings', icon: Settings, path: '/settings' },
   { id: 'blooming', label: 'View blooming plants', icon: Sparkles, path: '/library?filter=blooming' },
   { id: 'needs-care', label: 'View plants needing care', icon: Heart, path: '/library?filter=needs-care' },

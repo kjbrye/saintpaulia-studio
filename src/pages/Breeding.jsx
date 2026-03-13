@@ -6,14 +6,14 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowLeft, FlaskConical, Heart, Plus } from 'lucide-react';
 import { usePlants, useCreatePlant } from '../hooks/usePlants';
-import { useCrosses, useCreateCross, useUpdateCross, useDeleteCross, useAddOffspring } from '../hooks/useBreeding';
+import { useCrosses, useCreateCross, useUpdateCross, useDeleteCross, useAddOffspring, useAdvanceStage, useUpdateCrossStatus } from '../hooks/useBreeding';
 import HeaderBar from '../components/ui/HeaderBar';
 import { CrossCard, CrossForm, BreedingStatsPanel } from '../components/breeding';
 import { getBreedingStats } from '../utils/propagationStats';
 
 export default function Breeding() {
   const [showForm, setShowForm] = useState(false);
-  const [filter, setFilter] = useState('active'); // 'active' | 'completed' | 'all'
+  const [filter, setFilter] = useState('active'); // 'active' | 'complete' | 'archived' | 'all'
 
   const { data: plants = [] } = usePlants();
   const { data: crosses = [], isLoading, error } = useCrosses();
@@ -22,14 +22,27 @@ export default function Breeding() {
   const deleteCross = useDeleteCross();
   const createPlant = useCreatePlant();
   const addOffspring = useAddOffspring();
+  const advanceStage = useAdvanceStage();
+  const updateStatus = useUpdateCrossStatus();
 
   const stats = getBreedingStats(crosses);
-  const active = crosses.filter(c => !['blooming', 'failed'].includes(c.stage));
-  const completed = crosses.filter(c => ['blooming', 'failed'].includes(c.stage));
+
+  // Use status column with fallback to stage-based logic for un-migrated data
+  const getStatus = (c) => {
+    if (c.status) return c.status;
+    if (c.stage === 'blooming') return 'complete';
+    if (c.stage === 'failed') return 'failed';
+    return 'active';
+  };
+
+  const active = crosses.filter(c => getStatus(c) === 'active');
+  const complete = crosses.filter(c => ['complete', 'failed'].includes(getStatus(c)));
+  const archived = crosses.filter(c => getStatus(c) === 'archived');
 
   const displayed = filter === 'active' ? active
-    : filter === 'completed' ? completed
-    : crosses;
+    : filter === 'complete' ? complete
+    : filter === 'archived' ? archived
+    : crosses.filter(c => getStatus(c) !== 'archived');
 
   const handleCreate = async (data) => {
     await createCross.mutateAsync(data);
@@ -44,26 +57,43 @@ export default function Breeding() {
     deleteCross.mutate(id);
   };
 
-  const handleComplete = async (crossId, plantName, cross) => {
+  const handleAdvance = async (crossId, stage, advanceData) => {
+    await advanceStage.mutateAsync({ crossId, stage, ...advanceData });
+  };
+
+  const handleComplete = async (crossId, plantName, count, cross) => {
     const podName = cross.pod_parent_name || 'unknown';
     const pollenName = cross.pollen_parent_name || 'unknown';
+    const source = `Hybrid: ${podName} × ${pollenName}`;
+    const notes = `Cross from ${cross.cross_date}${cross.goals ? `. Goal: ${cross.goals}` : ''}`;
 
-    // Create the new plant in the library
-    const plant = await createPlant.mutateAsync({
-      cultivar_name: plantName,
-      source: `Hybrid: ${podName} × ${pollenName}`,
-      notes: `Cross from ${cross.cross_date}${cross.goals ? `. Goal: ${cross.goals}` : ''}`,
-    });
+    // Create plants and link each as offspring, auto-filling parentage
+    for (let i = 0; i < count; i++) {
+      const name = count > 1 ? `${plantName} #${i + 1}` : plantName;
+      const plant = await createPlant.mutateAsync({
+        cultivar_name: name,
+        source,
+        notes,
+        pod_parent_id: cross.pod_parent_id || null,
+        pollen_parent_id: cross.pollen_parent_id || null,
+        pod_parent_name: podName,
+        pollen_parent_name: pollenName,
+        generation: 1,
+      });
+      await addOffspring.mutateAsync({ cross_id: crossId, plant_id: plant.id });
+    }
 
-    // Link as offspring
-    await addOffspring.mutateAsync({ cross_id: crossId, plant_id: plant.id });
+    // Mark the cross as blooming/complete
+    await advanceStage.mutateAsync({ crossId, stage: 'blooming' });
+  };
 
-    // Mark the cross as blooming
-    await updateCross.mutateAsync({ id: crossId, updates: { stage: 'blooming' } });
+  const handleArchive = (id) => {
+    updateStatus.mutate({ id, status: 'archived' });
   };
 
   const isPending = createCross.isPending || updateCross.isPending
-    || deleteCross.isPending || createPlant.isPending || addOffspring.isPending;
+    || deleteCross.isPending || createPlant.isPending || addOffspring.isPending
+    || advanceStage.isPending || updateStatus.isPending;
 
   if (isLoading) {
     return (
@@ -125,7 +155,8 @@ export default function Breeding() {
             <div className="flex gap-1">
               {[
                 { key: 'active', label: `Active (${active.length})` },
-                { key: 'completed', label: `Past (${completed.length})` },
+                { key: 'complete', label: `Complete (${complete.length})` },
+                ...(archived.length > 0 ? [{ key: 'archived', label: `Archived (${archived.length})` }] : []),
                 { key: 'all', label: 'All' },
               ].map(f => (
                 <button
@@ -169,6 +200,8 @@ export default function Breeding() {
                   onUpdate={handleUpdate}
                   onDelete={handleDelete}
                   onComplete={handleComplete}
+                  onAdvance={handleAdvance}
+                  onArchive={handleArchive}
                   isPending={isPending}
                 />
               ))}

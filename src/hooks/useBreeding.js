@@ -16,6 +16,7 @@ export const breedingKeys = {
   list: () => [...breedingKeys.all, 'list'],
   details: () => [...breedingKeys.all, 'detail'],
   detail: (id) => [...breedingKeys.details(), id],
+  stageLogs: (crossId) => [...breedingKeys.all, 'stageLogs', crossId],
 };
 
 /**
@@ -105,6 +106,56 @@ export function useRemoveOffspring() {
     mutationFn: ({ id, cross_id }) => breedingService.removeOffspring(id),
     onSuccess: (_, { cross_id }) => {
       queryClient.invalidateQueries({ queryKey: breedingKeys.detail(cross_id) });
+    },
+  });
+}
+
+// ============================================================
+// Stage Logs
+// ============================================================
+
+/**
+ * Fetch stage logs for a cross
+ */
+export function useStageLogs(crossId) {
+  const { isAuthenticated } = useAuth();
+  return useQuery({
+    queryKey: breedingKeys.stageLogs(crossId),
+    queryFn: () => breedingService.getStageLogs(crossId),
+    enabled: !!crossId && isAuthenticated,
+  });
+}
+
+/**
+ * Advance a cross to the next stage (creates log + updates cross)
+ */
+export function useAdvanceStage() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ crossId, stage, notes, data }) =>
+      breedingService.advanceStage(crossId, stage, { notes, data }),
+    onSuccess: (data, { crossId }) => {
+      queryClient.setQueryData(breedingKeys.detail(crossId), (old) =>
+        old ? { ...old, ...data } : data
+      );
+      queryClient.invalidateQueries({ queryKey: breedingKeys.stageLogs(crossId) });
+      queryClient.invalidateQueries({ queryKey: breedingKeys.lists() });
+    },
+  });
+}
+
+/**
+ * Update cross status (archive, reactivate, etc.)
+ */
+export function useUpdateCrossStatus() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, status }) => breedingService.updateCrossStatus(id, status),
+    onSuccess: (data, { id }) => {
+      queryClient.setQueryData(breedingKeys.detail(id), (old) =>
+        old ? { ...old, ...data } : data
+      );
+      queryClient.invalidateQueries({ queryKey: breedingKeys.lists() });
     },
   });
 }

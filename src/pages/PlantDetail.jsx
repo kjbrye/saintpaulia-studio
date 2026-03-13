@@ -7,6 +7,7 @@ import { Link, useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Pencil, Trash2, Check, Loader2, Flower2 } from 'lucide-react';
 import { usePlant, useUpdatePlant, useDeletePlant } from '../hooks/usePlants';
 import { useCareLogs, useLogCare } from '../hooks/useCare';
+import { usePlantJournal, useCreateJournalEntry, useDeleteJournalEntry, journalKeys } from '../hooks/useJournal';
 import { useSettings } from '../hooks/useSettings.jsx';
 import { getPlantCareStatuses } from '../utils/careStatus';
 import {
@@ -16,6 +17,8 @@ import {
 } from '../components/detail';
 import EditableField from '../components/ui/EditableField';
 import PhotoUpload from '../components/plants/PhotoUpload';
+import NotesLog from '../components/ui/NotesLog';
+import { MiniPedigree } from '../components/lineage';
 
 // Status options for select dropdown
 const STATUS_OPTIONS = [
@@ -105,6 +108,11 @@ export default function PlantDetail() {
   const updatePlant = useUpdatePlant();
   const deletePlant = useDeletePlant();
 
+  // Journal entries
+  const { data: journalEntries = [], isLoading: journalLoading } = usePlantJournal(id);
+  const createJournalEntry = useCreateJournalEntry();
+  const deleteJournalEntry = useDeleteJournalEntry();
+
   // Edit mode state
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState(null);
@@ -124,6 +132,9 @@ export default function PlantDetail() {
         status: plant.status || 'healthy',
         pot_size: plant.pot_size || '',
         bloom_color: plant.bloom_color || '',
+        avsa_number: plant.avsa_number || '',
+        hybridizer: plant.hybridizer || '',
+        lineage_notes: plant.lineage_notes || '',
         notes: plant.notes || '',
       });
     }
@@ -167,6 +178,9 @@ export default function PlantDetail() {
           location: formData.location || null,
           pot_size: formData.pot_size || null,
           bloom_color: formData.bloom_color || null,
+          avsa_number: formData.avsa_number || null,
+          hybridizer: formData.hybridizer || null,
+          lineage_notes: formData.lineage_notes || null,
           notes: formData.notes || null,
         },
       });
@@ -413,6 +427,22 @@ export default function PlantDetail() {
               onChange={(v) => updateField('bloom_color', v)}
               options={BLOOM_COLOR_OPTIONS}
             />
+
+            <EditableField
+              label="AVSA Number"
+              value={isEditing ? formData?.avsa_number : plant.avsa_number}
+              isEditing={isEditing}
+              onChange={(v) => updateField('avsa_number', v)}
+              placeholder="e.g., 10822"
+            />
+
+            <EditableField
+              label="Hybridizer"
+              value={isEditing ? formData?.hybridizer : plant.hybridizer}
+              isEditing={isEditing}
+              onChange={(v) => updateField('hybridizer', v)}
+              placeholder="e.g., LLG Greenhouses"
+            />
           </div>
 
           <div
@@ -430,6 +460,13 @@ export default function PlantDetail() {
             placeholder="Any notes about this plant..."
           />
         </div>
+
+        {/* Lineage (only in view mode) */}
+        {!isEditing && (
+          <section className="mb-6">
+            <MiniPedigree plant={plant} />
+          </section>
+        )}
 
         {/* Care Status Grid (only in view mode) */}
         {!isEditing && (
@@ -465,6 +502,21 @@ export default function PlantDetail() {
 
             {/* Care History */}
             <CareHistory logs={careLogs} isLoading={logsLoading} />
+
+            {/* Journal Notes */}
+            <section className="mt-6">
+              <NotesLog
+                entries={journalEntries}
+                onAdd={async (content) => {
+                  await createJournalEntry.mutateAsync({ plant_id: id, content });
+                }}
+                onDelete={(entryId) => {
+                  deleteJournalEntry.mutate({ id: entryId, parentKey: journalKeys.forPlant(id) });
+                }}
+                isLoading={journalLoading}
+                isPending={createJournalEntry.isPending || deleteJournalEntry.isPending}
+              />
+            </section>
           </>
         )}
       </div>

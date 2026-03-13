@@ -24,6 +24,7 @@ import Propagation from './pages/Propagation';
 import PropagationDetail from './pages/PropagationDetail';
 import Breeding from './pages/Breeding';
 import CrossDetail from './pages/CrossDetail';
+import Lineage from './pages/Lineage';
 import NotFound from './pages/NotFound';
 import ErrorBoundary from './components/ui/ErrorBoundary';
 
@@ -136,6 +137,16 @@ function AppRoutes() {
         element={
           <ProtectedRoute>
             <CrossDetail />
+          </ProtectedRoute>
+        }
+      />
+
+      {/* Lineage */}
+      <Route
+        path="/lineage"
+        element={
+          <ProtectedRoute>
+            <Lineage />
           </ProtectedRoute>
         }
       />

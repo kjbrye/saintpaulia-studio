@@ -118,3 +118,102 @@ export async function removeOffspring(id) {
 
   if (error) throw error;
 }
+
+// ============================================================
+// Cross Stage Logs
+// ============================================================
+
+/**
+ * Fetch all stage logs for a cross, ordered chronologically
+ */
+export async function getStageLogs(crossId) {
+  const { data, error } = await supabase
+    .from('cross_stage_logs')
+    .select('*')
+    .eq('cross_id', crossId)
+    .order('entered_at', { ascending: true });
+
+  if (error) throw error;
+  return data;
+}
+
+/**
+ * Create a stage log entry
+ */
+export async function createStageLog(log) {
+  const user_id = await requireUserId();
+  const { data, error } = await supabase
+    .from('cross_stage_logs')
+    .insert({ ...log, user_id })
+    .select()
+    .single();
+
+  if (error) throw error;
+  return data;
+}
+
+/**
+ * Update a stage log entry
+ */
+export async function updateStageLog(id, updates) {
+  const { data, error } = await supabase
+    .from('cross_stage_logs')
+    .update(updates)
+    .eq('id', id)
+    .select()
+    .single();
+
+  if (error) throw error;
+  return data;
+}
+
+/**
+ * Advance a cross to the next stage, creating a stage log and updating the cross
+ */
+export async function advanceStage(crossId, newStage, { notes, data: stageData } = {}) {
+  const user_id = await requireUserId();
+
+  // Create stage log entry
+  const { error: logError } = await supabase
+    .from('cross_stage_logs')
+    .insert({
+      cross_id: crossId,
+      user_id,
+      stage: newStage,
+      notes: notes || null,
+      data: stageData || null,
+    });
+
+  if (logError) throw logError;
+
+  // Determine status based on stage
+  let status = 'active';
+  if (newStage === 'blooming') status = 'complete';
+  if (newStage === 'failed') status = 'failed';
+
+  // Update the cross stage and status
+  const { data: updated, error: updateError } = await supabase
+    .from('breeding_crosses')
+    .update({ stage: newStage, status, updated_at: new Date().toISOString() })
+    .eq('id', crossId)
+    .select()
+    .single();
+
+  if (updateError) throw updateError;
+  return updated;
+}
+
+/**
+ * Update cross status (e.g., archive)
+ */
+export async function updateCrossStatus(id, status) {
+  const { data, error } = await supabase
+    .from('breeding_crosses')
+    .update({ status, updated_at: new Date().toISOString() })
+    .eq('id', id)
+    .select()
+    .single();
+
+  if (error) throw error;
+  return data;
+}

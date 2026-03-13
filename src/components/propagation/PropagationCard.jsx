@@ -27,6 +27,7 @@ const METHOD_LABELS = {
 export default function PropagationCard({ propagation, onUpdate, onDelete, onComplete, isPending }) {
   const [showCompleteForm, setShowCompleteForm] = useState(false);
   const [plantName, setPlantName] = useState('');
+  const [plantCount, setPlantCount] = useState(1);
   const [completeError, setCompleteError] = useState(null);
 
   const isFailed = propagation.stage === 'failed';
@@ -46,6 +47,7 @@ export default function PropagationCard({ propagation, onUpdate, onDelete, onCom
   const handleAdvance = () => {
     if (isReadyToComplete) {
       setPlantName(`${parentName} propagation`);
+      setPlantCount(Math.max(1, propagation.plantlet_count || 1));
       setShowCompleteForm(true);
     } else {
       onUpdate(propagation.id, { stage: nextStage.key });
@@ -59,7 +61,7 @@ export default function PropagationCard({ propagation, onUpdate, onDelete, onCom
       return;
     }
     try {
-      await onComplete(propagation.id, plantName.trim(), propagation);
+      await onComplete(propagation.id, plantName.trim(), plantCount, propagation);
       setShowCompleteForm(false);
     } catch {
       setCompleteError('Failed to complete propagation. Please try again.');
@@ -157,19 +159,39 @@ export default function PropagationCard({ propagation, onUpdate, onDelete, onCom
         {showCompleteForm && (
           <form onSubmit={handleComplete} className="card-inset p-4 space-y-3">
             <p className="text-small font-semibold" style={{ color: 'var(--sage-700)' }}>
-              Add this plant to your library
+              Add {plantCount > 1 ? `${plantCount} plants` : 'this plant'} to your library
             </p>
-            <input
-              type="text"
-              className={`input w-full ${completeError ? 'input-error' : ''}`}
-              placeholder="Name for the new plant"
-              value={plantName}
-              onChange={(e) => {
-                setPlantName(e.target.value);
-                if (completeError) setCompleteError(null);
-              }}
-              autoFocus
-            />
+            <div className="flex items-center gap-3">
+              <div className="flex-1">
+                <input
+                  type="text"
+                  className={`input w-full ${completeError ? 'input-error' : ''}`}
+                  placeholder={plantCount > 1 ? 'Base name (e.g., Grace)' : 'Name for the new plant'}
+                  value={plantName}
+                  onChange={(e) => {
+                    setPlantName(e.target.value);
+                    if (completeError) setCompleteError(null);
+                  }}
+                  autoFocus
+                />
+              </div>
+              <div className="flex items-center gap-1.5">
+                <span className="text-small text-muted">×</span>
+                <input
+                  type="number"
+                  className="input text-center"
+                  style={{ width: 56 }}
+                  min={1}
+                  value={plantCount}
+                  onChange={(e) => setPlantCount(Math.max(1, parseInt(e.target.value) || 1))}
+                />
+              </div>
+            </div>
+            {plantCount > 1 && (
+              <p className="text-small text-muted">
+                Plants will be named {plantName || 'Name'} #1, {plantName || 'Name'} #2, etc.
+              </p>
+            )}
             {completeError && (
               <p className="text-small" style={{ color: 'var(--color-error)' }}>{completeError}</p>
             )}
@@ -178,7 +200,7 @@ export default function PropagationCard({ propagation, onUpdate, onDelete, onCom
                 {isPending ? (
                   <><Loader2 size={14} className="animate-spin" /> Adding...</>
                 ) : (
-                  <><Plus size={14} /> Complete &amp; Add to Library</>
+                  <><Plus size={14} /> Complete &amp; Add {plantCount > 1 ? `${plantCount} Plants` : 'to Library'}</>
                 )}
               </button>
               <button
