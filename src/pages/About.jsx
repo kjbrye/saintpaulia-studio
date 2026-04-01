@@ -3,13 +3,16 @@
  */
 
 import { Link } from 'react-router-dom';
-import { ArrowLeft, Flower2, Heart, Sparkles, BookOpen, Droplets, BarChart3 } from 'lucide-react';
+import { ArrowLeft, Flower2, Heart, Sparkles, BookOpen, Droplets, BarChart3, Scissors } from 'lucide-react';
 
 const features = [
   { icon: Flower2, label: 'Collection Management', desc: 'Organize and track your entire violet collection' },
   { icon: Droplets, label: 'Care Tracking', desc: 'Log watering, fertilizing, and grooming with smart reminders' },
-  { icon: BookOpen, label: 'Breeding Tracker', desc: 'Document crosses and track lineage', coming: true },
-  { icon: BarChart3, label: 'Analytics', desc: 'Insights into your care patterns and plant health', coming: true },
+  { icon: Scissors, label: 'Propagation Tracker', desc: 'Track leaf cuttings from cutting to established plantlet' },
+  { icon: Heart, label: 'Breeding Tracker', desc: 'Document crosses, track stages, and link offspring' },
+  { icon: Flower2, label: 'Lineage & Pedigree', desc: 'Explore ancestry, track traits, and find relationships' },
+  { icon: BookOpen, label: 'Journal', desc: 'Timestamped notes on plants, propagations, and crosses' },
+  { icon: BarChart3, label: 'Analytics', desc: 'Insights into your care patterns and plant health' },
 ];
 
 export default function About() {

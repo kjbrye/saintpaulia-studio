@@ -71,6 +71,10 @@ export function useKeyboardShortcuts({ onOpenCommandPalette }) {
         e.preventDefault();
         navigate('/lineage');
         break;
+      case 'a':
+        e.preventDefault();
+        navigate('/analytics');
+        break;
       case 's':
         e.preventDefault();
         navigate('/settings');

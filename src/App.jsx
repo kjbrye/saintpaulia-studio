@@ -11,7 +11,9 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AuthProvider, useAuth } from './hooks/useAuth';
 import { SettingsProvider } from './hooks/useSettings.jsx';
+import { ToastProvider } from './hooks/useToast.jsx';
 import AppShell from './components/AppShell';
+import ToastContainer from './components/ui/ToastContainer';
 import Dashboard from './pages/Dashboard';
 import Library from './pages/Library';
 import PlantDetail from './pages/PlantDetail';
@@ -25,6 +27,7 @@ import PropagationDetail from './pages/PropagationDetail';
 import Breeding from './pages/Breeding';
 import CrossDetail from './pages/CrossDetail';
 import Lineage from './pages/Lineage';
+import Analytics from './pages/Analytics';
 import NotFound from './pages/NotFound';
 import ErrorBoundary from './components/ui/ErrorBoundary';
 
@@ -151,6 +154,16 @@ function AppRoutes() {
         }
       />
 
+      {/* Analytics */}
+      <Route
+        path="/analytics"
+        element={
+          <ProtectedRoute>
+            <Analytics />
+          </ProtectedRoute>
+        }
+      />
+
       {/* Add Plant - must come before /plants/:id */}
       <Route
         path="/plants/new"
@@ -182,26 +195,29 @@ export default function App() {
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
         <SettingsProvider>
-          <BrowserRouter>
-            <ErrorBoundary>
-              <AppShell>
-                <div className="relative min-h-screen">
-                  {/* Background layer with reduced opacity */}
-                  <div
-                    className="fixed inset-0 -z-10"
-                    style={{
-                      backgroundImage: 'url(/Background.png)',
-                      backgroundSize: 'cover',
-                      backgroundPosition: 'center',
-                      backgroundRepeat: 'no-repeat',
-                      opacity: 0.3
-                    }}
-                  />
-                  <AppRoutes />
-                </div>
-              </AppShell>
-            </ErrorBoundary>
-          </BrowserRouter>
+          <ToastProvider>
+            <BrowserRouter>
+              <ErrorBoundary>
+                <AppShell>
+                  <div className="relative min-h-screen">
+                    {/* Background layer with reduced opacity */}
+                    <div
+                      className="fixed inset-0 -z-10"
+                      style={{
+                        backgroundImage: 'url(/Background.png)',
+                        backgroundSize: 'cover',
+                        backgroundPosition: 'center',
+                        backgroundRepeat: 'no-repeat',
+                        opacity: 0.3
+                      }}
+                    />
+                    <AppRoutes />
+                  </div>
+                </AppShell>
+              </ErrorBoundary>
+              <ToastContainer />
+            </BrowserRouter>
+          </ToastProvider>
         </SettingsProvider>
       </AuthProvider>
     </QueryClientProvider>

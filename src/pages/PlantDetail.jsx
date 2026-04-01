@@ -7,13 +7,18 @@ import { Link, useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Pencil, Trash2, Check, Loader2, Flower2 } from 'lucide-react';
 import { usePlant, useUpdatePlant, useDeletePlant } from '../hooks/usePlants';
 import { useCareLogs, useLogCare } from '../hooks/useCare';
+import { useBloomLogs, useCreateBloomLog, useEndBloom, useDeleteBloomLog } from '../hooks/useBlooms';
+import { useHealthLogs, useCreateHealthLog, useDeleteHealthLog } from '../hooks/useHealth';
 import { usePlantJournal, useCreateJournalEntry, useDeleteJournalEntry, journalKeys } from '../hooks/useJournal';
+import { useToast } from '../hooks/useToast';
 import { useSettings } from '../hooks/useSettings.jsx';
 import { getPlantCareStatuses } from '../utils/careStatus';
 import {
   CareStatusCard,
   QuickCareActions,
   CareHistory,
+  BloomHistory,
+  HealthHistory,
 } from '../components/detail';
 import EditableField from '../components/ui/EditableField';
 import PhotoUpload from '../components/plants/PhotoUpload';
@@ -96,6 +101,7 @@ const LOCATION_LABELS = {
 export default function PlantDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const toast = useToast();
   const { careThresholds } = useSettings();
 
   // Data fetching
@@ -107,6 +113,17 @@ export default function PlantDetail() {
   const { mutateAsync: logCare, isPending } = useLogCare();
   const updatePlant = useUpdatePlant();
   const deletePlant = useDeletePlant();
+
+  // Bloom logs
+  const { data: bloomLogs = [], isLoading: bloomsLoading } = useBloomLogs({ plantId: id });
+  const createBloomLog = useCreateBloomLog();
+  const endBloom = useEndBloom();
+  const deleteBloomLog = useDeleteBloomLog();
+
+  // Health logs
+  const { data: healthLogs = [], isLoading: healthLoading } = useHealthLogs({ plantId: id });
+  const createHealthLog = useCreateHealthLog();
+  const deleteHealthLog = useDeleteHealthLog();
 
   // Journal entries
   const { data: journalEntries = [], isLoading: journalLoading } = usePlantJournal(id);
@@ -162,7 +179,7 @@ export default function PlantDetail() {
   // Handle save
   const handleSave = async () => {
     if (!formData.cultivar_name.trim()) {
-      alert('Cultivar name is required');
+      toast.error('Cultivar name is required');
       return;
     }
 
@@ -190,7 +207,7 @@ export default function PlantDetail() {
       setHasChanges(false);
     } catch (err) {
       console.error('Failed to update plant:', err);
-      alert('Failed to save changes. Please try again.');
+      toast.error('Failed to save changes. Please try again.');
     }
   };
 
@@ -215,7 +232,7 @@ export default function PlantDetail() {
       navigate('/library');
     } catch (err) {
       console.error('Failed to delete plant:', err);
-      alert('Failed to delete plant. Please try again.');
+      toast.error('Failed to delete plant. Please try again.');
     }
   };
 
@@ -498,6 +515,32 @@ export default function PlantDetail() {
               onLogCare={logCare}
               isPending={isPending}
               currentPotSize={plant.pot_size}
+            />
+
+            {/* Bloom History */}
+            <BloomHistory
+              logs={bloomLogs}
+              isLoading={bloomsLoading}
+              onCreateBloom={(data) => createBloomLog.mutateAsync({ ...data, plant_id: id })}
+              onEndBloom={(logId) => endBloom.mutateAsync({
+                id: logId,
+                plantId: id,
+                endDate: new Date().toISOString().split('T')[0],
+              })}
+              onDeleteBloom={(logId) => deleteBloomLog.mutateAsync(logId)}
+              isCreating={createBloomLog.isPending}
+              isEnding={endBloom.isPending}
+              isDeleting={deleteBloomLog.isPending}
+            />
+
+            {/* Health Log */}
+            <HealthHistory
+              logs={healthLogs}
+              isLoading={healthLoading}
+              onCreateLog={(data) => createHealthLog.mutateAsync({ ...data, plant_id: id })}
+              onDeleteLog={(logId) => deleteHealthLog.mutateAsync(logId)}
+              isCreating={createHealthLog.isPending}
+              isDeleting={deleteHealthLog.isPending}
             />
 
             {/* Care History */}

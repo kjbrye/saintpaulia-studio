@@ -6,11 +6,13 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Plus, Loader2 } from 'lucide-react';
 import { useCreatePlant } from '../hooks/usePlants';
+import { useToast } from '../hooks/useToast';
 import FormField from '../components/ui/FormField';
 import { PhotoUpload } from '../components/plants';
 
 export default function AddPlant() {
   const navigate = useNavigate();
+  const toast = useToast();
   const createPlant = useCreatePlant();
 
   const [formData, setFormData] = useState({
@@ -69,7 +71,7 @@ export default function AddPlant() {
       navigate(`/plants/${plant.id}`);
     } catch (error) {
       console.error('Failed to create plant:', error);
-      setErrors({ submit: 'Failed to create plant. Please try again.' });
+      toast.error('Failed to create plant. Please try again.');
     }
   };
 

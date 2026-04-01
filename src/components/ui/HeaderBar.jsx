@@ -3,7 +3,7 @@
  */
 
 import { Link, useLocation } from 'react-router-dom';
-import { Settings, Info, Search, Plus, Scissors, FlaskConical, GitFork } from 'lucide-react';
+import { Settings, Info, Search, Plus, Scissors, FlaskConical, GitFork, BarChart3 } from 'lucide-react';
 
 export default function HeaderBar({ onSearchClick }) {
   const location = useLocation();
@@ -62,6 +62,15 @@ export default function HeaderBar({ onSearchClick }) {
             style={isActive('/lineage') ? { background: 'var(--sage-200)' } : undefined}
           >
             <GitFork size={18} style={{ color: isActive('/lineage') ? 'var(--purple-500)' : 'var(--sage-600)' }} />
+          </button>
+        </Link>
+        <Link to="/analytics">
+          <button
+            className="icon-container"
+            title="Analytics"
+            style={isActive('/analytics') ? { background: 'var(--sage-200)' } : undefined}
+          >
+            <BarChart3 size={18} style={{ color: isActive('/analytics') ? 'var(--purple-500)' : 'var(--sage-600)' }} />
           </button>
         </Link>
         <Link to="/plants/new">

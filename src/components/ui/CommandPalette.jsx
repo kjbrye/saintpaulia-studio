@@ -28,6 +28,7 @@ const ACTIONS = [
   { id: 'propagation', label: 'Go to Propagation', icon: Scissors, path: '/propagation', shortcut: 'P' },
   { id: 'breeding', label: 'Go to Breeding', icon: FlaskConical, path: '/breeding', shortcut: 'B' },
   { id: 'lineage', label: 'Go to Lineage', icon: GitFork, path: '/lineage', shortcut: 'G' },
+  { id: 'analytics', label: 'Go to Analytics', icon: Sparkles, path: '/analytics', shortcut: 'A' },
   { id: 'settings', label: 'Go to Settings', icon: Settings, path: '/settings' },
   { id: 'blooming', label: 'View blooming plants', icon: Sparkles, path: '/library?filter=blooming' },
   { id: 'needs-care', label: 'View plants needing care', icon: Heart, path: '/library?filter=needs-care' },

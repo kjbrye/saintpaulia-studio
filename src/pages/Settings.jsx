@@ -8,6 +8,7 @@ import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { ArrowLeft, User, Bell, Layout, LogOut, AlertTriangle } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
+import { useToast } from '../hooks/useToast';
 import { useSettings } from '../hooks/useSettings.jsx';
 
 const WATERING_OPTIONS = [
@@ -45,6 +46,7 @@ const PER_PAGE_OPTIONS = [
 export default function Settings() {
   const navigate = useNavigate();
   const { user, signOut } = useAuth();
+  const toast = useToast();
   const { settings, updateSetting } = useSettings();
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
@@ -56,6 +58,7 @@ export default function Settings() {
       navigate('/login');
     } catch (error) {
       console.error('Failed to log out:', error);
+      toast.error('Failed to log out. Please try again.');
       setIsLoggingOut(false);
     }
   };

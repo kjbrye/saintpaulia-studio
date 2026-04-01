@@ -5,6 +5,7 @@
 import { useState } from 'react';
 import { Droplets, Sparkles, Scissors, X, Check, Loader2 } from 'lucide-react';
 import { useLogCare } from '../../hooks/useCare';
+import { useToast } from '../../hooks/useToast';
 
 export default function BatchActionsToolbar({
   selectedIds = [],
@@ -15,6 +16,7 @@ export default function BatchActionsToolbar({
   const [isLogging, setIsLogging] = useState(false);
   const [loggedCareType, setLoggedCareType] = useState(null);
   const logCare = useLogCare();
+  const toast = useToast();
 
   const handleBatchCare = async (careType) => {
     if (selectedIds.length === 0 || isLogging) return;
@@ -30,6 +32,9 @@ export default function BatchActionsToolbar({
         )
       );
 
+      const careLabel = { watering: 'Watered', fertilizing: 'Fertilized', grooming: 'Groomed' }[careType] || careType;
+      toast.success(`${careLabel} ${selectedIds.length} plant${selectedIds.length !== 1 ? 's' : ''}`);
+
       // Clear selection after successful batch operation
       setTimeout(() => {
         onClearSelection();
@@ -38,6 +43,7 @@ export default function BatchActionsToolbar({
       }, 1000);
     } catch (error) {
       console.error('Failed to log batch care:', error);
+      toast.error('Failed to log care for some plants. Please try again.');
       setIsLogging(false);
       setLoggedCareType(null);
     }
