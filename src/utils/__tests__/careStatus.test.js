@@ -186,6 +186,18 @@ describe('getCollectionCareStats', () => {
     expect(stats.careBreakdown.watering.overdue).toBe(2);
     expect(stats.careBreakdown.watering.good).toBe(1);
     expect(stats.mostNeglectedCareType).not.toBeNull();
+    expect(stats.neglectedCareTypes.length).toBeGreaterThan(0);
+  });
+
+  it('reports all neglected care types when multiple are overdue', () => {
+    const plants = [
+      { last_watered: daysAgo(10), last_fertilized: daysAgo(20), last_groomed: daysAgo(1) },
+    ];
+    const stats = getCollectionCareStats(plants);
+    expect(stats.neglectedCareTypes).toContain('watering');
+    expect(stats.neglectedCareTypes).toContain('fertilizing');
+    expect(stats.neglectedCareTypes).not.toContain('grooming');
+    expect(stats.neglectedCareTypes).toHaveLength(2);
   });
 
   it('reports null mostNeglectedCareType when nothing is overdue', () => {
@@ -196,5 +208,6 @@ describe('getCollectionCareStats', () => {
     expect(stats.healthyCount).toBe(1);
     expect(stats.healthPercentage).toBe(100);
     expect(stats.mostNeglectedCareType).toBeNull();
+    expect(stats.neglectedCareTypes).toEqual([]);
   });
 });

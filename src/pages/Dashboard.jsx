@@ -9,6 +9,8 @@ import { usePlants } from '../hooks/usePlants';
 import { useAuth } from '../hooks/useAuth';
 import { useSettings } from '../hooks/useSettings.jsx';
 import { useRecentCareLogs } from '../hooks/useCare';
+import { usePropagations } from '../hooks/usePropagation';
+import { useCrosses } from '../hooks/useBreeding';
 import { getCollectionCareStats } from '../utils/careStatus';
 import HeaderBar from '../components/ui/HeaderBar';
 import {
@@ -23,9 +25,15 @@ export default function Dashboard() {
   const { careThresholds } = useSettings();
   const { data: plants = [], isLoading, error } = usePlants();
   const { data: recentLogs = [], isLoading: logsLoading } = useRecentCareLogs(10);
+  const { data: propagations = [] } = usePropagations();
+  const { data: crosses = [] } = useCrosses();
 
   // Derived data
   const bloomingPlants = plants.filter((p) => p.is_blooming);
+  const activePropagations = propagations.filter(
+    (p) => p.stage !== 'complete' && p.stage !== 'failed',
+  );
+  const activeCrosses = crosses.filter((c) => c.stage !== 'blooming' && c.stage !== 'failed');
   const stats = getCollectionCareStats(plants, careThresholds);
   const displayName = user?.email?.split('@')[0] || 'Gardener';
 
@@ -113,7 +121,12 @@ export default function Dashboard() {
             <QuickActionsPanel />
 
             {/* Collection Stats */}
-            <CollectionStatsPanel plants={plants} bloomingPlants={bloomingPlants} />
+            <CollectionStatsPanel
+              plants={plants}
+              bloomingPlants={bloomingPlants}
+              propagationCount={activePropagations.length}
+              breedingCount={activeCrosses.length}
+            />
 
             {/* Recent Activity */}
             <RecentActivityPanel careLogs={recentLogs} isLoading={logsLoading} />

@@ -134,6 +134,8 @@ export function getCollectionCareStats(plants, thresholds = CARE_THRESHOLDS) {
   const mostNeglectedCareType =
     careBreakdown[sortedByOverdue[0]].overdue > 0 ? sortedByOverdue[0] : null;
 
+  const neglectedCareTypes = sortedByOverdue.filter((t) => careBreakdown[t].overdue > 0);
+
   const sortedByGood = careTypes.sort((a, b) => careBreakdown[b].good - careBreakdown[a].good);
   const bestMaintainedCareType = sortedByGood[0];
 
@@ -143,6 +145,7 @@ export function getCollectionCareStats(plants, thresholds = CARE_THRESHOLDS) {
     healthPercentage: Math.round((healthyCount / plants.length) * 100),
     careBreakdown,
     mostNeglectedCareType,
+    neglectedCareTypes,
     bestMaintainedCareType,
   };
 }

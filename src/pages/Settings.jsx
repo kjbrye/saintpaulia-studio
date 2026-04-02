@@ -6,7 +6,7 @@
 
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { ArrowLeft, User, Bell, Layout, LogOut, AlertTriangle } from 'lucide-react';
+import { ArrowLeft, User, Bell, Layout, LogOut, AlertTriangle, Eye } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import { useToast } from '../hooks/useToast';
 import { useSettings } from '../hooks/useSettings.jsx';
@@ -156,6 +156,38 @@ export default function Settings() {
           </div>
         </section>
 
+        {/* Accessibility Section */}
+        <section className="card p-6 mb-6">
+          <div className="flex items-center gap-2 mb-4">
+            <Eye size={18} color="var(--sage-600)" />
+            <h2 className="text-label">Accessibility</h2>
+          </div>
+          <p className="text-small text-muted mb-4">
+            Adjust the display to meet your visual needs (WCAG compliant)
+          </p>
+
+          <div className="space-y-4">
+            <ToggleRow
+              label="High contrast"
+              description="Increases text and border contrast for readability"
+              checked={settings.highContrast}
+              onChange={(v) => updateSetting('highContrast', v)}
+            />
+            <ToggleRow
+              label="Reduce motion"
+              description="Minimizes animations and transitions"
+              checked={settings.reducedMotion}
+              onChange={(v) => updateSetting('reducedMotion', v)}
+            />
+            <ToggleRow
+              label="Larger text"
+              description="Increases base font size throughout the app"
+              checked={settings.largeText}
+              onChange={(v) => updateSetting('largeText', v)}
+            />
+          </div>
+        </section>
+
         {/* Danger Zone */}
         <section className="card p-6 border-copper-400/30">
           <div className="flex items-center gap-2 mb-4">
@@ -195,6 +227,27 @@ export default function Settings() {
           </div>
         </div>
       )}
+    </div>
+  );
+}
+
+function ToggleRow({ label, description, checked, onChange }) {
+  return (
+    <div className="flex items-center justify-between gap-4">
+      <div className="flex-1">
+        <span className="text-body">{label}</span>
+        {description && <p className="text-small text-muted">{description}</p>}
+      </div>
+      <button
+        role="switch"
+        aria-checked={checked}
+        aria-label={label}
+        onClick={() => onChange(!checked)}
+        className="a11y-toggle"
+        data-checked={checked ? 'true' : 'false'}
+      >
+        <span className="a11y-toggle-thumb" />
+      </button>
     </div>
   );
 }

@@ -13,6 +13,9 @@ const DEFAULT_SETTINGS = {
   groomingThreshold: 7,
   defaultView: 'grid',
   plantsPerPage: 24,
+  highContrast: false,
+  reducedMotion: false,
+  largeText: false,
 };
 
 const STORAGE_KEY = 'saintpaulia-settings';
@@ -34,6 +37,14 @@ export function SettingsProvider({ children }) {
   });
 
   const saveTimeout = useRef(null);
+
+  // Sync accessibility attributes to <html> so CSS can target them
+  useEffect(() => {
+    const root = document.documentElement;
+    root.setAttribute('data-high-contrast', settings.highContrast ? 'true' : 'false');
+    root.setAttribute('data-reduced-motion', settings.reducedMotion ? 'true' : 'false');
+    root.setAttribute('data-large-text', settings.largeText ? 'true' : 'false');
+  }, [settings.highContrast, settings.reducedMotion, settings.largeText]);
 
   // Sync from Supabase on mount (overrides localStorage if remote exists)
   useEffect(() => {

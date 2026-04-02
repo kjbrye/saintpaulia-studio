@@ -3,7 +3,7 @@
  */
 
 import { Link } from 'react-router-dom';
-import { Flower2, Leaf } from 'lucide-react';
+import { Flower2, Leaf, Scissors, Heart } from 'lucide-react';
 
 const MAX_AVATARS = 5;
 
@@ -31,7 +31,12 @@ function PlantAvatarStack({ plants, maxCount = MAX_AVATARS }) {
   );
 }
 
-export default function CollectionStatsPanel({ plants = [], bloomingPlants = [] }) {
+export default function CollectionStatsPanel({
+  plants = [],
+  bloomingPlants = [],
+  propagationCount = 0,
+  breedingCount = 0,
+}) {
   return (
     <div className="stats-rows-container">
       <Link to="/library" className="stat-row">
@@ -49,6 +54,24 @@ export default function CollectionStatsPanel({ plants = [], bloomingPlants = [] 
             <Flower2 size={20} />
           </div>
         )}
+      </Link>
+
+      <Link to="/propagation" className="stat-row stat-row-copper">
+        <span className="stat-row-count">{propagationCount}</span>
+        <span className="stat-row-label">
+          {propagationCount === 1 ? 'Propagation' : 'Propagations'}
+        </span>
+        <div className="stat-row-empty-icon">
+          <Scissors size={20} />
+        </div>
+      </Link>
+
+      <Link to="/breeding" className="stat-row stat-row-copper">
+        <span className="stat-row-count">{breedingCount}</span>
+        <span className="stat-row-label">{breedingCount === 1 ? 'Cross' : 'Crosses'}</span>
+        <div className="stat-row-empty-icon">
+          <Heart size={20} />
+        </div>
       </Link>
     </div>
   );

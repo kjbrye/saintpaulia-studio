@@ -99,8 +99,8 @@ function CareProgressBar({ careType, upToDate, total }) {
   );
 }
 
-function CareTip({ mostNeglectedCareType }) {
-  if (!mostNeglectedCareType) {
+function CareTips({ neglectedCareTypes = [] }) {
+  if (neglectedCareTypes.length === 0) {
     return (
       <div className="care-overview-tip care-overview-tip-success">
         <Sparkles size={18} style={{ color: 'var(--sage-600)', flexShrink: 0 }} />
@@ -109,20 +109,20 @@ function CareTip({ mostNeglectedCareType }) {
     );
   }
 
-  const careLabel = CARE_LABELS[mostNeglectedCareType].toLowerCase();
-  const Icon = CARE_ICONS[mostNeglectedCareType];
-
-  return (
-    <div className="care-overview-tip">
-      <Icon size={18} style={{ color: 'var(--copper-500)', flexShrink: 0 }} />
-      <span>Focus on {careLabel} to get back on track.</span>
-    </div>
-  );
+  return neglectedCareTypes.map((careType) => {
+    const careLabel = CARE_LABELS[careType].toLowerCase();
+    const Icon = CARE_ICONS[careType];
+    return (
+      <div key={careType} className="care-overview-tip">
+        <Icon size={18} style={{ color: 'var(--copper-500)', flexShrink: 0 }} />
+        <span>Focus on {careLabel} to get back on track.</span>
+      </div>
+    );
+  });
 }
 
 export default function CareOverviewPanel({ stats }) {
-  const { totalPlants, healthyCount, healthPercentage, careBreakdown, mostNeglectedCareType } =
-    stats;
+  const { totalPlants, healthyCount, healthPercentage, careBreakdown, neglectedCareTypes } = stats;
 
   // Calculate "up to date" counts (good + soon, not overdue)
   const getUpToDateCount = (breakdown) => breakdown.good + breakdown.soon;
@@ -157,7 +157,7 @@ export default function CareOverviewPanel({ stats }) {
         </div>
       </div>
 
-      <CareTip mostNeglectedCareType={mostNeglectedCareType} />
+      <CareTips neglectedCareTypes={neglectedCareTypes} />
     </div>
   );
 }
