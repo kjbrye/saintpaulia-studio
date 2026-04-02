@@ -25,13 +25,29 @@ const ACTIONS = [
   { id: 'add-plant', label: 'Add new plant', icon: Plus, path: '/plants/new', shortcut: 'N' },
   { id: 'library', label: 'Go to Library', icon: BookOpen, path: '/library', shortcut: 'L' },
   { id: 'care-log', label: 'Go to Care Log', icon: Droplets, path: '/care', shortcut: 'C' },
-  { id: 'propagation', label: 'Go to Propagation', icon: Scissors, path: '/propagation', shortcut: 'P' },
+  {
+    id: 'propagation',
+    label: 'Go to Propagation',
+    icon: Scissors,
+    path: '/propagation',
+    shortcut: 'P',
+  },
   { id: 'breeding', label: 'Go to Breeding', icon: FlaskConical, path: '/breeding', shortcut: 'B' },
   { id: 'lineage', label: 'Go to Lineage', icon: GitFork, path: '/lineage', shortcut: 'G' },
   { id: 'analytics', label: 'Go to Analytics', icon: Sparkles, path: '/analytics', shortcut: 'A' },
   { id: 'settings', label: 'Go to Settings', icon: Settings, path: '/settings' },
-  { id: 'blooming', label: 'View blooming plants', icon: Sparkles, path: '/library?filter=blooming' },
-  { id: 'needs-care', label: 'View plants needing care', icon: Heart, path: '/library?filter=needs-care' },
+  {
+    id: 'blooming',
+    label: 'View blooming plants',
+    icon: Sparkles,
+    path: '/library?filter=blooming',
+  },
+  {
+    id: 'needs-care',
+    label: 'View plants needing care',
+    icon: Heart,
+    path: '/library?filter=needs-care',
+  },
 ];
 
 export default function CommandPalette({ isOpen, onClose }) {
@@ -48,12 +64,12 @@ export default function CommandPalette({ isOpen, onClose }) {
 
     // Filter plants
     const matchedPlants = plants
-      .filter(plant => {
+      .filter((plant) => {
         const name = (plant.nickname || plant.cultivar_name || '').toLowerCase();
         return name.includes(q);
       })
       .slice(0, 5)
-      .map(plant => ({
+      .map((plant) => ({
         id: `plant-${plant.id}`,
         type: 'plant',
         label: plant.nickname || plant.cultivar_name,
@@ -64,18 +80,18 @@ export default function CommandPalette({ isOpen, onClose }) {
       }));
 
     // Filter actions
-    const matchedActions = ACTIONS
-      .filter(action => action.label.toLowerCase().includes(q))
-      .map(action => ({
+    const matchedActions = ACTIONS.filter((action) => action.label.toLowerCase().includes(q)).map(
+      (action) => ({
         ...action,
         type: 'action',
-      }));
+      }),
+    );
 
     // If no query, show actions first, then recent plants
     if (!q) {
       return [
         ...matchedActions,
-        ...plants.slice(0, 3).map(plant => ({
+        ...plants.slice(0, 3).map((plant) => ({
           id: `plant-${plant.id}`,
           type: 'plant',
           label: plant.nickname || plant.cultivar_name,
@@ -121,11 +137,11 @@ export default function CommandPalette({ isOpen, onClose }) {
     switch (e.key) {
       case 'ArrowDown':
         e.preventDefault();
-        setSelectedIndex(i => Math.min(i + 1, results.length - 1));
+        setSelectedIndex((i) => Math.min(i + 1, results.length - 1));
         break;
       case 'ArrowUp':
         e.preventDefault();
-        setSelectedIndex(i => Math.max(i - 1, 0));
+        setSelectedIndex((i) => Math.max(i - 1, 0));
         break;
       case 'Enter':
         e.preventDefault();
@@ -151,10 +167,7 @@ export default function CommandPalette({ isOpen, onClose }) {
   return (
     <div className="fixed inset-0 z-50">
       {/* Backdrop */}
-      <div
-        className="absolute inset-0 bg-black/40 backdrop-blur-sm"
-        onClick={onClose}
-      />
+      <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={onClose} />
 
       {/* Dialog */}
       <div className="absolute left-1/2 top-[15%] -translate-x-1/2 w-full max-w-lg">
@@ -210,31 +223,38 @@ export default function CommandPalette({ isOpen, onClose }) {
                       <div
                         className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
                         style={{
-                          background: result.type === 'plant'
-                            ? result.isBlooming ? 'var(--purple-100)' : 'var(--sage-100)'
-                            : 'var(--sage-100)',
+                          background:
+                            result.type === 'plant'
+                              ? result.isBlooming
+                                ? 'var(--purple-100)'
+                                : 'var(--sage-100)'
+                              : 'var(--sage-100)',
                         }}
                       >
                         <Icon
                           size={16}
                           style={{
-                            color: result.type === 'plant'
-                              ? result.isBlooming ? 'var(--purple-500)' : 'var(--sage-600)'
-                              : 'var(--sage-600)',
+                            color:
+                              result.type === 'plant'
+                                ? result.isBlooming
+                                  ? 'var(--purple-500)'
+                                  : 'var(--sage-600)'
+                                : 'var(--sage-600)',
                           }}
                         />
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="text-small font-medium truncate" style={{ color: 'var(--sage-800)' }}>
+                        <p
+                          className="text-small font-medium truncate"
+                          style={{ color: 'var(--sage-800)' }}
+                        >
                           {result.label}
                         </p>
                         {result.sublabel && (
                           <p className="text-small text-muted truncate">{result.sublabel}</p>
                         )}
                       </div>
-                      {result.shortcut && (
-                        <span className="kbd">{result.shortcut}</span>
-                      )}
+                      {result.shortcut && <span className="kbd">{result.shortcut}</span>}
                       {result.type === 'plant' && (
                         <ArrowRight size={14} style={{ color: 'var(--sage-400)' }} />
                       )}
@@ -249,9 +269,15 @@ export default function CommandPalette({ isOpen, onClose }) {
           <div className="px-4 py-2 border-t border-[var(--sage-200)] bg-[var(--sage-50)]">
             <div className="flex items-center justify-between text-small text-muted">
               <div className="flex items-center gap-3">
-                <span><span className="kbd">↑↓</span> navigate</span>
-                <span><span className="kbd">↵</span> select</span>
-                <span><span className="kbd">esc</span> close</span>
+                <span>
+                  <span className="kbd">↑↓</span> navigate
+                </span>
+                <span>
+                  <span className="kbd">↵</span> select
+                </span>
+                <span>
+                  <span className="kbd">esc</span> close
+                </span>
               </div>
             </div>
           </div>

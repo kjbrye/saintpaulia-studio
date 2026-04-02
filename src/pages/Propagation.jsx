@@ -6,7 +6,12 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowLeft, Scissors, Sprout, Plus } from 'lucide-react';
 import { usePlants, useCreatePlant } from '../hooks/usePlants';
-import { usePropagations, useCreatePropagation, useUpdatePropagation, useDeletePropagation } from '../hooks/usePropagation';
+import {
+  usePropagations,
+  useCreatePropagation,
+  useUpdatePropagation,
+  useDeletePropagation,
+} from '../hooks/usePropagation';
 import HeaderBar from '../components/ui/HeaderBar';
 import { PropagationCard, PropagationForm, PropagationStatsPanel } from '../components/propagation';
 import { getPropagationStats } from '../utils/propagationStats';
@@ -23,12 +28,11 @@ export default function Propagation() {
   const createPlant = useCreatePlant();
 
   const stats = getPropagationStats(propagations);
-  const active = propagations.filter(p => !['complete', 'failed'].includes(p.stage));
-  const completed = propagations.filter(p => ['complete', 'failed'].includes(p.stage));
+  const active = propagations.filter((p) => !['complete', 'failed'].includes(p.stage));
+  const completed = propagations.filter((p) => ['complete', 'failed'].includes(p.stage));
 
-  const displayed = filter === 'active' ? active
-    : filter === 'completed' ? completed
-    : propagations;
+  const displayed =
+    filter === 'active' ? active : filter === 'completed' ? completed : propagations;
 
   const handleCreate = async (data) => {
     await createPropagation.mutateAsync(data);
@@ -61,14 +65,20 @@ export default function Propagation() {
     await updatePropagation.mutateAsync({ id: propagationId, updates: { stage: 'complete' } });
   };
 
-  const isPending = createPropagation.isPending || updatePropagation.isPending
-    || deletePropagation.isPending || createPlant.isPending;
+  const isPending =
+    createPropagation.isPending ||
+    updatePropagation.isPending ||
+    deletePropagation.isPending ||
+    createPlant.isPending;
 
   if (isLoading) {
     return (
       <div className="min-h-screen">
         <HeaderBar />
-        <div className="flex items-center justify-center p-8" style={{ minHeight: 'calc(100vh - 60px)' }}>
+        <div
+          className="flex items-center justify-center p-8"
+          style={{ minHeight: 'calc(100vh - 60px)' }}
+        >
           <p className="text-muted">Loading propagations...</p>
         </div>
       </div>
@@ -79,7 +89,10 @@ export default function Propagation() {
     return (
       <div className="min-h-screen">
         <HeaderBar />
-        <div className="flex items-center justify-center p-8" style={{ minHeight: 'calc(100vh - 60px)' }}>
+        <div
+          className="flex items-center justify-center p-8"
+          style={{ minHeight: 'calc(100vh - 60px)' }}
+        >
           <div className="panel p-8 text-center max-w-md">
             <p className="heading heading-lg mb-2">Failed to load</p>
             <p className="text-muted mb-4">{error.message}</p>
@@ -113,10 +126,7 @@ export default function Propagation() {
 
           {/* Actions bar */}
           <div className="flex flex-wrap items-center justify-between gap-3 mb-6">
-            <button
-              className="btn btn-primary"
-              onClick={() => setShowForm(true)}
-            >
+            <button className="btn btn-primary" onClick={() => setShowForm(true)}>
               <Plus size={18} />
               New Cutting
             </button>
@@ -126,7 +136,7 @@ export default function Propagation() {
                 { key: 'active', label: `Active (${active.length})` },
                 { key: 'completed', label: `Past (${completed.length})` },
                 { key: 'all', label: 'All' },
-              ].map(f => (
+              ].map((f) => (
                 <button
                   key={f.key}
                   className={`btn btn-small ${filter === f.key ? 'btn-primary' : 'btn-secondary'}`}
@@ -161,7 +171,7 @@ export default function Propagation() {
           {/* Propagation list */}
           {displayed.length > 0 ? (
             <div className="space-y-4">
-              {displayed.map(prop => (
+              {displayed.map((prop) => (
                 <PropagationCard
                   key={prop.id}
                   propagation={prop}

@@ -14,7 +14,9 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey);
  * Throws if not authenticated.
  */
 export async function requireUserId() {
-  const { data: { user } } = await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
   if (!user) throw new Error('Not authenticated');
   return user.id;
 }

@@ -1,6 +1,6 @@
 /**
  * Care Service
- * 
+ *
  * All care log database operations live here.
  */
 
@@ -56,7 +56,13 @@ export async function createCareLog(careLog) {
  * @param {string} potSize - Optional pot size (only for repotting)
  * @returns {Promise<Object>} Created care log object
  */
-export async function logCare(plantId, careType, notes = '', fertilizerType = null, potSize = null) {
+export async function logCare(
+  plantId,
+  careType,
+  notes = '',
+  fertilizerType = null,
+  potSize = null,
+) {
   const now = new Date().toISOString();
 
   // Create the care log
@@ -89,10 +95,7 @@ export async function logCare(plantId, careType, notes = '', fertilizerType = nu
   }
 
   if (Object.keys(plantUpdate).length > 0) {
-    const { error } = await supabase
-      .from('plants')
-      .update(plantUpdate)
-      .eq('id', plantId);
+    const { error } = await supabase.from('plants').update(plantUpdate).eq('id', plantId);
 
     if (error) throw error;
   }
@@ -108,7 +111,8 @@ export async function logCare(plantId, careType, notes = '', fertilizerType = nu
 export async function getRecentCareLogs(limit = 10) {
   const { data, error } = await supabase
     .from('care_logs')
-    .select(`
+    .select(
+      `
       *,
       plants (
         id,
@@ -116,7 +120,8 @@ export async function getRecentCareLogs(limit = 10) {
         cultivar_name,
         photo_url
       )
-    `)
+    `,
+    )
     .order('care_date', { ascending: false })
     .limit(limit);
 

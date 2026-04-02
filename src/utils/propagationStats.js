@@ -11,12 +11,11 @@ export function getPropagationStats(propagations) {
   if (!propagations.length) return null;
 
   const total = propagations.length;
-  const complete = propagations.filter(p => p.stage === 'complete').length;
-  const failed = propagations.filter(p => p.stage === 'failed').length;
+  const complete = propagations.filter((p) => p.stage === 'complete').length;
+  const failed = propagations.filter((p) => p.stage === 'failed').length;
   const active = total - complete - failed;
-  const successRate = complete + failed > 0
-    ? Math.round((complete / (complete + failed)) * 100)
-    : null;
+  const successRate =
+    complete + failed > 0 ? Math.round((complete / (complete + failed)) * 100) : null;
 
   // By method
   const byMethod = {};
@@ -33,15 +32,17 @@ export function getPropagationStats(propagations) {
   const methodStats = Object.entries(byMethod).map(([method, stats]) => ({
     method,
     ...stats,
-    successRate: stats.complete + stats.failed > 0
-      ? Math.round((stats.complete / (stats.complete + stats.failed)) * 100)
-      : null,
+    successRate:
+      stats.complete + stats.failed > 0
+        ? Math.round((stats.complete / (stats.complete + stats.failed)) * 100)
+        : null,
   }));
 
   // By parent plant
   const byParent = {};
   for (const p of propagations) {
-    const name = p.parent_plant?.cultivar_name || p.parent_plant?.nickname || p.parent_plant_name || 'Unknown';
+    const name =
+      p.parent_plant?.cultivar_name || p.parent_plant?.nickname || p.parent_plant_name || 'Unknown';
     if (!byParent[name]) {
       byParent[name] = { total: 0, complete: 0, failed: 0 };
     }
@@ -54,9 +55,10 @@ export function getPropagationStats(propagations) {
     .map(([name, stats]) => ({
       name,
       ...stats,
-      successRate: stats.complete + stats.failed > 0
-        ? Math.round((stats.complete / (stats.complete + stats.failed)) * 100)
-        : null,
+      successRate:
+        stats.complete + stats.failed > 0
+          ? Math.round((stats.complete / (stats.complete + stats.failed)) * 100)
+          : null,
     }))
     .sort((a, b) => b.total - a.total);
 
@@ -72,18 +74,24 @@ export function getBreedingStats(crosses) {
   if (!crosses.length) return null;
 
   const total = crosses.length;
-  const blooming = crosses.filter(c => c.stage === 'blooming').length;
-  const failed = crosses.filter(c => c.stage === 'failed').length;
+  const blooming = crosses.filter((c) => c.stage === 'blooming').length;
+  const failed = crosses.filter((c) => c.stage === 'failed').length;
   const active = total - blooming - failed;
-  const successRate = blooming + failed > 0
-    ? Math.round((blooming / (blooming + failed)) * 100)
-    : null;
+  const successRate =
+    blooming + failed > 0 ? Math.round((blooming / (blooming + failed)) * 100) : null;
 
   const totalSeeds = crosses.reduce((sum, c) => sum + (c.seed_count || 0), 0);
   const totalGerminated = crosses.reduce((sum, c) => sum + (c.germination_count || 0), 0);
-  const germinationRate = totalSeeds > 0
-    ? Math.round((totalGerminated / totalSeeds) * 100)
-    : null;
+  const germinationRate = totalSeeds > 0 ? Math.round((totalGerminated / totalSeeds) * 100) : null;
 
-  return { total, active, blooming, failed, successRate, totalSeeds, totalGerminated, germinationRate };
+  return {
+    total,
+    active,
+    blooming,
+    failed,
+    successRate,
+    totalSeeds,
+    totalGerminated,
+    germinationRate,
+  };
 }

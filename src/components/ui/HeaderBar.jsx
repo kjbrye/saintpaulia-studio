@@ -3,7 +3,16 @@
  */
 
 import { Link, useLocation } from 'react-router-dom';
-import { Settings, Info, Search, Plus, Scissors, FlaskConical, GitFork, BarChart3 } from 'lucide-react';
+import {
+  Settings,
+  Info,
+  Search,
+  Plus,
+  Scissors,
+  FlaskConical,
+  GitFork,
+  BarChart3,
+} from 'lucide-react';
 
 export default function HeaderBar({ onSearchClick }) {
   const location = useLocation();
@@ -43,7 +52,10 @@ export default function HeaderBar({ onSearchClick }) {
             title="Propagation"
             style={isActive('/propagation') ? { background: 'var(--sage-200)' } : undefined}
           >
-            <Scissors size={18} style={{ color: isActive('/propagation') ? 'var(--purple-500)' : 'var(--sage-600)' }} />
+            <Scissors
+              size={18}
+              style={{ color: isActive('/propagation') ? 'var(--purple-500)' : 'var(--sage-600)' }}
+            />
           </button>
         </Link>
         <Link to="/breeding">
@@ -52,7 +64,10 @@ export default function HeaderBar({ onSearchClick }) {
             title="Breeding"
             style={isActive('/breeding') ? { background: 'var(--sage-200)' } : undefined}
           >
-            <FlaskConical size={18} style={{ color: isActive('/breeding') ? 'var(--purple-500)' : 'var(--sage-600)' }} />
+            <FlaskConical
+              size={18}
+              style={{ color: isActive('/breeding') ? 'var(--purple-500)' : 'var(--sage-600)' }}
+            />
           </button>
         </Link>
         <Link to="/lineage">
@@ -61,7 +76,10 @@ export default function HeaderBar({ onSearchClick }) {
             title="Lineage"
             style={isActive('/lineage') ? { background: 'var(--sage-200)' } : undefined}
           >
-            <GitFork size={18} style={{ color: isActive('/lineage') ? 'var(--purple-500)' : 'var(--sage-600)' }} />
+            <GitFork
+              size={18}
+              style={{ color: isActive('/lineage') ? 'var(--purple-500)' : 'var(--sage-600)' }}
+            />
           </button>
         </Link>
         <Link to="/analytics">
@@ -70,7 +88,10 @@ export default function HeaderBar({ onSearchClick }) {
             title="Analytics"
             style={isActive('/analytics') ? { background: 'var(--sage-200)' } : undefined}
           >
-            <BarChart3 size={18} style={{ color: isActive('/analytics') ? 'var(--purple-500)' : 'var(--sage-600)' }} />
+            <BarChart3
+              size={18}
+              style={{ color: isActive('/analytics') ? 'var(--purple-500)' : 'var(--sage-600)' }}
+            />
           </button>
         </Link>
         <Link to="/plants/new">

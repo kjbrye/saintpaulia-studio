@@ -26,14 +26,14 @@ export default function BatchActionsToolbar({
 
     try {
       // Log care for each selected plant
-      await Promise.all(
-        selectedIds.map(plantId =>
-          logCare.mutateAsync({ plantId, careType })
-        )
-      );
+      await Promise.all(selectedIds.map((plantId) => logCare.mutateAsync({ plantId, careType })));
 
-      const careLabel = { watering: 'Watered', fertilizing: 'Fertilized', grooming: 'Groomed' }[careType] || careType;
-      toast.success(`${careLabel} ${selectedIds.length} plant${selectedIds.length !== 1 ? 's' : ''}`);
+      const careLabel =
+        { watering: 'Watered', fertilizing: 'Fertilized', grooming: 'Groomed' }[careType] ||
+        careType;
+      toast.success(
+        `${careLabel} ${selectedIds.length} plant${selectedIds.length !== 1 ? 's' : ''}`,
+      );
 
       // Clear selection after successful batch operation
       setTimeout(() => {

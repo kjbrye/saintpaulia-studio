@@ -35,16 +35,10 @@ export default class ErrorBoundary extends Component {
               An unexpected error occurred. Try refreshing the page or going back to the dashboard.
             </p>
             <div className="flex gap-3 justify-center">
-              <button
-                onClick={() => window.location.assign('/')}
-                className="btn btn-primary"
-              >
+              <button onClick={() => window.location.assign('/')} className="btn btn-primary">
                 Go to Dashboard
               </button>
-              <button
-                onClick={this.handleReset}
-                className="btn btn-secondary"
-              >
+              <button onClick={this.handleReset} className="btn btn-secondary">
                 Try Again
               </button>
             </div>

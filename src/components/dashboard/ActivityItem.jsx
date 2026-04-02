@@ -51,8 +51,7 @@ export default function ActivityItem({ care_type, care_date, plants }) {
       {/* Content */}
       <div className="flex-1 min-w-0">
         <p className="text-body truncate">
-          <span className="font-semibold">{careLabels[care_type] || care_type}</span>
-          {' '}
+          <span className="font-semibold">{careLabels[care_type] || care_type}</span>{' '}
           {plantId ? (
             <Link to={`/plants/${plantId}`} className="hover:underline">
               {plantName}

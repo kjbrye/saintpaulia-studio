@@ -23,7 +23,9 @@ export default function PedigreeNode({ plant, label, isCenter, isUnknown, extern
         >
           {externalName}
         </p>
-        <span className="text-muted" style={{ fontSize: 10 }}>External</span>
+        <span className="text-muted" style={{ fontSize: 10 }}>
+          External
+        </span>
       </div>
     );
   }
@@ -60,7 +62,10 @@ export default function PedigreeNode({ plant, label, isCenter, isUnknown, extern
     >
       <p
         className={`font-medium truncate ${compact ? 'text-small' : ''}`}
-        style={{ color: isCenter ? 'var(--purple-500)' : 'var(--sage-800)', fontSize: compact ? 12 : undefined }}
+        style={{
+          color: isCenter ? 'var(--purple-500)' : 'var(--sage-800)',
+          fontSize: compact ? 12 : undefined,
+        }}
       >
         {displayName}
       </p>
@@ -71,13 +76,12 @@ export default function PedigreeNode({ plant, label, isCenter, isUnknown, extern
       )}
       <div className="flex items-center gap-1.5 mt-1">
         {label && (
-          <span className="text-muted" style={{ fontSize: 10 }}>{label}</span>
+          <span className="text-muted" style={{ fontSize: 10 }}>
+            {label}
+          </span>
         )}
         {genBadge && (
-          <span
-            className="badge"
-            style={{ fontSize: 10, padding: '0 5px', lineHeight: '16px' }}
-          >
+          <span className="badge" style={{ fontSize: 10, padding: '0 5px', lineHeight: '16px' }}>
             {genBadge}
           </span>
         )}

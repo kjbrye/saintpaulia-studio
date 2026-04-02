@@ -16,7 +16,7 @@ export default function LineageEditor({ plant, plants = [], onSave, isPending, o
     lineage_notes: plant.lineage_notes || '',
   });
 
-  const update = (field, value) => setFormData(prev => ({ ...prev, [field]: value }));
+  const update = (field, value) => setFormData((prev) => ({ ...prev, [field]: value }));
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -32,7 +32,7 @@ export default function LineageEditor({ plant, plants = [], onSave, isPending, o
   };
 
   // Available parents — exclude the plant itself
-  const parentOptions = plants.filter(p => p.id !== plant.id);
+  const parentOptions = plants.filter((p) => p.id !== plant.id);
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
@@ -46,13 +46,13 @@ export default function LineageEditor({ plant, plants = [], onSave, isPending, o
             onChange={(e) => {
               update('pod_parent_id', e.target.value);
               if (e.target.value) {
-                const p = plants.find(pl => pl.id === e.target.value);
+                const p = plants.find((pl) => pl.id === e.target.value);
                 if (p) update('pod_parent_name', p.cultivar_name || p.nickname || '');
               }
             }}
           >
             <option value="">— Select from library —</option>
-            {parentOptions.map(p => (
+            {parentOptions.map((p) => (
               <option key={p.id} value={p.id}>
                 {p.cultivar_name || p.nickname || 'Unnamed'}
               </option>
@@ -80,13 +80,13 @@ export default function LineageEditor({ plant, plants = [], onSave, isPending, o
             onChange={(e) => {
               update('pollen_parent_id', e.target.value);
               if (e.target.value) {
-                const p = plants.find(pl => pl.id === e.target.value);
+                const p = plants.find((pl) => pl.id === e.target.value);
                 if (p) update('pollen_parent_name', p.cultivar_name || p.nickname || '');
               }
             }}
           >
             <option value="">— Select from library —</option>
-            {parentOptions.map(p => (
+            {parentOptions.map((p) => (
               <option key={p.id} value={p.id}>
                 {p.cultivar_name || p.nickname || 'Unnamed'}
               </option>
@@ -144,9 +144,13 @@ export default function LineageEditor({ plant, plants = [], onSave, isPending, o
       <div className="flex items-center gap-2">
         <button type="submit" className="btn btn-primary btn-small" disabled={isPending}>
           {isPending ? (
-            <><Loader2 size={14} className="animate-spin" /> Saving...</>
+            <>
+              <Loader2 size={14} className="animate-spin" /> Saving...
+            </>
           ) : (
-            <><Save size={14} /> Save Lineage</>
+            <>
+              <Save size={14} /> Save Lineage
+            </>
           )}
         </button>
         {onCancel && (

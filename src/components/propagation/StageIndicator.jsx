@@ -7,7 +7,7 @@
 import clsx from 'clsx';
 
 export default function StageIndicator({ currentStage, stages, failed }) {
-  const currentIndex = stages.findIndex(s => s.key === currentStage);
+  const currentIndex = stages.findIndex((s) => s.key === currentStage);
 
   return (
     <div className="flex items-center gap-1">
@@ -25,14 +25,14 @@ export default function StageIndicator({ currentStage, stages, failed }) {
                 isFailed && 'bg-[var(--color-error)]',
                 isComplete && 'bg-[var(--color-success)]',
                 isCurrent && !isFailed && 'bg-[var(--purple-400)]',
-                !isComplete && !isCurrent && 'bg-[var(--sage-200)]'
+                !isComplete && !isCurrent && 'bg-[var(--sage-200)]',
               )}
               title={stage.label}
             >
               <Icon
                 size={14}
                 className={clsx(
-                  isComplete || isCurrent ? 'text-white' : 'text-[var(--text-muted)]'
+                  isComplete || isCurrent ? 'text-white' : 'text-[var(--text-muted)]',
                 )}
               />
             </div>
@@ -40,7 +40,7 @@ export default function StageIndicator({ currentStage, stages, failed }) {
               <div
                 className={clsx(
                   'w-3 h-0.5 mx-0.5',
-                  isComplete ? 'bg-[var(--color-success)]' : 'bg-[var(--sage-200)]'
+                  isComplete ? 'bg-[var(--color-success)]' : 'bg-[var(--sage-200)]',
                 )}
               />
             )}

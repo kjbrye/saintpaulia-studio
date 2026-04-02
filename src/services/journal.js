@@ -45,10 +45,7 @@ export async function createJournalEntry(entry) {
  * Delete a journal entry
  */
 export async function deleteJournalEntry(id) {
-  const { error } = await supabase
-    .from('journal_entries')
-    .delete()
-    .eq('id', id);
+  const { error } = await supabase.from('journal_entries').delete().eq('id', id);
 
   if (error) throw error;
 }

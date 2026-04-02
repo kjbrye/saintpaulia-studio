@@ -20,30 +20,32 @@ export function ToastProvider({ children }) {
     setToasts((prev) => prev.filter((t) => t.id !== id));
   }, []);
 
-  const addToast = useCallback(({ type = 'info', message, duration = 4000 }) => {
-    const id = ++toastId;
-    setToasts((prev) => [...prev, { id, type, message }]);
+  const addToast = useCallback(
+    ({ type = 'info', message, duration = 4000 }) => {
+      const id = ++toastId;
+      setToasts((prev) => [...prev, { id, type, message }]);
 
-    if (duration > 0) {
-      timersRef.current[id] = setTimeout(() => removeToast(id), duration);
-    }
+      if (duration > 0) {
+        timersRef.current[id] = setTimeout(() => removeToast(id), duration);
+      }
 
-    return id;
-  }, [removeToast]);
+      return id;
+    },
+    [removeToast],
+  );
 
-  const toast = useMemo(() => ({
-    success: (message) => addToast({ type: 'success', message }),
-    error: (message) => addToast({ type: 'error', message, duration: 6000 }),
-    info: (message) => addToast({ type: 'info', message }),
-  }), [addToast]);
+  const toast = useMemo(
+    () => ({
+      success: (message) => addToast({ type: 'success', message }),
+      error: (message) => addToast({ type: 'error', message, duration: 6000 }),
+      info: (message) => addToast({ type: 'info', message }),
+    }),
+    [addToast],
+  );
 
   const value = useMemo(() => ({ toasts, toast, removeToast }), [toasts, toast, removeToast]);
 
-  return (
-    <ToastContext.Provider value={value}>
-      {children}
-    </ToastContext.Provider>
-  );
+  return <ToastContext.Provider value={value}>{children}</ToastContext.Provider>;
 }
 
 export function useToast() {

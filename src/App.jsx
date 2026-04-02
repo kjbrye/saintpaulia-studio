@@ -1,6 +1,6 @@
 /**
  * App Component
- * 
+ *
  * Root component that sets up:
  * - React Query for data fetching
  * - Auth provider for authentication
@@ -77,7 +77,7 @@ function AppRoutes() {
           </ProtectedRoute>
         }
       />
-      
+
       {/* Library */}
       <Route
         path="/library"
@@ -183,7 +183,7 @@ function AppRoutes() {
           </ProtectedRoute>
         }
       />
-      
+
       {/* 404 */}
       <Route path="*" element={<NotFound />} />
     </Routes>
@@ -208,7 +208,7 @@ export default function App() {
                         backgroundSize: 'cover',
                         backgroundPosition: 'center',
                         backgroundRepeat: 'no-repeat',
-                        opacity: 0.3
+                        opacity: 0.3,
                       }}
                     />
                     <AppRoutes />

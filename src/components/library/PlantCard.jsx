@@ -44,9 +44,10 @@ export default function PlantCard({
           className={`
             absolute top-2 left-2 z-10 w-6 h-6 rounded-md flex items-center justify-center
             transition-colors border
-            ${isSelected
-              ? 'bg-[var(--sage-500)] border-[var(--sage-600)]'
-              : 'bg-white/80 border-[var(--sage-300)] hover:border-[var(--sage-400)]'
+            ${
+              isSelected
+                ? 'bg-[var(--sage-500)] border-[var(--sage-600)]'
+                : 'bg-white/80 border-[var(--sage-300)] hover:border-[var(--sage-400)]'
             }
           `}
         >
@@ -60,11 +61,7 @@ export default function PlantCard({
         style={{ background: 'var(--cream-200)' }}
       >
         {plant.photo_url ? (
-          <img
-            src={plant.photo_url}
-            alt={displayName}
-            className="w-full h-full object-cover"
-          />
+          <img src={plant.photo_url} alt={displayName} className="w-full h-full object-cover" />
         ) : (
           <Flower2 size={48} style={{ color: 'var(--sage-400)' }} />
         )}
@@ -72,9 +69,7 @@ export default function PlantCard({
 
       {/* Plant Info */}
       <h3 className="heading heading-md truncate">{displayName}</h3>
-      {plant.nickname && (
-        <p className="text-small text-muted truncate">{plant.cultivar_name}</p>
-      )}
+      {plant.nickname && <p className="text-small text-muted truncate">{plant.cultivar_name}</p>}
 
       {/* Status Badges */}
       <div className="flex flex-wrap gap-2 mt-3">

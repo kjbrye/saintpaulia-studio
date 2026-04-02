@@ -68,10 +68,7 @@ export async function updatePropagation(id, updates) {
  * Delete a propagation
  */
 export async function deletePropagation(id) {
-  const { error } = await supabase
-    .from('propagations')
-    .delete()
-    .eq('id', id);
+  const { error } = await supabase.from('propagations').delete().eq('id', id);
 
   if (error) throw error;
 }

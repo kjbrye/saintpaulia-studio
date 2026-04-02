@@ -7,13 +7,29 @@ import { Link, useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Trash2, Archive, RotateCcw, X } from 'lucide-react';
 import { format } from 'date-fns';
 import {
-  useCross, useUpdateCross, useDeleteCross, useRemoveOffspring,
-  useAddOffspring, useStageLogs, useAdvanceStage, useUpdateCrossStatus,
+  useCross,
+  useUpdateCross,
+  useDeleteCross,
+  useRemoveOffspring,
+  useAddOffspring,
+  useStageLogs,
+  useAdvanceStage,
+  useUpdateCrossStatus,
 } from '../hooks/useBreeding';
 import { usePlants, useCreatePlant } from '../hooks/usePlants';
-import { useCrossJournal, useCreateJournalEntry, useDeleteJournalEntry, journalKeys } from '../hooks/useJournal';
+import {
+  useCrossJournal,
+  useCreateJournalEntry,
+  useDeleteJournalEntry,
+  journalKeys,
+} from '../hooks/useJournal';
 import HeaderBar from '../components/ui/HeaderBar';
-import { StageTimeline, StageAdvanceModal, OffspringList, LineageView } from '../components/breeding';
+import {
+  StageTimeline,
+  StageAdvanceModal,
+  OffspringList,
+  LineageView,
+} from '../components/breeding';
 import { BREEDING_STAGES } from '../components/breeding/CrossCard';
 import NotesLog from '../components/ui/NotesLog';
 
@@ -39,8 +55,14 @@ export default function CrossDetail() {
   const createJournalEntry = useCreateJournalEntry();
   const deleteJournalEntry = useDeleteJournalEntry();
 
-  const isPending = updateCross.isPending || deleteCross.isPending || removeOffspring.isPending
-    || addOffspring.isPending || createPlant.isPending || advanceStage.isPending || updateStatus.isPending;
+  const isPending =
+    updateCross.isPending ||
+    deleteCross.isPending ||
+    removeOffspring.isPending ||
+    addOffspring.isPending ||
+    createPlant.isPending ||
+    advanceStage.isPending ||
+    updateStatus.isPending;
 
   const handleDelete = async () => {
     await deleteCross.mutateAsync(id);
@@ -54,7 +76,10 @@ export default function CrossDetail() {
       await updateCross.mutateAsync({ id, updates: { seed_count: stageData.seed_count } });
     }
     if (stageData.germination_count != null) {
-      await updateCross.mutateAsync({ id, updates: { germination_count: stageData.germination_count } });
+      await updateCross.mutateAsync({
+        id,
+        updates: { germination_count: stageData.germination_count },
+      });
     }
 
     await advanceStage.mutateAsync({ crossId: id, stage, notes, data: stageData });
@@ -93,7 +118,10 @@ export default function CrossDetail() {
     return (
       <div className="min-h-screen">
         <HeaderBar />
-        <div className="flex items-center justify-center p-8" style={{ minHeight: 'calc(100vh - 60px)' }}>
+        <div
+          className="flex items-center justify-center p-8"
+          style={{ minHeight: 'calc(100vh - 60px)' }}
+        >
           <p className="text-muted">Loading cross details...</p>
         </div>
       </div>
@@ -104,7 +132,10 @@ export default function CrossDetail() {
     return (
       <div className="min-h-screen">
         <HeaderBar />
-        <div className="flex items-center justify-center p-8" style={{ minHeight: 'calc(100vh - 60px)' }}>
+        <div
+          className="flex items-center justify-center p-8"
+          style={{ minHeight: 'calc(100vh - 60px)' }}
+        >
           <div className="card p-8 text-center max-w-md">
             <p className="heading heading-lg mb-2">Cross not found</p>
             <p className="text-muted mb-4">{error?.message || 'This cross does not exist.'}</p>
@@ -120,16 +151,24 @@ export default function CrossDetail() {
   const isFailed = cross.status === 'failed' || cross.stage === 'failed';
   const isComplete = cross.status === 'complete' || cross.stage === 'blooming';
   const isArchived = cross.status === 'archived';
-  const podName = cross.pod_parent?.cultivar_name || cross.pod_parent?.nickname || cross.pod_parent_name || 'Unknown';
-  const pollenName = cross.pollen_parent?.cultivar_name || cross.pollen_parent?.nickname || cross.pollen_parent_name || 'Unknown';
+  const podName =
+    cross.pod_parent?.cultivar_name ||
+    cross.pod_parent?.nickname ||
+    cross.pod_parent_name ||
+    'Unknown';
+  const pollenName =
+    cross.pollen_parent?.cultivar_name ||
+    cross.pollen_parent?.nickname ||
+    cross.pollen_parent_name ||
+    'Unknown';
 
   const statusBadge = isArchived
     ? { label: 'Archived', style: { background: 'var(--sage-200)', color: 'var(--sage-700)' } }
     : isFailed
-    ? { label: 'Failed', style: { background: 'var(--color-error)', color: 'white' } }
-    : isComplete
-    ? { label: 'Complete', style: { background: 'var(--color-success)', color: 'white' } }
-    : null;
+      ? { label: 'Failed', style: { background: 'var(--color-error)', color: 'white' } }
+      : isComplete
+        ? { label: 'Complete', style: { background: 'var(--color-success)', color: 'white' } }
+        : null;
 
   return (
     <div className="min-h-screen">
@@ -148,7 +187,9 @@ export default function CrossDetail() {
                     {podName} <span className="text-[var(--purple-400)]">×</span> {pollenName}
                   </h1>
                   {statusBadge && (
-                    <span className="badge" style={statusBadge.style}>{statusBadge.label}</span>
+                    <span className="badge" style={statusBadge.style}>
+                      {statusBadge.label}
+                    </span>
                   )}
                 </div>
                 <p className="text-body text-muted">
@@ -191,7 +232,9 @@ export default function CrossDetail() {
           {cross.goals && (
             <div className="card p-6 mb-6">
               <h2 className="heading heading-md mb-2">Goals</h2>
-              <p className="text-body" style={{ color: 'var(--purple-400)' }}>{cross.goals}</p>
+              <p className="text-body" style={{ color: 'var(--purple-400)' }}>
+                {cross.goals}
+              </p>
             </div>
           )}
 
@@ -243,7 +286,9 @@ export default function CrossDetail() {
               plants={plants}
               crossId={id}
               onAddOffspring={(data) => addOffspring.mutateAsync(data)}
-              onRemoveOffspring={(offspringId) => removeOffspring.mutate({ id: offspringId, cross_id: id })}
+              onRemoveOffspring={(offspringId) =>
+                removeOffspring.mutate({ id: offspringId, cross_id: id })
+              }
               onCreateAndLink={handleCreateAndLink}
               isPending={isPending}
             />
@@ -254,7 +299,9 @@ export default function CrossDetail() {
             <h2 className="heading heading-md mb-4">Lineage</h2>
             <LineageView
               cross={cross}
-              onRemoveOffspring={(offspringId) => removeOffspring.mutate({ id: offspringId, cross_id: id })}
+              onRemoveOffspring={(offspringId) =>
+                removeOffspring.mutate({ id: offspringId, cross_id: id })
+              }
               isPending={isPending}
             />
           </div>
@@ -293,13 +340,18 @@ export default function CrossDetail() {
             <div className="card p-8 max-w-md w-full">
               <h2 className="heading heading-lg mb-2">Delete Cross?</h2>
               <p className="text-muted mb-6">
-                Are you sure you want to delete this cross? All stage logs and offspring records will also be removed. This cannot be undone.
+                Are you sure you want to delete this cross? All stage logs and offspring records
+                will also be removed. This cannot be undone.
               </p>
               <div className="flex justify-end gap-3">
                 <button className="btn btn-secondary" onClick={() => setShowDeleteConfirm(false)}>
                   Cancel
                 </button>
-                <button className="btn btn-danger" onClick={handleDelete} disabled={deleteCross.isPending}>
+                <button
+                  className="btn btn-danger"
+                  onClick={handleDelete}
+                  disabled={deleteCross.isPending}
+                >
                   {deleteCross.isPending ? 'Deleting...' : 'Delete'}
                 </button>
               </div>

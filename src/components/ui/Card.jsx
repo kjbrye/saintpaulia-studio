@@ -7,12 +7,7 @@
 import { forwardRef } from 'react';
 import clsx from 'clsx';
 
-const Card = forwardRef(function Card({
-  children,
-  className,
-  variant = 'default',
-  ...props
-}, ref) {
+const Card = forwardRef(function Card({ children, className, variant = 'default', ...props }, ref) {
   const variantClasses = {
     default: 'card',
     elevated: 'card-elevated',
@@ -21,11 +16,7 @@ const Card = forwardRef(function Card({
   };
 
   return (
-    <div
-      ref={ref}
-      className={clsx(variantClasses[variant], className)}
-      {...props}
-    >
+    <div ref={ref} className={clsx(variantClasses[variant], className)} {...props}>
       {children}
     </div>
   );

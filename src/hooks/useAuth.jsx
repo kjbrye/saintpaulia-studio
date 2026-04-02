@@ -1,6 +1,6 @@
 /**
  * useAuth Hook
- * 
+ *
  * Authentication state and operations.
  * Provides current user, loading state, and auth methods.
  */
@@ -61,11 +61,7 @@ export function AuthProvider({ children }) {
     isAuthenticated: !!user,
   };
 
-  return (
-    <AuthContext.Provider value={value}>
-      {children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
 /**

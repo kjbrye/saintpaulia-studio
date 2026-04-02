@@ -5,8 +5,16 @@
 import { useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import {
-  ArrowLeft, Flower2, Droplets, Sparkles, Scissors, Activity,
-  TrendingUp, Sprout, Heart, Leaf,
+  ArrowLeft,
+  Flower2,
+  Droplets,
+  Sparkles,
+  Scissors,
+  Activity,
+  TrendingUp,
+  Sprout,
+  Heart,
+  Leaf,
 } from 'lucide-react';
 import { usePlants } from '../hooks/usePlants';
 import { useCareLogs } from '../hooks/useCare';
@@ -24,9 +32,15 @@ function StatCard({ icon: Icon, iconColor, label, value, sub }) {
         <Icon size={22} style={{ color: iconColor }} />
       </div>
       <div>
-        <p className="heading heading-lg" style={{ lineHeight: 1 }}>{value}</p>
+        <p className="heading heading-lg" style={{ lineHeight: 1 }}>
+          {value}
+        </p>
         <p className="text-small text-muted">{label}</p>
-        {sub && <p className="text-small" style={{ color: iconColor }}>{sub}</p>}
+        {sub && (
+          <p className="text-small" style={{ color: iconColor }}>
+            {sub}
+          </p>
+        )}
       </div>
     </div>
   );
@@ -36,10 +50,16 @@ function HorizontalBar({ label, value, max, color }) {
   const pct = max > 0 ? (value / max) * 100 : 0;
   return (
     <div className="flex items-center gap-3 py-1.5">
-      <span className="text-small w-24 text-right flex-shrink-0" style={{ color: 'var(--text-secondary)' }}>
+      <span
+        className="text-small w-24 text-right flex-shrink-0"
+        style={{ color: 'var(--text-secondary)' }}
+      >
         {label}
       </span>
-      <div className="flex-1 h-5 rounded-full overflow-hidden" style={{ background: 'var(--sage-100)' }}>
+      <div
+        className="flex-1 h-5 rounded-full overflow-hidden"
+        style={{ background: 'var(--sage-100)' }}
+      >
         <div
           className="h-full rounded-full transition-all"
           style={{ width: `${Math.max(pct, pct > 0 ? 4 : 0)}%`, background: color }}
@@ -69,9 +89,24 @@ function CareBreakdownPanel({ careBreakdown, totalPlants }) {
                 <Icon size={16} style={{ color }} />
                 <span className="text-body font-medium">{label}</span>
               </div>
-              <HorizontalBar label="Good" value={data.good} max={totalPlants} color="var(--sage-500)" />
-              <HorizontalBar label="Due soon" value={data.soon} max={totalPlants} color="var(--copper-400)" />
-              <HorizontalBar label="Overdue" value={data.overdue} max={totalPlants} color="var(--color-error)" />
+              <HorizontalBar
+                label="Good"
+                value={data.good}
+                max={totalPlants}
+                color="var(--sage-500)"
+              />
+              <HorizontalBar
+                label="Due soon"
+                value={data.soon}
+                max={totalPlants}
+                color="var(--copper-400)"
+              />
+              <HorizontalBar
+                label="Overdue"
+                value={data.overdue}
+                max={totalPlants}
+                color="var(--color-error)"
+              />
             </div>
           );
         })}
@@ -83,7 +118,9 @@ function CareBreakdownPanel({ careBreakdown, totalPlants }) {
 function StatusDistributionPanel({ plants }) {
   const statusCounts = useMemo(() => {
     const counts = { healthy: 0, recovering: 0, struggling: 0, dormant: 0 };
-    plants.forEach((p) => { counts[p.status] = (counts[p.status] || 0) + 1; });
+    plants.forEach((p) => {
+      counts[p.status] = (counts[p.status] || 0) + 1;
+    });
     return counts;
   }, [plants]);
 
@@ -98,7 +135,13 @@ function StatusDistributionPanel({ plants }) {
     <div className="card p-6">
       <h2 className="heading heading-md mb-4">Plant Health</h2>
       {statuses.map(({ key, label, color }) => (
-        <HorizontalBar key={key} label={label} value={statusCounts[key]} max={plants.length} color={color} />
+        <HorizontalBar
+          key={key}
+          label={label}
+          value={statusCounts[key]}
+          max={plants.length}
+          color={color}
+        />
       ))}
     </div>
   );
@@ -127,11 +170,15 @@ function PropagationPanel({ stats }) {
           <p className="text-small text-muted">Active</p>
         </div>
         <div className="card-inset p-3 text-center">
-          <p className="heading heading-md" style={{ color: 'var(--sage-600)' }}>{stats.complete}</p>
+          <p className="heading heading-md" style={{ color: 'var(--sage-600)' }}>
+            {stats.complete}
+          </p>
           <p className="text-small text-muted">Complete</p>
         </div>
         <div className="card-inset p-3 text-center">
-          <p className="heading heading-md">{stats.successRate != null ? `${stats.successRate}%` : '—'}</p>
+          <p className="heading heading-md">
+            {stats.successRate != null ? `${stats.successRate}%` : '—'}
+          </p>
           <p className="text-small text-muted">Success Rate</p>
         </div>
       </div>
@@ -139,7 +186,13 @@ function PropagationPanel({ stats }) {
         <>
           <h3 className="text-label mb-2">By Method</h3>
           {stats.methodStats.map((m) => (
-            <HorizontalBar key={m.method} label={m.method} value={m.total} max={stats.total} color="var(--sage-500)" />
+            <HorizontalBar
+              key={m.method}
+              label={m.method}
+              value={m.total}
+              max={stats.total}
+              color="var(--sage-500)"
+            />
           ))}
         </>
       )}
@@ -175,11 +228,15 @@ function BreedingPanel({ stats }) {
           <p className="text-small text-muted">Active</p>
         </div>
         <div className="card-inset p-3 text-center">
-          <p className="heading heading-md" style={{ color: 'var(--sage-600)' }}>{stats.blooming}</p>
+          <p className="heading heading-md" style={{ color: 'var(--sage-600)' }}>
+            {stats.blooming}
+          </p>
           <p className="text-small text-muted">Blooming</p>
         </div>
         <div className="card-inset p-3 text-center">
-          <p className="heading heading-md">{stats.successRate != null ? `${stats.successRate}%` : '—'}</p>
+          <p className="heading heading-md">
+            {stats.successRate != null ? `${stats.successRate}%` : '—'}
+          </p>
           <p className="text-small text-muted">Success Rate</p>
         </div>
       </div>
@@ -196,7 +253,9 @@ function BreedingPanel({ stats }) {
           {stats.germinationRate != null && (
             <div className="flex justify-between text-small mt-1">
               <span className="text-muted">Germination rate</span>
-              <span className="font-medium" style={{ color: 'var(--sage-600)' }}>{stats.germinationRate}%</span>
+              <span className="font-medium" style={{ color: 'var(--sage-600)' }}>
+                {stats.germinationRate}%
+              </span>
             </div>
           )}
         </div>
@@ -236,7 +295,14 @@ function BloomPanel({ bloomLogs, plants }) {
       }
     });
 
-    return { total, active, neverBloomed, avgDuration, qualityCounts, plantsBloomed: plantIds.size };
+    return {
+      total,
+      active,
+      neverBloomed,
+      avgDuration,
+      qualityCounts,
+      plantsBloomed: plantIds.size,
+    };
   }, [bloomLogs, plants]);
 
   if (!stats) {
@@ -264,7 +330,9 @@ function BloomPanel({ bloomLogs, plants }) {
           <p className="text-small text-muted">Total Blooms</p>
         </div>
         <div className="card-inset p-3 text-center">
-          <p className="heading heading-md" style={{ color: 'var(--purple-400)' }}>{stats.active}</p>
+          <p className="heading heading-md" style={{ color: 'var(--purple-400)' }}>
+            {stats.active}
+          </p>
           <p className="text-small text-muted">Active Now</p>
         </div>
         <div className="card-inset p-3 text-center">
@@ -272,7 +340,9 @@ function BloomPanel({ bloomLogs, plants }) {
           <p className="text-small text-muted">Plants Bloomed</p>
         </div>
         <div className="card-inset p-3 text-center">
-          <p className="heading heading-md">{stats.avgDuration != null ? `${stats.avgDuration}d` : '—'}</p>
+          <p className="heading heading-md">
+            {stats.avgDuration != null ? `${stats.avgDuration}d` : '—'}
+          </p>
           <p className="text-small text-muted">Avg Duration</p>
         </div>
       </div>
@@ -288,7 +358,7 @@ function BloomPanel({ bloomLogs, plants }) {
                 max={stats.total}
                 color={qualityColors[q]}
               />
-            ) : null
+            ) : null,
           )}
         </>
       )}
@@ -309,7 +379,10 @@ export default function Analytics() {
   const { data: crosses = [] } = useCrosses();
   const { data: bloomLogs = [] } = useBloomLogs({ limit: 500 });
 
-  const careStats = useMemo(() => getCollectionCareStats(plants, careThresholds), [plants, careThresholds]);
+  const careStats = useMemo(
+    () => getCollectionCareStats(plants, careThresholds),
+    [plants, careThresholds],
+  );
   const propStats = useMemo(() => getPropagationStats(propagations), [propagations]);
   const breedingStats = useMemo(() => getBreedingStats(crosses), [crosses]);
 
@@ -364,10 +437,30 @@ export default function Analytics() {
 
         {/* Top stats row */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-          <StatCard icon={Leaf} iconColor="var(--sage-600)" label="Total Plants" value={plants.length} />
-          <StatCard icon={Flower2} iconColor="var(--purple-400)" label="Blooming" value={bloomingCount} />
-          <StatCard icon={Sprout} iconColor="var(--sage-500)" label="Propagations" value={propagations.length} />
-          <StatCard icon={Heart} iconColor="var(--copper-500)" label="Crosses" value={crosses.length} />
+          <StatCard
+            icon={Leaf}
+            iconColor="var(--sage-600)"
+            label="Total Plants"
+            value={plants.length}
+          />
+          <StatCard
+            icon={Flower2}
+            iconColor="var(--purple-400)"
+            label="Blooming"
+            value={bloomingCount}
+          />
+          <StatCard
+            icon={Sprout}
+            iconColor="var(--sage-500)"
+            label="Propagations"
+            value={propagations.length}
+          />
+          <StatCard
+            icon={Heart}
+            iconColor="var(--copper-500)"
+            label="Crosses"
+            value={crosses.length}
+          />
         </div>
 
         {/* Care activity chart */}
@@ -399,7 +492,10 @@ export default function Analytics() {
 
         {/* Two-column layout for detailed panels */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-          <CareBreakdownPanel careBreakdown={careStats.careBreakdown} totalPlants={careStats.totalPlants} />
+          <CareBreakdownPanel
+            careBreakdown={careStats.careBreakdown}
+            totalPlants={careStats.totalPlants}
+          />
           <StatusDistributionPanel plants={plants} />
         </div>
 

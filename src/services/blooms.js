@@ -46,10 +46,7 @@ export async function createBloomLog(bloomLog) {
 
   // Mark the plant as blooming
   if (bloomLog.plant_id) {
-    await supabase
-      .from('plants')
-      .update({ is_blooming: true })
-      .eq('id', bloomLog.plant_id);
+    await supabase.from('plants').update({ is_blooming: true }).eq('id', bloomLog.plant_id);
   }
 
   return data;
@@ -78,10 +75,7 @@ export async function updateBloomLog(id, updates) {
  * @param {string} id - Bloom log ID
  */
 export async function deleteBloomLog(id) {
-  const { error } = await supabase
-    .from('bloom_log')
-    .delete()
-    .eq('id', id);
+  const { error } = await supabase.from('bloom_log').delete().eq('id', id);
 
   if (error) throw error;
 }
@@ -106,10 +100,7 @@ export async function endBloom(id, plantId, endDate) {
 
   // If no other active blooms, mark plant as not blooming
   if (!activeBlooms || activeBlooms.length === 0) {
-    await supabase
-      .from('plants')
-      .update({ is_blooming: false })
-      .eq('id', plantId);
+    await supabase.from('plants').update({ is_blooming: false }).eq('id', plantId);
   }
 
   return log;

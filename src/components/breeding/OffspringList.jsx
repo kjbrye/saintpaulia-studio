@@ -23,8 +23,8 @@ export default function OffspringList({
   const [error, setError] = useState(null);
 
   // Filter out plants that are already offspring
-  const offspringPlantIds = new Set(offspring.map(o => o.plant?.id).filter(Boolean));
-  const availablePlants = plants.filter(p => !offspringPlantIds.has(p.id));
+  const offspringPlantIds = new Set(offspring.map((o) => o.plant?.id).filter(Boolean));
+  const availablePlants = plants.filter((p) => !offspringPlantIds.has(p.id));
 
   const handleAddExisting = async (e) => {
     e.preventDefault();
@@ -96,18 +96,27 @@ export default function OffspringList({
                 onChange={(e) => setSelectedPlantId(e.target.value)}
               >
                 <option value="">Select a plant...</option>
-                {availablePlants.map(p => (
+                {availablePlants.map((p) => (
                   <option key={p.id} value={p.id}>
-                    {p.cultivar_name}{p.nickname ? ` (${p.nickname})` : ''}
+                    {p.cultivar_name}
+                    {p.nickname ? ` (${p.nickname})` : ''}
                   </option>
                 ))}
               </select>
               <div className="flex items-center gap-2">
-                <button type="submit" className="btn btn-primary btn-small" disabled={isPending || !selectedPlantId}>
+                <button
+                  type="submit"
+                  className="btn btn-primary btn-small"
+                  disabled={isPending || !selectedPlantId}
+                >
                   {isPending ? <Loader2 size={14} className="animate-spin" /> : <Plus size={14} />}
                   Link Plant
                 </button>
-                <button type="button" className="btn btn-secondary btn-small" onClick={() => setIsAdding(false)}>
+                <button
+                  type="button"
+                  className="btn btn-secondary btn-small"
+                  onClick={() => setIsAdding(false)}
+                >
                   Cancel
                 </button>
               </div>
@@ -123,11 +132,19 @@ export default function OffspringList({
                 autoFocus
               />
               <div className="flex items-center gap-2">
-                <button type="submit" className="btn btn-primary btn-small" disabled={isPending || !newPlantName.trim()}>
+                <button
+                  type="submit"
+                  className="btn btn-primary btn-small"
+                  disabled={isPending || !newPlantName.trim()}
+                >
                   {isPending ? <Loader2 size={14} className="animate-spin" /> : <Plus size={14} />}
                   Create & Link
                 </button>
-                <button type="button" className="btn btn-secondary btn-small" onClick={() => setIsAdding(false)}>
+                <button
+                  type="button"
+                  className="btn btn-secondary btn-small"
+                  onClick={() => setIsAdding(false)}
+                >
                   Cancel
                 </button>
               </div>
@@ -135,7 +152,9 @@ export default function OffspringList({
           )}
 
           {error && (
-            <p className="text-small mt-2" style={{ color: 'var(--color-error)' }}>{error}</p>
+            <p className="text-small mt-2" style={{ color: 'var(--color-error)' }}>
+              {error}
+            </p>
           )}
         </div>
       )}
@@ -143,7 +162,7 @@ export default function OffspringList({
       {/* Offspring list */}
       {offspring.length > 0 ? (
         <div className="space-y-2">
-          {offspring.map(o => (
+          {offspring.map((o) => (
             <div
               key={o.id}
               className="group flex items-center justify-between gap-2 p-3 rounded-lg"
@@ -162,9 +181,7 @@ export default function OffspringList({
                 ) : (
                   <span className="text-body text-muted">Plant removed</span>
                 )}
-                {o.notes && (
-                  <span className="text-small text-muted truncate">{o.notes}</span>
-                )}
+                {o.notes && <span className="text-small text-muted truncate">{o.notes}</span>}
               </div>
               <button
                 className="icon-container flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity"

@@ -4,10 +4,29 @@
 
 import { useState } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Trash2, Scissors, Sprout, Leaf, Flower2, Check, Plus, Minus } from 'lucide-react';
+import {
+  ArrowLeft,
+  Trash2,
+  Scissors,
+  Sprout,
+  Leaf,
+  Flower2,
+  Check,
+  Plus,
+  Minus,
+} from 'lucide-react';
 import { format } from 'date-fns';
-import { usePropagation, useUpdatePropagation, useDeletePropagation } from '../hooks/usePropagation';
-import { usePropagationJournal, useCreateJournalEntry, useDeleteJournalEntry, journalKeys } from '../hooks/useJournal';
+import {
+  usePropagation,
+  useUpdatePropagation,
+  useDeletePropagation,
+} from '../hooks/usePropagation';
+import {
+  usePropagationJournal,
+  useCreateJournalEntry,
+  useDeleteJournalEntry,
+  journalKeys,
+} from '../hooks/useJournal';
 import HeaderBar from '../components/ui/HeaderBar';
 import { StageIndicator } from '../components/propagation';
 import { PROPAGATION_STAGES, METHOD_LABELS } from '../components/propagation/PropagationCard';
@@ -47,7 +66,10 @@ export default function PropagationDetail() {
     return (
       <div className="min-h-screen">
         <HeaderBar />
-        <div className="flex items-center justify-center p-8" style={{ minHeight: 'calc(100vh - 60px)' }}>
+        <div
+          className="flex items-center justify-center p-8"
+          style={{ minHeight: 'calc(100vh - 60px)' }}
+        >
           <p className="text-muted">Loading propagation...</p>
         </div>
       </div>
@@ -58,10 +80,15 @@ export default function PropagationDetail() {
     return (
       <div className="min-h-screen">
         <HeaderBar />
-        <div className="flex items-center justify-center p-8" style={{ minHeight: 'calc(100vh - 60px)' }}>
+        <div
+          className="flex items-center justify-center p-8"
+          style={{ minHeight: 'calc(100vh - 60px)' }}
+        >
           <div className="card p-8 text-center max-w-md">
             <p className="heading heading-lg mb-2">Propagation not found</p>
-            <p className="text-muted mb-4">{error?.message || 'This propagation does not exist.'}</p>
+            <p className="text-muted mb-4">
+              {error?.message || 'This propagation does not exist.'}
+            </p>
             <Link to="/propagation">
               <button className="btn btn-primary">Back to Propagation</button>
             </Link>
@@ -73,10 +100,11 @@ export default function PropagationDetail() {
 
   const isFailed = propagation.stage === 'failed';
   const isComplete = propagation.stage === 'complete';
-  const parentName = propagation.parent_plant?.cultivar_name
-    || propagation.parent_plant?.nickname
-    || propagation.parent_plant_name
-    || 'Unknown parent';
+  const parentName =
+    propagation.parent_plant?.cultivar_name ||
+    propagation.parent_plant?.nickname ||
+    propagation.parent_plant_name ||
+    'Unknown parent';
 
   return (
     <div className="min-h-screen">
@@ -116,17 +144,32 @@ export default function PropagationDetail() {
             <div className="mt-3 flex items-center gap-2">
               <span
                 className="text-small font-semibold"
-                style={{ color: isFailed ? 'var(--color-error)' : isComplete ? 'var(--color-success)' : 'var(--purple-400)' }}
+                style={{
+                  color: isFailed
+                    ? 'var(--color-error)'
+                    : isComplete
+                      ? 'var(--color-success)'
+                      : 'var(--purple-400)',
+                }}
               >
-                {isFailed ? 'Failed' : isComplete ? 'Complete' : PROPAGATION_STAGES.find(s => s.key === propagation.stage)?.label}
+                {isFailed
+                  ? 'Failed'
+                  : isComplete
+                    ? 'Complete'
+                    : PROPAGATION_STAGES.find((s) => s.key === propagation.stage)?.label}
               </span>
             </div>
 
             {/* Stage advance buttons */}
             {!isComplete && !isFailed && (
-              <div className="flex flex-wrap items-center gap-2 mt-4 pt-4" style={{ borderTop: '1px solid var(--sage-200)' }}>
+              <div
+                className="flex flex-wrap items-center gap-2 mt-4 pt-4"
+                style={{ borderTop: '1px solid var(--sage-200)' }}
+              >
                 {PROPAGATION_STAGES.map((stage, i) => {
-                  const currentIdx = PROPAGATION_STAGES.findIndex(s => s.key === propagation.stage);
+                  const currentIdx = PROPAGATION_STAGES.findIndex(
+                    (s) => s.key === propagation.stage,
+                  );
                   if (i <= currentIdx || stage.key === 'complete') return null;
                   const Icon = stage.icon;
                   return (
@@ -201,7 +244,11 @@ export default function PropagationDetail() {
             <div className="card p-5">
               <p className="text-label text-muted mb-1">Current Stage</p>
               <p className="heading heading-sm">
-                {isFailed ? 'Failed' : isComplete ? 'Complete' : PROPAGATION_STAGES.find(s => s.key === propagation.stage)?.label}
+                {isFailed
+                  ? 'Failed'
+                  : isComplete
+                    ? 'Complete'
+                    : PROPAGATION_STAGES.find((s) => s.key === propagation.stage)?.label}
               </p>
             </div>
           </div>
@@ -235,7 +282,11 @@ export default function PropagationDetail() {
                 <button className="btn btn-secondary" onClick={() => setShowDeleteConfirm(false)}>
                   Cancel
                 </button>
-                <button className="btn btn-danger" onClick={handleDelete} disabled={deletePropagation.isPending}>
+                <button
+                  className="btn btn-danger"
+                  onClick={handleDelete}
+                  disabled={deletePropagation.isPending}
+                >
                   {deletePropagation.isPending ? 'Deleting...' : 'Delete'}
                 </button>
               </div>

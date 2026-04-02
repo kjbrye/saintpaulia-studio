@@ -28,20 +28,23 @@ export default function MiniPedigree({ plant }) {
           </Link>
         </div>
         <p className="text-small text-muted mt-3">
-          No lineage recorded. Edit this plant to add parent information, or view the pedigree page to explore relationships.
+          No lineage recorded. Edit this plant to add parent information, or view the pedigree page
+          to explore relationships.
         </p>
       </div>
     );
   }
 
-  const podName = plant.pod_parent?.cultivar_name
-    || plant.pod_parent?.nickname
-    || plant.pod_parent_name
-    || 'Unknown';
-  const pollenName = plant.pollen_parent?.cultivar_name
-    || plant.pollen_parent?.nickname
-    || plant.pollen_parent_name
-    || 'Unknown';
+  const podName =
+    plant.pod_parent?.cultivar_name ||
+    plant.pod_parent?.nickname ||
+    plant.pod_parent_name ||
+    'Unknown';
+  const pollenName =
+    plant.pollen_parent?.cultivar_name ||
+    plant.pollen_parent?.nickname ||
+    plant.pollen_parent_name ||
+    'Unknown';
 
   return (
     <div className="card p-6">
@@ -70,7 +73,9 @@ export default function MiniPedigree({ plant }) {
           isUnknown={!hasPodParent}
         />
 
-        <span className="text-lg font-bold flex-shrink-0" style={{ color: 'var(--purple-400)' }}>×</span>
+        <span className="text-lg font-bold flex-shrink-0" style={{ color: 'var(--purple-400)' }}>
+          ×
+        </span>
 
         {/* Pollen parent */}
         <ParentCard
@@ -96,16 +101,23 @@ function ParentCard({ name, label, plantId, isUnknown }) {
       className="flex-1 rounded-lg p-3"
       style={{
         background: isUnknown && !isExternal ? 'var(--sage-50)' : 'var(--sage-100)',
-        border: isUnknown && !isExternal ? '1px dashed var(--sage-300)' : '1px solid var(--sage-200)',
+        border:
+          isUnknown && !isExternal ? '1px dashed var(--sage-300)' : '1px solid var(--sage-200)',
       }}
     >
       <p style={{ fontSize: 10, color: 'var(--sage-500)' }}>
-        {label}{isExternal ? ' (external)' : ''}
+        {label}
+        {isExternal ? ' (external)' : ''}
       </p>
       <p
         className="font-medium truncate"
         style={{
-          color: isUnknown && !isExternal ? 'var(--sage-400)' : isExternal ? 'var(--sage-700)' : 'var(--sage-800)',
+          color:
+            isUnknown && !isExternal
+              ? 'var(--sage-400)'
+              : isExternal
+                ? 'var(--sage-700)'
+                : 'var(--sage-800)',
           fontSize: 13,
         }}
       >
@@ -113,7 +125,9 @@ function ParentCard({ name, label, plantId, isUnknown }) {
           <span className="flex items-center gap-1">
             <HelpCircle size={12} /> Unknown
           </span>
-        ) : name}
+        ) : (
+          name
+        )}
       </p>
     </div>
   );

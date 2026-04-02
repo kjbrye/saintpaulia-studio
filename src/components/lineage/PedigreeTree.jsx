@@ -6,7 +6,13 @@ import { useMemo, useState } from 'react';
 import { GitFork, ChevronDown, ChevronUp } from 'lucide-react';
 import AncestorGrid from './AncestorGrid';
 import DescendantList from './DescendantList';
-import { getDescendants, calculateGeneration, formatPedigreeNotation, getCoiRisk, calculateInbreedingCoefficient } from '../../utils/lineage';
+import {
+  getDescendants,
+  calculateGeneration,
+  formatPedigreeNotation,
+  getCoiRisk,
+  calculateInbreedingCoefficient,
+} from '../../utils/lineage';
 
 export default function PedigreeTree({ plantId, ancestorPlants = [], allPlants = [], isLoading }) {
   const [showDescendants, setShowDescendants] = useState(false);
@@ -25,14 +31,11 @@ export default function PedigreeTree({ plantId, ancestorPlants = [], allPlants =
   const plant = plantMap.get(plantId);
 
   const computedGeneration = useMemo(
-    () => plant ? calculateGeneration(plantId, plantMap) : null,
-    [plantId, plantMap, plant]
+    () => (plant ? calculateGeneration(plantId, plantMap) : null),
+    [plantId, plantMap, plant],
   );
 
-  const pedigreeNotation = useMemo(
-    () => plant ? formatPedigreeNotation(plant) : null,
-    [plant]
-  );
+  const pedigreeNotation = useMemo(() => (plant ? formatPedigreeNotation(plant) : null), [plant]);
 
   const coi = useMemo(() => {
     if (!plant?.pod_parent_id || !plant?.pollen_parent_id) return null;
@@ -40,8 +43,8 @@ export default function PedigreeTree({ plantId, ancestorPlants = [], allPlants =
   }, [plant, plantMap]);
 
   const descendants = useMemo(
-    () => allPlants.length > 0 ? getDescendants(plantId, allPlants) : [],
-    [plantId, allPlants]
+    () => (allPlants.length > 0 ? getDescendants(plantId, allPlants) : []),
+    [plantId, allPlants],
   );
 
   if (isLoading) {
@@ -67,7 +70,7 @@ export default function PedigreeTree({ plantId, ancestorPlants = [], allPlants =
             <h2 className="heading heading-md">Pedigree</h2>
           </div>
           <div className="flex items-center gap-2">
-            {[2, 3].map(g => (
+            {[2, 3].map((g) => (
               <button
                 key={g}
                 className={`btn btn-small ${generations === g ? 'btn-primary' : 'btn-secondary'}`}
@@ -79,23 +82,16 @@ export default function PedigreeTree({ plantId, ancestorPlants = [], allPlants =
           </div>
         </div>
 
-        <AncestorGrid
-          plantId={plantId}
-          plantMap={plantMap}
-          generations={generations}
-        />
+        <AncestorGrid plantId={plantId} plantMap={plantMap} generations={generations} />
 
         {/* Lineage summary */}
-        <div className="flex flex-wrap items-center gap-3 mt-4 pt-4" style={{ borderTop: '1px solid var(--sage-200)' }}>
-          {gen != null && (
-            <span className="badge badge-purple">F{gen}</span>
-          )}
-          {pedigreeNotation && (
-            <span className="text-small text-muted">{pedigreeNotation}</span>
-          )}
-          {plant.hybridizer && (
-            <span className="text-small text-muted">by {plant.hybridizer}</span>
-          )}
+        <div
+          className="flex flex-wrap items-center gap-3 mt-4 pt-4"
+          style={{ borderTop: '1px solid var(--sage-200)' }}
+        >
+          {gen != null && <span className="badge badge-purple">F{gen}</span>}
+          {pedigreeNotation && <span className="text-small text-muted">{pedigreeNotation}</span>}
+          {plant.hybridizer && <span className="text-small text-muted">by {plant.hybridizer}</span>}
           {coiRisk && coi > 0 && (
             <span className="text-small" style={{ color: coiRisk.color }}>
               COI: {(coi * 100).toFixed(1)}% ({coiRisk.label})
@@ -116,10 +112,11 @@ export default function PedigreeTree({ plantId, ancestorPlants = [], allPlants =
                 Descendants {descendants.length > 0 && `(${descendants.length})`}
               </h2>
             </div>
-            {showDescendants
-              ? <ChevronUp size={18} style={{ color: 'var(--sage-500)' }} />
-              : <ChevronDown size={18} style={{ color: 'var(--sage-500)' }} />
-            }
+            {showDescendants ? (
+              <ChevronUp size={18} style={{ color: 'var(--sage-500)' }} />
+            ) : (
+              <ChevronDown size={18} style={{ color: 'var(--sage-500)' }} />
+            )}
           </button>
           {showDescendants && (
             <div className="mt-4">

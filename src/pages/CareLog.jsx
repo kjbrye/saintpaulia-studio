@@ -4,7 +4,17 @@
 
 import { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowLeft, Droplets, Scissors, Sparkles, Flower2, Search, ArrowUpDown, Calendar, ChevronDown } from 'lucide-react';
+import {
+  ArrowLeft,
+  Droplets,
+  Scissors,
+  Sparkles,
+  Flower2,
+  Search,
+  ArrowUpDown,
+  Calendar,
+  ChevronDown,
+} from 'lucide-react';
 import { useRecentCareLogs } from '../hooks/useCare';
 import { usePlants } from '../hooks/usePlants';
 import { CareLogItem } from '../components/care';
@@ -178,16 +188,9 @@ export default function CareLog() {
                 onClick={() => setFilter(option.value)}
                 className="px-4 py-2 rounded-xl text-small font-semibold transition-all"
                 style={{
-                  background:
-                    filter === option.value
-                      ? 'var(--sage-600)'
-                      : 'var(--sage-100)',
-                  color:
-                    filter === option.value ? 'white' : 'var(--sage-600)',
-                  boxShadow:
-                    filter === option.value
-                      ? 'var(--shadow-sage-primary)'
-                      : 'none',
+                  background: filter === option.value ? 'var(--sage-600)' : 'var(--sage-100)',
+                  color: filter === option.value ? 'white' : 'var(--sage-600)',
+                  boxShadow: filter === option.value ? 'var(--shadow-sage-primary)' : 'none',
                 }}
               >
                 {option.label}
@@ -199,7 +202,10 @@ export default function CareLog() {
           <div className="flex flex-wrap items-end gap-4">
             {/* Plant Dropdown */}
             <div className="flex-1 min-w-[180px]">
-              <label className="block mb-1.5 text-small font-semibold" style={{ color: 'var(--sage-700)' }}>
+              <label
+                className="block mb-1.5 text-small font-semibold"
+                style={{ color: 'var(--sage-700)' }}
+              >
                 Plant
               </label>
               <div className="relative">
@@ -225,7 +231,10 @@ export default function CareLog() {
 
             {/* Sort By */}
             <div className="min-w-[150px]">
-              <label className="block mb-1.5 text-small font-semibold" style={{ color: 'var(--sage-700)' }}>
+              <label
+                className="block mb-1.5 text-small font-semibold"
+                style={{ color: 'var(--sage-700)' }}
+              >
                 Sort By
               </label>
               <div className="relative">
@@ -251,7 +260,10 @@ export default function CareLog() {
             {/* Date Range */}
             <div className="flex gap-2 items-end">
               <div>
-                <label className="block mb-1.5 text-small font-semibold" style={{ color: 'var(--sage-700)' }}>
+                <label
+                  className="block mb-1.5 text-small font-semibold"
+                  style={{ color: 'var(--sage-700)' }}
+                >
                   From
                 </label>
                 <div className="relative">
@@ -265,7 +277,10 @@ export default function CareLog() {
                 </div>
               </div>
               <div>
-                <label className="block mb-1.5 text-small font-semibold" style={{ color: 'var(--sage-700)' }}>
+                <label
+                  className="block mb-1.5 text-small font-semibold"
+                  style={{ color: 'var(--sage-700)' }}
+                >
                   To
                 </label>
                 <div className="relative">
@@ -319,10 +334,7 @@ export default function CareLog() {
           <div className="card p-8 text-center">
             <p className="heading heading-lg mb-2">Failed to load</p>
             <p className="text-muted mb-4">{error.message}</p>
-            <button
-              className="btn btn-primary"
-              onClick={() => window.location.reload()}
-            >
+            <button className="btn btn-primary" onClick={() => window.location.reload()}>
               Try Again
             </button>
           </div>
@@ -332,10 +344,7 @@ export default function CareLog() {
           </div>
         ) : Object.keys(groupedLogs).length === 0 ? (
           <div className="card p-8 text-center">
-            <div
-              className="icon-container mx-auto mb-4"
-              style={{ width: 64, height: 64 }}
-            >
+            <div className="icon-container mx-auto mb-4" style={{ width: 64, height: 64 }}>
               <Droplets size={32} style={{ color: 'var(--sage-400)' }} />
             </div>
             <h2 className="heading heading-lg mb-2">No care logs found</h2>
@@ -351,10 +360,7 @@ export default function CareLog() {
               <section key={date}>
                 <h3 className="text-label mb-3">{date}</h3>
                 <div className="card p-4">
-                  <div
-                    className="divide-y"
-                    style={{ borderColor: 'var(--sage-200)' }}
-                  >
+                  <div className="divide-y" style={{ borderColor: 'var(--sage-200)' }}>
                     {logs.map((log) => {
                       const plant = plantMap[log.plant_id];
                       return (
@@ -366,9 +372,7 @@ export default function CareLog() {
                           <CareLogItem
                             log={log}
                             showPlantName
-                            plantName={
-                              plant?.nickname || plant?.cultivar_name
-                            }
+                            plantName={plant?.nickname || plant?.cultivar_name}
                           />
                         </Link>
                       );

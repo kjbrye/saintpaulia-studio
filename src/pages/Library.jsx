@@ -23,8 +23,12 @@ export default function Library() {
   const [currentPage, setCurrentPage] = useState(1);
 
   // Filter state
-  const initialCareFilter = searchParams.get('filter') === 'needs-care' ? 'needs-care' :
-                            searchParams.get('filter') === 'blooming' ? 'all' : 'all';
+  const initialCareFilter =
+    searchParams.get('filter') === 'needs-care'
+      ? 'needs-care'
+      : searchParams.get('filter') === 'blooming'
+        ? 'all'
+        : 'all';
   const initialBloomingFilter = searchParams.get('filter') === 'blooming' ? 'blooming' : 'all';
   const [potSizeFilter, setPotSizeFilter] = useState('all');
   const [bloomColorFilter, setBloomColorFilter] = useState('all');
@@ -48,7 +52,7 @@ export default function Library() {
       result = result.filter(
         (p) =>
           p.nickname?.toLowerCase().includes(query) ||
-          p.cultivar_name?.toLowerCase().includes(query)
+          p.cultivar_name?.toLowerCase().includes(query),
       );
     }
 
@@ -81,7 +85,7 @@ export default function Library() {
       switch (sortBy) {
         case 'name':
           return (a.nickname || a.cultivar_name || '').localeCompare(
-            b.nickname || b.cultivar_name || ''
+            b.nickname || b.cultivar_name || '',
           );
         case 'acquired':
           return new Date(b.acquisition_date || 0) - new Date(a.acquisition_date || 0);
@@ -93,12 +97,29 @@ export default function Library() {
     });
 
     return result;
-  }, [plants, searchQuery, sortBy, careThresholds, potSizeFilter, bloomColorFilter, bloomingFilter, careFilter]);
+  }, [
+    plants,
+    searchQuery,
+    sortBy,
+    careThresholds,
+    potSizeFilter,
+    bloomColorFilter,
+    bloomingFilter,
+    careFilter,
+  ]);
 
   // Reset to page 1 when search, sort, or filters change
   useEffect(() => {
     setCurrentPage(1);
-  }, [searchQuery, sortBy, plantsPerPage, potSizeFilter, bloomColorFilter, bloomingFilter, careFilter]);
+  }, [
+    searchQuery,
+    sortBy,
+    plantsPerPage,
+    potSizeFilter,
+    bloomColorFilter,
+    bloomingFilter,
+    careFilter,
+  ]);
 
   // Clear selection when exiting selection mode
   useEffect(() => {
@@ -121,7 +142,7 @@ export default function Library() {
 
   // Selection handlers
   const handleToggleSelect = useCallback((plantId) => {
-    setSelectedIds(prev => {
+    setSelectedIds((prev) => {
       const next = new Set(prev);
       if (next.has(plantId)) {
         next.delete(plantId);
@@ -133,7 +154,7 @@ export default function Library() {
   }, []);
 
   const handleSelectAll = useCallback(() => {
-    setSelectedIds(new Set(filteredPlants.map(p => p.id)));
+    setSelectedIds(new Set(filteredPlants.map((p) => p.id)));
   }, [filteredPlants]);
 
   const handleClearSelection = useCallback(() => {
@@ -142,7 +163,7 @@ export default function Library() {
   }, []);
 
   const toggleSelectionMode = useCallback(() => {
-    setSelectionMode(prev => !prev);
+    setSelectionMode((prev) => !prev);
   }, []);
 
   if (isLoading) {
@@ -159,10 +180,7 @@ export default function Library() {
         <div className="card p-8 text-center max-w-md">
           <p className="heading heading-lg mb-2">Failed to load</p>
           <p className="text-muted mb-4">{error.message}</p>
-          <button
-            className="btn btn-primary"
-            onClick={() => window.location.reload()}
-          >
+          <button className="btn btn-primary" onClick={() => window.location.reload()}>
             Try Again
           </button>
         </div>
@@ -286,7 +304,7 @@ export default function Library() {
                   <div className="flex items-center justify-center gap-4">
                     <button
                       className="btn btn-secondary btn-small"
-                      onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                      onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
                       disabled={currentPage === 1}
                     >
                       <ChevronLeft size={16} />
@@ -297,7 +315,7 @@ export default function Library() {
                     </span>
                     <button
                       className="btn btn-secondary btn-small"
-                      onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                      onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
                       disabled={currentPage === totalPages}
                     >
                       Next
@@ -308,7 +326,9 @@ export default function Library() {
 
                 {/* Count */}
                 <p className="text-center text-muted">
-                  Showing {startIndex + 1}–{Math.min(startIndex + plantsPerPage, filteredPlants.length)} of {filteredPlants.length} plants
+                  Showing {startIndex + 1}–
+                  {Math.min(startIndex + plantsPerPage, filteredPlants.length)} of{' '}
+                  {filteredPlants.length} plants
                   {filteredPlants.length !== plants.length && ` (${plants.length} total)`}
                 </p>
               </div>

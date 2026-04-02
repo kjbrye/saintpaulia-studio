@@ -25,10 +25,17 @@ const INHERITED_FROM_OPTIONS = [
   { value: 'mutation', label: 'Mutation / Sport' },
 ];
 
-const CATEGORY_LABELS = Object.fromEntries(TRAIT_CATEGORIES.map(c => [c.value, c.label]));
-const INHERITED_LABELS = Object.fromEntries(INHERITED_FROM_OPTIONS.map(o => [o.value, o.label]));
+const CATEGORY_LABELS = Object.fromEntries(TRAIT_CATEGORIES.map((c) => [c.value, c.label]));
+const INHERITED_LABELS = Object.fromEntries(INHERITED_FROM_OPTIONS.map((o) => [o.value, o.label]));
 
-export default function TraitInheritance({ plantId, traits = [], onCreate, onDelete, isLoading, isPending }) {
+export default function TraitInheritance({
+  plantId,
+  traits = [],
+  onCreate,
+  onDelete,
+  isLoading,
+  isPending,
+}) {
   const [isAdding, setIsAdding] = useState(false);
   const [formData, setFormData] = useState({
     trait_category: 'flower_color',
@@ -48,7 +55,12 @@ export default function TraitInheritance({ plantId, traits = [], onCreate, onDel
         inherited_from: formData.inherited_from,
         notes: formData.notes.trim() || null,
       });
-      setFormData({ trait_category: 'flower_color', trait_value: '', inherited_from: 'unknown', notes: '' });
+      setFormData({
+        trait_category: 'flower_color',
+        trait_value: '',
+        inherited_from: 'unknown',
+        notes: '',
+      });
       setIsAdding(false);
     } catch {
       // handled by parent
@@ -69,9 +81,7 @@ export default function TraitInheritance({ plantId, traits = [], onCreate, onDel
         <div className="flex items-center gap-2">
           <Dna size={18} style={{ color: 'var(--purple-400)' }} />
           <h2 className="heading heading-md">Traits</h2>
-          {traits.length > 0 && (
-            <span className="text-small text-muted">({traits.length})</span>
-          )}
+          {traits.length > 0 && <span className="text-small text-muted">({traits.length})</span>}
         </div>
         {!isAdding && (
           <button className="btn btn-primary btn-small" onClick={() => setIsAdding(true)}>
@@ -89,10 +99,14 @@ export default function TraitInheritance({ plantId, traits = [], onCreate, onDel
               <select
                 className="input w-full"
                 value={formData.trait_category}
-                onChange={(e) => setFormData(prev => ({ ...prev, trait_category: e.target.value }))}
+                onChange={(e) =>
+                  setFormData((prev) => ({ ...prev, trait_category: e.target.value }))
+                }
               >
-                {TRAIT_CATEGORIES.map(c => (
-                  <option key={c.value} value={c.value}>{c.label}</option>
+                {TRAIT_CATEGORIES.map((c) => (
+                  <option key={c.value} value={c.value}>
+                    {c.label}
+                  </option>
                 ))}
               </select>
             </div>
@@ -101,7 +115,7 @@ export default function TraitInheritance({ plantId, traits = [], onCreate, onDel
               <input
                 className="input w-full"
                 value={formData.trait_value}
-                onChange={(e) => setFormData(prev => ({ ...prev, trait_value: e.target.value }))}
+                onChange={(e) => setFormData((prev) => ({ ...prev, trait_value: e.target.value }))}
                 placeholder="e.g., double pink, girl-leaf"
                 autoFocus
               />
@@ -113,10 +127,14 @@ export default function TraitInheritance({ plantId, traits = [], onCreate, onDel
               <select
                 className="input w-full"
                 value={formData.inherited_from}
-                onChange={(e) => setFormData(prev => ({ ...prev, inherited_from: e.target.value }))}
+                onChange={(e) =>
+                  setFormData((prev) => ({ ...prev, inherited_from: e.target.value }))
+                }
               >
-                {INHERITED_FROM_OPTIONS.map(o => (
-                  <option key={o.value} value={o.value}>{o.label}</option>
+                {INHERITED_FROM_OPTIONS.map((o) => (
+                  <option key={o.value} value={o.value}>
+                    {o.label}
+                  </option>
                 ))}
               </select>
             </div>
@@ -125,16 +143,30 @@ export default function TraitInheritance({ plantId, traits = [], onCreate, onDel
               <input
                 className="input w-full"
                 value={formData.notes}
-                onChange={(e) => setFormData(prev => ({ ...prev, notes: e.target.value }))}
+                onChange={(e) => setFormData((prev) => ({ ...prev, notes: e.target.value }))}
                 placeholder="Observations..."
               />
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <button type="submit" className="btn btn-primary btn-small" disabled={isPending || !formData.trait_value.trim()}>
-              {isPending ? <><Loader2 size={14} className="animate-spin" /> Saving...</> : 'Save Trait'}
+            <button
+              type="submit"
+              className="btn btn-primary btn-small"
+              disabled={isPending || !formData.trait_value.trim()}
+            >
+              {isPending ? (
+                <>
+                  <Loader2 size={14} className="animate-spin" /> Saving...
+                </>
+              ) : (
+                'Save Trait'
+              )}
             </button>
-            <button type="button" className="btn btn-secondary btn-small" onClick={() => setIsAdding(false)}>
+            <button
+              type="button"
+              className="btn btn-secondary btn-small"
+              onClick={() => setIsAdding(false)}
+            >
               Cancel
             </button>
           </div>
@@ -148,9 +180,11 @@ export default function TraitInheritance({ plantId, traits = [], onCreate, onDel
         <div className="space-y-3">
           {[...grouped.entries()].map(([category, items]) => (
             <div key={category}>
-              <p className="text-label text-muted mb-1.5">{CATEGORY_LABELS[category] || category}</p>
+              <p className="text-label text-muted mb-1.5">
+                {CATEGORY_LABELS[category] || category}
+              </p>
               <div className="space-y-1">
-                {items.map(trait => (
+                {items.map((trait) => (
                   <div
                     key={trait.id}
                     className="group flex items-center justify-between gap-2 p-2 rounded-lg"

@@ -4,7 +4,12 @@
 
 import { useState, useMemo } from 'react';
 import { Search, GitFork } from 'lucide-react';
-import { findCommonAncestors, calculateInbreedingCoefficient, describeRelationship, getCoiRisk } from '../../utils/lineage';
+import {
+  findCommonAncestors,
+  calculateInbreedingCoefficient,
+  describeRelationship,
+  getCoiRisk,
+} from '../../utils/lineage';
 
 export default function RelationshipFinder({ plants = [], plantMap }) {
   const [plantAId, setPlantAId] = useState('');
@@ -37,7 +42,7 @@ export default function RelationshipFinder({ plants = [], plantMap }) {
             onChange={(e) => setPlantAId(e.target.value)}
           >
             <option value="">Select a plant...</option>
-            {plants.map(p => (
+            {plants.map((p) => (
               <option key={p.id} value={p.id}>
                 {p.cultivar_name || p.nickname || 'Unnamed'}
               </option>
@@ -52,11 +57,13 @@ export default function RelationshipFinder({ plants = [], plantMap }) {
             onChange={(e) => setPlantBId(e.target.value)}
           >
             <option value="">Select a plant...</option>
-            {plants.filter(p => p.id !== plantAId).map(p => (
-              <option key={p.id} value={p.id}>
-                {p.cultivar_name || p.nickname || 'Unnamed'}
-              </option>
-            ))}
+            {plants
+              .filter((p) => p.id !== plantAId)
+              .map((p) => (
+                <option key={p.id} value={p.id}>
+                  {p.cultivar_name || p.nickname || 'Unnamed'}
+                </option>
+              ))}
           </select>
         </div>
       </div>
@@ -81,7 +88,10 @@ export default function RelationshipFinder({ plants = [], plantMap }) {
           </div>
 
           {/* COI visual bar */}
-          <div className="w-full rounded-full overflow-hidden" style={{ height: 6, background: 'var(--sage-200)' }}>
+          <div
+            className="w-full rounded-full overflow-hidden"
+            style={{ height: 6, background: 'var(--sage-200)' }}
+          >
             <div
               className="h-full rounded-full transition-all"
               style={{

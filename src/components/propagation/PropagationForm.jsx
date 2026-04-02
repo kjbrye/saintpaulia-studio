@@ -17,9 +17,9 @@ export default function PropagationForm({ plants = [], onSubmit, onCancel, isPen
   const [errors, setErrors] = useState({});
 
   const updateField = (field, value) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+    setFormData((prev) => ({ ...prev, [field]: value }));
     if (errors[field]) {
-      setErrors(prev => ({ ...prev, [field]: null }));
+      setErrors((prev) => ({ ...prev, [field]: null }));
     }
   };
 
@@ -39,7 +39,7 @@ export default function PropagationForm({ plants = [], onSubmit, onCancel, isPen
     e.preventDefault();
     if (!validate()) return;
 
-    const selectedPlant = plants.find(p => p.id === formData.parent_plant_id);
+    const selectedPlant = plants.find((p) => p.id === formData.parent_plant_id);
     try {
       await onSubmit({
         parent_plant_id: formData.parent_plant_id,
@@ -62,9 +62,10 @@ export default function PropagationForm({ plants = [], onSubmit, onCancel, isPen
           onChange={(e) => updateField('parent_plant_id', e.target.value)}
         >
           <option value="">Select a plant...</option>
-          {plants.map(plant => (
+          {plants.map((plant) => (
             <option key={plant.id} value={plant.id}>
-              {plant.cultivar_name}{plant.nickname ? ` (${plant.nickname})` : ''}
+              {plant.cultivar_name}
+              {plant.nickname ? ` (${plant.nickname})` : ''}
             </option>
           ))}
         </select>
@@ -87,7 +88,9 @@ export default function PropagationForm({ plants = [], onSubmit, onCancel, isPen
             onChange={(e) => updateField('method', e.target.value)}
           >
             {Object.entries(METHOD_LABELS).map(([key, label]) => (
-              <option key={key} value={key}>{label}</option>
+              <option key={key} value={key}>
+                {label}
+              </option>
             ))}
           </select>
         </FormField>
@@ -109,7 +112,8 @@ export default function PropagationForm({ plants = [], onSubmit, onCancel, isPen
         </p>
       )}
 
-      <div className="flex flex-col-reverse sm:flex-row justify-end gap-3 pt-4"
+      <div
+        className="flex flex-col-reverse sm:flex-row justify-end gap-3 pt-4"
         style={{ borderTop: '1px solid var(--sage-200)' }}
       >
         <button type="button" className="btn btn-secondary" onClick={onCancel}>

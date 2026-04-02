@@ -67,7 +67,9 @@ function CircularProgress({ percentage, healthyCount, totalPlants }) {
       </div>
       <div className="care-overview-circle-label">
         <span className="care-overview-health-label">Collection Health</span>
-        <span className="care-overview-count">{healthyCount} of {totalPlants} plants</span>
+        <span className="care-overview-count">
+          {healthyCount} of {totalPlants} plants
+        </span>
       </div>
     </div>
   );
@@ -85,17 +87,13 @@ function CareProgressBar({ careType, upToDate, total }) {
           <Icon size={18} style={{ color: 'var(--copper-500)' }} />
           <span>{label}</span>
         </div>
-        <span className="care-progress-count">{upToDate} of {total} up to date</span>
+        <span className="care-progress-count">
+          {upToDate} of {total} up to date
+        </span>
       </div>
       <div className="care-progress-bar-track">
-        <div
-          className="care-progress-bar-fill"
-          style={{ width: `${percentage}%` }}
-        />
-        <div
-          className="care-progress-bar-remaining"
-          style={{ width: `${100 - percentage}%` }}
-        />
+        <div className="care-progress-bar-fill" style={{ width: `${percentage}%` }} />
+        <div className="care-progress-bar-remaining" style={{ width: `${100 - percentage}%` }} />
       </div>
     </div>
   );
@@ -123,7 +121,8 @@ function CareTip({ mostNeglectedCareType }) {
 }
 
 export default function CareOverviewPanel({ stats }) {
-  const { totalPlants, healthyCount, healthPercentage, careBreakdown, mostNeglectedCareType } = stats;
+  const { totalPlants, healthyCount, healthPercentage, careBreakdown, mostNeglectedCareType } =
+    stats;
 
   // Calculate "up to date" counts (good + soon, not overdue)
   const getUpToDateCount = (breakdown) => breakdown.good + breakdown.soon;

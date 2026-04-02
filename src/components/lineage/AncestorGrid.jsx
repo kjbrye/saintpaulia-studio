@@ -14,7 +14,7 @@ import { buildAncestorTree } from '../../utils/lineage';
 export default function AncestorGrid({ plantId, plantMap, generations = 3, onSelect }) {
   const tree = useMemo(
     () => buildAncestorTree(plantId, plantMap, generations),
-    [plantId, plantMap, generations]
+    [plantId, plantMap, generations],
   );
 
   if (!tree) return null;
@@ -33,7 +33,7 @@ export default function AncestorGrid({ plantId, plantMap, generations = 3, onSel
         style={{ minWidth: maxGen >= 3 ? 700 : maxGen >= 2 ? 500 : 350 }}
       >
         {/* Ancestor generations (furthest first) */}
-        {Array.from({ length: maxGen }, (_, i) => maxGen - i).map(gen => (
+        {Array.from({ length: maxGen }, (_, i) => maxGen - i).map((gen) => (
           <div key={gen} className="flex flex-col justify-around gap-1 flex-1">
             <p className="text-center mb-1" style={{ fontSize: 10, color: 'var(--sage-400)' }}>
               {gen === 1 ? 'Parents' : gen === 2 ? 'Grandparents' : 'Great-grandparents'}
@@ -42,7 +42,7 @@ export default function AncestorGrid({ plantId, plantMap, generations = 3, onSel
               <div key={node.key} className="flex-1 flex items-center justify-center px-1">
                 <PedigreeNode
                   plant={node.plant}
-                  label={node.isUnknown ? (node.label || 'Unknown') : node.role}
+                  label={node.isUnknown ? node.label || 'Unknown' : node.role}
                   isUnknown={node.isUnknown && !node.label}
                   externalName={node.isUnknown && node.label ? node.label : undefined}
                   compact={gen >= 2}

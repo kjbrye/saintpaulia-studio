@@ -6,7 +6,15 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowLeft, FlaskConical, Heart, Plus } from 'lucide-react';
 import { usePlants, useCreatePlant } from '../hooks/usePlants';
-import { useCrosses, useCreateCross, useUpdateCross, useDeleteCross, useAddOffspring, useAdvanceStage, useUpdateCrossStatus } from '../hooks/useBreeding';
+import {
+  useCrosses,
+  useCreateCross,
+  useUpdateCross,
+  useDeleteCross,
+  useAddOffspring,
+  useAdvanceStage,
+  useUpdateCrossStatus,
+} from '../hooks/useBreeding';
 import HeaderBar from '../components/ui/HeaderBar';
 import { CrossCard, CrossForm, BreedingStatsPanel } from '../components/breeding';
 import { getBreedingStats } from '../utils/propagationStats';
@@ -35,14 +43,18 @@ export default function Breeding() {
     return 'active';
   };
 
-  const active = crosses.filter(c => getStatus(c) === 'active');
-  const complete = crosses.filter(c => ['complete', 'failed'].includes(getStatus(c)));
-  const archived = crosses.filter(c => getStatus(c) === 'archived');
+  const active = crosses.filter((c) => getStatus(c) === 'active');
+  const complete = crosses.filter((c) => ['complete', 'failed'].includes(getStatus(c)));
+  const archived = crosses.filter((c) => getStatus(c) === 'archived');
 
-  const displayed = filter === 'active' ? active
-    : filter === 'complete' ? complete
-    : filter === 'archived' ? archived
-    : crosses.filter(c => getStatus(c) !== 'archived');
+  const displayed =
+    filter === 'active'
+      ? active
+      : filter === 'complete'
+        ? complete
+        : filter === 'archived'
+          ? archived
+          : crosses.filter((c) => getStatus(c) !== 'archived');
 
   const handleCreate = async (data) => {
     await createCross.mutateAsync(data);
@@ -91,15 +103,23 @@ export default function Breeding() {
     updateStatus.mutate({ id, status: 'archived' });
   };
 
-  const isPending = createCross.isPending || updateCross.isPending
-    || deleteCross.isPending || createPlant.isPending || addOffspring.isPending
-    || advanceStage.isPending || updateStatus.isPending;
+  const isPending =
+    createCross.isPending ||
+    updateCross.isPending ||
+    deleteCross.isPending ||
+    createPlant.isPending ||
+    addOffspring.isPending ||
+    advanceStage.isPending ||
+    updateStatus.isPending;
 
   if (isLoading) {
     return (
       <div className="min-h-screen">
         <HeaderBar />
-        <div className="flex items-center justify-center p-8" style={{ minHeight: 'calc(100vh - 60px)' }}>
+        <div
+          className="flex items-center justify-center p-8"
+          style={{ minHeight: 'calc(100vh - 60px)' }}
+        >
           <p className="text-muted">Loading breeding crosses...</p>
         </div>
       </div>
@@ -110,7 +130,10 @@ export default function Breeding() {
     return (
       <div className="min-h-screen">
         <HeaderBar />
-        <div className="flex items-center justify-center p-8" style={{ minHeight: 'calc(100vh - 60px)' }}>
+        <div
+          className="flex items-center justify-center p-8"
+          style={{ minHeight: 'calc(100vh - 60px)' }}
+        >
           <div className="panel p-8 text-center max-w-md">
             <p className="heading heading-lg mb-2">Failed to load</p>
             <p className="text-muted mb-4">{error.message}</p>
@@ -144,10 +167,7 @@ export default function Breeding() {
 
           {/* Actions bar */}
           <div className="flex flex-wrap items-center justify-between gap-3 mb-6">
-            <button
-              className="btn btn-primary"
-              onClick={() => setShowForm(true)}
-            >
+            <button className="btn btn-primary" onClick={() => setShowForm(true)}>
               <Plus size={18} />
               New Cross
             </button>
@@ -156,9 +176,11 @@ export default function Breeding() {
               {[
                 { key: 'active', label: `Active (${active.length})` },
                 { key: 'complete', label: `Complete (${complete.length})` },
-                ...(archived.length > 0 ? [{ key: 'archived', label: `Archived (${archived.length})` }] : []),
+                ...(archived.length > 0
+                  ? [{ key: 'archived', label: `Archived (${archived.length})` }]
+                  : []),
                 { key: 'all', label: 'All' },
-              ].map(f => (
+              ].map((f) => (
                 <button
                   key={f.key}
                   className={`btn btn-small ${filter === f.key ? 'btn-primary' : 'btn-secondary'}`}
@@ -193,7 +215,7 @@ export default function Breeding() {
           {/* Cross list */}
           {displayed.length > 0 ? (
             <div className="space-y-4">
-              {displayed.map(cross => (
+              {displayed.map((cross) => (
                 <CrossCard
                   key={cross.id}
                   cross={cross}

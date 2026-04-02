@@ -75,7 +75,7 @@ export default function RecentActivityPanel({ careLogs = [], isLoading = false }
         <span className="panel-title">Recent Activity</span>
       </div>
       <div className="panel-content">
-        {careLogs.slice(0, 5).map(log => (
+        {careLogs.slice(0, 5).map((log) => (
           <ActivityItem key={log.id} log={log} />
         ))}
       </div>

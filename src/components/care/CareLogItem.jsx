@@ -64,18 +64,22 @@ export default function CareLogItem({ log, showPlantName = false, plantName }) {
         <p className="text-body font-medium">
           {label}
           {fertilizerLabel && (
-            <span style={{ color: 'var(--purple-400)' }} className="font-normal"> - {fertilizerLabel}</span>
+            <span style={{ color: 'var(--purple-400)' }} className="font-normal">
+              {' '}
+              - {fertilizerLabel}
+            </span>
           )}
           {potSize && (
-            <span style={{ color: 'var(--sage-600)' }} className="font-normal"> - {potSize}</span>
+            <span style={{ color: 'var(--sage-600)' }} className="font-normal">
+              {' '}
+              - {potSize}
+            </span>
           )}
           {showPlantName && plantName && (
             <span className="text-muted font-normal"> — {plantName}</span>
           )}
         </p>
-        {log.notes && (
-          <p className="text-small text-muted truncate">{log.notes}</p>
-        )}
+        {log.notes && <p className="text-small text-muted truncate">{log.notes}</p>}
       </div>
       <div className="text-right flex-shrink-0">
         <p className="text-small" style={{ color: 'var(--sage-700)' }}>

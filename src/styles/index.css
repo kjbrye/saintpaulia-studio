@@ -15,48 +15,48 @@
   /* ===========================================
      SAGE GREENS
      =========================================== */
-  --sage-100: #E8EBE5;
-  --sage-200: #D4DACE;
-  --sage-300: #B5C0AB;
-  --sage-400: #94A586;
-  --sage-500: #778A68;
-  --sage-600: #5D6E51;
-  --sage-700: #4A5842;
-  --sage-800: #3D4838;
-  --sage-900: #343D30;
+  --sage-100: #e8ebe5;
+  --sage-200: #d4dace;
+  --sage-300: #b5c0ab;
+  --sage-400: #94a586;
+  --sage-500: #778a68;
+  --sage-600: #5d6e51;
+  --sage-700: #4a5842;
+  --sage-800: #3d4838;
+  --sage-900: #343d30;
 
   /* ===========================================
      CREAM / WARM NEUTRALS
      =========================================== */
-  --cream-50: #FDFCFA;
-  --cream-100: #F9F7F3;
-  --cream-200: #F3EFE7;
-  --cream-300: #E5DDD2;
-  --cream-400: #DAD0C2;
+  --cream-50: #fdfcfa;
+  --cream-100: #f9f7f3;
+  --cream-200: #f3efe7;
+  --cream-300: #e5ddd2;
+  --cream-400: #dad0c2;
 
   /* ===========================================
      COPPER ACCENTS
      =========================================== */
-  --copper-400: #C78D6D;
-  --copper-500: #B87750;
-  --copper-600: #A66542;
-  --copper-700: #814B2E;
+  --copper-400: #c78d6d;
+  --copper-500: #b87750;
+  --copper-600: #a66542;
+  --copper-700: #814b2e;
 
   /* ===========================================
      PURPLE ACCENTS (for bloom elements)
      =========================================== */
-  --purple-100: #E8E0F0;
-  --purple-200: #D1C3E3;
-  --purple-300: #B39FCC;
-  --purple-400: #9C87B7;
+  --purple-100: #e8e0f0;
+  --purple-200: #d1c3e3;
+  --purple-300: #b39fcc;
+  --purple-400: #9c87b7;
   --purple-500: #776391;
 
   /* ===========================================
      SEMANTIC COLORS
      =========================================== */
-  --color-success: #7CB87C;
-  --color-warning: #FFCB7D;
-  --color-error: #D86464;
+  --color-success: #7cb87c;
+  --color-warning: #ffcb7d;
+  --color-error: #d86464;
 
   /* ===========================================
      TEXT COLORS
@@ -78,39 +78,33 @@
      =========================================== */
   --gradient-cream-bg: linear-gradient(180deg, var(--cream-100) 0%, var(--cream-200) 100%);
 
-  --gradient-sage-card: linear-gradient(145deg,
+  --gradient-sage-card: linear-gradient(
+    145deg,
     var(--sage-100) 0%,
     var(--sage-200) 50%,
     var(--sage-100) 100%
   );
 
-  --gradient-sage-button: linear-gradient(145deg,
-    var(--sage-100) 0%,
-    var(--sage-200) 100%
-  );
+  --gradient-sage-button: linear-gradient(145deg, var(--sage-100) 0%, var(--sage-200) 100%);
 
-  --gradient-sage-primary: linear-gradient(165deg,
+  --gradient-sage-primary: linear-gradient(
+    165deg,
     var(--sage-500) 0%,
     var(--sage-600) 30%,
     var(--sage-500) 60%,
     var(--sage-700) 100%
   );
 
-  --gradient-sage-inset: linear-gradient(145deg,
-    var(--sage-200) 0%,
-    var(--sage-100) 100%
-  );
+  --gradient-sage-inset: linear-gradient(145deg, var(--sage-200) 0%, var(--sage-100) 100%);
 
-  --gradient-purple-card: linear-gradient(145deg,
+  --gradient-purple-card: linear-gradient(
+    145deg,
     var(--purple-100) 0%,
     var(--purple-200) 50%,
     var(--purple-100) 100%
   );
 
-  --gradient-cream-icon: linear-gradient(145deg,
-    var(--cream-50) 0%,
-    var(--cream-200) 100%
-  );
+  --gradient-cream-icon: linear-gradient(145deg, var(--cream-50) 0%, var(--cream-200) 100%);
 
   /* ===========================================
      SHADOWS - Sharper, more professional
@@ -118,49 +112,37 @@
 
   /* Raised sage metallic - main cards */
   --shadow-sage-raised:
-    0 1px 3px rgba(74, 88, 66, 0.12),
-    0 4px 12px rgba(74, 88, 66, 0.15),
+    0 1px 3px rgba(74, 88, 66, 0.12), 0 4px 12px rgba(74, 88, 66, 0.15),
     inset 0 1px 0 rgba(255, 255, 255, 0.5);
 
   /* Pressed/active */
   --shadow-sage-pressed:
-    inset 0 2px 4px rgba(74, 88, 66, 0.2),
-    inset 0 1px 2px rgba(74, 88, 66, 0.15);
+    inset 0 2px 4px rgba(74, 88, 66, 0.2), inset 0 1px 2px rgba(74, 88, 66, 0.15);
 
   /* Subtle - smaller elements */
   --shadow-sage-subtle:
-    0 1px 2px rgba(74, 88, 66, 0.1),
-    0 2px 6px rgba(74, 88, 66, 0.1),
+    0 1px 2px rgba(74, 88, 66, 0.1), 0 2px 6px rgba(74, 88, 66, 0.1),
     inset 0 1px 0 rgba(255, 255, 255, 0.4);
 
   /* Inset container/well */
   --shadow-sage-inset:
-    inset 0 2px 4px rgba(74, 88, 66, 0.15),
-    inset 0 1px 2px rgba(74, 88, 66, 0.1);
+    inset 0 2px 4px rgba(74, 88, 66, 0.15), inset 0 1px 2px rgba(74, 88, 66, 0.1);
 
   /* Primary button */
-  --shadow-sage-primary:
-    0 2px 4px rgba(93, 110, 81, 0.3),
-    0 4px 12px rgba(93, 110, 81, 0.2);
+  --shadow-sage-primary: 0 2px 4px rgba(93, 110, 81, 0.3), 0 4px 12px rgba(93, 110, 81, 0.2);
 
-  --shadow-sage-primary-pressed:
-    inset 0 2px 4px rgba(52, 61, 48, 0.4);
+  --shadow-sage-primary-pressed: inset 0 2px 4px rgba(52, 61, 48, 0.4);
 
   /* Purple metallic */
   --shadow-purple-raised:
-    0 1px 3px rgba(119, 99, 145, 0.15),
-    0 4px 12px rgba(119, 99, 145, 0.15),
+    0 1px 3px rgba(119, 99, 145, 0.15), 0 4px 12px rgba(119, 99, 145, 0.15),
     inset 0 1px 0 rgba(255, 255, 255, 0.5);
 
   /* Cream icon container */
-  --shadow-cream-raised:
-    0 1px 3px rgba(74, 88, 66, 0.1),
-    inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  --shadow-cream-raised: 0 1px 3px rgba(74, 88, 66, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.8);
 
   /* Panel shadow - command center panels */
-  --shadow-panel:
-    0 1px 2px rgba(74, 88, 66, 0.08),
-    0 2px 8px rgba(74, 88, 66, 0.12);
+  --shadow-panel: 0 1px 2px rgba(74, 88, 66, 0.08), 0 2px 8px rgba(74, 88, 66, 0.12);
 
   /* ===========================================
      BORDERS
@@ -195,7 +177,9 @@
 /* ===========================================
    BASE STYLES
    =========================================== */
-*, *::before, *::after {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
 }
 
@@ -276,7 +260,9 @@ body {
   font-size: 52px;
   font-weight: 700;
   line-height: 1;
-  text-shadow: 1px 1px 0 rgba(255,255,255,0.5), -1px -1px 0 rgba(74, 88, 66, 0.1);
+  text-shadow:
+    1px 1px 0 rgba(255, 255, 255, 0.5),
+    -1px -1px 0 rgba(74, 88, 66, 0.1);
 }
 
 /* ===========================================
@@ -287,7 +273,9 @@ body {
   border-radius: var(--radius-xl);
   border: var(--border-sage);
   box-shadow: var(--shadow-sage-raised);
-  transition: box-shadow var(--transition-fast), transform var(--transition-fast);
+  transition:
+    box-shadow var(--transition-fast),
+    transform var(--transition-fast);
 }
 
 .card-subtle {
@@ -443,7 +431,7 @@ body {
   box-shadow:
     0 0 12px rgba(255, 203, 125, 0.7),
     0 0 24px rgba(255, 203, 125, 0.4),
-    inset 1px 1px 2px rgba(255,255,255,0.4);
+    inset 1px 1px 2px rgba(255, 255, 255, 0.4);
   border: 1px solid var(--copper-500);
 }
 
@@ -452,7 +440,7 @@ body {
   box-shadow:
     0 0 12px rgba(124, 184, 124, 0.7),
     0 0 24px rgba(124, 184, 124, 0.4),
-    inset 1px 1px 2px rgba(255,255,255,0.4);
+    inset 1px 1px 2px rgba(255, 255, 255, 0.4);
   border: 1px solid var(--color-success);
 }
 
@@ -461,7 +449,7 @@ body {
   box-shadow:
     0 0 12px rgba(216, 100, 100, 0.7),
     0 0 24px rgba(216, 100, 100, 0.4),
-    inset 1px 1px 2px rgba(255,255,255,0.4);
+    inset 1px 1px 2px rgba(255, 255, 255, 0.4);
   border: 1px solid var(--color-error);
 }
 
@@ -622,11 +610,11 @@ select.input {
 }
 
 /* Date input styling */
-input[type="date"].input {
+input[type='date'].input {
   appearance: none;
 }
 
-input[type="date"].input::-webkit-calendar-picker-indicator {
+input[type='date'].input::-webkit-calendar-picker-indicator {
   filter: invert(40%) sepia(10%) saturate(500%) hue-rotate(70deg);
   cursor: pointer;
 }
@@ -650,7 +638,9 @@ textarea.input {
 
 /* Spin animation for loader */
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .animate-spin {
@@ -677,11 +667,7 @@ textarea.input {
    DANGER BUTTON
    =========================================== */
 .btn-danger {
-  background: linear-gradient(165deg,
-    var(--color-error) 0%,
-    #c54545 50%,
-    var(--color-error) 100%
-  );
+  background: linear-gradient(165deg, var(--color-error) 0%, #c54545 50%, var(--color-error) 100%);
   color: white;
   border: 1px solid #c54545;
   box-shadow:

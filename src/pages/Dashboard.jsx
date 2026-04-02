@@ -25,7 +25,7 @@ export default function Dashboard() {
   const { data: recentLogs = [], isLoading: logsLoading } = useRecentCareLogs(10);
 
   // Derived data
-  const bloomingPlants = plants.filter(p => p.is_blooming);
+  const bloomingPlants = plants.filter((p) => p.is_blooming);
   const stats = getCollectionCareStats(plants, careThresholds);
   const displayName = user?.email?.split('@')[0] || 'Gardener';
 
@@ -33,7 +33,10 @@ export default function Dashboard() {
     return (
       <div className="min-h-screen">
         <HeaderBar />
-        <div className="flex items-center justify-center p-8" style={{ minHeight: 'calc(100vh - 60px)' }}>
+        <div
+          className="flex items-center justify-center p-8"
+          style={{ minHeight: 'calc(100vh - 60px)' }}
+        >
           <p className="text-muted">Loading your collection...</p>
         </div>
       </div>
@@ -44,7 +47,10 @@ export default function Dashboard() {
     return (
       <div className="min-h-screen">
         <HeaderBar />
-        <div className="flex items-center justify-center p-8" style={{ minHeight: 'calc(100vh - 60px)' }}>
+        <div
+          className="flex items-center justify-center p-8"
+          style={{ minHeight: 'calc(100vh - 60px)' }}
+        >
           <div className="panel p-8 text-center max-w-md">
             <p className="heading heading-lg mb-2">Failed to load</p>
             <p className="text-muted mb-4">{error.message}</p>
@@ -62,7 +68,10 @@ export default function Dashboard() {
     return (
       <div className="min-h-screen">
         <HeaderBar />
-        <div className="flex items-center justify-center p-8" style={{ minHeight: 'calc(100vh - 60px)' }}>
+        <div
+          className="flex items-center justify-center p-8"
+          style={{ minHeight: 'calc(100vh - 60px)' }}
+        >
           <div className="panel p-10 text-center max-w-md">
             <div
               className="w-16 h-16 rounded-xl mx-auto mb-4 flex items-center justify-center"

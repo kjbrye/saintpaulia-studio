@@ -1,6 +1,6 @@
 /**
  * UI Components
- * 
+ *
  * Barrel export for all UI components.
  * Import from here: import { Button, Card } from '@/components/ui'
  */

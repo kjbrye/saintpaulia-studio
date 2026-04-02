@@ -65,9 +65,7 @@ function HealthLogItem({ log, onDelete, isDeleting }) {
       </div>
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2 mb-0.5">
-          <span className="text-small text-muted">
-            {formatDate(log.observation_date)}
-          </span>
+          <span className="text-small text-muted">{formatDate(log.observation_date)}</span>
           {log.health_status && (
             <span
               className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium"
@@ -77,18 +75,17 @@ function HealthLogItem({ log, onDelete, isDeleting }) {
             </span>
           )}
         </div>
-        {log.symptoms && (
-          <p className="text-body font-medium">{log.symptoms}</p>
-        )}
-        {log.notes && (
-          <p className="text-small text-muted mt-0.5">{log.notes}</p>
-        )}
+        {log.symptoms && <p className="text-body font-medium">{log.symptoms}</p>}
+        {log.notes && <p className="text-small text-muted mt-0.5">{log.notes}</p>}
       </div>
       <div className="flex-shrink-0">
         {showConfirmDelete ? (
           <div className="flex items-center gap-1">
             <button
-              onClick={() => { onDelete(log.id); setShowConfirmDelete(false); }}
+              onClick={() => {
+                onDelete(log.id);
+                setShowConfirmDelete(false);
+              }}
               disabled={isDeleting}
               className="icon-container icon-container-sm"
               title="Confirm delete"
@@ -166,7 +163,9 @@ function NewHealthForm({ onSubmit, onCancel, isPending }) {
             className="input w-full py-1.5 text-small"
           >
             {STATUS_OPTIONS.map((opt) => (
-              <option key={opt.value} value={opt.value}>{opt.label}</option>
+              <option key={opt.value} value={opt.value}>
+                {opt.label}
+              </option>
             ))}
           </select>
         </div>
@@ -252,10 +251,7 @@ export default function HealthHistory({
       <div className="flex items-center justify-between mb-4">
         <h2 className="heading heading-md">Health Log</h2>
         {!showForm && (
-          <button
-            onClick={() => setShowForm(true)}
-            className="btn btn-secondary btn-sm"
-          >
+          <button onClick={() => setShowForm(true)} className="btn btn-secondary btn-sm">
             <Plus size={16} />
             Log Observation
           </button>
@@ -277,19 +273,21 @@ export default function HealthHistory({
           <Activity size={24} style={{ color: 'var(--sage-400)' }} className="mx-auto mb-2" />
           <p className="text-muted">No health observations recorded yet</p>
         </div>
-      ) : logs.length > 0 && (
-        <div className="card-inset p-4">
-          <div className="divide-y divide-[var(--sage-200)]">
-            {logs.map((log) => (
-              <HealthLogItem
-                key={log.id}
-                log={log}
-                onDelete={onDeleteLog}
-                isDeleting={isDeleting}
-              />
-            ))}
+      ) : (
+        logs.length > 0 && (
+          <div className="card-inset p-4">
+            <div className="divide-y divide-[var(--sage-200)]">
+              {logs.map((log) => (
+                <HealthLogItem
+                  key={log.id}
+                  log={log}
+                  onDelete={onDeleteLog}
+                  isDeleting={isDeleting}
+                />
+              ))}
+            </div>
           </div>
-        </div>
+        )
       )}
     </div>
   );

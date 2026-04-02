@@ -78,10 +78,7 @@ export async function updateHealthLog(id, updates) {
  * @param {string} id - Health log ID
  */
 export async function deleteHealthLog(id) {
-  const { error } = await supabase
-    .from('health_log')
-    .delete()
-    .eq('id', id);
+  const { error } = await supabase.from('health_log').delete().eq('id', id);
 
   if (error) throw error;
 }

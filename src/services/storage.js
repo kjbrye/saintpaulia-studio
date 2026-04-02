@@ -29,18 +29,16 @@ export async function uploadPlantPhoto(file) {
   const ext = file.name.split('.').pop();
   const fileName = `${userId}/${Date.now()}.${ext}`;
 
-  const { error } = await supabase.storage
-    .from(BUCKET)
-    .upload(fileName, file, {
-      cacheControl: '3600',
-      upsert: false,
-    });
+  const { error } = await supabase.storage.from(BUCKET).upload(fileName, file, {
+    cacheControl: '3600',
+    upsert: false,
+  });
 
   if (error) throw error;
 
-  const { data: { publicUrl } } = supabase.storage
-    .from(BUCKET)
-    .getPublicUrl(fileName);
+  const {
+    data: { publicUrl },
+  } = supabase.storage.from(BUCKET).getPublicUrl(fileName);
 
   return publicUrl;
 }
@@ -55,9 +53,7 @@ export async function deletePlantPhoto(publicUrl) {
   const path = publicUrl.split(`${BUCKET}/`)[1];
   if (!path) return;
 
-  const { error } = await supabase.storage
-    .from(BUCKET)
-    .remove([path]);
+  const { error } = await supabase.storage.from(BUCKET).remove([path]);
 
   if (error) throw error;
 }

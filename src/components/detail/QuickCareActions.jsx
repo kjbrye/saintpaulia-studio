@@ -101,20 +101,13 @@ function CareButton({ careType, onLog, isLoading, recentlyLogged, currentPotSize
 
   // Get options based on type
   const options = config.optionType === 'potSize' ? POT_SIZE_OPTIONS : FERTILIZER_OPTIONS;
-  const dropdownTitle = config.optionType === 'potSize' ? 'Select new pot size' : 'Select fertilizer type';
+  const dropdownTitle =
+    config.optionType === 'potSize' ? 'Select new pot size' : 'Select fertilizer type';
 
   return (
     <div className="relative flex-1" ref={optionsRef}>
-      <button
-        className="btn btn-secondary w-full"
-        onClick={handleButtonClick}
-        disabled={isLoading}
-      >
-        {isLoading ? (
-          <Loader2 size={18} className="animate-spin" />
-        ) : (
-          <Icon size={18} />
-        )}
+      <button className="btn btn-secondary w-full" onClick={handleButtonClick} disabled={isLoading}>
+        {isLoading ? <Loader2 size={18} className="animate-spin" /> : <Icon size={18} />}
         {config.label}
         {config.hasOptions && <ChevronDown size={14} />}
       </button>
@@ -127,21 +120,27 @@ function CareButton({ careType, onLog, isLoading, recentlyLogged, currentPotSize
 
             {/* Show current pot size if repotting */}
             {config.optionType === 'potSize' && currentPotSize && (
-              <p className="text-xs px-3 py-1 mb-1 rounded" style={{ color: 'var(--sage-600)', background: 'var(--sage-100)' }}>
+              <p
+                className="text-xs px-3 py-1 mb-1 rounded"
+                style={{ color: 'var(--sage-600)', background: 'var(--sage-100)' }}
+              >
                 Current: {currentPotSize}
               </p>
             )}
 
-            {options.map(option => (
+            {options.map((option) => (
               <button
                 key={option.value}
                 onClick={() => handleOptionSelect(option.value)}
                 className="w-full text-left px-3 py-2 text-small rounded-lg transition-colors"
                 style={{
-                  color: config.optionType === 'potSize' && option.value === currentPotSize ? 'var(--sage-400)' : undefined
+                  color:
+                    config.optionType === 'potSize' && option.value === currentPotSize
+                      ? 'var(--sage-400)'
+                      : undefined,
                 }}
-                onMouseEnter={(e) => e.target.style.background = 'var(--sage-100)'}
-                onMouseLeave={(e) => e.target.style.background = 'transparent'}
+                onMouseEnter={(e) => (e.target.style.background = 'var(--sage-100)')}
+                onMouseLeave={(e) => (e.target.style.background = 'transparent')}
               >
                 {option.label}
                 {config.optionType === 'potSize' && option.value === currentPotSize && (
@@ -151,12 +150,18 @@ function CareButton({ careType, onLog, isLoading, recentlyLogged, currentPotSize
             ))}
 
             {config.optionType === 'fertilizer' && (
-              <div style={{ borderTop: '1px solid var(--sage-200)', marginTop: '4px', paddingTop: '4px' }}>
+              <div
+                style={{
+                  borderTop: '1px solid var(--sage-200)',
+                  marginTop: '4px',
+                  paddingTop: '4px',
+                }}
+              >
                 <button
                   onClick={() => handleOptionSelect(null)}
                   className="w-full text-left px-3 py-2 text-small text-muted rounded-lg transition-colors"
-                  onMouseEnter={(e) => e.target.style.background = 'var(--sage-100)'}
-                  onMouseLeave={(e) => e.target.style.background = 'transparent'}
+                  onMouseEnter={(e) => (e.target.style.background = 'var(--sage-100)')}
+                  onMouseLeave={(e) => (e.target.style.background = 'transparent')}
                 >
                   Skip / Not sure
                 </button>

@@ -136,7 +136,7 @@ export function useAdvanceStage() {
       breedingService.advanceStage(crossId, stage, { notes, data }),
     onSuccess: (data, { crossId }) => {
       queryClient.setQueryData(breedingKeys.detail(crossId), (old) =>
-        old ? { ...old, ...data } : data
+        old ? { ...old, ...data } : data,
       );
       queryClient.invalidateQueries({ queryKey: breedingKeys.stageLogs(crossId) });
       queryClient.invalidateQueries({ queryKey: breedingKeys.lists() });
@@ -153,7 +153,7 @@ export function useUpdateCrossStatus() {
     mutationFn: ({ id, status }) => breedingService.updateCrossStatus(id, status),
     onSuccess: (data, { id }) => {
       queryClient.setQueryData(breedingKeys.detail(id), (old) =>
-        old ? { ...old, ...data } : data
+        old ? { ...old, ...data } : data,
       );
       queryClient.invalidateQueries({ queryKey: breedingKeys.lists() });
     },

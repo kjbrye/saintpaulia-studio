@@ -11,11 +11,7 @@ export default function DescendantList({ descendants = [], isLoading }) {
   }
 
   if (descendants.length === 0) {
-    return (
-      <p className="text-small text-muted text-center py-4">
-        No known descendants.
-      </p>
-    );
+    return <p className="text-small text-muted text-center py-4">No known descendants.</p>;
   }
 
   // Group by generation
@@ -30,7 +26,7 @@ export default function DescendantList({ descendants = [], isLoading }) {
 
   return (
     <div className="space-y-4">
-      {sortedGens.map(gen => (
+      {sortedGens.map((gen) => (
         <div key={gen}>
           <p className="text-label text-muted mb-2">
             {gen === 1 ? 'Children' : gen === 2 ? 'Grandchildren' : `Generation ${gen}`}
@@ -45,7 +41,10 @@ export default function DescendantList({ descendants = [], isLoading }) {
               >
                 <Flower2 size={16} style={{ color: 'var(--purple-400)', flexShrink: 0 }} />
                 <div className="flex-1 min-w-0">
-                  <p className="text-body font-medium truncate" style={{ color: 'var(--sage-800)' }}>
+                  <p
+                    className="text-body font-medium truncate"
+                    style={{ color: 'var(--sage-800)' }}
+                  >
                     {plant.nickname || plant.cultivar_name || 'Unnamed'}
                   </p>
                   {plant.cultivar_name && plant.nickname && (

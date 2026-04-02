@@ -44,9 +44,10 @@ export default function PlantListItem({
           className={`
             w-6 h-6 rounded-md flex items-center justify-center flex-shrink-0
             transition-colors border
-            ${isSelected
-              ? 'bg-[var(--sage-500)] border-[var(--sage-600)]'
-              : 'bg-white/80 border-[var(--sage-300)] hover:border-[var(--sage-400)]'
+            ${
+              isSelected
+                ? 'bg-[var(--sage-500)] border-[var(--sage-600)]'
+                : 'bg-white/80 border-[var(--sage-300)] hover:border-[var(--sage-400)]'
             }
           `}
         >
@@ -60,11 +61,7 @@ export default function PlantListItem({
         style={{ background: 'var(--cream-200)' }}
       >
         {plant.photo_url ? (
-          <img
-            src={plant.photo_url}
-            alt=""
-            className="w-full h-full object-cover"
-          />
+          <img src={plant.photo_url} alt="" className="w-full h-full object-cover" />
         ) : (
           <Flower2 size={24} style={{ color: 'var(--sage-400)' }} />
         )}

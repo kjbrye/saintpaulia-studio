@@ -7,9 +7,19 @@ import { Link, useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Pencil, Trash2, Check, Loader2, Flower2 } from 'lucide-react';
 import { usePlant, useUpdatePlant, useDeletePlant } from '../hooks/usePlants';
 import { useCareLogs, useLogCare } from '../hooks/useCare';
-import { useBloomLogs, useCreateBloomLog, useEndBloom, useDeleteBloomLog } from '../hooks/useBlooms';
+import {
+  useBloomLogs,
+  useCreateBloomLog,
+  useEndBloom,
+  useDeleteBloomLog,
+} from '../hooks/useBlooms';
 import { useHealthLogs, useCreateHealthLog, useDeleteHealthLog } from '../hooks/useHealth';
-import { usePlantJournal, useCreateJournalEntry, useDeleteJournalEntry, journalKeys } from '../hooks/useJournal';
+import {
+  usePlantJournal,
+  useCreateJournalEntry,
+  useDeleteJournalEntry,
+  journalKeys,
+} from '../hooks/useJournal';
 import { useToast } from '../hooks/useToast';
 import { useSettings } from '../hooks/useSettings.jsx';
 import { getPlantCareStatuses } from '../utils/careStatus';
@@ -282,19 +292,13 @@ export default function PlantDetail() {
             <button onClick={() => navigate(-1)} className="icon-container">
               <ArrowLeft size={20} style={{ color: 'var(--sage-600)' }} />
             </button>
-            {isEditing && (
-              <h1 className="heading heading-lg">Edit Plant</h1>
-            )}
+            {isEditing && <h1 className="heading heading-lg">Edit Plant</h1>}
           </div>
 
           <div className="flex items-center gap-3">
             {isEditing ? (
               <>
-                <button
-                  type="button"
-                  className="btn btn-secondary"
-                  onClick={handleCancel}
-                >
+                <button type="button" className="btn btn-secondary" onClick={handleCancel}>
                   Cancel
                 </button>
                 <button
@@ -317,10 +321,7 @@ export default function PlantDetail() {
               </>
             ) : (
               <>
-                <button
-                  className="btn btn-secondary"
-                  onClick={() => setIsEditing(true)}
-                >
+                <button className="btn btn-secondary" onClick={() => setIsEditing(true)}>
                   <Pencil size={18} />
                   Edit
                 </button>
@@ -385,10 +386,7 @@ export default function PlantDetail() {
             </div>
           </div>
 
-          <div
-            className="my-6"
-            style={{ borderTop: '1px solid var(--sage-200)' }}
-          />
+          <div className="my-6" style={{ borderTop: '1px solid var(--sage-200)' }} />
 
           {/* Detail Fields */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -462,10 +460,7 @@ export default function PlantDetail() {
             />
           </div>
 
-          <div
-            className="my-6"
-            style={{ borderTop: '1px solid var(--sage-200)' }}
-          />
+          <div className="my-6" style={{ borderTop: '1px solid var(--sage-200)' }} />
 
           {/* Notes */}
           <EditableField
@@ -522,11 +517,13 @@ export default function PlantDetail() {
               logs={bloomLogs}
               isLoading={bloomsLoading}
               onCreateBloom={(data) => createBloomLog.mutateAsync({ ...data, plant_id: id })}
-              onEndBloom={(logId) => endBloom.mutateAsync({
-                id: logId,
-                plantId: id,
-                endDate: new Date().toISOString().split('T')[0],
-              })}
+              onEndBloom={(logId) =>
+                endBloom.mutateAsync({
+                  id: logId,
+                  plantId: id,
+                  endDate: new Date().toISOString().split('T')[0],
+                })
+              }
               onDeleteBloom={(logId) => deleteBloomLog.mutateAsync(logId)}
               isCreating={createBloomLog.isPending}
               isEnding={endBloom.isPending}
@@ -573,14 +570,11 @@ export default function PlantDetail() {
           <div className="card p-8 max-w-md w-full">
             <h2 className="heading heading-lg mb-2">Delete Plant?</h2>
             <p className="text-muted mb-6">
-              Are you sure you want to delete "{displayName}"? This will also
-              delete all care logs and cannot be undone.
+              Are you sure you want to delete "{displayName}"? This will also delete all care logs
+              and cannot be undone.
             </p>
             <div className="flex justify-end gap-3">
-              <button
-                className="btn btn-secondary"
-                onClick={() => setShowDeleteConfirm(false)}
-              >
+              <button className="btn btn-secondary" onClick={() => setShowDeleteConfirm(false)}>
                 Cancel
               </button>
               <button

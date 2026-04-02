@@ -12,7 +12,7 @@ import { BREEDING_STAGES } from './CrossCard';
 export default function StageTimeline({ cross, stageLogs = [], onAdvance, isPending }) {
   const [expandedStage, setExpandedStage] = useState(null);
 
-  const currentIndex = BREEDING_STAGES.findIndex(s => s.key === cross.stage);
+  const currentIndex = BREEDING_STAGES.findIndex((s) => s.key === cross.stage);
   const isFailed = cross.status === 'failed' || cross.stage === 'failed';
   const isComplete = cross.status === 'complete' || cross.stage === 'blooming';
 
@@ -24,7 +24,7 @@ export default function StageTimeline({ cross, stageLogs = [], onAdvance, isPend
   }
 
   const toggleExpand = (stageKey) => {
-    setExpandedStage(prev => prev === stageKey ? null : stageKey);
+    setExpandedStage((prev) => (prev === stageKey ? null : stageKey));
   };
 
   return (
@@ -82,7 +82,7 @@ export default function StageTimeline({ cross, stageLogs = [], onAdvance, isPend
                   <Icon
                     size={14}
                     className={clsx(
-                      isCompleted || isCurrent ? 'text-white' : 'text-[var(--text-muted)]'
+                      isCompleted || isCurrent ? 'text-white' : 'text-[var(--text-muted)]',
                     )}
                   />
                 )}
@@ -108,11 +108,12 @@ export default function StageTimeline({ cross, stageLogs = [], onAdvance, isPend
                       {format(new Date(latestLog.entered_at), 'MMM d, yyyy')}
                     </span>
                   )}
-                  {hasContent && (
-                    isExpanded
-                      ? <ChevronDown size={14} style={{ color: 'var(--sage-500)' }} />
-                      : <ChevronRight size={14} style={{ color: 'var(--sage-500)' }} />
-                  )}
+                  {hasContent &&
+                    (isExpanded ? (
+                      <ChevronDown size={14} style={{ color: 'var(--sage-500)' }} />
+                    ) : (
+                      <ChevronRight size={14} style={{ color: 'var(--sage-500)' }} />
+                    ))}
                 </div>
                 {latestLog?.notes && !isExpanded && (
                   <p className="text-small text-muted truncate mt-0.5">{latestLog.notes}</p>
@@ -137,7 +138,7 @@ export default function StageTimeline({ cross, stageLogs = [], onAdvance, isPend
             {/* Expanded stage details */}
             {isExpanded && logs.length > 0 && (
               <div className="ml-11 mt-1 mb-2 space-y-2">
-                {logs.map(log => (
+                {logs.map((log) => (
                   <div
                     key={log.id}
                     className="p-3 rounded-lg"
@@ -153,9 +154,7 @@ export default function StageTimeline({ cross, stageLogs = [], onAdvance, isPend
                         {log.notes}
                       </p>
                     )}
-                    {log.data && (
-                      <StageDataDisplay data={log.data} stage={log.stage} />
-                    )}
+                    {log.data && <StageDataDisplay data={log.data} stage={log.stage} />}
                   </div>
                 ))}
               </div>
@@ -178,7 +177,8 @@ function StageDataDisplay({ data, stage }) {
 
   // Show any other fields generically
   for (const [key, value] of Object.entries(data)) {
-    if (['seed_count', 'germination_count', 'pod_size', 'days_to_germinate'].includes(key)) continue;
+    if (['seed_count', 'germination_count', 'pod_size', 'days_to_germinate'].includes(key))
+      continue;
     items.push([key.replace(/_/g, ' '), String(value)]);
   }
 
@@ -189,7 +189,9 @@ function StageDataDisplay({ data, stage }) {
       {items.map(([label, value]) => (
         <div key={label} className="text-small">
           <span className="text-muted">{label}: </span>
-          <span className="font-semibold" style={{ color: 'var(--sage-800)' }}>{value}</span>
+          <span className="font-semibold" style={{ color: 'var(--sage-800)' }}>
+            {value}
+          </span>
         </div>
       ))}
     </div>

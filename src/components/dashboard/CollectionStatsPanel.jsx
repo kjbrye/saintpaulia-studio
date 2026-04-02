@@ -14,11 +14,7 @@ function PlantAvatarStack({ plants, maxCount = MAX_AVATARS }) {
   return (
     <div className="avatar-stack">
       {visible.map((plant, index) => (
-        <div
-          key={plant.id}
-          className="avatar-stack-item"
-          style={{ zIndex: maxCount - index }}
-        >
+        <div key={plant.id} className="avatar-stack-item" style={{ zIndex: maxCount - index }}>
           {plant.primary_photo_url ? (
             <img src={plant.primary_photo_url} alt={plant.name} />
           ) : (
@@ -40,20 +36,14 @@ export default function CollectionStatsPanel({ plants = [], bloomingPlants = [] 
     <div className="stats-rows-container">
       <Link to="/library" className="stat-row">
         <span className="stat-row-count">{plants.length}</span>
-        <span className="stat-row-label">
-          {plants.length === 1 ? 'Plant' : 'Plants'}
-        </span>
-        {plants.length > 0 && (
-          <PlantAvatarStack plants={plants} />
-        )}
+        <span className="stat-row-label">{plants.length === 1 ? 'Plant' : 'Plants'}</span>
+        {plants.length > 0 && <PlantAvatarStack plants={plants} />}
       </Link>
 
       <Link to="/library?filter=blooming" className="stat-row stat-row-purple">
         <span className="stat-row-count">{bloomingPlants.length}</span>
         <span className="stat-row-label">Blooming</span>
-        {bloomingPlants.length > 0 && (
-          <PlantAvatarStack plants={bloomingPlants} />
-        )}
+        {bloomingPlants.length > 0 && <PlantAvatarStack plants={bloomingPlants} />}
         {bloomingPlants.length === 0 && (
           <div className="stat-row-empty-icon">
             <Flower2 size={20} />

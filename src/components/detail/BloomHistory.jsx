@@ -38,9 +38,12 @@ function BloomLogItem({ log, onEnd, onDelete, isEnding, isDeleting }) {
 
   return (
     <div className="flex items-start gap-4 py-3">
-      <div className="icon-container icon-container-sm" style={{
-        background: isActive ? 'var(--purple-100)' : 'var(--sage-100)',
-      }}>
+      <div
+        className="icon-container icon-container-sm"
+        style={{
+          background: isActive ? 'var(--purple-100)' : 'var(--sage-100)',
+        }}
+      >
         <Flower2 size={14} style={{ color: isActive ? 'var(--purple-400)' : 'var(--sage-500)' }} />
       </div>
       <div className="flex-1 min-w-0">
@@ -48,7 +51,10 @@ function BloomLogItem({ log, onEnd, onDelete, isEnding, isDeleting }) {
           <p className="text-body font-medium">
             {formatDate(log.bloom_start_date)}
             {log.bloom_end_date && (
-              <span style={{ color: 'var(--text-secondary)' }}> — {formatDate(log.bloom_end_date)}</span>
+              <span style={{ color: 'var(--text-secondary)' }}>
+                {' '}
+                — {formatDate(log.bloom_end_date)}
+              </span>
             )}
           </p>
           {isActive && (
@@ -62,10 +68,14 @@ function BloomLogItem({ log, onEnd, onDelete, isEnding, isDeleting }) {
         </div>
         <div className="flex items-center gap-3 mt-0.5">
           {log.flower_count && (
-            <span className="text-small text-muted">{log.flower_count} flower{log.flower_count !== 1 ? 's' : ''}</span>
+            <span className="text-small text-muted">
+              {log.flower_count} flower{log.flower_count !== 1 ? 's' : ''}
+            </span>
           )}
           {log.bloom_quality && (
-            <span className="text-small text-muted">{QUALITY_LABELS[log.bloom_quality] || log.bloom_quality}</span>
+            <span className="text-small text-muted">
+              {QUALITY_LABELS[log.bloom_quality] || log.bloom_quality}
+            </span>
           )}
         </div>
       </div>
@@ -84,7 +94,10 @@ function BloomLogItem({ log, onEnd, onDelete, isEnding, isDeleting }) {
         {showConfirmDelete ? (
           <div className="flex items-center gap-1">
             <button
-              onClick={() => { onDelete(log.id); setShowConfirmDelete(false); }}
+              onClick={() => {
+                onDelete(log.id);
+                setShowConfirmDelete(false);
+              }}
               disabled={isDeleting}
               className="icon-container icon-container-sm"
               title="Confirm delete"
@@ -166,7 +179,9 @@ function NewBloomForm({ onSubmit, onCancel, isPending }) {
             className="input w-full py-1.5 text-small"
           >
             {QUALITY_OPTIONS.map((opt) => (
-              <option key={opt.value} value={opt.value}>{opt.label}</option>
+              <option key={opt.value} value={opt.value}>
+                {opt.label}
+              </option>
             ))}
           </select>
         </div>
@@ -217,10 +232,7 @@ export default function BloomHistory({
       <div className="flex items-center justify-between mb-4">
         <h2 className="heading heading-md">Bloom History</h2>
         {!showForm && (
-          <button
-            onClick={() => setShowForm(true)}
-            className="btn btn-secondary btn-sm"
-          >
+          <button onClick={() => setShowForm(true)} className="btn btn-secondary btn-sm">
             <Plus size={16} />
             Log Bloom
           </button>

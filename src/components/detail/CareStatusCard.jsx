@@ -84,9 +84,7 @@ export default function CareStatusCard({ careType, status, lastDate }) {
           Due soon
         </p>
       )}
-      {status.status === 'good' && (
-        <p className="text-small mt-1 text-muted">On track</p>
-      )}
+      {status.status === 'good' && <p className="text-small mt-1 text-muted">On track</p>}
     </div>
   );
 }

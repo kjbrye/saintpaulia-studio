@@ -85,8 +85,7 @@ export function useEndBloom() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, plantId, endDate }) =>
-      bloomService.endBloom(id, plantId, endDate),
+    mutationFn: ({ id, plantId, endDate }) => bloomService.endBloom(id, plantId, endDate),
     onSuccess: (_data, { plantId }) => {
       queryClient.invalidateQueries({ queryKey: bloomKeys.all });
       queryClient.invalidateQueries({ queryKey: plantKeys.detail(plantId) });

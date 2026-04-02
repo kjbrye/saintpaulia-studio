@@ -78,11 +78,7 @@ export default function PhotoUpload({ value, onChange }) {
       >
         {value ? (
           <div className="relative w-full h-full">
-            <img
-              src={value}
-              alt="Plant"
-              className="w-full h-full object-cover"
-            />
+            <img src={value} alt="Plant" className="w-full h-full object-cover" />
             <button
               type="button"
               onClick={handleRemove}
@@ -102,9 +98,7 @@ export default function PhotoUpload({ value, onChange }) {
             <div className="icon-container">
               <Camera size={24} style={{ color: 'var(--sage-500)' }} />
             </div>
-            <span className="text-small text-muted text-center px-4">
-              Add Photo
-            </span>
+            <span className="text-small text-muted text-center px-4">Add Photo</span>
             <span
               className="text-small text-center px-4"
               style={{ color: 'var(--sage-400)', fontSize: 11 }}

@@ -25,11 +25,7 @@ export default function PlantHeader({ plant }) {
           style={{ background: 'var(--cream-200)' }}
         >
           {plant.photo_url ? (
-            <img
-              src={plant.photo_url}
-              alt={displayName}
-              className="w-full h-full object-cover"
-            />
+            <img src={plant.photo_url} alt={displayName} className="w-full h-full object-cover" />
           ) : (
             <Flower2 size={64} style={{ color: 'var(--sage-400)' }} />
           )}
@@ -40,9 +36,7 @@ export default function PlantHeader({ plant }) {
           <div className="flex items-start justify-between gap-4 mb-2">
             <div>
               <h1 className="heading heading-xl truncate">{displayName}</h1>
-              {plant.nickname && (
-                <p className="text-body text-muted">{plant.cultivar_name}</p>
-              )}
+              {plant.nickname && <p className="text-body text-muted">{plant.cultivar_name}</p>}
             </div>
 
             {/* Blooming Badge */}

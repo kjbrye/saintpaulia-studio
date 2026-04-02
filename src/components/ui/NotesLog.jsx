@@ -31,15 +31,10 @@ export default function NotesLog({ entries = [], onAdd, onDelete, isLoading, isP
         <div className="flex items-center gap-2">
           <BookOpen size={18} style={{ color: 'var(--purple-400)' }} />
           <h2 className="heading heading-md">Notes</h2>
-          {entries.length > 0 && (
-            <span className="text-small text-muted">({entries.length})</span>
-          )}
+          {entries.length > 0 && <span className="text-small text-muted">({entries.length})</span>}
         </div>
         {!isAdding && (
-          <button
-            className="btn btn-primary btn-small"
-            onClick={() => setIsAdding(true)}
-          >
+          <button className="btn btn-primary btn-small" onClick={() => setIsAdding(true)}>
             <Plus size={14} />
             Add Note
           </button>
@@ -64,7 +59,9 @@ export default function NotesLog({ entries = [], onAdd, onDelete, isLoading, isP
               disabled={isPending || !newNote.trim()}
             >
               {isPending ? (
-                <><Loader2 size={14} className="animate-spin" /> Saving...</>
+                <>
+                  <Loader2 size={14} className="animate-spin" /> Saving...
+                </>
               ) : (
                 'Save Note'
               )}
@@ -72,7 +69,10 @@ export default function NotesLog({ entries = [], onAdd, onDelete, isLoading, isP
             <button
               type="button"
               className="btn btn-secondary btn-small"
-              onClick={() => { setIsAdding(false); setNewNote(''); }}
+              onClick={() => {
+                setIsAdding(false);
+                setNewNote('');
+              }}
             >
               Cancel
             </button>
@@ -85,7 +85,7 @@ export default function NotesLog({ entries = [], onAdd, onDelete, isLoading, isP
         <p className="text-small text-muted py-4 text-center">Loading notes...</p>
       ) : entries.length > 0 ? (
         <div className="space-y-3">
-          {entries.map(entry => (
+          {entries.map((entry) => (
             <div
               key={entry.id}
               className="group flex gap-3 p-3 rounded-lg"

@@ -5,7 +5,11 @@
 import { useState, useMemo } from 'react';
 import { Loader2, Plus } from 'lucide-react';
 import FormField from '../ui/FormField';
-import { describeRelationship, calculateInbreedingCoefficient, getCoiRisk } from '../../utils/lineage';
+import {
+  describeRelationship,
+  calculateInbreedingCoefficient,
+  getCoiRisk,
+} from '../../utils/lineage';
 
 export default function CrossForm({ plants = [], onSubmit, onCancel, isPending }) {
   const [formData, setFormData] = useState({
@@ -18,9 +22,9 @@ export default function CrossForm({ plants = [], onSubmit, onCancel, isPending }
   const [errors, setErrors] = useState({});
 
   const updateField = (field, value) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+    setFormData((prev) => ({ ...prev, [field]: value }));
     if (errors[field]) {
-      setErrors(prev => ({ ...prev, [field]: null }));
+      setErrors((prev) => ({ ...prev, [field]: null }));
     }
   };
 
@@ -46,8 +50,8 @@ export default function CrossForm({ plants = [], onSubmit, onCancel, isPending }
     e.preventDefault();
     if (!validate()) return;
 
-    const podPlant = plants.find(p => p.id === formData.pod_parent_id);
-    const pollenPlant = plants.find(p => p.id === formData.pollen_parent_id);
+    const podPlant = plants.find((p) => p.id === formData.pod_parent_id);
+    const pollenPlant = plants.find((p) => p.id === formData.pollen_parent_id);
 
     try {
       await onSubmit({
@@ -74,9 +78,10 @@ export default function CrossForm({ plants = [], onSubmit, onCancel, isPending }
             onChange={(e) => updateField('pod_parent_id', e.target.value)}
           >
             <option value="">Select pod parent...</option>
-            {plants.map(plant => (
+            {plants.map((plant) => (
               <option key={plant.id} value={plant.id}>
-                {plant.cultivar_name}{plant.nickname ? ` (${plant.nickname})` : ''}
+                {plant.cultivar_name}
+                {plant.nickname ? ` (${plant.nickname})` : ''}
               </option>
             ))}
           </select>
@@ -89,9 +94,10 @@ export default function CrossForm({ plants = [], onSubmit, onCancel, isPending }
             onChange={(e) => updateField('pollen_parent_id', e.target.value)}
           >
             <option value="">Select pollen parent...</option>
-            {plants.map(plant => (
+            {plants.map((plant) => (
               <option key={plant.id} value={plant.id}>
-                {plant.cultivar_name}{plant.nickname ? ` (${plant.nickname})` : ''}
+                {plant.cultivar_name}
+                {plant.nickname ? ` (${plant.nickname})` : ''}
               </option>
             ))}
           </select>
@@ -139,7 +145,8 @@ export default function CrossForm({ plants = [], onSubmit, onCancel, isPending }
         </p>
       )}
 
-      <div className="flex flex-col-reverse sm:flex-row justify-end gap-3 pt-4"
+      <div
+        className="flex flex-col-reverse sm:flex-row justify-end gap-3 pt-4"
         style={{ borderTop: '1px solid var(--sage-200)' }}
       >
         <button type="button" className="btn btn-secondary" onClick={onCancel}>

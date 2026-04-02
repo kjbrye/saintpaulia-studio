@@ -104,11 +104,7 @@ export default function AddPlant() {
 
             {/* Primary Fields */}
             <div className="flex-1 space-y-5">
-              <FormField
-                label="Cultivar Name"
-                required
-                error={errors.cultivar_name}
-              >
+              <FormField label="Cultivar Name" required error={errors.cultivar_name}>
                 <input
                   type="text"
                   className={`input w-full ${errors.cultivar_name ? 'input-error' : ''}`}
@@ -132,15 +128,9 @@ export default function AddPlant() {
 
           {/* Divider with label */}
           <div className="flex items-center gap-4 my-8">
-            <div
-              className="flex-1"
-              style={{ borderTop: '1px solid var(--sage-200)' }}
-            />
+            <div className="flex-1" style={{ borderTop: '1px solid var(--sage-200)' }} />
             <span className="text-label text-muted">Details</span>
-            <div
-              className="flex-1"
-              style={{ borderTop: '1px solid var(--sage-200)' }}
-            />
+            <div className="flex-1" style={{ borderTop: '1px solid var(--sage-200)' }} />
           </div>
 
           {/* Detail Fields - 2 column grid */}
@@ -244,10 +234,7 @@ export default function AddPlant() {
 
           {/* Submit Error */}
           {errors.submit && (
-            <p
-              className="text-small mb-4 text-center"
-              style={{ color: 'var(--color-error)' }}
-            >
+            <p className="text-small mb-4 text-center" style={{ color: 'var(--color-error)' }}>
               {errors.submit}
             </p>
           )}

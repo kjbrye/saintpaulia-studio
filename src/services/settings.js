@@ -34,7 +34,7 @@ export async function saveSettings(settings) {
     .from('user_settings')
     .upsert(
       { user_id: userId, settings, updated_at: new Date().toISOString() },
-      { onConflict: 'user_id' }
+      { onConflict: 'user_id' },
     );
 
   if (error) throw error;

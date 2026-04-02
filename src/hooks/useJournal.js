@@ -61,9 +61,14 @@ export function useCreateJournalEntry() {
     mutationFn: (entry) => journalService.createJournalEntry(entry),
     onSuccess: (data) => {
       // Invalidate the relevant parent's journal query
-      if (data.plant_id) queryClient.invalidateQueries({ queryKey: journalKeys.forPlant(data.plant_id) });
-      if (data.propagation_id) queryClient.invalidateQueries({ queryKey: journalKeys.forPropagation(data.propagation_id) });
-      if (data.cross_id) queryClient.invalidateQueries({ queryKey: journalKeys.forCross(data.cross_id) });
+      if (data.plant_id)
+        queryClient.invalidateQueries({ queryKey: journalKeys.forPlant(data.plant_id) });
+      if (data.propagation_id)
+        queryClient.invalidateQueries({
+          queryKey: journalKeys.forPropagation(data.propagation_id),
+        });
+      if (data.cross_id)
+        queryClient.invalidateQueries({ queryKey: journalKeys.forCross(data.cross_id) });
     },
   });
 }

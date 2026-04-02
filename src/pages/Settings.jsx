@@ -66,7 +66,7 @@ export default function Settings() {
   const memberSince = user?.created_at
     ? new Date(user.created_at).toLocaleDateString('en-US', {
         month: 'long',
-        year: 'numeric'
+        year: 'numeric',
       })
     : 'Unknown';
 
@@ -160,7 +160,9 @@ export default function Settings() {
         <section className="card p-6 border-copper-400/30">
           <div className="flex items-center gap-2 mb-4">
             <AlertTriangle size={18} color="var(--copper-500)" />
-            <h2 className="text-label" style={{ color: 'var(--copper-600)' }}>Danger Zone</h2>
+            <h2 className="text-label" style={{ color: 'var(--copper-600)' }}>
+              Danger Zone
+            </h2>
           </div>
 
           <button
@@ -173,9 +175,7 @@ export default function Settings() {
         </section>
 
         {/* App Version */}
-        <p className="text-center text-small text-muted mt-8">
-          Saintpaulia Studio v2.0.0
-        </p>
+        <p className="text-center text-small text-muted mt-8">Saintpaulia Studio v2.0.0</p>
       </div>
 
       {/* Logout Confirmation Modal */}
@@ -183,21 +183,12 @@ export default function Settings() {
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
           <div className="card p-8 max-w-sm w-full">
             <h2 className="heading heading-lg mb-2">Log out?</h2>
-            <p className="text-muted mb-6">
-              Are you sure you want to log out of your account?
-            </p>
+            <p className="text-muted mb-6">Are you sure you want to log out of your account?</p>
             <div className="flex justify-end gap-3">
-              <button
-                className="btn btn-secondary"
-                onClick={() => setShowLogoutConfirm(false)}
-              >
+              <button className="btn btn-secondary" onClick={() => setShowLogoutConfirm(false)}>
                 Cancel
               </button>
-              <button
-                className="btn btn-primary"
-                onClick={handleLogout}
-                disabled={isLoggingOut}
-              >
+              <button className="btn btn-primary" onClick={handleLogout} disabled={isLoggingOut}>
                 {isLoggingOut ? 'Logging out...' : 'Log Out'}
               </button>
             </div>
@@ -220,8 +211,10 @@ function SettingRow({ label, value, options, onChange }) {
           onChange(isNaN(val) ? val : Number(val));
         }}
       >
-        {options.map(opt => (
-          <option key={opt.value} value={opt.value}>{opt.label}</option>
+        {options.map((opt) => (
+          <option key={opt.value} value={opt.value}>
+            {opt.label}
+          </option>
         ))}
       </select>
     </div>

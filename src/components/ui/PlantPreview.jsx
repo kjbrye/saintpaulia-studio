@@ -17,12 +17,10 @@ const careIcons = {
   grooming: { icon: Scissors, label: 'Needs grooming' },
 };
 
-const PlantPreview = forwardRef(function PlantPreview({
-  plant,
-  needsCare = false,
-  className,
-  ...props
-}, ref) {
+const PlantPreview = forwardRef(function PlantPreview(
+  { plant, needsCare = false, className, ...props },
+  ref,
+) {
   const { careThresholds } = useSettings();
   const displayName = plant.nickname || plant.cultivar_name || 'Unnamed Plant';
   const overdueCareTypes = needsCare ? getOverdueCareTypes(plant, careThresholds) : [];
@@ -31,20 +29,13 @@ const PlantPreview = forwardRef(function PlantPreview({
     <Link to={`/plants/${plant.id}`} className="block">
       <div
         ref={ref}
-        className={clsx(
-          'card-interactive p-4 flex items-center gap-4',
-          className
-        )}
+        className={clsx('card-interactive p-4 flex items-center gap-4', className)}
         {...props}
       >
         {/* Plant avatar */}
         <div className="w-12 h-12 rounded-xl bg-[var(--bg-inset)] flex items-center justify-center flex-shrink-0 overflow-hidden">
           {plant.photo_url ? (
-            <img
-              src={plant.photo_url}
-              alt={displayName}
-              className="w-full h-full object-cover"
-            />
+            <img src={plant.photo_url} alt={displayName} className="w-full h-full object-cover" />
           ) : (
             <span className="text-2xl">🪻</span>
           )}
@@ -52,13 +43,9 @@ const PlantPreview = forwardRef(function PlantPreview({
 
         {/* Plant info */}
         <div className="flex-1 min-w-0">
-          <p className="font-semibold text-[var(--text-primary)] truncate">
-            {displayName}
-          </p>
+          <p className="font-semibold text-[var(--text-primary)] truncate">{displayName}</p>
           {plant.cultivar_name && plant.nickname && (
-            <p className="text-sm text-[var(--text-muted)] truncate">
-              {plant.cultivar_name}
-            </p>
+            <p className="text-sm text-[var(--text-muted)] truncate">{plant.cultivar_name}</p>
           )}
         </div>
 

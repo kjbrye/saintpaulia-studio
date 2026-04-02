@@ -73,10 +73,16 @@ export function calculateGeneration(plantId, plantMap, cache = new Map()) {
   if (cache.has(plantId)) return cache.get(plantId);
 
   const plant = plantMap.get(plantId);
-  if (!plant) { cache.set(plantId, null); return null; }
+  if (!plant) {
+    cache.set(plantId, null);
+    return null;
+  }
 
   // If the plant already has a generation set, use it
-  if (plant.generation != null) { cache.set(plantId, plant.generation); return plant.generation; }
+  if (plant.generation != null) {
+    cache.set(plantId, plant.generation);
+    return plant.generation;
+  }
 
   // No parents known → foundation stock
   if (!plant.pod_parent_id && !plant.pollen_parent_id) {
@@ -84,10 +90,14 @@ export function calculateGeneration(plantId, plantMap, cache = new Map()) {
     return null;
   }
 
-  const podGen = plant.pod_parent_id ? calculateGeneration(plant.pod_parent_id, plantMap, cache) : null;
-  const pollenGen = plant.pollen_parent_id ? calculateGeneration(plant.pollen_parent_id, plantMap, cache) : null;
+  const podGen = plant.pod_parent_id
+    ? calculateGeneration(plant.pod_parent_id, plantMap, cache)
+    : null;
+  const pollenGen = plant.pollen_parent_id
+    ? calculateGeneration(plant.pollen_parent_id, plantMap, cache)
+    : null;
 
-  let gen = null;
+  let gen;
   if (podGen != null && pollenGen != null) {
     gen = Math.max(podGen, pollenGen) + 1;
   } else if (podGen != null) {
@@ -127,7 +137,7 @@ export function findCommonAncestors(plantAId, plantBId, plantMap, maxDepth = 6) 
   }
 
   // Sort by total distance (closest common ancestors first)
-  common.sort((a, b) => (a.distanceA + a.distanceB) - (b.distanceA + b.distanceB));
+  common.sort((a, b) => a.distanceA + a.distanceB - (b.distanceA + b.distanceB));
   return common;
 }
 
@@ -171,7 +181,12 @@ function getAncestorDistances(plantId, plantMap, maxDepth) {
  * @param {number} maxDepth
  * @returns {number} COI as decimal (0-1)
  */
-export function calculateInbreedingCoefficient(podParentId, pollenParentId, plantMap, maxDepth = 6) {
+export function calculateInbreedingCoefficient(
+  podParentId,
+  pollenParentId,
+  plantMap,
+  maxDepth = 6,
+) {
   if (!podParentId || !pollenParentId) return 0;
 
   const commonAncestors = findCommonAncestors(podParentId, pollenParentId, plantMap, maxDepth);
@@ -203,14 +218,15 @@ export function getDescendants(plantId, allPlants) {
     if (visited.has(id)) continue;
     visited.add(id);
 
-    const children = allPlants.filter(
-      p => p.pod_parent_id === id || p.pollen_parent_id === id
-    );
+    const children = allPlants.filter((p) => p.pod_parent_id === id || p.pollen_parent_id === id);
 
     for (const child of children) {
-      const parentRole = child.pod_parent_id === id
-        ? (child.pollen_parent_id === id ? 'both' : 'pod_parent')
-        : 'pollen_parent';
+      const parentRole =
+        child.pod_parent_id === id
+          ? child.pollen_parent_id === id
+            ? 'both'
+            : 'pod_parent'
+          : 'pollen_parent';
 
       descendants.push({ plant: child, generation: generation + 1, parentRole });
       queue.push({ id: child.id, generation: generation + 1 });
@@ -226,14 +242,13 @@ export function getDescendants(plantId, allPlants) {
  * @returns {string} e.g., "'Rob's Vanilla Trail' × 'Buckeye Seductress'"
  */
 export function formatPedigreeNotation(plant) {
-  const pod = plant.pod_parent_name
-    || plant.pod_parent?.cultivar_name
-    || plant.pod_parent?.nickname
-    || null;
-  const pollen = plant.pollen_parent_name
-    || plant.pollen_parent?.cultivar_name
-    || plant.pollen_parent?.nickname
-    || null;
+  const pod =
+    plant.pod_parent_name || plant.pod_parent?.cultivar_name || plant.pod_parent?.nickname || null;
+  const pollen =
+    plant.pollen_parent_name ||
+    plant.pollen_parent?.cultivar_name ||
+    plant.pollen_parent?.nickname ||
+    null;
 
   if (!pod && !pollen) return null;
   return `${pod || 'Unknown'} × ${pollen || 'Unknown'}`;
@@ -259,13 +274,16 @@ export function describeRelationship(plantAId, plantBId, plantMap) {
 
   // Siblings (share at least one parent)
   const shareParent =
-    (a.pod_parent_id && (a.pod_parent_id === b.pod_parent_id || a.pod_parent_id === b.pollen_parent_id)) ||
-    (a.pollen_parent_id && (a.pollen_parent_id === b.pod_parent_id || a.pollen_parent_id === b.pollen_parent_id));
+    (a.pod_parent_id &&
+      (a.pod_parent_id === b.pod_parent_id || a.pod_parent_id === b.pollen_parent_id)) ||
+    (a.pollen_parent_id &&
+      (a.pollen_parent_id === b.pod_parent_id || a.pollen_parent_id === b.pollen_parent_id));
   if (shareParent) {
     const shareBoth =
-      a.pod_parent_id && a.pollen_parent_id &&
+      a.pod_parent_id &&
+      a.pollen_parent_id &&
       ((a.pod_parent_id === b.pod_parent_id && a.pollen_parent_id === b.pollen_parent_id) ||
-       (a.pod_parent_id === b.pollen_parent_id && a.pollen_parent_id === b.pod_parent_id));
+        (a.pod_parent_id === b.pollen_parent_id && a.pollen_parent_id === b.pod_parent_id));
     return shareBoth ? 'Full siblings' : 'Half siblings';
   }
 
@@ -274,7 +292,8 @@ export function describeRelationship(plantAId, plantBId, plantMap) {
   if (common.length > 0) {
     const closest = common[0];
     const totalDist = closest.distanceA + closest.distanceB;
-    if (totalDist <= 4) return `Related (${common.length} common ancestor${common.length > 1 ? 's' : ''})`;
+    if (totalDist <= 4)
+      return `Related (${common.length} common ancestor${common.length > 1 ? 's' : ''})`;
     return 'Distantly related';
   }
 

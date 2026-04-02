@@ -3,16 +3,53 @@
  */
 
 import { Link } from 'react-router-dom';
-import { ArrowLeft, Flower2, Heart, Sparkles, BookOpen, Droplets, BarChart3, Scissors } from 'lucide-react';
+import {
+  ArrowLeft,
+  Flower2,
+  Heart,
+  Sparkles,
+  BookOpen,
+  Droplets,
+  BarChart3,
+  Scissors,
+} from 'lucide-react';
 
 const features = [
-  { icon: Flower2, label: 'Collection Management', desc: 'Organize and track your entire violet collection' },
-  { icon: Droplets, label: 'Care Tracking', desc: 'Log watering, fertilizing, and grooming with smart reminders' },
-  { icon: Scissors, label: 'Propagation Tracker', desc: 'Track leaf cuttings from cutting to established plantlet' },
-  { icon: Heart, label: 'Breeding Tracker', desc: 'Document crosses, track stages, and link offspring' },
-  { icon: Flower2, label: 'Lineage & Pedigree', desc: 'Explore ancestry, track traits, and find relationships' },
-  { icon: BookOpen, label: 'Journal', desc: 'Timestamped notes on plants, propagations, and crosses' },
-  { icon: BarChart3, label: 'Analytics', desc: 'Insights into your care patterns and plant health' },
+  {
+    icon: Flower2,
+    label: 'Collection Management',
+    desc: 'Organize and track your entire violet collection',
+  },
+  {
+    icon: Droplets,
+    label: 'Care Tracking',
+    desc: 'Log watering, fertilizing, and grooming with smart reminders',
+  },
+  {
+    icon: Scissors,
+    label: 'Propagation Tracker',
+    desc: 'Track leaf cuttings from cutting to established plantlet',
+  },
+  {
+    icon: Heart,
+    label: 'Breeding Tracker',
+    desc: 'Document crosses, track stages, and link offspring',
+  },
+  {
+    icon: Flower2,
+    label: 'Lineage & Pedigree',
+    desc: 'Explore ancestry, track traits, and find relationships',
+  },
+  {
+    icon: BookOpen,
+    label: 'Journal',
+    desc: 'Timestamped notes on plants, propagations, and crosses',
+  },
+  {
+    icon: BarChart3,
+    label: 'Analytics',
+    desc: 'Insights into your care patterns and plant health',
+  },
 ];
 
 export default function About() {
@@ -42,14 +79,13 @@ export default function About() {
           </div>
           <p className="leading-relaxed mb-4" style={{ color: 'var(--text-primary)' }}>
             Saintpaulia Studio is a personal collection manager built for African violet
-            enthusiasts. Whether you have a windowsill trio or a light-stand full of blooms,
-            this app helps you keep track of every plant, every care task, and every glorious
-            flowering moment.
+            enthusiasts. Whether you have a windowsill trio or a light-stand full of blooms, this
+            app helps you keep track of every plant, every care task, and every glorious flowering
+            moment.
           </p>
           <p className="leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
-            Born from a love of these fuzzy-leaved beauties, Saintpaulia Studio is designed
-            to make plant care feel less like a chore and more like the peaceful hobby it
-            should be.
+            Born from a love of these fuzzy-leaved beauties, Saintpaulia Studio is designed to make
+            plant care feel less like a chore and more like the peaceful hobby it should be.
           </p>
         </section>
 
@@ -64,15 +100,21 @@ export default function About() {
                 </div>
                 <div className="flex-1">
                   <div className="flex items-center gap-2">
-                    <span className="font-medium" style={{ color: 'var(--text-primary)' }}>{label}</span>
+                    <span className="font-medium" style={{ color: 'var(--text-primary)' }}>
+                      {label}
+                    </span>
                     {coming && (
-                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium"
-                        style={{ background: 'var(--purple-100)', color: 'var(--purple-600)' }}>
+                      <span
+                        className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium"
+                        style={{ background: 'var(--purple-100)', color: 'var(--purple-600)' }}
+                      >
                         <Sparkles size={10} /> Coming Soon
                       </span>
                     )}
                   </div>
-                  <p className="text-small" style={{ color: 'var(--text-secondary)' }}>{desc}</p>
+                  <p className="text-small" style={{ color: 'var(--text-secondary)' }}>
+                    {desc}
+                  </p>
                 </div>
               </div>
             ))}
@@ -88,15 +130,14 @@ export default function About() {
             <h2 className="heading heading-lg pt-2">About African Violets</h2>
           </div>
           <p className="leading-relaxed mb-4" style={{ color: 'var(--text-primary)' }}>
-            African violets (<em>Saintpaulia</em>) are beloved houseplants native to the
-            coastal mountains of East Africa. First discovered in 1892, they've since become
-            one of the world's most popular flowering houseplants.
+            African violets (<em>Saintpaulia</em>) are beloved houseplants native to the coastal
+            mountains of East Africa. First discovered in 1892, they've since become one of the
+            world's most popular flowering houseplants.
           </p>
           <p className="leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
-            Known for their velvety leaves and jewel-toned blooms, African violets thrive
-            under indoor conditions and can bloom nearly year-round with proper care.
-            Collectors appreciate the incredible variety of flower forms, colors, and
-            leaf patterns available.
+            Known for their velvety leaves and jewel-toned blooms, African violets thrive under
+            indoor conditions and can bloom nearly year-round with proper care. Collectors
+            appreciate the incredible variety of flower forms, colors, and leaf patterns available.
           </p>
         </section>
 

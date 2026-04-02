@@ -1,6 +1,6 @@
 /**
  * Auth Service
- * 
+ *
  * All authentication operations live here.
  */
 
@@ -11,7 +11,9 @@ import { supabase } from '../api/supabase';
  * @returns {Promise<Object|null>} User object or null
  */
 export async function getCurrentUser() {
-  const { data: { user } } = await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
   return user;
 }
 
@@ -20,14 +22,16 @@ export async function getCurrentUser() {
  * @returns {Promise<Object|null>} Session object or null
  */
 export async function getSession() {
-  const { data: { session } } = await supabase.auth.getSession();
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
   return session;
 }
 
 /**
  * Sign in with email and password
- * @param {string} email 
- * @param {string} password 
+ * @param {string} email
+ * @param {string} password
  * @returns {Promise<Object>} Auth response
  */
 export async function signIn(email, password) {
@@ -42,8 +46,8 @@ export async function signIn(email, password) {
 
 /**
  * Sign up with email and password
- * @param {string} email 
- * @param {string} password 
+ * @param {string} email
+ * @param {string} password
  * @returns {Promise<Object>} Auth response
  */
 export async function signUp(email, password) {
@@ -83,6 +87,8 @@ export async function resetPassword(email) {
  * @returns {Object} Subscription object with unsubscribe method
  */
 export function onAuthStateChange(callback) {
-  const { data: { subscription } } = supabase.auth.onAuthStateChange(callback);
+  const {
+    data: { subscription },
+  } = supabase.auth.onAuthStateChange(callback);
   return subscription;
 }

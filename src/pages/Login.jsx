@@ -1,6 +1,6 @@
 /**
  * Login Page
- * 
+ *
  * Email/password authentication with sign in and sign up modes.
  */
 
@@ -79,8 +79,8 @@ export default function Login() {
         {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label 
-              htmlFor="email" 
+            <label
+              htmlFor="email"
               className="block text-sm font-medium text-[var(--text-secondary)] mb-2"
             >
               Email
@@ -120,7 +120,9 @@ export default function Login() {
           {/* Success message */}
           {message && (
             <div className="p-3 rounded-xl bg-[rgba(34,197,94,0.15)] border border-[rgba(34,197,94,0.3)]">
-              <p className="text-sm" style={{ color: 'var(--sage-700)' }}>{message}</p>
+              <p className="text-sm" style={{ color: 'var(--sage-700)' }}>
+                {message}
+              </p>
             </div>
           )}
 
@@ -145,8 +147,7 @@ export default function Login() {
                 ? 'Send Reset Link'
                 : mode === 'signin'
                   ? 'Sign In'
-                  : 'Create Account'
-            }
+                  : 'Create Account'}
           </Button>
         </form>
 

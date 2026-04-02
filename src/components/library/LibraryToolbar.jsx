@@ -114,11 +114,7 @@ export default function LibraryToolbar({
           </div>
 
           {/* Sort Dropdown */}
-          <select
-            className="input"
-            value={sortBy}
-            onChange={(e) => onSortChange(e.target.value)}
-          >
+          <select className="input" value={sortBy} onChange={(e) => onSortChange(e.target.value)}>
             <option value="updated">Recently Updated</option>
             <option value="name">Name A-Z</option>
             <option value="acquired">Date Acquired</option>

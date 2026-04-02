@@ -3,7 +3,15 @@
  */
 
 import { useState, useMemo } from 'react';
-import { Droplets, Sparkles, Scissors, Clock, Flower2, ArrowUpDown, ChevronDown } from 'lucide-react';
+import {
+  Droplets,
+  Sparkles,
+  Scissors,
+  Clock,
+  Flower2,
+  ArrowUpDown,
+  ChevronDown,
+} from 'lucide-react';
 
 const careConfig = {
   watering: {
@@ -84,15 +92,19 @@ function CareLogItem({ log }) {
         <p className="text-body font-medium">
           {config.label}
           {fertilizerLabel && (
-            <span style={{ color: 'var(--purple-400)' }} className="font-normal"> - {fertilizerLabel}</span>
+            <span style={{ color: 'var(--purple-400)' }} className="font-normal">
+              {' '}
+              - {fertilizerLabel}
+            </span>
           )}
           {potSize && (
-            <span style={{ color: 'var(--sage-600)' }} className="font-normal"> - {potSize}</span>
+            <span style={{ color: 'var(--sage-600)' }} className="font-normal">
+              {' '}
+              - {potSize}
+            </span>
           )}
         </p>
-        {log.notes && (
-          <p className="text-small text-muted truncate">{log.notes}</p>
-        )}
+        {log.notes && <p className="text-small text-muted truncate">{log.notes}</p>}
       </div>
       <div className="flex items-center gap-1 text-small text-muted flex-shrink-0">
         <Clock size={12} />
@@ -171,12 +183,8 @@ export default function CareHistory({ logs = [], isLoading }) {
               onClick={() => setFilter(option.value)}
               className="px-3 py-1.5 rounded-lg text-small font-medium transition-all"
               style={{
-                background:
-                  filter === option.value
-                    ? 'var(--sage-600)'
-                    : 'var(--sage-100)',
-                color:
-                  filter === option.value ? 'white' : 'var(--sage-600)',
+                background: filter === option.value ? 'var(--sage-600)' : 'var(--sage-100)',
+                color: filter === option.value ? 'white' : 'var(--sage-600)',
               }}
             >
               {option.label}
@@ -188,7 +196,10 @@ export default function CareHistory({ logs = [], isLoading }) {
         <div className="flex flex-wrap items-end gap-3">
           {/* Sort By */}
           <div className="min-w-[130px]">
-            <label className="block mb-1 text-small font-medium" style={{ color: 'var(--sage-600)' }}>
+            <label
+              className="block mb-1 text-small font-medium"
+              style={{ color: 'var(--sage-600)' }}
+            >
               Sort
             </label>
             <div className="relative">
@@ -214,7 +225,10 @@ export default function CareHistory({ logs = [], isLoading }) {
           {/* Date Range */}
           <div className="flex gap-2 items-end flex-wrap">
             <div>
-              <label className="block mb-1 text-small font-medium" style={{ color: 'var(--sage-600)' }}>
+              <label
+                className="block mb-1 text-small font-medium"
+                style={{ color: 'var(--sage-600)' }}
+              >
                 From
               </label>
               <input
@@ -226,7 +240,10 @@ export default function CareHistory({ logs = [], isLoading }) {
               />
             </div>
             <div>
-              <label className="block mb-1 text-small font-medium" style={{ color: 'var(--sage-600)' }}>
+              <label
+                className="block mb-1 text-small font-medium"
+                style={{ color: 'var(--sage-600)' }}
+              >
                 To
               </label>
               <input

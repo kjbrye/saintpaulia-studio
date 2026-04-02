@@ -1,6 +1,6 @@
 /**
  * Care Status Utilities
- * 
+ *
  * Business logic for determining plant care status.
  * Extracted from components so it can be reused and tested.
  */
@@ -16,18 +16,16 @@ export function getCareStatus(lastCareDate, daysThreshold) {
     return { status: 'overdue', days: null };
   }
 
-  const daysSince = Math.floor(
-    (new Date() - new Date(lastCareDate)) / (1000 * 60 * 60 * 24)
-  );
+  const daysSince = Math.floor((new Date() - new Date(lastCareDate)) / (1000 * 60 * 60 * 24));
 
   if (daysSince >= daysThreshold) {
     return { status: 'overdue', days: daysSince };
   }
-  
+
   if (daysSince >= daysThreshold * 0.8) {
     return { status: 'soon', days: daysSince };
   }
-  
+
   return { status: 'good', days: daysSince };
 }
 
@@ -49,7 +47,10 @@ export const CARE_THRESHOLDS = {
 export function getPlantCareStatuses(plant, thresholds = CARE_THRESHOLDS) {
   return {
     watering: getCareStatus(plant.last_watered, thresholds.watering ?? CARE_THRESHOLDS.watering),
-    fertilizing: getCareStatus(plant.last_fertilized, thresholds.fertilizing ?? CARE_THRESHOLDS.fertilizing),
+    fertilizing: getCareStatus(
+      plant.last_fertilized,
+      thresholds.fertilizing ?? CARE_THRESHOLDS.fertilizing,
+    ),
     grooming: getCareStatus(plant.last_groomed, thresholds.grooming ?? CARE_THRESHOLDS.grooming),
   };
 }
@@ -62,7 +63,7 @@ export function getPlantCareStatuses(plant, thresholds = CARE_THRESHOLDS) {
  */
 export function plantNeedsCare(plant, thresholds) {
   const statuses = getPlantCareStatuses(plant, thresholds);
-  return Object.values(statuses).some(s => s.status === 'overdue');
+  return Object.values(statuses).some((s) => s.status === 'overdue');
 }
 
 /**
@@ -127,16 +128,13 @@ export function getCollectionCareStats(plants, thresholds = CARE_THRESHOLDS) {
   // Find most neglected (highest overdue count) and best maintained (lowest overdue count)
   const careTypes = Object.keys(careBreakdown);
   const sortedByOverdue = careTypes.sort(
-    (a, b) => careBreakdown[b].overdue - careBreakdown[a].overdue
+    (a, b) => careBreakdown[b].overdue - careBreakdown[a].overdue,
   );
 
-  const mostNeglectedCareType = careBreakdown[sortedByOverdue[0]].overdue > 0
-    ? sortedByOverdue[0]
-    : null;
+  const mostNeglectedCareType =
+    careBreakdown[sortedByOverdue[0]].overdue > 0 ? sortedByOverdue[0] : null;
 
-  const sortedByGood = careTypes.sort(
-    (a, b) => careBreakdown[b].good - careBreakdown[a].good
-  );
+  const sortedByGood = careTypes.sort((a, b) => careBreakdown[b].good - careBreakdown[a].good);
   const bestMaintainedCareType = sortedByGood[0];
 
   return {

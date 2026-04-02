@@ -14,10 +14,20 @@ const STAGE_FIELDS = {
   ],
   harvested: [
     { key: 'seed_count', label: 'Seed Count', type: 'number', min: 0 },
-    { key: 'pod_condition', label: 'Pod Condition', type: 'select', options: ['green', 'brown', 'split'] },
+    {
+      key: 'pod_condition',
+      label: 'Pod Condition',
+      type: 'select',
+      options: ['green', 'brown', 'split'],
+    },
   ],
   sown: [
-    { key: 'sowing_method', label: 'Sowing Method', type: 'select', options: ['surface sow', 'covered', 'baggie method'] },
+    {
+      key: 'sowing_method',
+      label: 'Sowing Method',
+      type: 'select',
+      options: ['surface sow', 'covered', 'baggie method'],
+    },
   ],
   sprouted: [
     { key: 'germination_count', label: 'Germination Count', type: 'number', min: 0 },
@@ -25,7 +35,19 @@ const STAGE_FIELDS = {
   ],
   blooming: [],
   failed: [
-    { key: 'failure_reason', label: 'Reason for Failure', type: 'select', options: ['no pod formed', 'pod dropped', 'no germination', 'seedlings died', 'contamination', 'other'] },
+    {
+      key: 'failure_reason',
+      label: 'Reason for Failure',
+      type: 'select',
+      options: [
+        'no pod formed',
+        'pod dropped',
+        'no germination',
+        'seedlings died',
+        'contamination',
+        'other',
+      ],
+    },
   ],
 };
 
@@ -33,13 +55,13 @@ export default function StageAdvanceModal({ cross, targetStage, onConfirm, onCan
   const [notes, setNotes] = useState('');
   const [stageData, setStageData] = useState({});
 
-  const stageInfo = BREEDING_STAGES.find(s => s.key === targetStage.key) || targetStage;
+  const stageInfo = BREEDING_STAGES.find((s) => s.key === targetStage.key) || targetStage;
   const Icon = stageInfo.icon;
   const fields = STAGE_FIELDS[targetStage.key] || [];
   const isFailing = targetStage.key === 'failed';
 
   const updateField = (key, value) => {
-    setStageData(prev => ({ ...prev, [key]: value }));
+    setStageData((prev) => ({ ...prev, [key]: value }));
   };
 
   const handleSubmit = (e) => {
@@ -79,7 +101,7 @@ export default function StageAdvanceModal({ cross, targetStage, onConfirm, onCan
 
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Stage-specific fields */}
-          {fields.map(field => (
+          {fields.map((field) => (
             <div key={field.key}>
               <label className="text-label text-muted block mb-1">{field.label}</label>
               {field.type === 'number' ? (
@@ -88,7 +110,9 @@ export default function StageAdvanceModal({ cross, targetStage, onConfirm, onCan
                   className="input w-full"
                   min={field.min}
                   value={stageData[field.key] ?? ''}
-                  onChange={(e) => updateField(field.key, e.target.value ? Number(e.target.value) : undefined)}
+                  onChange={(e) =>
+                    updateField(field.key, e.target.value ? Number(e.target.value) : undefined)
+                  }
                 />
               ) : field.type === 'select' ? (
                 <select
@@ -97,8 +121,10 @@ export default function StageAdvanceModal({ cross, targetStage, onConfirm, onCan
                   onChange={(e) => updateField(field.key, e.target.value || undefined)}
                 >
                   <option value="">Select...</option>
-                  {field.options.map(opt => (
-                    <option key={opt} value={opt}>{opt}</option>
+                  {field.options.map((opt) => (
+                    <option key={opt} value={opt}>
+                      {opt}
+                    </option>
                   ))}
                 </select>
               ) : (
@@ -143,8 +169,10 @@ export default function StageAdvanceModal({ cross, targetStage, onConfirm, onCan
                   <Loader2 size={18} className="animate-spin" />
                   {isFailing ? 'Marking...' : 'Advancing...'}
                 </>
+              ) : isFailing ? (
+                'Mark Failed'
               ) : (
-                isFailing ? 'Mark Failed' : `Advance to ${stageInfo.label}`
+                `Advance to ${stageInfo.label}`
               )}
             </button>
           </div>

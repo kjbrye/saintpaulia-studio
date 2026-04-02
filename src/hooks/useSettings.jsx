@@ -37,15 +37,18 @@ export function SettingsProvider({ children }) {
 
   // Sync from Supabase on mount (overrides localStorage if remote exists)
   useEffect(() => {
-    settingsService.getSettings().then((remote) => {
-      if (remote) {
-        const merged = { ...DEFAULT_SETTINGS, ...remote };
-        setSettings(merged);
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(merged));
-      }
-    }).catch(() => {
-      // Supabase unavailable — localStorage values are fine
-    });
+    settingsService
+      .getSettings()
+      .then((remote) => {
+        if (remote) {
+          const merged = { ...DEFAULT_SETTINGS, ...remote };
+          setSettings(merged);
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(merged));
+        }
+      })
+      .catch(() => {
+        // Supabase unavailable — localStorage values are fine
+      });
   }, []);
 
   const updateSetting = useCallback((key, value) => {

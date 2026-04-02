@@ -22,9 +22,7 @@ export default function EditableField({
       <div>
         <span className="text-label block mb-1">{label}</span>
         <span className="text-body">
-          {displayValue || value || (
-            <span className="text-muted">Not set</span>
-          )}
+          {displayValue || value || <span className="text-muted">Not set</span>}
         </span>
       </div>
     );

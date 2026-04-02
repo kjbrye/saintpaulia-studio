@@ -4,7 +4,19 @@
 
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Scissors, Sprout, Leaf, Flower2, Check, X, Trash2, ChevronRight, Loader2, Plus, Minus } from 'lucide-react';
+import {
+  Scissors,
+  Sprout,
+  Leaf,
+  Flower2,
+  Check,
+  X,
+  Trash2,
+  ChevronRight,
+  Loader2,
+  Plus,
+  Minus,
+} from 'lucide-react';
 import { format } from 'date-fns';
 import StageIndicator from './StageIndicator';
 
@@ -24,7 +36,13 @@ const METHOD_LABELS = {
   other: 'Other',
 };
 
-export default function PropagationCard({ propagation, onUpdate, onDelete, onComplete, isPending }) {
+export default function PropagationCard({
+  propagation,
+  onUpdate,
+  onDelete,
+  onComplete,
+  isPending,
+}) {
   const [showCompleteForm, setShowCompleteForm] = useState(false);
   const [plantName, setPlantName] = useState('');
   const [plantCount, setPlantCount] = useState(1);
@@ -32,15 +50,17 @@ export default function PropagationCard({ propagation, onUpdate, onDelete, onCom
 
   const isFailed = propagation.stage === 'failed';
   const isComplete = propagation.stage === 'complete';
-  const parentName = propagation.parent_plant?.cultivar_name
-    || propagation.parent_plant?.nickname
-    || propagation.parent_plant_name
-    || 'Unknown parent';
+  const parentName =
+    propagation.parent_plant?.cultivar_name ||
+    propagation.parent_plant?.nickname ||
+    propagation.parent_plant_name ||
+    'Unknown parent';
 
-  const currentIndex = PROPAGATION_STAGES.findIndex(s => s.key === propagation.stage);
-  const nextStage = !isComplete && !isFailed && currentIndex < PROPAGATION_STAGES.length - 1
-    ? PROPAGATION_STAGES[currentIndex + 1]
-    : null;
+  const currentIndex = PROPAGATION_STAGES.findIndex((s) => s.key === propagation.stage);
+  const nextStage =
+    !isComplete && !isFailed && currentIndex < PROPAGATION_STAGES.length - 1
+      ? PROPAGATION_STAGES[currentIndex + 1]
+      : null;
 
   const isReadyToComplete = nextStage?.key === 'complete';
 
@@ -93,7 +113,14 @@ export default function PropagationCard({ propagation, onUpdate, onDelete, onCom
               {propagation.method && (
                 <span className="badge">{METHOD_LABELS[propagation.method]} method</span>
               )}
-              {isFailed && <span className="badge" style={{ background: 'var(--color-error)', color: 'white' }}>Failed</span>}
+              {isFailed && (
+                <span
+                  className="badge"
+                  style={{ background: 'var(--color-error)', color: 'white' }}
+                >
+                  Failed
+                </span>
+              )}
               {isComplete && <span className="badge badge-success">Complete</span>}
             </div>
           </div>
@@ -166,7 +193,9 @@ export default function PropagationCard({ propagation, onUpdate, onDelete, onCom
                 <input
                   type="text"
                   className={`input w-full ${completeError ? 'input-error' : ''}`}
-                  placeholder={plantCount > 1 ? 'Base name (e.g., Grace)' : 'Name for the new plant'}
+                  placeholder={
+                    plantCount > 1 ? 'Base name (e.g., Grace)' : 'Name for the new plant'
+                  }
                   value={plantName}
                   onChange={(e) => {
                     setPlantName(e.target.value);
@@ -193,14 +222,21 @@ export default function PropagationCard({ propagation, onUpdate, onDelete, onCom
               </p>
             )}
             {completeError && (
-              <p className="text-small" style={{ color: 'var(--color-error)' }}>{completeError}</p>
+              <p className="text-small" style={{ color: 'var(--color-error)' }}>
+                {completeError}
+              </p>
             )}
             <div className="flex items-center gap-2">
               <button type="submit" className="btn btn-primary btn-small" disabled={isPending}>
                 {isPending ? (
-                  <><Loader2 size={14} className="animate-spin" /> Adding...</>
+                  <>
+                    <Loader2 size={14} className="animate-spin" /> Adding...
+                  </>
                 ) : (
-                  <><Plus size={14} /> Complete &amp; Add {plantCount > 1 ? `${plantCount} Plants` : 'to Library'}</>
+                  <>
+                    <Plus size={14} /> Complete &amp; Add{' '}
+                    {plantCount > 1 ? `${plantCount} Plants` : 'to Library'}
+                  </>
                 )}
               </button>
               <button

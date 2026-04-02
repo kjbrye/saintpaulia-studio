@@ -7,13 +7,10 @@
 import { forwardRef } from 'react';
 import clsx from 'clsx';
 
-const Seal = forwardRef(function Seal({
-  src,
-  alt = 'Saintpaulia Studio',
-  size = 'md',
-  className,
-  ...props
-}, ref) {
+const Seal = forwardRef(function Seal(
+  { src, alt = 'Saintpaulia Studio', size = 'md', className, ...props },
+  ref,
+) {
   const sizes = {
     sm: { container: 'w-12 h-12', icon: 'text-lg' },
     md: { container: 'w-16 h-16', icon: 'text-2xl' },
@@ -44,7 +41,7 @@ const Seal = forwardRef(function Seal({
           sizes[size].container,
           'rounded-full flex items-center justify-center flex-shrink-0',
           'border-2 border-[#7a4820]',
-          className
+          className,
         )}
         style={sealStyles}
         {...props}
@@ -69,7 +66,7 @@ const Seal = forwardRef(function Seal({
         sizes[size].container,
         'rounded-full flex items-center justify-center flex-shrink-0',
         'border-2 border-[#7a4820]',
-        className
+        className,
       )}
       style={sealStyles}
       {...props}

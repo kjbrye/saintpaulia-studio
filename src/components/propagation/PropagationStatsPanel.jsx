@@ -20,11 +20,18 @@ export default function PropagationStatsPanel({ stats }) {
         <StatBox label="Total" value={stats.total} />
         <StatBox label="Active" value={stats.active} color="var(--purple-400)" />
         <StatBox label="Complete" value={stats.complete} color="var(--color-success)" />
-        <StatBox label="Success Rate" value={stats.successRate !== null ? `${stats.successRate}%` : '—'} color="var(--color-success)" />
+        <StatBox
+          label="Success Rate"
+          value={stats.successRate !== null ? `${stats.successRate}%` : '—'}
+          color="var(--color-success)"
+        />
       </div>
 
       {stats.totalPlantlets > 0 && (
-        <div className="flex items-center gap-2 mb-5 p-3 rounded-lg" style={{ background: 'var(--sage-50)' }}>
+        <div
+          className="flex items-center gap-2 mb-5 p-3 rounded-lg"
+          style={{ background: 'var(--sage-50)' }}
+        >
           <Leaf size={16} style={{ color: 'var(--color-success)' }} />
           <span className="text-small font-semibold" style={{ color: 'var(--sage-700)' }}>
             {stats.totalPlantlets} total plantlets produced
@@ -39,7 +46,7 @@ export default function PropagationStatsPanel({ stats }) {
             By Method
           </h3>
           <div className="space-y-2">
-            {stats.methodStats.map(m => (
+            {stats.methodStats.map((m) => (
               <div key={m.method} className="flex items-center justify-between text-small">
                 <span style={{ color: 'var(--sage-700)' }}>
                   {METHOD_LABELS[m.method] || m.method}
@@ -61,7 +68,7 @@ export default function PropagationStatsPanel({ stats }) {
             By Parent Plant
           </h3>
           <div className="space-y-2">
-            {stats.parentStats.slice(0, 5).map(p => (
+            {stats.parentStats.slice(0, 5).map((p) => (
               <div key={p.name} className="flex items-center justify-between text-small">
                 <span className="truncate mr-2" style={{ color: 'var(--sage-700)' }}>
                   {p.name}
@@ -82,7 +89,9 @@ export default function PropagationStatsPanel({ stats }) {
 function StatBox({ label, value, color }) {
   return (
     <div className="text-center p-3 rounded-lg" style={{ background: 'var(--sage-50)' }}>
-      <p className="heading heading-lg" style={color ? { color } : undefined}>{value}</p>
+      <p className="heading heading-lg" style={color ? { color } : undefined}>
+        {value}
+      </p>
       <p className="text-small text-muted">{label}</p>
     </div>
   );

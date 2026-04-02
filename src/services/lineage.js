@@ -13,11 +13,13 @@ import { supabase, requireUserId } from '../api/supabase';
 export async function getPlantWithParents(id) {
   const { data, error } = await supabase
     .from('plants')
-    .select(`
+    .select(
+      `
       *,
       pod_parent:pod_parent_id (*),
       pollen_parent:pollen_parent_id (*)
-    `)
+    `,
+    )
     .eq('id', id)
     .single();
 
@@ -30,10 +32,7 @@ export async function getPlantWithParents(id) {
  */
 export async function getPlantsByIds(ids) {
   if (!ids || ids.length === 0) return [];
-  const { data, error } = await supabase
-    .from('plants')
-    .select('*')
-    .in('id', ids);
+  const { data, error } = await supabase.from('plants').select('*').in('id', ids);
 
   if (error) throw error;
   return data;
@@ -54,15 +53,12 @@ export async function getAncestors(plantId, generations = 4) {
   for (let gen = 0; gen <= generations; gen++) {
     if (currentIds.length === 0) break;
 
-    const { data, error } = await supabase
-      .from('plants')
-      .select('*')
-      .in('id', currentIds);
+    const { data, error } = await supabase.from('plants').select('*').in('id', currentIds);
 
     if (error) throw error;
 
     const nextIds = [];
-    for (const plant of (data || [])) {
+    for (const plant of data || []) {
       allPlants.set(plant.id, plant);
       if (gen < generations) {
         if (plant.pod_parent_id && !allPlants.has(plant.pod_parent_id)) {
@@ -151,10 +147,7 @@ export async function createTraitObservation(observation) {
  * Delete a trait observation.
  */
 export async function deleteTraitObservation(id) {
-  const { error } = await supabase
-    .from('trait_observations')
-    .delete()
-    .eq('id', id);
+  const { error } = await supabase.from('trait_observations').delete().eq('id', id);
 
   if (error) throw error;
 }

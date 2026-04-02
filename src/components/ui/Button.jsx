@@ -7,15 +7,12 @@
 import { forwardRef } from 'react';
 import clsx from 'clsx';
 
-const Button = forwardRef(function Button({
-  children,
-  variant = 'default',
-  size = 'md',
-  className,
-  disabled,
-  ...props
-}, ref) {
-  const baseClasses = 'btn font-semibold transition-all duration-150 flex items-center justify-center gap-2';
+const Button = forwardRef(function Button(
+  { children, variant = 'default', size = 'md', className, disabled, ...props },
+  ref,
+) {
+  const baseClasses =
+    'btn font-semibold transition-all duration-150 flex items-center justify-center gap-2';
 
   const variantClasses = {
     default: 'btn-secondary',
@@ -29,9 +26,7 @@ const Button = forwardRef(function Button({
     lg: 'px-6 py-3 text-base rounded-xl',
   };
 
-  const disabledClasses = disabled
-    ? 'opacity-50 cursor-not-allowed pointer-events-none'
-    : '';
+  const disabledClasses = disabled ? 'opacity-50 cursor-not-allowed pointer-events-none' : '';
 
   return (
     <button
@@ -41,7 +36,7 @@ const Button = forwardRef(function Button({
         variantClasses[variant],
         sizeClasses[size],
         disabledClasses,
-        className
+        className,
       )}
       disabled={disabled}
       {...props}

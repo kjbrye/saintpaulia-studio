@@ -9,14 +9,16 @@ import { Link } from 'react-router-dom';
 import { GitBranch, ArrowRight, X } from 'lucide-react';
 
 export default function LineageView({ cross, onRemoveOffspring, isPending }) {
-  const podName = cross.pod_parent?.cultivar_name
-    || cross.pod_parent?.nickname
-    || cross.pod_parent_name
-    || 'Unknown';
-  const pollenName = cross.pollen_parent?.cultivar_name
-    || cross.pollen_parent?.nickname
-    || cross.pollen_parent_name
-    || 'Unknown';
+  const podName =
+    cross.pod_parent?.cultivar_name ||
+    cross.pod_parent?.nickname ||
+    cross.pod_parent_name ||
+    'Unknown';
+  const pollenName =
+    cross.pollen_parent?.cultivar_name ||
+    cross.pollen_parent?.nickname ||
+    cross.pollen_parent_name ||
+    'Unknown';
 
   const offspring = cross.offspring || [];
 
@@ -73,7 +75,7 @@ export default function LineageView({ cross, onRemoveOffspring, isPending }) {
               Offspring ({offspring.length})
             </span>
           </div>
-          {offspring.map(o => (
+          {offspring.map((o) => (
             <div key={o.id} className="card-subtle p-3 flex items-center justify-between gap-3">
               <div className="min-w-0">
                 <Link
@@ -99,9 +101,7 @@ export default function LineageView({ cross, onRemoveOffspring, isPending }) {
           ))}
         </div>
       ) : (
-        <p className="text-small text-muted text-center py-4">
-          No offspring recorded yet
-        </p>
+        <p className="text-small text-muted text-center py-4">No offspring recorded yet</p>
       )}
     </div>
   );

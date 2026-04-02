@@ -4,7 +4,20 @@
 
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Heart, Sprout, Leaf, Flower2, X, Trash2, ChevronRight, Package, Sun, Loader2, Plus, Archive } from 'lucide-react';
+import {
+  Heart,
+  Sprout,
+  Leaf,
+  Flower2,
+  X,
+  Trash2,
+  ChevronRight,
+  Package,
+  Sun,
+  Loader2,
+  Plus,
+  Archive,
+} from 'lucide-react';
 import { format } from 'date-fns';
 import StageIndicator from '../propagation/StageIndicator';
 import StageAdvanceModal from './StageAdvanceModal';
@@ -18,7 +31,15 @@ const BREEDING_STAGES = [
   { key: 'blooming', label: 'Blooming', icon: Flower2 },
 ];
 
-export default function CrossCard({ cross, onUpdate, onDelete, onComplete, onAdvance, onArchive, isPending }) {
+export default function CrossCard({
+  cross,
+  onUpdate,
+  onDelete,
+  onComplete,
+  onAdvance,
+  onArchive,
+  isPending,
+}) {
   const [showCompleteForm, setShowCompleteForm] = useState(false);
   const [advanceTarget, setAdvanceTarget] = useState(null);
   const [plantName, setPlantName] = useState('');
@@ -26,24 +47,29 @@ export default function CrossCard({ cross, onUpdate, onDelete, onComplete, onAdv
   const [completeError, setCompleteError] = useState(null);
 
   // Use status column with fallback to stage-based logic
-  const status = cross.status || (cross.stage === 'blooming' ? 'complete' : cross.stage === 'failed' ? 'failed' : 'active');
+  const status =
+    cross.status ||
+    (cross.stage === 'blooming' ? 'complete' : cross.stage === 'failed' ? 'failed' : 'active');
   const isFailed = status === 'failed';
   const isComplete = status === 'complete';
   const isArchived = status === 'archived';
 
-  const podName = cross.pod_parent?.cultivar_name
-    || cross.pod_parent?.nickname
-    || cross.pod_parent_name
-    || 'Unknown';
-  const pollenName = cross.pollen_parent?.cultivar_name
-    || cross.pollen_parent?.nickname
-    || cross.pollen_parent_name
-    || 'Unknown';
+  const podName =
+    cross.pod_parent?.cultivar_name ||
+    cross.pod_parent?.nickname ||
+    cross.pod_parent_name ||
+    'Unknown';
+  const pollenName =
+    cross.pollen_parent?.cultivar_name ||
+    cross.pollen_parent?.nickname ||
+    cross.pollen_parent_name ||
+    'Unknown';
 
-  const currentIndex = BREEDING_STAGES.findIndex(s => s.key === cross.stage);
-  const nextStage = !isComplete && !isFailed && !isArchived && currentIndex < BREEDING_STAGES.length - 1
-    ? BREEDING_STAGES[currentIndex + 1]
-    : null;
+  const currentIndex = BREEDING_STAGES.findIndex((s) => s.key === cross.stage);
+  const nextStage =
+    !isComplete && !isFailed && !isArchived && currentIndex < BREEDING_STAGES.length - 1
+      ? BREEDING_STAGES[currentIndex + 1]
+      : null;
 
   const isReadyToComplete = nextStage?.key === 'blooming';
 
@@ -94,17 +120,17 @@ export default function CrossCard({ cross, onUpdate, onDelete, onComplete, onAdv
   };
 
   // Show seed count after harvested, germination after sown
-  const stageIndex = BREEDING_STAGES.findIndex(s => s.key === cross.stage);
+  const stageIndex = BREEDING_STAGES.findIndex((s) => s.key === cross.stage);
   const showSeedCount = stageIndex >= 2;
   const showGerminationCount = stageIndex >= 3;
 
   const statusBadge = isArchived
     ? { label: 'Archived', style: { background: 'var(--sage-200)', color: 'var(--sage-700)' } }
     : isFailed
-    ? { label: 'Failed', style: { background: 'var(--color-error)', color: 'white' } }
-    : isComplete
-    ? { label: 'Complete', style: { background: 'var(--color-success)', color: 'white' } }
-    : null;
+      ? { label: 'Failed', style: { background: 'var(--color-error)', color: 'white' } }
+      : isComplete
+        ? { label: 'Complete', style: { background: 'var(--color-success)', color: 'white' } }
+        : null;
 
   return (
     <div className="card p-5" style={isArchived ? { opacity: 0.7 } : undefined}>
@@ -123,7 +149,9 @@ export default function CrossCard({ cross, onUpdate, onDelete, onComplete, onAdv
                 {pollenName}
               </Link>
               {statusBadge && (
-                <span className="badge" style={statusBadge.style}>{statusBadge.label}</span>
+                <span className="badge" style={statusBadge.style}>
+                  {statusBadge.label}
+                </span>
               )}
             </div>
             <span className="text-small text-muted">
@@ -154,11 +182,7 @@ export default function CrossCard({ cross, onUpdate, onDelete, onComplete, onAdv
         </div>
 
         {/* Stage indicator */}
-        <StageIndicator
-          currentStage={cross.stage}
-          stages={BREEDING_STAGES}
-          failed={isFailed}
-        />
+        <StageIndicator currentStage={cross.stage} stages={BREEDING_STAGES} failed={isFailed} />
 
         {/* Inline count display */}
         {!isFailed && !isArchived && (showSeedCount || showGerminationCount) && (
@@ -166,13 +190,17 @@ export default function CrossCard({ cross, onUpdate, onDelete, onComplete, onAdv
             {showSeedCount && cross.seed_count > 0 && (
               <span className="text-small">
                 <span className="text-muted">Seeds: </span>
-                <span className="font-semibold" style={{ color: 'var(--sage-800)' }}>{cross.seed_count}</span>
+                <span className="font-semibold" style={{ color: 'var(--sage-800)' }}>
+                  {cross.seed_count}
+                </span>
               </span>
             )}
             {showGerminationCount && cross.germination_count > 0 && (
               <span className="text-small">
                 <span className="text-muted">Germinated: </span>
-                <span className="font-semibold" style={{ color: 'var(--sage-800)' }}>{cross.germination_count}</span>
+                <span className="font-semibold" style={{ color: 'var(--sage-800)' }}>
+                  {cross.germination_count}
+                </span>
               </span>
             )}
             {cross.seed_count > 0 && cross.germination_count > 0 && (
@@ -201,7 +229,9 @@ export default function CrossCard({ cross, onUpdate, onDelete, onComplete, onAdv
                 <input
                   type="text"
                   className={`input w-full ${completeError ? 'input-error' : ''}`}
-                  placeholder={plantCount > 1 ? 'Base name (e.g., Star Cross)' : 'Name for the new hybrid'}
+                  placeholder={
+                    plantCount > 1 ? 'Base name (e.g., Star Cross)' : 'Name for the new hybrid'
+                  }
                   value={plantName}
                   onChange={(e) => {
                     setPlantName(e.target.value);
@@ -228,14 +258,21 @@ export default function CrossCard({ cross, onUpdate, onDelete, onComplete, onAdv
               </p>
             )}
             {completeError && (
-              <p className="text-small" style={{ color: 'var(--color-error)' }}>{completeError}</p>
+              <p className="text-small" style={{ color: 'var(--color-error)' }}>
+                {completeError}
+              </p>
             )}
             <div className="flex items-center gap-2">
               <button type="submit" className="btn btn-primary btn-small" disabled={isPending}>
                 {isPending ? (
-                  <><Loader2 size={14} className="animate-spin" /> Adding...</>
+                  <>
+                    <Loader2 size={14} className="animate-spin" /> Adding...
+                  </>
                 ) : (
-                  <><Plus size={14} /> Blooming &amp; Add {plantCount > 1 ? `${plantCount} Plants` : 'to Library'}</>
+                  <>
+                    <Plus size={14} /> Blooming &amp; Add{' '}
+                    {plantCount > 1 ? `${plantCount} Plants` : 'to Library'}
+                  </>
                 )}
               </button>
               <button

@@ -17,11 +17,13 @@ import { supabase, requireUserId } from '../api/supabase';
 export async function getCrosses() {
   const { data, error } = await supabase
     .from('breeding_crosses')
-    .select(`
+    .select(
+      `
       *,
       pod_parent:plants!pod_parent_id(id, cultivar_name, nickname),
       pollen_parent:plants!pollen_parent_id(id, cultivar_name, nickname)
-    `)
+    `,
+    )
     .order('created_at', { ascending: false });
 
   if (error) throw error;
@@ -34,12 +36,14 @@ export async function getCrosses() {
 export async function getCrossById(id) {
   const { data, error } = await supabase
     .from('breeding_crosses')
-    .select(`
+    .select(
+      `
       *,
       pod_parent:plants!pod_parent_id(id, cultivar_name, nickname),
       pollen_parent:plants!pollen_parent_id(id, cultivar_name, nickname),
       offspring(id, notes, plant:plants(id, cultivar_name, nickname))
-    `)
+    `,
+    )
     .eq('id', id)
     .single();
 
@@ -81,10 +85,7 @@ export async function updateCross(id, updates) {
  * Delete a cross
  */
 export async function deleteCross(id) {
-  const { error } = await supabase
-    .from('breeding_crosses')
-    .delete()
-    .eq('id', id);
+  const { error } = await supabase.from('breeding_crosses').delete().eq('id', id);
 
   if (error) throw error;
 }
@@ -111,10 +112,7 @@ export async function addOffspring(offspring) {
  * Remove an offspring record
  */
 export async function removeOffspring(id) {
-  const { error } = await supabase
-    .from('offspring')
-    .delete()
-    .eq('id', id);
+  const { error } = await supabase.from('offspring').delete().eq('id', id);
 
   if (error) throw error;
 }
@@ -174,15 +172,13 @@ export async function advanceStage(crossId, newStage, { notes, data: stageData }
   const user_id = await requireUserId();
 
   // Create stage log entry
-  const { error: logError } = await supabase
-    .from('cross_stage_logs')
-    .insert({
-      cross_id: crossId,
-      user_id,
-      stage: newStage,
-      notes: notes || null,
-      data: stageData || null,
-    });
+  const { error: logError } = await supabase.from('cross_stage_logs').insert({
+    cross_id: crossId,
+    user_id,
+    stage: newStage,
+    notes: notes || null,
+    data: stageData || null,
+  });
 
   if (logError) throw logError;
 

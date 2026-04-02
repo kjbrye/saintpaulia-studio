@@ -1,6 +1,6 @@
 /**
  * Plants Service
- * 
+ *
  * All database operations for plants live here.
  * Components never call Supabase directly - they use hooks that call these functions.
  */
@@ -15,10 +15,7 @@ import { supabase, requireUserId } from '../api/supabase';
  * @returns {Promise<Array>} Array of plant objects
  */
 export async function getPlants({ orderBy = 'updated_at', ascending = false } = {}) {
-  const { data, error } = await supabase
-    .from('plants')
-    .select('*')
-    .order(orderBy, { ascending });
+  const { data, error } = await supabase.from('plants').select('*').order(orderBy, { ascending });
 
   if (error) throw error;
   return data;
@@ -30,11 +27,7 @@ export async function getPlants({ orderBy = 'updated_at', ascending = false } = 
  * @returns {Promise<Object>} Plant object
  */
 export async function getPlantById(id) {
-  const { data, error } = await supabase
-    .from('plants')
-    .select('*')
-    .eq('id', id)
-    .single();
+  const { data, error } = await supabase.from('plants').select('*').eq('id', id).single();
 
   if (error) throw error;
   return data;
@@ -81,10 +74,7 @@ export async function updatePlant(id, updates) {
  * @returns {Promise<void>}
  */
 export async function deletePlant(id) {
-  const { error } = await supabase
-    .from('plants')
-    .delete()
-    .eq('id', id);
+  const { error } = await supabase.from('plants').delete().eq('id', id);
 
   if (error) throw error;
 }

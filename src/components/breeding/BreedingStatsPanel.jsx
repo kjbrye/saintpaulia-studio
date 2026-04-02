@@ -19,7 +19,11 @@ export default function BreedingStatsPanel({ stats }) {
         <StatBox label="Total" value={stats.total} />
         <StatBox label="Active" value={stats.active} color="var(--purple-400)" />
         <StatBox label="Blooming" value={stats.blooming} color="var(--color-success)" />
-        <StatBox label="Success Rate" value={stats.successRate !== null ? `${stats.successRate}%` : '—'} color="var(--color-success)" />
+        <StatBox
+          label="Success Rate"
+          value={stats.successRate !== null ? `${stats.successRate}%` : '—'}
+          color="var(--color-success)"
+        />
       </div>
 
       {/* Germination stats */}
@@ -33,16 +37,22 @@ export default function BreedingStatsPanel({ stats }) {
           </div>
           <div className="flex items-center justify-between text-small">
             <span style={{ color: 'var(--sage-700)' }}>Total seeds</span>
-            <span className="font-bold" style={{ color: 'var(--sage-800)' }}>{stats.totalSeeds}</span>
+            <span className="font-bold" style={{ color: 'var(--sage-800)' }}>
+              {stats.totalSeeds}
+            </span>
           </div>
           <div className="flex items-center justify-between text-small">
             <span style={{ color: 'var(--sage-700)' }}>Germinated</span>
-            <span className="font-bold" style={{ color: 'var(--sage-800)' }}>{stats.totalGerminated}</span>
+            <span className="font-bold" style={{ color: 'var(--sage-800)' }}>
+              {stats.totalGerminated}
+            </span>
           </div>
           {stats.germinationRate !== null && (
             <div className="flex items-center justify-between text-small">
               <span style={{ color: 'var(--sage-700)' }}>Germination rate</span>
-              <span className="font-bold" style={{ color: 'var(--color-success)' }}>{stats.germinationRate}%</span>
+              <span className="font-bold" style={{ color: 'var(--color-success)' }}>
+                {stats.germinationRate}%
+              </span>
             </div>
           )}
         </div>
@@ -54,7 +64,9 @@ export default function BreedingStatsPanel({ stats }) {
 function StatBox({ label, value, color }) {
   return (
     <div className="text-center p-3 rounded-lg" style={{ background: 'var(--sage-50)' }}>
-      <p className="heading heading-lg" style={color ? { color } : undefined}>{value}</p>
+      <p className="heading heading-lg" style={color ? { color } : undefined}>
+        {value}
+      </p>
       <p className="text-small text-muted">{label}</p>
     </div>
   );

@@ -6,9 +6,20 @@ import { useState, useMemo } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { ArrowLeft, GitFork, Pencil } from 'lucide-react';
 import { usePlants } from '../hooks/usePlants';
-import { useAncestors, useUpdateLineage, useTraitObservations, useCreateTraitObservation, useDeleteTraitObservation } from '../hooks/useLineage';
+import {
+  useAncestors,
+  useUpdateLineage,
+  useTraitObservations,
+  useCreateTraitObservation,
+  useDeleteTraitObservation,
+} from '../hooks/useLineage';
 import HeaderBar from '../components/ui/HeaderBar';
-import { PedigreeTree, LineageEditor, RelationshipFinder, TraitInheritance } from '../components/lineage';
+import {
+  PedigreeTree,
+  LineageEditor,
+  RelationshipFinder,
+  TraitInheritance,
+} from '../components/lineage';
 
 export default function Lineage() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -69,7 +80,7 @@ export default function Lineage() {
                 onChange={(e) => handleSelectPlant(e.target.value)}
               >
                 <option value="">Select a plant to view pedigree...</option>
-                {plants.map(p => (
+                {plants.map((p) => (
                   <option key={p.id} value={p.id}>
                     {p.cultivar_name || p.nickname || 'Unnamed'}
                     {p.generation != null ? ` (F${p.generation})` : ''}
@@ -77,10 +88,7 @@ export default function Lineage() {
                 ))}
               </select>
               {selectedId && !editing && (
-                <button
-                  className="btn btn-secondary btn-small"
-                  onClick={() => setEditing(true)}
-                >
+                <button className="btn btn-secondary btn-small" onClick={() => setEditing(true)}>
                   <Pencil size={14} /> Edit Lineage
                 </button>
               )}
@@ -141,7 +149,9 @@ export default function Lineage() {
             <div className="panel p-10 text-center">
               <GitFork size={48} style={{ color: 'var(--purple-400)', margin: '0 auto 16px' }} />
               <h2 className="heading heading-lg mb-2">No plants yet</h2>
-              <p className="text-muted mb-6">Add plants to your library to start exploring lineage.</p>
+              <p className="text-muted mb-6">
+                Add plants to your library to start exploring lineage.
+              </p>
               <Link to="/plants/new">
                 <button className="btn btn-primary">Add Your First Plant</button>
               </Link>
