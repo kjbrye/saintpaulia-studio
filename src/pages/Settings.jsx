@@ -244,7 +244,7 @@ export default function Settings() {
         </section>
 
         {/* App Version */}
-        <p className="text-center text-small text-muted mt-8">Saintpaulia Studio v2.0.0</p>
+        <p className="text-center text-small text-muted mt-8">Saintpaulia Studio v0.1.0</p>
       </div>
 
       {/* Logout Confirmation Modal */}

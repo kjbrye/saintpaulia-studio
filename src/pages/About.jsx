@@ -172,7 +172,7 @@ export default function About() {
           <div className="flex items-center justify-center gap-2 mb-2">
             <Heart size={16} style={{ color: 'var(--copper-500)' }} />
             <span className="text-small font-medium" style={{ color: 'var(--text-secondary)' }}>
-              Version 2.0.0
+              Version 0.1.0
             </span>
           </div>
           <p className="text-small" style={{ color: 'var(--text-secondary)' }}>
