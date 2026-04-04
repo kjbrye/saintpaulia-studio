@@ -117,6 +117,7 @@ export default function PlantDetail() {
 
   // Data fetching
   const { data: plant, isLoading, error } = usePlant(id);
+  usePageTitle(plant?.nickname || plant?.cultivar_name || 'Plant Detail');
   const { data: careLogs = [], isLoading: logsLoading } = useCareLogs({
     plantId: id,
     limit: 10,
@@ -283,7 +284,6 @@ export default function PlantDetail() {
 
   const careStatuses = getPlantCareStatuses(plant, careThresholds);
   const displayName = plant.nickname || plant.cultivar_name || 'Unnamed Plant';
-  usePageTitle(displayName);
 
   return (
     <div className="min-h-screen p-6 md:p-10">
