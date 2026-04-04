@@ -71,7 +71,7 @@ export function SettingsProvider({ children }) {
       clearTimeout(saveTimeout.current);
       saveTimeout.current = setTimeout(() => {
         settingsService.saveSettings(next).catch((err) => {
-          console.error('Failed to save settings:', err);
+          // Sentry captures this automatically
         });
       }, 500);
       return next;

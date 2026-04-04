@@ -69,12 +69,27 @@ export async function updatePlant(id, updates) {
 }
 
 /**
- * Delete a plant
+ * Delete a plant and all associated records.
+ * Removes care logs, bloom logs, health logs, and journal entries first,
+ * then deletes the plant itself.
  * @param {string} id - Plant ID
  * @returns {Promise<void>}
  */
 export async function deletePlant(id) {
-  const { error } = await supabase.from('plants').delete().eq('id', id);
+  // Delete associated records first (order doesn't matter, all independent)
+  const relatedDeletes = [
+    supabase.from('care_logs').delete().eq('plant_id', id),
+    supabase.from('bloom_log').delete().eq('plant_id', id),
+    supabase.from('health_log').delete().eq('plant_id', id),
+    supabase.from('journal_entries').delete().eq('plant_id', id),
+  ];
 
+  const results = await Promise.all(relatedDeletes);
+  for (const { error } of results) {
+    if (error) throw error;
+  }
+
+  // Now delete the plant
+  const { error } = await supabase.from('plants').delete().eq('id', id);
   if (error) throw error;
 }

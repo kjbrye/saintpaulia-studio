@@ -2,7 +2,7 @@
  * Library Page - Plant collection browser with batch selection
  */
 
-import { useState, useMemo, useEffect, useCallback } from 'react';
+import { useState, useMemo, useEffect, useCallback, useRef } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { ArrowLeft, Plus, ChevronLeft, ChevronRight, CheckSquare, Square } from 'lucide-react';
 import { usePlants } from '../hooks/usePlants';
@@ -13,11 +13,20 @@ import PlantListItem from '../components/library/PlantListItem';
 import LibraryToolbar from '../components/library/LibraryToolbar';
 import BatchActionsToolbar from '../components/library/BatchActionsToolbar';
 import { EmptyLibrary, NoResults } from '../components/library/EmptyState';
+import { usePageTitle } from '../hooks/usePageTitle';
 
 export default function Library() {
+  usePageTitle('Library');
   const { settings, careThresholds } = useSettings();
   const [searchParams] = useSearchParams();
   const [searchQuery, setSearchQuery] = useState('');
+  const [debouncedSearch, setDebouncedSearch] = useState('');
+  const searchTimerRef = useRef(null);
+  const handleSearch = useCallback((value) => {
+    setSearchQuery(value);
+    clearTimeout(searchTimerRef.current);
+    searchTimerRef.current = setTimeout(() => setDebouncedSearch(value), 200);
+  }, []);
   const [viewMode, setViewMode] = useState(settings.defaultView);
   const [sortBy, setSortBy] = useState('updated');
   const [currentPage, setCurrentPage] = useState(1);
@@ -47,8 +56,8 @@ export default function Library() {
     let result = plants;
 
     // Search filter
-    if (searchQuery) {
-      const query = searchQuery.toLowerCase();
+    if (debouncedSearch) {
+      const query = debouncedSearch.toLowerCase();
       result = result.filter(
         (p) =>
           p.nickname?.toLowerCase().includes(query) ||
@@ -99,7 +108,7 @@ export default function Library() {
     return result;
   }, [
     plants,
-    searchQuery,
+    debouncedSearch,
     sortBy,
     careThresholds,
     potSizeFilter,
@@ -112,7 +121,7 @@ export default function Library() {
   useEffect(() => {
     setCurrentPage(1);
   }, [
-    searchQuery,
+    debouncedSearch,
     sortBy,
     plantsPerPage,
     potSizeFilter,
@@ -246,7 +255,7 @@ export default function Library() {
             {/* Toolbar */}
             <LibraryToolbar
               searchQuery={searchQuery}
-              onSearchChange={setSearchQuery}
+              onSearchChange={handleSearch}
               viewMode={viewMode}
               onViewModeChange={setViewMode}
               sortBy={sortBy}

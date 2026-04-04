@@ -24,6 +24,7 @@ import { useBloomLogs } from '../hooks/useBlooms';
 import { useSettings } from '../hooks/useSettings.jsx';
 import { getCollectionCareStats } from '../utils/careStatus';
 import { getPropagationStats, getBreedingStats } from '../utils/propagationStats';
+import { usePageTitle } from '../hooks/usePageTitle';
 
 function StatCard({ icon: Icon, iconColor, label, value, sub }) {
   return (
@@ -372,6 +373,7 @@ function BloomPanel({ bloomLogs, plants }) {
 }
 
 export default function Analytics() {
+  usePageTitle('Analytics');
   const { careThresholds } = useSettings();
   const { data: plants = [], isLoading: plantsLoading } = usePlants();
   const { data: careLogs = [] } = useCareLogs({ limit: 500 });

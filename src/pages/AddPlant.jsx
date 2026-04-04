@@ -9,8 +9,10 @@ import { useCreatePlant } from '../hooks/usePlants';
 import { useToast } from '../hooks/useToast';
 import FormField from '../components/ui/FormField';
 import { PhotoUpload } from '../components/plants';
+import { usePageTitle } from '../hooks/usePageTitle';
 
 export default function AddPlant() {
+  usePageTitle('Add Plant');
   const navigate = useNavigate();
   const toast = useToast();
   const createPlant = useCreatePlant();
@@ -70,7 +72,7 @@ export default function AddPlant() {
 
       navigate(`/plants/${plant.id}`);
     } catch (error) {
-      console.error('Failed to create plant:', error);
+      // Sentry captures this automatically
       toast.error('Failed to create plant. Please try again.');
     }
   };

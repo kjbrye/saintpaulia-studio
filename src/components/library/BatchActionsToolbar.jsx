@@ -42,7 +42,7 @@ export default function BatchActionsToolbar({
         setLoggedCareType(null);
       }, 1000);
     } catch (error) {
-      console.error('Failed to log batch care:', error);
+      // Sentry captures this automatically
       toast.error('Failed to log care for some plants. Please try again.');
       setIsLogging(false);
       setLoggedCareType(null);

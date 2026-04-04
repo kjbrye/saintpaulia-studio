@@ -31,8 +31,10 @@ import HeaderBar from '../components/ui/HeaderBar';
 import { StageIndicator } from '../components/propagation';
 import { PROPAGATION_STAGES, METHOD_LABELS } from '../components/propagation/PropagationCard';
 import NotesLog from '../components/ui/NotesLog';
+import { usePageTitle } from '../hooks/usePageTitle';
 
 export default function PropagationDetail() {
+  usePageTitle('Propagation Detail');
   const { id } = useParams();
   const navigate = useNavigate();
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);

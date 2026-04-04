@@ -18,6 +18,7 @@ import {
 import { useRecentCareLogs } from '../hooks/useCare';
 import { usePlants } from '../hooks/usePlants';
 import { CareLogItem } from '../components/care';
+import { usePageTitle } from '../hooks/usePageTitle';
 
 const FILTER_OPTIONS = [
   { value: 'all', label: 'All' },
@@ -35,6 +36,7 @@ const SORT_OPTIONS = [
 ];
 
 export default function CareLog() {
+  usePageTitle('Care Log');
   const [filter, setFilter] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedPlantId, setSelectedPlantId] = useState('all');
@@ -140,7 +142,7 @@ export default function CareLog() {
       } else if (sortBy === 'plant-name') {
         // Group by plant name
         const plant = plantMap[log.plant_id];
-        groupKey = plant?.nickname || plant?.cultivar_name || 'Unknown Plant';
+        groupKey = plant?.nickname || plant?.cultivar_name || 'Deleted Plant';
       } else {
         // Group by date (default for date sorting)
         const logDate = new Date(log.care_date).toDateString();
@@ -363,18 +365,26 @@ export default function CareLog() {
                   <div className="divide-y" style={{ borderColor: 'var(--sage-200)' }}>
                     {logs.map((log) => {
                       const plant = plantMap[log.plant_id];
-                      return (
+                      const plantName = plant?.nickname || plant?.cultivar_name || 'Deleted Plant';
+                      const content = (
+                        <CareLogItem
+                          log={log}
+                          showPlantName
+                          plantName={plantName}
+                        />
+                      );
+                      return plant ? (
                         <Link
                           key={log.id}
                           to={`/plants/${log.plant_id}`}
                           className="block hover:bg-[var(--sage-100)] -mx-4 px-4 transition-colors rounded-lg"
                         >
-                          <CareLogItem
-                            log={log}
-                            showPlantName
-                            plantName={plant?.nickname || plant?.cultivar_name}
-                          />
+                          {content}
                         </Link>
+                      ) : (
+                        <div key={log.id} className="-mx-4 px-4">
+                          {content}
+                        </div>
                       );
                     })}
                   </div>

@@ -15,8 +15,10 @@ import {
 import HeaderBar from '../components/ui/HeaderBar';
 import { PropagationCard, PropagationForm, PropagationStatsPanel } from '../components/propagation';
 import { getPropagationStats } from '../utils/propagationStats';
+import { usePageTitle } from '../hooks/usePageTitle';
 
 export default function Propagation() {
+  usePageTitle('Propagation');
   const [showForm, setShowForm] = useState(false);
   const [filter, setFilter] = useState('active'); // 'active' | 'completed' | 'all'
 

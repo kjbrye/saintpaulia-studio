@@ -20,8 +20,10 @@ import {
   RelationshipFinder,
   TraitInheritance,
 } from '../components/lineage';
+import { usePageTitle } from '../hooks/usePageTitle';
 
 export default function Lineage() {
+  usePageTitle('Lineage');
   const [searchParams, setSearchParams] = useSearchParams();
   const selectedId = searchParams.get('plant') || '';
   const [editing, setEditing] = useState(false);

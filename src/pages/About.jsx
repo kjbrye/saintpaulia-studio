@@ -14,6 +14,7 @@ import {
   Scissors,
   ExternalLink,
 } from 'lucide-react';
+import { usePageTitle } from '../hooks/usePageTitle';
 
 const features = [
   {
@@ -54,6 +55,7 @@ const features = [
 ];
 
 export default function About() {
+  usePageTitle('About');
   return (
     <div className="min-h-screen p-6 md:p-10">
       <div className="max-w-3xl mx-auto space-y-8">
@@ -170,7 +172,7 @@ export default function About() {
           <div className="flex items-center justify-center gap-2 mb-2">
             <Heart size={16} style={{ color: 'var(--copper-500)' }} />
             <span className="text-small font-medium" style={{ color: 'var(--text-secondary)' }}>
-              Version 2.0
+              Version 2.0.0
             </span>
           </div>
           <p className="text-small" style={{ color: 'var(--text-secondary)' }}>

@@ -4,8 +4,10 @@
 
 import { Link } from 'react-router-dom';
 import { Card } from '../components/ui';
+import { usePageTitle } from '../hooks/usePageTitle';
 
 export default function NotFound() {
+  usePageTitle('Not Found');
   return (
     <div className="min-h-screen flex items-center justify-center px-4">
       <Card className="w-full max-w-md p-8 sm:p-10 text-center">

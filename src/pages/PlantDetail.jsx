@@ -34,6 +34,7 @@ import EditableField from '../components/ui/EditableField';
 import PhotoUpload from '../components/plants/PhotoUpload';
 import NotesLog from '../components/ui/NotesLog';
 import { MiniPedigree } from '../components/lineage';
+import { usePageTitle } from '../hooks/usePageTitle';
 
 // Status options for select dropdown
 const STATUS_OPTIONS = [
@@ -216,7 +217,7 @@ export default function PlantDetail() {
       setFormData(null);
       setHasChanges(false);
     } catch (err) {
-      console.error('Failed to update plant:', err);
+      // Sentry captures this automatically
       toast.error('Failed to save changes. Please try again.');
     }
   };
@@ -241,7 +242,7 @@ export default function PlantDetail() {
       await deletePlant.mutateAsync(plant.id);
       navigate('/library');
     } catch (err) {
-      console.error('Failed to delete plant:', err);
+      // Sentry captures this automatically
       toast.error('Failed to delete plant. Please try again.');
     }
   };
@@ -282,6 +283,7 @@ export default function PlantDetail() {
 
   const careStatuses = getPlantCareStatuses(plant, careThresholds);
   const displayName = plant.nickname || plant.cultivar_name || 'Unnamed Plant';
+  usePageTitle(displayName);
 
   return (
     <div className="min-h-screen p-6 md:p-10">
@@ -570,8 +572,8 @@ export default function PlantDetail() {
           <div className="card p-8 max-w-md w-full">
             <h2 className="heading heading-lg mb-2">Delete Plant?</h2>
             <p className="text-muted mb-6">
-              Are you sure you want to delete "{displayName}"? This will also delete all care logs
-              and cannot be undone.
+              Are you sure you want to delete "{displayName}"? All associated care logs, bloom logs,
+              health logs, and journal entries will also be removed. This cannot be undone.
             </p>
             <div className="flex justify-end gap-3">
               <button className="btn btn-secondary" onClick={() => setShowDeleteConfirm(false)}>

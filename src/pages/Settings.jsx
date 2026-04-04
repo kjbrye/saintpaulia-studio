@@ -11,6 +11,7 @@ import { useAuth } from '../hooks/useAuth';
 import { useToast } from '../hooks/useToast';
 import { useSettings } from '../hooks/useSettings.jsx';
 import { exportAllData } from '../services/export';
+import { usePageTitle } from '../hooks/usePageTitle';
 
 const WATERING_OPTIONS = [
   { value: 5, label: '5 days' },
@@ -45,6 +46,7 @@ const PER_PAGE_OPTIONS = [
 ];
 
 export default function Settings() {
+  usePageTitle('Settings');
   const navigate = useNavigate();
   const { user, signOut } = useAuth();
   const toast = useToast();
@@ -59,7 +61,7 @@ export default function Settings() {
       await signOut();
       navigate('/login');
     } catch (error) {
-      console.error('Failed to log out:', error);
+      // Sentry captures this automatically via ErrorBoundary
       toast.error('Failed to log out. Please try again.');
       setIsLoggingOut(false);
     }
@@ -71,7 +73,7 @@ export default function Settings() {
       const count = await exportAllData();
       toast.success(`Exported ${count} file${count > 1 ? 's' : ''} successfully`);
     } catch (error) {
-      console.error('Export failed:', error);
+      // Sentry captures this automatically via ErrorBoundary
       toast.error(error.message || 'Failed to export data');
     } finally {
       setIsExporting(false);

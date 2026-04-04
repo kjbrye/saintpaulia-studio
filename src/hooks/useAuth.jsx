@@ -24,6 +24,9 @@ export function AuthProvider({ children }) {
     authService.getSession().then((session) => {
       setUser(session?.user ?? null);
       setLoading(false);
+    }).catch(() => {
+      setUser(null);
+      setLoading(false);
     });
 
     // Listen for auth changes

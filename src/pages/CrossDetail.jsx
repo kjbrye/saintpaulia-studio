@@ -32,8 +32,10 @@ import {
 } from '../components/breeding';
 import { BREEDING_STAGES } from '../components/breeding/CrossCard';
 import NotesLog from '../components/ui/NotesLog';
+import { usePageTitle } from '../hooks/usePageTitle';
 
 export default function CrossDetail() {
+  usePageTitle('Cross Detail');
   const { id } = useParams();
   const navigate = useNavigate();
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);

@@ -9,8 +9,10 @@ import { Navigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import { resetPassword } from '../services/auth';
 import { Card, Button } from '../components/ui';
+import { usePageTitle } from '../hooks/usePageTitle';
 
 export default function Login() {
+  usePageTitle('Log In');
   const { isAuthenticated, loading, signIn, signUp } = useAuth();
   const [mode, setMode] = useState('signin'); // 'signin', 'signup', or 'reset'
   const [email, setEmail] = useState('');

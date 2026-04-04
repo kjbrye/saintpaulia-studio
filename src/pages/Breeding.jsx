@@ -18,8 +18,10 @@ import {
 import HeaderBar from '../components/ui/HeaderBar';
 import { CrossCard, CrossForm, BreedingStatsPanel } from '../components/breeding';
 import { getBreedingStats } from '../utils/propagationStats';
+import { usePageTitle } from '../hooks/usePageTitle';
 
 export default function Breeding() {
+  usePageTitle('Breeding');
   const [showForm, setShowForm] = useState(false);
   const [filter, setFilter] = useState('active'); // 'active' | 'complete' | 'archived' | 'all'
 

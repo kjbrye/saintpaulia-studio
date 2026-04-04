@@ -12,6 +12,7 @@ import { useRecentCareLogs } from '../hooks/useCare';
 import { usePropagations } from '../hooks/usePropagation';
 import { useCrosses } from '../hooks/useBreeding';
 import { getCollectionCareStats } from '../utils/careStatus';
+import { usePageTitle } from '../hooks/usePageTitle';
 import HeaderBar from '../components/ui/HeaderBar';
 import {
   CollectionStatsPanel,
@@ -21,6 +22,7 @@ import {
 } from '../components/dashboard';
 
 export default function Dashboard() {
+  usePageTitle('Dashboard');
   const { user } = useAuth();
   const { careThresholds } = useSettings();
   const { data: plants = [], isLoading, error } = usePlants();

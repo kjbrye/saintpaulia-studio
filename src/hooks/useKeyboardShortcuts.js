@@ -6,7 +6,8 @@ import { useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 /**
- * Hook that listens for global keyboard shortcuts
+ * Hook that listens for global keyboard shortcuts.
+ * All navigation shortcuts require Alt modifier to avoid conflicts with typing.
  * @param {Object} options
  * @param {Function} options.onOpenCommandPalette - Called when ⌘K is pressed
  */
@@ -15,31 +16,26 @@ export function useKeyboardShortcuts({ onOpenCommandPalette }) {
 
   const handleKeyDown = useCallback(
     (e) => {
-      // Ignore if user is typing in an input field
-      const isInputFocused = ['INPUT', 'TEXTAREA', 'SELECT'].includes(
-        document.activeElement?.tagName,
-      );
-      const isContentEditable = document.activeElement?.isContentEditable;
-
-      if (isInputFocused || isContentEditable) {
-        // Only allow Escape to close command palette when in input
-        if (e.key === 'Escape') {
-          return; // Let the command palette handle its own escape
-        }
-        return;
-      }
-
-      // ⌘K or Ctrl+K - Open command palette
+      // ⌘K or Ctrl+K - Open command palette (always active)
       if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
         e.preventDefault();
         onOpenCommandPalette?.();
         return;
       }
 
-      // Simple key shortcuts (no modifier required)
+      // Ignore all other shortcuts if user is typing
+      const isInputFocused = ['INPUT', 'TEXTAREA', 'SELECT'].includes(
+        document.activeElement?.tagName,
+      );
+      if (isInputFocused || document.activeElement?.isContentEditable) {
+        return;
+      }
+
+      // Alt + key shortcuts for navigation
+      if (!e.altKey || e.metaKey || e.ctrlKey) return;
+
       switch (e.key.toLowerCase()) {
         case 'k':
-          // Also allow just 'k' to open command palette
           e.preventDefault();
           onOpenCommandPalette?.();
           break;
@@ -56,7 +52,6 @@ export function useKeyboardShortcuts({ onOpenCommandPalette }) {
           navigate('/care');
           break;
         case 'h':
-          // Go home
           e.preventDefault();
           navigate('/');
           break;
@@ -79,12 +74,6 @@ export function useKeyboardShortcuts({ onOpenCommandPalette }) {
         case 's':
           e.preventDefault();
           navigate('/settings');
-          break;
-        case '?':
-          // Show keyboard shortcuts help (could open a modal)
-          e.preventDefault();
-          // For now, just open command palette
-          onOpenCommandPalette?.();
           break;
       }
     },
