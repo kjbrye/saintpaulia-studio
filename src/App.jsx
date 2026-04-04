@@ -7,6 +7,7 @@
  * - Router for navigation
  */
 
+import { lazy, Suspense } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AuthProvider, useAuth } from './hooks/useAuth';
@@ -14,22 +15,24 @@ import { SettingsProvider } from './hooks/useSettings.jsx';
 import { ToastProvider } from './hooks/useToast.jsx';
 import AppShell from './components/AppShell';
 import ToastContainer from './components/ui/ToastContainer';
-import Dashboard from './pages/Dashboard';
-import Library from './pages/Library';
-import PlantDetail from './pages/PlantDetail';
-import AddPlant from './pages/AddPlant';
-import CareLog from './pages/CareLog';
-import Settings from './pages/Settings';
-import Login from './pages/Login';
-import About from './pages/About';
-import Propagation from './pages/Propagation';
-import PropagationDetail from './pages/PropagationDetail';
-import Breeding from './pages/Breeding';
-import CrossDetail from './pages/CrossDetail';
-import Lineage from './pages/Lineage';
-import Analytics from './pages/Analytics';
-import NotFound from './pages/NotFound';
 import ErrorBoundary from './components/ui/ErrorBoundary';
+
+// Lazy-loaded pages
+const Dashboard = lazy(() => import('./pages/Dashboard'));
+const Library = lazy(() => import('./pages/Library'));
+const PlantDetail = lazy(() => import('./pages/PlantDetail'));
+const AddPlant = lazy(() => import('./pages/AddPlant'));
+const CareLog = lazy(() => import('./pages/CareLog'));
+const Settings = lazy(() => import('./pages/Settings'));
+const Login = lazy(() => import('./pages/Login'));
+const About = lazy(() => import('./pages/About'));
+const Propagation = lazy(() => import('./pages/Propagation'));
+const PropagationDetail = lazy(() => import('./pages/PropagationDetail'));
+const Breeding = lazy(() => import('./pages/Breeding'));
+const CrossDetail = lazy(() => import('./pages/CrossDetail'));
+const Lineage = lazy(() => import('./pages/Lineage'));
+const Analytics = lazy(() => import('./pages/Analytics'));
+const NotFound = lazy(() => import('./pages/NotFound'));
 
 // Create a client with sensible defaults
 const queryClient = new QueryClient({
@@ -63,6 +66,13 @@ function ProtectedRoute({ children }) {
 // App routes
 function AppRoutes() {
   return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen flex items-center justify-center">
+          <p className="text-[var(--text-muted)]">Loading...</p>
+        </div>
+      }
+    >
     <Routes>
       {/* Public routes */}
       <Route path="/login" element={<Login />} />
@@ -187,6 +197,7 @@ function AppRoutes() {
       {/* 404 */}
       <Route path="*" element={<NotFound />} />
     </Routes>
+    </Suspense>
   );
 }
 
