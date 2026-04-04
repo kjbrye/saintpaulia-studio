@@ -6,10 +6,11 @@
 
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { ArrowLeft, User, Bell, Layout, LogOut, AlertTriangle, Eye } from 'lucide-react';
+import { ArrowLeft, User, Bell, Layout, LogOut, AlertTriangle, Eye, Download } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import { useToast } from '../hooks/useToast';
 import { useSettings } from '../hooks/useSettings.jsx';
+import { exportAllData } from '../services/export';
 
 const WATERING_OPTIONS = [
   { value: 5, label: '5 days' },
@@ -50,6 +51,7 @@ export default function Settings() {
   const { settings, updateSetting } = useSettings();
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
+  const [isExporting, setIsExporting] = useState(false);
 
   const handleLogout = async () => {
     setIsLoggingOut(true);
@@ -60,6 +62,19 @@ export default function Settings() {
       console.error('Failed to log out:', error);
       toast.error('Failed to log out. Please try again.');
       setIsLoggingOut(false);
+    }
+  };
+
+  const handleExport = async () => {
+    setIsExporting(true);
+    try {
+      const count = await exportAllData();
+      toast.success(`Exported ${count} file${count > 1 ? 's' : ''} successfully`);
+    } catch (error) {
+      console.error('Export failed:', error);
+      toast.error(error.message || 'Failed to export data');
+    } finally {
+      setIsExporting(false);
     }
   };
 
@@ -186,6 +201,26 @@ export default function Settings() {
               onChange={(v) => updateSetting('largeText', v)}
             />
           </div>
+        </section>
+
+        {/* Data Export */}
+        <section className="card p-6 mb-6">
+          <div className="flex items-center gap-2 mb-4">
+            <Download size={18} color="var(--sage-600)" />
+            <h2 className="text-label">Data Export</h2>
+          </div>
+          <p className="text-small text-muted mb-4">
+            Download all your data as CSV files — plants, care logs, bloom logs, health logs,
+            journal entries, propagations, and breeding crosses.
+          </p>
+          <button
+            onClick={handleExport}
+            disabled={isExporting}
+            className="btn btn-secondary flex items-center gap-2"
+          >
+            <Download size={18} />
+            {isExporting ? 'Exporting...' : 'Export All Data'}
+          </button>
         </section>
 
         {/* Danger Zone */}
