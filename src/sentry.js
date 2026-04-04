@@ -8,9 +8,10 @@ import {
 } from 'react-router-dom';
 
 Sentry.init({
-  dsn: import.meta.env.VITE_SENTRY_DSN,
+  dsn: 'https://5658da1ecf7c6b3116ece6ac0a8e4ef6@o4511162117783552.ingest.us.sentry.io/4511162124271616',
   environment: import.meta.env.MODE,
   enabled: import.meta.env.PROD,
+  sendDefaultPii: true,
 
   integrations: [
     Sentry.reactRouterV6BrowserTracingIntegration({
