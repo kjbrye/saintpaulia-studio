@@ -5,6 +5,7 @@
  */
 
 import { supabase, requireUserId } from '../api/supabase';
+import { optimizeImage } from '../utils/imageOptimizer';
 
 const BUCKET = 'plant-photos';
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
@@ -25,11 +26,14 @@ export async function uploadPlantPhoto(file) {
     throw new Error('File must be under 5MB');
   }
 
+  // Optimize: resize to max 1200px and convert to WebP
+  const optimized = await optimizeImage(file);
+
   const userId = await requireUserId();
-  const ext = file.name.split('.').pop();
+  const ext = optimized.name.split('.').pop();
   const fileName = `${userId}/${Date.now()}.${ext}`;
 
-  const { error } = await supabase.storage.from(BUCKET).upload(fileName, file, {
+  const { error } = await supabase.storage.from(BUCKET).upload(fileName, optimized, {
     cacheControl: '3600',
     upsert: false,
   });
