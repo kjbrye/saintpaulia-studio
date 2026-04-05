@@ -21,3 +21,6 @@ Sentry.init({
 
   debug: true,
 });
+
+// Expose for console testing — remove after verification
+window.Sentry = Sentry;
