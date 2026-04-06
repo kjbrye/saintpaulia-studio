@@ -46,7 +46,11 @@ export async function createBloomLog(bloomLog) {
 
   // Mark the plant as blooming
   if (bloomLog.plant_id) {
-    await supabase.from('plants').update({ is_blooming: true }).eq('id', bloomLog.plant_id);
+    const { error: updateError } = await supabase
+      .from('plants')
+      .update({ is_blooming: true })
+      .eq('id', bloomLog.plant_id);
+    if (updateError) throw updateError;
   }
 
   return data;
@@ -75,9 +79,31 @@ export async function updateBloomLog(id, updates) {
  * @param {string} id - Bloom log ID
  */
 export async function deleteBloomLog(id) {
-  const { error } = await supabase.from('bloom_log').delete().eq('id', id);
+  // Fetch the bloom log first to get the plant_id
+  const { data: log, error: fetchError } = await supabase
+    .from('bloom_log')
+    .select('plant_id')
+    .eq('id', id)
+    .single();
 
+  if (fetchError) throw fetchError;
+
+  const { error } = await supabase.from('bloom_log').delete().eq('id', id);
   if (error) throw error;
+
+  // Check if the plant has any remaining active blooms
+  if (log.plant_id) {
+    const { data: activeBlooms } = await supabase
+      .from('bloom_log')
+      .select('id')
+      .eq('plant_id', log.plant_id)
+      .is('bloom_end_date', null);
+
+    // If no active blooms remain, mark plant as not blooming
+    if (!activeBlooms || activeBlooms.length === 0) {
+      await supabase.from('plants').update({ is_blooming: false }).eq('id', log.plant_id);
+    }
+  }
 }
 
 /**
@@ -100,7 +126,11 @@ export async function endBloom(id, plantId, endDate) {
 
   // If no other active blooms, mark plant as not blooming
   if (!activeBlooms || activeBlooms.length === 0) {
-    await supabase.from('plants').update({ is_blooming: false }).eq('id', plantId);
+    const { error: updateError } = await supabase
+      .from('plants')
+      .update({ is_blooming: false })
+      .eq('id', plantId);
+    if (updateError) throw updateError;
   }
 
   return log;

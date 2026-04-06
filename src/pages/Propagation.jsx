@@ -2,10 +2,11 @@
  * Propagation Page - Track leaf cuttings and plantlet growth
  */
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowLeft, Scissors, Sprout, Plus } from 'lucide-react';
 import { usePlants, useCreatePlant } from '../hooks/usePlants';
+import { isArchived } from '../constants/plantStatus';
 import {
   usePropagations,
   useCreatePropagation,
@@ -15,6 +16,7 @@ import {
 import HeaderBar from '../components/ui/HeaderBar';
 import { PropagationCard, PropagationForm, PropagationStatsPanel } from '../components/propagation';
 import { getPropagationStats } from '../utils/propagationStats';
+import PremiumGate from '../components/ui/PremiumGate';
 import { usePageTitle } from '../hooks/usePageTitle';
 
 export default function Propagation() {
@@ -22,7 +24,8 @@ export default function Propagation() {
   const [showForm, setShowForm] = useState(false);
   const [filter, setFilter] = useState('active'); // 'active' | 'completed' | 'all'
 
-  const { data: plants = [] } = usePlants();
+  const { data: allPlants = [] } = usePlants();
+  const plants = useMemo(() => allPlants.filter((p) => !isArchived(p.status)), [allPlants]);
   const { data: propagations = [], isLoading, error } = usePropagations();
   const createPropagation = useCreatePropagation();
   const updatePropagation = useUpdatePropagation();
@@ -111,6 +114,7 @@ export default function Propagation() {
     <div className="min-h-screen">
       <HeaderBar />
 
+      <PremiumGate feature="propagation">
       <main className="p-4 md:p-6 lg:p-8">
         <div className="max-w-3xl mx-auto">
           {/* Header */}
@@ -213,6 +217,7 @@ export default function Propagation() {
           )}
         </div>
       </main>
+      </PremiumGate>
     </div>
   );
 }

@@ -12,6 +12,7 @@ import { useRecentCareLogs } from '../hooks/useCare';
 import { usePropagations } from '../hooks/usePropagation';
 import { useCrosses } from '../hooks/useBreeding';
 import { getCollectionCareStats } from '../utils/careStatus';
+import { isArchived } from '../constants/plantStatus';
 import { usePageTitle } from '../hooks/usePageTitle';
 import HeaderBar from '../components/ui/HeaderBar';
 import {
@@ -30,13 +31,14 @@ export default function Dashboard() {
   const { data: propagations = [] } = usePropagations();
   const { data: crosses = [] } = useCrosses();
 
-  // Derived data
-  const bloomingPlants = plants.filter((p) => p.is_blooming);
+  // Derived data — exclude archived plants from active views
+  const activePlants = plants.filter((p) => !isArchived(p.status));
+  const bloomingPlants = activePlants.filter((p) => p.is_blooming);
   const activePropagations = propagations.filter(
     (p) => p.stage !== 'complete' && p.stage !== 'failed',
   );
   const activeCrosses = crosses.filter((c) => c.stage !== 'blooming' && c.stage !== 'failed');
-  const stats = getCollectionCareStats(plants, careThresholds);
+  const stats = getCollectionCareStats(activePlants, careThresholds);
   const displayName = user?.email?.split('@')[0] || 'Gardener';
 
   if (isLoading) {
@@ -74,7 +76,7 @@ export default function Dashboard() {
   }
 
   // Empty state
-  if (plants.length === 0) {
+  if (activePlants.length === 0) {
     return (
       <div className="min-h-screen">
         <HeaderBar />
@@ -124,7 +126,7 @@ export default function Dashboard() {
 
             {/* Collection Stats */}
             <CollectionStatsPanel
-              plants={plants}
+              plants={activePlants}
               bloomingPlants={bloomingPlants}
               propagationCount={activePropagations.length}
               breedingCount={activeCrosses.length}

@@ -2,10 +2,11 @@
  * Breeding Page - Track cross-pollination attempts and offspring
  */
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowLeft, FlaskConical, Heart, Plus } from 'lucide-react';
 import { usePlants, useCreatePlant } from '../hooks/usePlants';
+import { isArchived } from '../constants/plantStatus';
 import {
   useCrosses,
   useCreateCross,
@@ -18,6 +19,7 @@ import {
 import HeaderBar from '../components/ui/HeaderBar';
 import { CrossCard, CrossForm, BreedingStatsPanel } from '../components/breeding';
 import { getBreedingStats } from '../utils/propagationStats';
+import PremiumGate from '../components/ui/PremiumGate';
 import { usePageTitle } from '../hooks/usePageTitle';
 
 export default function Breeding() {
@@ -25,7 +27,8 @@ export default function Breeding() {
   const [showForm, setShowForm] = useState(false);
   const [filter, setFilter] = useState('active'); // 'active' | 'complete' | 'archived' | 'all'
 
-  const { data: plants = [] } = usePlants();
+  const { data: allPlants = [] } = usePlants();
+  const plants = useMemo(() => allPlants.filter((p) => !isArchived(p.status)), [allPlants]);
   const { data: crosses = [], isLoading, error } = useCrosses();
   const createCross = useCreateCross();
   const updateCross = useUpdateCross();
@@ -152,6 +155,7 @@ export default function Breeding() {
     <div className="min-h-screen">
       <HeaderBar />
 
+      <PremiumGate feature="breeding">
       <main className="p-4 md:p-6 lg:p-8">
         <div className="max-w-3xl mx-auto">
           {/* Header */}
@@ -259,6 +263,7 @@ export default function Breeding() {
           )}
         </div>
       </main>
+      </PremiumGate>
     </div>
   );
 }

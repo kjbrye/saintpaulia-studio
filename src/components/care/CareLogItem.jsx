@@ -39,7 +39,9 @@ export default function CareLogItem({ log, showPlantName = false, plantName }) {
   const Icon = CARE_ICONS[log.care_type] || Droplets;
   const colors = CARE_COLORS[log.care_type] || CARE_COLORS.watering;
   const label = CARE_LABELS[log.care_type] || 'Care';
-  const fertilizerLabel = log.fertilizer_type ? FERTILIZER_LABELS[log.fertilizer_type] : null;
+  const fertilizerLabel = log.fertilizer_type
+    ? FERTILIZER_LABELS[log.fertilizer_type] || log.fertilizer_type.replace(/^custom:/, '')
+    : null;
   const potSize = log.pot_size;
 
   const date = new Date(log.care_date);

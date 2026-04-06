@@ -2,8 +2,18 @@
  * QuickCareActions - Buttons to quickly log care actions
  */
 
-import { Droplets, Sparkles, Scissors, Check, Loader2, ChevronDown, Flower2 } from 'lucide-react';
-import { useState, useRef, useEffect } from 'react';
+import {
+  Droplets,
+  Sparkles,
+  Scissors,
+  Check,
+  Loader2,
+  ChevronDown,
+  Flower2,
+  Calendar,
+} from 'lucide-react';
+import { useState, useRef, useEffect, useMemo } from 'react';
+import { useSettings } from '../../hooks/useSettings';
 
 const careConfig = {
   watering: {
@@ -53,7 +63,7 @@ const POT_SIZE_OPTIONS = [
   { value: '6"+', label: '6"+ (Extra Large)' },
 ];
 
-function CareButton({ careType, onLog, isLoading, recentlyLogged, currentPotSize }) {
+function CareButton({ careType, onLog, isLoading, recentlyLogged, currentPotSize, fertilizerOptions }) {
   const [showOptions, setShowOptions] = useState(false);
   const optionsRef = useRef(null);
   const config = careConfig[careType];
@@ -100,7 +110,7 @@ function CareButton({ careType, onLog, isLoading, recentlyLogged, currentPotSize
   }
 
   // Get options based on type
-  const options = config.optionType === 'potSize' ? POT_SIZE_OPTIONS : FERTILIZER_OPTIONS;
+  const options = config.optionType === 'potSize' ? POT_SIZE_OPTIONS : (fertilizerOptions || FERTILIZER_OPTIONS);
   const dropdownTitle =
     config.optionType === 'potSize' ? 'Select new pot size' : 'Select fertilizer type';
 
@@ -128,7 +138,13 @@ function CareButton({ careType, onLog, isLoading, recentlyLogged, currentPotSize
               </p>
             )}
 
-            {options.map((option) => (
+            {options.map((option, idx) =>
+              option.divider ? (
+                <div
+                  key={`divider-${idx}`}
+                  style={{ borderTop: '1px solid var(--sage-200)', margin: '4px 0' }}
+                />
+              ) : (
               <button
                 key={option.value}
                 onClick={() => handleOptionSelect(option.value)}
@@ -147,7 +163,8 @@ function CareButton({ careType, onLog, isLoading, recentlyLogged, currentPotSize
                   <span className="text-xs text-muted ml-2">(current)</span>
                 )}
               </button>
-            ))}
+              )
+            )}
 
             {config.optionType === 'fertilizer' && (
               <div
@@ -177,11 +194,25 @@ function CareButton({ careType, onLog, isLoading, recentlyLogged, currentPotSize
 export default function QuickCareActions({ plantId, onLogCare, isPending, currentPotSize }) {
   const [recentlyLogged, setRecentlyLogged] = useState({});
   const [loadingType, setLoadingType] = useState(null);
+  const [backdateValue, setBackdateValue] = useState('');
+  const { settings } = useSettings();
+
+  const allFertilizerOptions = useMemo(() => {
+    const custom = (settings.customFertilizers || []).map((name) => ({
+      value: `custom:${name}`,
+      label: name,
+    }));
+    if (custom.length === 0) return FERTILIZER_OPTIONS;
+    return [...FERTILIZER_OPTIONS, { divider: true }, ...custom];
+  }, [settings.customFertilizers]);
 
   const handleLog = async (careType, fertilizerType = null, potSize = null) => {
     setLoadingType(careType);
     try {
-      await onLogCare({ plantId, careType, notes: '', fertilizerType, potSize });
+      const careDate = backdateValue
+        ? new Date(backdateValue + 'T12:00:00').toISOString()
+        : undefined;
+      await onLogCare({ plantId, careType, notes: '', fertilizerType, potSize, careDate });
       setRecentlyLogged((prev) => ({ ...prev, [careType]: true }));
       // Reset after 3 seconds
       setTimeout(() => {
@@ -192,9 +223,33 @@ export default function QuickCareActions({ plantId, onLogCare, isPending, curren
     }
   };
 
+  const todayStr = new Date().toISOString().split('T')[0];
+
   return (
     <div className="card p-6 mb-6">
-      <h2 className="heading heading-md mb-4">Quick Care</h2>
+      <div className="flex items-center justify-between mb-4">
+        <h2 className="heading heading-md">Quick Care</h2>
+        <div className="flex items-center gap-2">
+          <Calendar size={16} style={{ color: 'var(--sage-400)' }} />
+          <input
+            type="date"
+            value={backdateValue}
+            max={todayStr}
+            onChange={(e) => setBackdateValue(e.target.value)}
+            className="input py-1 px-2 text-small"
+            style={{ width: '140px' }}
+          />
+          {backdateValue && (
+            <button
+              onClick={() => setBackdateValue('')}
+              className="text-xs font-medium px-2 py-1 rounded-lg transition-colors"
+              style={{ color: 'var(--sage-600)', background: 'var(--sage-100)' }}
+            >
+              Today
+            </button>
+          )}
+        </div>
+      </div>
       <div className="flex flex-col sm:flex-row gap-3">
         <CareButton
           careType="watering"
@@ -207,6 +262,7 @@ export default function QuickCareActions({ plantId, onLogCare, isPending, curren
           onLog={handleLog}
           isLoading={loadingType === 'fertilizing' || isPending}
           recentlyLogged={recentlyLogged.fertilizing}
+          fertilizerOptions={allFertilizerOptions}
         />
         <CareButton
           careType="grooming"

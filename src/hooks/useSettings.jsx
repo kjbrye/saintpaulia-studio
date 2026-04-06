@@ -16,6 +16,8 @@ const DEFAULT_SETTINGS = {
   highContrast: false,
   reducedMotion: false,
   largeText: false,
+  customFertilizers: [],
+  customLocations: [],
 };
 
 const STORAGE_KEY = 'saintpaulia-settings';

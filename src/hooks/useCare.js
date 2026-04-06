@@ -48,8 +48,8 @@ export function useLogCare() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ plantId, careType, notes, fertilizerType, potSize }) =>
-      careService.logCare(plantId, careType, notes, fertilizerType, potSize),
+    mutationFn: ({ plantId, careType, notes, fertilizerType, potSize, careDate }) =>
+      careService.logCare(plantId, careType, notes, fertilizerType, potSize, careDate),
     onSuccess: (newLog, { plantId, careType, potSize }) => {
       // Invalidate care logs
       queryClient.invalidateQueries({ queryKey: careKeys.all });

@@ -20,6 +20,7 @@ import {
   RelationshipFinder,
   TraitInheritance,
 } from '../components/lineage';
+import PremiumGate from '../components/ui/PremiumGate';
 import { usePageTitle } from '../hooks/usePageTitle';
 
 export default function Lineage() {
@@ -57,6 +58,7 @@ export default function Lineage() {
   return (
     <div className="min-h-screen">
       <HeaderBar />
+      <PremiumGate feature="lineage">
       <main className="p-4 md:p-6 lg:p-8">
         <div className="max-w-4xl mx-auto">
           {/* Header */}
@@ -161,6 +163,7 @@ export default function Lineage() {
           )}
         </div>
       </main>
+      </PremiumGate>
     </div>
   );
 }

@@ -6,11 +6,14 @@
 
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { ArrowLeft, User, Bell, Layout, LogOut, AlertTriangle, Eye, Download } from 'lucide-react';
+import { ArrowLeft, User, Bell, Layout, LogOut, AlertTriangle, Eye, Download, Crown, Sparkles, Plus, X, MapPin } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import { useToast } from '../hooks/useToast';
 import { useSettings } from '../hooks/useSettings.jsx';
+import { useSubscription } from '../hooks/useSubscription';
 import { exportAllData } from '../services/export';
+import { createCheckoutSession, createPortalSession } from '../services/subscription';
+import { PLANS, STRIPE_PRICES } from '../constants/plans';
 import { usePageTitle } from '../hooks/usePageTitle';
 
 const WATERING_OPTIONS = [
@@ -54,6 +57,8 @@ export default function Settings() {
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
+  const { subscription, isPremium, plan } = useSubscription();
+  const [billingLoading, setBillingLoading] = useState(false);
 
   const handleLogout = async () => {
     setIsLoggingOut(true);
@@ -118,6 +123,104 @@ export default function Settings() {
           </div>
         </section>
 
+        {/* Subscription Section */}
+        <section className="card p-6 mb-6">
+          <div className="flex items-center gap-2 mb-4">
+            <Crown size={18} color="var(--copper-500)" />
+            <h2 className="text-label">Subscription</h2>
+          </div>
+
+          {isPremium ? (
+            <div className="space-y-4">
+              <div className="card-inset p-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-body font-semibold">Premium Plan</p>
+                    <p className="text-small text-muted">
+                      {subscription?.cancel_at_period_end
+                        ? `Downgrades to Free on ${new Date(subscription.current_period_end).toLocaleDateString()}`
+                        : subscription?.current_period_end
+                          ? `Renews ${new Date(subscription.current_period_end).toLocaleDateString()}`
+                          : 'Active'}
+                    </p>
+                  </div>
+                  <span
+                    className="px-3 py-1 rounded-full text-xs font-bold"
+                    style={{
+                      background: subscription?.cancel_at_period_end ? 'var(--color-warning)' : 'var(--color-success)',
+                      color: 'var(--sage-900)',
+                    }}
+                  >
+                    {subscription?.cancel_at_period_end ? 'Canceling' : 'Active'}
+                  </span>
+                </div>
+              </div>
+              <button
+                className="btn btn-secondary"
+                disabled={billingLoading}
+                onClick={async () => {
+                  setBillingLoading(true);
+                  try {
+                    const { url } = await createPortalSession();
+                    window.location.href = url;
+                  } catch {
+                    toast.error('Failed to open billing portal');
+                    setBillingLoading(false);
+                  }
+                }}
+              >
+                {billingLoading ? 'Opening...' : 'Manage Billing'}
+              </button>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              <div className="card-inset p-4">
+                <p className="text-body font-semibold">Free Plan</p>
+                <p className="text-small text-muted">
+                  25 plant limit. Upgrade for unlimited plants, breeding, propagation, lineage, and analytics.
+                </p>
+              </div>
+              <div className="flex flex-wrap gap-3">
+                <button
+                  className="btn btn-primary"
+                  disabled={billingLoading}
+                  onClick={async () => {
+                    if (!STRIPE_PRICES.monthly) return;
+                    setBillingLoading(true);
+                    try {
+                      const { url } = await createCheckoutSession(STRIPE_PRICES.monthly);
+                      window.location.href = url;
+                    } catch {
+                      toast.error('Failed to start checkout');
+                      setBillingLoading(false);
+                    }
+                  }}
+                >
+                  <Sparkles size={16} />
+                  {billingLoading ? 'Redirecting...' : `Upgrade Monthly — $${PLANS.premium.monthlyPrice}/mo`}
+                </button>
+                <button
+                  className="btn btn-secondary"
+                  disabled={billingLoading}
+                  onClick={async () => {
+                    if (!STRIPE_PRICES.annual) return;
+                    setBillingLoading(true);
+                    try {
+                      const { url } = await createCheckoutSession(STRIPE_PRICES.annual);
+                      window.location.href = url;
+                    } catch {
+                      toast.error('Failed to start checkout');
+                      setBillingLoading(false);
+                    }
+                  }}
+                >
+                  {billingLoading ? 'Redirecting...' : `Upgrade Annual — $${PLANS.premium.annualPrice}/yr`}
+                </button>
+              </div>
+            </div>
+          )}
+        </section>
+
         {/* Care Reminders Section */}
         <section className="card p-6 mb-6">
           <div className="flex items-center gap-2 mb-4">
@@ -149,6 +252,28 @@ export default function Settings() {
             />
           </div>
         </section>
+
+        {/* Custom Fertilizers Section */}
+        <CustomListSection
+          icon={Sparkles}
+          iconColor="var(--purple-400)"
+          title="Custom Fertilizers"
+          description="Add your own fertilizer types to use when logging care"
+          items={settings.customFertilizers || []}
+          onChange={(list) => updateSetting('customFertilizers', list)}
+          placeholder="e.g. Schultz 10-15-10"
+        />
+
+        {/* Custom Locations Section */}
+        <CustomListSection
+          icon={MapPin}
+          iconColor="var(--sage-600)"
+          title="Custom Locations"
+          description="Add your own locations to use when placing plants"
+          items={settings.customLocations || []}
+          onChange={(list) => updateSetting('customLocations', list)}
+          placeholder="e.g. Kitchen Window, Basement Rack"
+        />
 
         {/* Display Section */}
         <section className="card p-6 mb-6">
@@ -286,6 +411,72 @@ function ToggleRow({ label, description, checked, onChange }) {
         <span className="a11y-toggle-thumb" />
       </button>
     </div>
+  );
+}
+
+function CustomListSection({ icon: Icon, iconColor, title, description, items, onChange, placeholder }) {
+  const [newName, setNewName] = useState('');
+
+  const handleAdd = () => {
+    const trimmed = newName.trim();
+    if (!trimmed) return;
+    if (items.some((f) => f.toLowerCase() === trimmed.toLowerCase())) return;
+    onChange([...items, trimmed]);
+    setNewName('');
+  };
+
+  const handleRemove = (index) => {
+    onChange(items.filter((_, i) => i !== index));
+  };
+
+  return (
+    <section className="card p-6 mb-6">
+      <div className="flex items-center gap-2 mb-4">
+        <Icon size={18} color={iconColor} />
+        <h2 className="text-label">{title}</h2>
+      </div>
+      <p className="text-small text-muted mb-4">{description}</p>
+
+      <div className="flex gap-2 mb-4">
+        <input
+          type="text"
+          value={newName}
+          onChange={(e) => setNewName(e.target.value)}
+          onKeyDown={(e) => e.key === 'Enter' && handleAdd()}
+          placeholder={placeholder}
+          className="input flex-1 py-2 text-small"
+          maxLength={50}
+        />
+        <button
+          onClick={handleAdd}
+          disabled={!newName.trim()}
+          className="btn btn-primary flex items-center gap-1"
+        >
+          <Plus size={16} />
+          Add
+        </button>
+      </div>
+
+      {items.length > 0 && (
+        <div className="space-y-2">
+          {items.map((name, index) => (
+            <div
+              key={index}
+              className="card-inset px-4 py-2 flex items-center justify-between"
+            >
+              <span className="text-body">{name}</span>
+              <button
+                onClick={() => handleRemove(index)}
+                className="icon-container icon-container-sm"
+                aria-label={`Remove ${name}`}
+              >
+                <X size={14} style={{ color: 'var(--copper-500)' }} />
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
+    </section>
   );
 }
 

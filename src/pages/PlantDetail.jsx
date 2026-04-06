@@ -2,9 +2,9 @@
  * PlantDetail Page - Individual plant view with care management and edit functionality
  */
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Pencil, Trash2, Check, Loader2, Flower2 } from 'lucide-react';
+import { ArrowLeft, Pencil, Trash2, Check, Loader2, Flower2, Archive, RotateCcw } from 'lucide-react';
 import { usePlant, useUpdatePlant, useDeletePlant } from '../hooks/usePlants';
 import { useCareLogs, useLogCare } from '../hooks/useCare';
 import {
@@ -35,21 +35,12 @@ import PhotoUpload from '../components/plants/PhotoUpload';
 import NotesLog from '../components/ui/NotesLog';
 import { MiniPedigree } from '../components/lineage';
 import { usePageTitle } from '../hooks/usePageTitle';
-
-// Status options for select dropdown
-const STATUS_OPTIONS = [
-  { value: 'healthy', label: 'Healthy' },
-  { value: 'recovering', label: 'Recovering' },
-  { value: 'struggling', label: 'Struggling' },
-  { value: 'dormant', label: 'Dormant' },
-];
-
-const STATUS_LABELS = {
-  healthy: 'Healthy',
-  recovering: 'Recovering',
-  struggling: 'Struggling',
-  dormant: 'Dormant',
-};
+import {
+  STATUS_LABELS,
+  STATUS_OPTIONS,
+  ARCHIVE_OPTIONS,
+  isArchived,
+} from '../constants/plantStatus';
 
 // Location options for select dropdown
 const LOCATION_OPTIONS = [
@@ -113,7 +104,16 @@ export default function PlantDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
   const toast = useToast();
-  const { careThresholds } = useSettings();
+  const { careThresholds, settings } = useSettings();
+
+  const allLocationOptions = useMemo(() => {
+    const custom = (settings.customLocations || []).map((loc) => ({
+      value: `custom:${loc}`,
+      label: loc,
+    }));
+    if (custom.length === 0) return LOCATION_OPTIONS;
+    return [...LOCATION_OPTIONS, ...custom];
+  }, [settings.customLocations]);
 
   // Data fetching
   const { data: plant, isLoading, error } = usePlant(id);
@@ -147,6 +147,7 @@ export default function PlantDetail() {
   const [formData, setFormData] = useState(null);
   const [hasChanges, setHasChanges] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [showArchiveMenu, setShowArchiveMenu] = useState(false);
 
   // Initialize form data when entering edit mode
   useEffect(() => {
@@ -248,6 +249,33 @@ export default function PlantDetail() {
     }
   };
 
+  // Handle archive (mark as deceased/gifted/sold)
+  const handleArchive = async (archiveStatus) => {
+    try {
+      await updatePlant.mutateAsync({
+        id: plant.id,
+        updates: { status: archiveStatus },
+      });
+      setShowArchiveMenu(false);
+      toast.success(`Plant marked as ${STATUS_LABELS[archiveStatus].toLowerCase()}`);
+    } catch (err) {
+      toast.error('Failed to archive plant. Please try again.');
+    }
+  };
+
+  // Handle restore (move back to active)
+  const handleRestore = async () => {
+    try {
+      await updatePlant.mutateAsync({
+        id: plant.id,
+        updates: { status: 'healthy' },
+      });
+      toast.success('Plant restored to active collection');
+    } catch (err) {
+      toast.error('Failed to restore plant. Please try again.');
+    }
+  };
+
   // Format date for display
   const formatDate = (dateStr) => {
     if (!dateStr) return null;
@@ -284,6 +312,7 @@ export default function PlantDetail() {
 
   const careStatuses = getPlantCareStatuses(plant, careThresholds);
   const displayName = plant.nickname || plant.cultivar_name || 'Unnamed Plant';
+  const plantIsArchived = isArchived(plant.status);
 
   return (
     <div className="min-h-screen p-6 md:p-10">
@@ -323,6 +352,39 @@ export default function PlantDetail() {
               </>
             ) : (
               <>
+                {plantIsArchived ? (
+                  <button className="btn btn-secondary" onClick={handleRestore}>
+                    <RotateCcw size={18} />
+                    Restore
+                  </button>
+                ) : (
+                  <div className="relative">
+                    <button
+                      className="btn btn-secondary"
+                      onClick={() => setShowArchiveMenu(!showArchiveMenu)}
+                    >
+                      <Archive size={18} />
+                      Archive
+                    </button>
+                    {showArchiveMenu && (
+                      <div className="absolute right-0 top-full mt-2 z-10 card p-2 shadow-lg min-w-[180px]">
+                        <p className="text-xs text-muted px-3 py-1 mb-1">Mark plant as...</p>
+                        {ARCHIVE_OPTIONS.map((opt) => (
+                          <button
+                            key={opt.value}
+                            onClick={() => handleArchive(opt.value)}
+                            className="w-full text-left px-3 py-2 text-small rounded-lg transition-colors"
+                            onMouseEnter={(e) => (e.target.style.background = 'var(--sage-100)')}
+                            onMouseLeave={(e) => (e.target.style.background = 'transparent')}
+                          >
+                            <span className="font-medium">{opt.label}</span>
+                            <span className="block text-xs text-muted">{opt.description}</span>
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )}
                 <button className="btn btn-secondary" onClick={() => setIsEditing(true)}>
                   <Pencil size={18} />
                   Edit
@@ -338,6 +400,27 @@ export default function PlantDetail() {
             )}
           </div>
         </header>
+
+        {/* Archived Banner */}
+        {plantIsArchived && !isEditing && (
+          <div
+            className="card p-4 mb-6 flex items-center justify-between"
+            style={{ background: 'var(--sage-100)', borderLeft: '4px solid var(--sage-500)' }}
+          >
+            <div>
+              <p className="text-body font-semibold" style={{ color: 'var(--sage-700)' }}>
+                {STATUS_LABELS[plant.status]}
+              </p>
+              <p className="text-small text-muted">
+                This plant has been archived. Its data is preserved for reference.
+              </p>
+            </div>
+            <button className="btn btn-secondary btn-small" onClick={handleRestore}>
+              <RotateCcw size={16} />
+              Restore
+            </button>
+          </div>
+        )}
 
         {/* Plant Info Card (View/Edit Mode) */}
         <div className="card p-6 mb-6">
@@ -412,10 +495,10 @@ export default function PlantDetail() {
             <EditableField
               label="Location"
               value={isEditing ? formData?.location : plant.location}
-              displayValue={LOCATION_LABELS[plant.location]}
+              displayValue={LOCATION_LABELS[plant.location] || (plant.location && plant.location.replace(/^custom:/, ''))}
               isEditing={isEditing}
               onChange={(v) => updateField('location', v)}
-              options={LOCATION_OPTIONS}
+              options={allLocationOptions}
             />
 
             <EditableField
@@ -482,8 +565,8 @@ export default function PlantDetail() {
           </section>
         )}
 
-        {/* Care Status Grid (only in view mode) */}
-        {!isEditing && (
+        {/* Care Status Grid (only in view mode, hide for archived) */}
+        {!isEditing && !plantIsArchived && (
           <>
             <section className="mb-6">
               <h2 className="heading heading-md mb-4">Care Status</h2>
@@ -513,7 +596,12 @@ export default function PlantDetail() {
               isPending={isPending}
               currentPotSize={plant.pot_size}
             />
+          </>
+        )}
 
+        {/* History sections (visible for both active and archived plants) */}
+        {!isEditing && (
+          <>
             {/* Bloom History */}
             <BloomHistory
               logs={bloomLogs}

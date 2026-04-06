@@ -32,6 +32,7 @@ import {
 } from '../components/breeding';
 import { BREEDING_STAGES } from '../components/breeding/CrossCard';
 import NotesLog from '../components/ui/NotesLog';
+import PremiumGate from '../components/ui/PremiumGate';
 import { usePageTitle } from '../hooks/usePageTitle';
 
 export default function CrossDetail() {
@@ -175,6 +176,7 @@ export default function CrossDetail() {
   return (
     <div className="min-h-screen">
       <HeaderBar />
+      <PremiumGate feature="breeding">
       <main className="p-4 md:p-6 lg:p-8">
         <div className="max-w-3xl mx-auto">
           {/* Header */}
@@ -361,6 +363,7 @@ export default function CrossDetail() {
           </div>
         )}
       </main>
+      </PremiumGate>
     </div>
   );
 }

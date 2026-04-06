@@ -62,7 +62,9 @@ const SORT_OPTIONS = [
 function CareLogItem({ log }) {
   const config = careConfig[log.care_type] || careConfig.watering;
   const Icon = config.icon;
-  const fertilizerLabel = log.fertilizer_type ? FERTILIZER_LABELS[log.fertilizer_type] : null;
+  const fertilizerLabel = log.fertilizer_type
+    ? FERTILIZER_LABELS[log.fertilizer_type] || log.fertilizer_type.replace(/^custom:/, '')
+    : null;
   const potSize = log.pot_size;
 
   const formatDate = (dateStr) => {

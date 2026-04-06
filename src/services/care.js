@@ -54,6 +54,7 @@ export async function createCareLog(careLog) {
  * @param {string} notes - Optional notes
  * @param {string} fertilizerType - Optional fertilizer type (only for fertilizing)
  * @param {string} potSize - Optional pot size (only for repotting)
+ * @param {string} careDate - Optional ISO date string (defaults to now)
  * @returns {Promise<Object>} Created care log object
  */
 export async function logCare(
@@ -62,8 +63,9 @@ export async function logCare(
   notes = '',
   fertilizerType = null,
   potSize = null,
+  careDate = null,
 ) {
-  const now = new Date().toISOString();
+  const now = careDate || new Date().toISOString();
 
   // Create the care log
   const careLog = await createCareLog({

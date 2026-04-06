@@ -60,18 +60,22 @@ export default function LibraryToolbar({
   onBloomingFilterChange,
   careFilter,
   onCareFilterChange,
+  collectionFilter,
+  onCollectionFilterChange,
 }) {
   const hasActiveFilters =
     potSizeFilter !== 'all' ||
     bloomColorFilter !== 'all' ||
     bloomingFilter !== 'all' ||
-    careFilter !== 'all';
+    careFilter !== 'all' ||
+    collectionFilter !== 'active';
 
   const clearAllFilters = () => {
     onPotSizeFilterChange('all');
     onBloomColorFilterChange('all');
     onBloomingFilterChange('all');
     onCareFilterChange('all');
+    onCollectionFilterChange('active');
   };
 
   return (
@@ -197,6 +201,27 @@ export default function LibraryToolbar({
             label="Up to Date"
             active={careFilter === 'up-to-date'}
             onClick={() => onCareFilterChange('up-to-date')}
+          />
+        </div>
+
+        <span className="text-sage-300">|</span>
+
+        {/* Collection Filter Chips */}
+        <div className="flex gap-1.5">
+          <FilterChip
+            label="Active"
+            active={collectionFilter === 'active'}
+            onClick={() => onCollectionFilterChange('active')}
+          />
+          <FilterChip
+            label="Archived"
+            active={collectionFilter === 'archived'}
+            onClick={() => onCollectionFilterChange('archived')}
+          />
+          <FilterChip
+            label="All"
+            active={collectionFilter === 'all'}
+            onClick={() => onCollectionFilterChange('all')}
           />
         </div>
 

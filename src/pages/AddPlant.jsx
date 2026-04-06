@@ -5,17 +5,24 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Plus, Loader2 } from 'lucide-react';
-import { useCreatePlant } from '../hooks/usePlants';
+import { usePlants, useCreatePlant } from '../hooks/usePlants';
+import { useSubscription } from '../hooks/useSubscription';
 import { useToast } from '../hooks/useToast';
 import FormField from '../components/ui/FormField';
 import { PhotoUpload } from '../components/plants';
+import PlantLimitBanner from '../components/ui/PlantLimitBanner';
 import { usePageTitle } from '../hooks/usePageTitle';
+import { useSettings } from '../hooks/useSettings';
 
 export default function AddPlant() {
   usePageTitle('Add Plant');
   const navigate = useNavigate();
   const toast = useToast();
   const createPlant = useCreatePlant();
+  const { data: plants = [] } = usePlants();
+  const { plantLimit } = useSubscription();
+  const { settings } = useSettings();
+  const atLimit = plants.length >= plantLimit;
 
   const [formData, setFormData] = useState({
     cultivar_name: '',
@@ -92,8 +99,10 @@ export default function AddPlant() {
           <h1 className="heading heading-xl">Add New Plant</h1>
         </header>
 
+        <PlantLimitBanner plantCount={plants.length} />
+
         {/* Form Card */}
-        <form onSubmit={handleSubmit} className="card p-8">
+        <form onSubmit={handleSubmit} className="card p-8" style={atLimit ? { opacity: 0.5, pointerEvents: 'none' } : undefined}>
           {/* Photo + Primary Fields */}
           <div className="flex flex-col md:flex-row gap-8 mb-8">
             {/* Photo Upload */}
@@ -168,6 +177,9 @@ export default function AddPlant() {
                 <option value="light_stand">Light Stand</option>
                 <option value="greenhouse">Greenhouse</option>
                 <option value="other">Other</option>
+                {(settings.customLocations || []).map((loc) => (
+                  <option key={`custom:${loc}`} value={`custom:${loc}`}>{loc}</option>
+                ))}
               </select>
             </FormField>
 

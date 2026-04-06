@@ -24,6 +24,8 @@ import { useBloomLogs } from '../hooks/useBlooms';
 import { useSettings } from '../hooks/useSettings.jsx';
 import { getCollectionCareStats } from '../utils/careStatus';
 import { getPropagationStats, getBreedingStats } from '../utils/propagationStats';
+import { isArchived } from '../constants/plantStatus';
+import PremiumGate from '../components/ui/PremiumGate';
 import { usePageTitle } from '../hooks/usePageTitle';
 
 function StatCard({ icon: Icon, iconColor, label, value, sub }) {
@@ -375,11 +377,13 @@ function BloomPanel({ bloomLogs, plants }) {
 export default function Analytics() {
   usePageTitle('Analytics');
   const { careThresholds } = useSettings();
-  const { data: plants = [], isLoading: plantsLoading } = usePlants();
+  const { data: allPlants = [], isLoading: plantsLoading } = usePlants();
   const { data: careLogs = [] } = useCareLogs({ limit: 500 });
   const { data: propagations = [] } = usePropagations();
   const { data: crosses = [] } = useCrosses();
   const { data: bloomLogs = [] } = useBloomLogs({ limit: 500 });
+
+  const plants = useMemo(() => allPlants.filter((p) => !isArchived(p.status)), [allPlants]);
 
   const careStats = useMemo(
     () => getCollectionCareStats(plants, careThresholds),
@@ -422,6 +426,7 @@ export default function Analytics() {
   const bloomingCount = plants.filter((p) => p.is_blooming).length;
 
   return (
+    <PremiumGate feature="analytics">
     <div className="min-h-screen p-6 md:p-10">
       <div className="max-w-5xl mx-auto">
         {/* Header */}
@@ -509,5 +514,6 @@ export default function Analytics() {
         <BreedingPanel stats={breedingStats} />
       </div>
     </div>
+    </PremiumGate>
   );
 }

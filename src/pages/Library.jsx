@@ -8,6 +8,7 @@ import { ArrowLeft, Plus, ChevronLeft, ChevronRight, CheckSquare, Square } from 
 import { usePlants } from '../hooks/usePlants';
 import { useSettings } from '../hooks/useSettings.jsx';
 import { plantNeedsCare } from '../utils/careStatus';
+import { isArchived } from '../constants/plantStatus';
 import PlantCard from '../components/library/PlantCard';
 import PlantListItem from '../components/library/PlantListItem';
 import LibraryToolbar from '../components/library/LibraryToolbar';
@@ -43,6 +44,7 @@ export default function Library() {
   const [bloomColorFilter, setBloomColorFilter] = useState('all');
   const [bloomingFilter, setBloomingFilter] = useState(initialBloomingFilter);
   const [careFilter, setCareFilter] = useState(initialCareFilter);
+  const [collectionFilter, setCollectionFilter] = useState('active');
 
   // Selection state
   const [selectionMode, setSelectionMode] = useState(false);
@@ -52,8 +54,18 @@ export default function Library() {
   const plantsPerPage = settings.plantsPerPage;
 
   // Filter and sort
+  // Count of active plants (for header display, excludes archived)
+  const activePlants = useMemo(() => plants.filter((p) => !isArchived(p.status)), [plants]);
+
   const filteredPlants = useMemo(() => {
     let result = plants;
+
+    // Collection filter (active/archived/all)
+    if (collectionFilter === 'active') {
+      result = result.filter((p) => !isArchived(p.status));
+    } else if (collectionFilter === 'archived') {
+      result = result.filter((p) => isArchived(p.status));
+    }
 
     // Search filter
     if (debouncedSearch) {
@@ -115,6 +127,7 @@ export default function Library() {
     bloomColorFilter,
     bloomingFilter,
     careFilter,
+    collectionFilter,
   ]);
 
   // Reset to page 1 when search, sort, or filters change
@@ -128,6 +141,7 @@ export default function Library() {
     bloomColorFilter,
     bloomingFilter,
     careFilter,
+    collectionFilter,
   ]);
 
   // Clear selection when exiting selection mode
@@ -147,7 +161,8 @@ export default function Library() {
     potSizeFilter !== 'all' ||
     bloomColorFilter !== 'all' ||
     bloomingFilter !== 'all' ||
-    careFilter !== 'all';
+    careFilter !== 'all' ||
+    collectionFilter !== 'active';
 
   // Selection handlers
   const handleToggleSelect = useCallback((plantId) => {
@@ -237,10 +252,10 @@ export default function Library() {
         </header>
 
         {/* Empty state - no plants at all */}
-        {plants.length === 0 && <EmptyLibrary />}
+        {activePlants.length === 0 && collectionFilter === 'active' && <EmptyLibrary />}
 
         {/* Has plants */}
-        {plants.length > 0 && (
+        {(activePlants.length > 0 || collectionFilter !== 'active') && (
           <>
             {/* Batch Actions Toolbar */}
             {selectionMode && (
@@ -268,6 +283,8 @@ export default function Library() {
               onBloomingFilterChange={setBloomingFilter}
               careFilter={careFilter}
               onCareFilterChange={setCareFilter}
+              collectionFilter={collectionFilter}
+              onCollectionFilterChange={setCollectionFilter}
             />
 
             {/* No search/filter results */}

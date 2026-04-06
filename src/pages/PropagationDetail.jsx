@@ -31,6 +31,7 @@ import HeaderBar from '../components/ui/HeaderBar';
 import { StageIndicator } from '../components/propagation';
 import { PROPAGATION_STAGES, METHOD_LABELS } from '../components/propagation/PropagationCard';
 import NotesLog from '../components/ui/NotesLog';
+import PremiumGate from '../components/ui/PremiumGate';
 import { usePageTitle } from '../hooks/usePageTitle';
 
 export default function PropagationDetail() {
@@ -111,6 +112,7 @@ export default function PropagationDetail() {
   return (
     <div className="min-h-screen">
       <HeaderBar />
+      <PremiumGate feature="propagation">
       <main className="p-4 md:p-6 lg:p-8">
         <div className="max-w-3xl mx-auto">
           {/* Header */}
@@ -296,6 +298,7 @@ export default function PropagationDetail() {
           </div>
         )}
       </main>
+      </PremiumGate>
     </div>
   );
 }
