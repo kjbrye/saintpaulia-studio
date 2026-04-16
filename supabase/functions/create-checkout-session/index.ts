@@ -80,6 +80,7 @@ Deno.serve(async (req) => {
       success_url: `${origin}/settings?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${origin}/settings`,
       'subscription_data[metadata][supabase_user_id]': user.id,
+      allow_promotion_codes: 'true',
     });
 
     return new Response(JSON.stringify({ url: session.url }), {
