@@ -185,24 +185,6 @@ export default function Settings() {
                   className="btn btn-primary"
                   disabled={billingLoading}
                   onClick={async () => {
-                    if (!STRIPE_PRICES.monthly) return;
-                    setBillingLoading(true);
-                    try {
-                      const { url } = await createCheckoutSession(STRIPE_PRICES.monthly);
-                      window.location.href = url;
-                    } catch {
-                      toast.error('Failed to start checkout');
-                      setBillingLoading(false);
-                    }
-                  }}
-                >
-                  <Sparkles size={16} />
-                  {billingLoading ? 'Redirecting...' : `Upgrade Monthly — $${PLANS.premium.monthlyPrice}/mo`}
-                </button>
-                <button
-                  className="btn btn-secondary"
-                  disabled={billingLoading}
-                  onClick={async () => {
                     if (!STRIPE_PRICES.annual) return;
                     setBillingLoading(true);
                     try {
@@ -214,7 +196,25 @@ export default function Settings() {
                     }
                   }}
                 >
+                  <Sparkles size={16} />
                   {billingLoading ? 'Redirecting...' : `Upgrade Annual — $${PLANS.premium.annualPrice}/yr`}
+                </button>
+                <button
+                  className="btn btn-secondary"
+                  disabled={billingLoading}
+                  onClick={async () => {
+                    if (!STRIPE_PRICES.monthly) return;
+                    setBillingLoading(true);
+                    try {
+                      const { url } = await createCheckoutSession(STRIPE_PRICES.monthly);
+                      window.location.href = url;
+                    } catch {
+                      toast.error('Failed to start checkout');
+                      setBillingLoading(false);
+                    }
+                  }}
+                >
+                  {billingLoading ? 'Redirecting...' : `Upgrade Monthly — $${PLANS.premium.monthlyPrice}/mo`}
                 </button>
               </div>
             </div>

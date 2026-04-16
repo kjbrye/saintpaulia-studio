@@ -1,24 +1,34 @@
-import { serve } from 'https://deno.land/std@0.177.0/http/server.ts';
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
-import Stripe from 'https://esm.sh/stripe@14?target=deno';
+import { createClient } from 'jsr:@supabase/supabase-js@2';
 
-const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY')!, { apiVersion: '2023-10-16' });
+const STRIPE_SECRET_KEY = Deno.env.get('STRIPE_SECRET_KEY')!;
 const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
 const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, sentry-trace, baggage',
 };
 
-serve(async (req) => {
-  // Handle CORS preflight
+async function stripePost(endpoint: string, params: Record<string, string>) {
+  const res = await fetch(`https://api.stripe.com/v1${endpoint}`, {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${STRIPE_SECRET_KEY}`,
+      'Content-Type': 'application/x-www-form-urlencoded',
+    },
+    body: new URLSearchParams(params).toString(),
+  });
+  const data = await res.json();
+  if (data.error) throw new Error(data.error.message);
+  return data;
+}
+
+Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders });
   }
 
   try {
-    // Verify the user from the JWT
     const authHeader = req.headers.get('Authorization')!;
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
     const token = authHeader.replace('Bearer ', '');
@@ -39,39 +49,37 @@ serve(async (req) => {
       });
     }
 
-    // Look up or create Stripe customer
     const { data: sub } = await supabase
       .from('subscriptions')
       .select('stripe_customer_id')
       .eq('user_id', user.id)
-      .single();
+      .maybeSingle();
 
     let customerId = sub?.stripe_customer_id;
 
     if (!customerId) {
-      const customer = await stripe.customers.create({
-        email: user.email,
-        metadata: { supabase_user_id: user.id },
+      const customer = await stripePost('/customers', {
+        email: user.email!,
+        'metadata[supabase_user_id]': user.id,
       });
       customerId = customer.id;
 
-      // Upsert subscription row with customer ID
       await supabase.from('subscriptions').upsert(
         { user_id: user.id, stripe_customer_id: customerId },
         { onConflict: 'user_id' },
       );
     }
 
-    // Create Checkout session
-    const session = await stripe.checkout.sessions.create({
-      customer: customerId,
+    const origin = req.headers.get('origin') || 'http://localhost:5173';
+
+    const session = await stripePost('/checkout/sessions', {
+      customer: customerId!,
       mode: 'subscription',
-      line_items: [{ price: priceId, quantity: 1 }],
-      success_url: `${req.headers.get('origin')}/settings?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${req.headers.get('origin')}/settings`,
-      subscription_data: {
-        metadata: { supabase_user_id: user.id },
-      },
+      'line_items[0][price]': priceId,
+      'line_items[0][quantity]': '1',
+      success_url: `${origin}/settings?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${origin}/settings`,
+      'subscription_data[metadata][supabase_user_id]': user.id,
     });
 
     return new Response(JSON.stringify({ url: session.url }), {

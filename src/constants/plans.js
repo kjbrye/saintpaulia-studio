@@ -39,6 +39,6 @@ export const FEATURE_LABELS = {
 };
 
 export const STRIPE_PRICES = {
-  monthly: import.meta.env.VITE_STRIPE_PRICE_MONTHLY,
-  annual: import.meta.env.VITE_STRIPE_PRICE_ANNUAL,
+  get monthly() { return import.meta.env.VITE_STRIPE_PRICE_MONTHLY; },
+  get annual() { return import.meta.env.VITE_STRIPE_PRICE_ANNUAL; },
 };

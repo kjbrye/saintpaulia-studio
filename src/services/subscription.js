@@ -17,10 +17,8 @@ export async function getSubscription() {
     .from('subscriptions')
     .select('*')
     .eq('user_id', userId)
-    .single();
+    .maybeSingle();
 
-  // No row yet means free tier
-  if (error?.code === 'PGRST116') return null;
   if (error) throw error;
   return data;
 }
@@ -35,24 +33,25 @@ export async function createCheckoutSession(priceId) {
     data: { session },
   } = await supabase.auth.getSession();
 
-  const response = await fetch(
+  const res = await window.fetch(
     `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/create-checkout-session`,
     {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${session.access_token}`,
+        'Authorization': `Bearer ${session.access_token}`,
+        'apikey': import.meta.env.VITE_SUPABASE_ANON_KEY,
       },
       body: JSON.stringify({ priceId }),
     },
   );
 
-  if (!response.ok) {
-    const body = await response.text();
-    throw new Error(body || 'Failed to create checkout session');
-  }
+  console.log('Checkout status:', res.status);
+  const data = await res.json();
+  console.log('Checkout response:', data);
 
-  return response.json();
+  if (!res.ok) throw new Error(data.error || 'Failed to create checkout session');
+  return data;
 }
 
 /**
@@ -60,25 +59,8 @@ export async function createCheckoutSession(priceId) {
  * @returns {Promise<{url: string}>}
  */
 export async function createPortalSession() {
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
+  const { data, error } = await supabase.functions.invoke('create-portal-session');
 
-  const response = await fetch(
-    `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/create-portal-session`,
-    {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${session.access_token}`,
-      },
-    },
-  );
-
-  if (!response.ok) {
-    const body = await response.text();
-    throw new Error(body || 'Failed to create portal session');
-  }
-
-  return response.json();
+  if (error) throw error;
+  return data;
 }

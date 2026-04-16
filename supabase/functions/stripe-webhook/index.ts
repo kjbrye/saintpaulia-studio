@@ -1,50 +1,81 @@
-import { serve } from 'https://deno.land/std@0.177.0/http/server.ts';
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
-import Stripe from 'https://esm.sh/stripe@14?target=deno';
+import { createClient } from 'jsr:@supabase/supabase-js@2';
 
-const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY')!, { apiVersion: '2023-10-16' });
-const webhookSecret = Deno.env.get('STRIPE_WEBHOOK_SECRET')!;
+const STRIPE_SECRET_KEY = Deno.env.get('STRIPE_SECRET_KEY')!;
+const WEBHOOK_SECRET = Deno.env.get('STRIPE_WEBHOOK_SECRET')!;
 const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
 const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
 
-serve(async (req) => {
-  const signature = req.headers.get('stripe-signature');
-  if (!signature) {
+async function stripeGet(endpoint: string) {
+  const res = await fetch(`https://api.stripe.com/v1${endpoint}`, {
+    headers: { 'Authorization': `Bearer ${STRIPE_SECRET_KEY}` },
+  });
+  return res.json();
+}
+
+async function verifySignature(payload: string, sigHeader: string, secret: string): Promise<boolean> {
+  const parts: Record<string, string> = {};
+  for (const part of sigHeader.split(',')) {
+    const [k, v] = part.split('=');
+    parts[k] = v;
+  }
+
+  const timestamp = parts['t'];
+  const signature = parts['v1'];
+  if (!timestamp || !signature) return false;
+
+  const age = Math.floor(Date.now() / 1000) - parseInt(timestamp);
+  if (age > 300) return false;
+
+  const signedPayload = `${timestamp}.${payload}`;
+  const key = await crypto.subtle.importKey(
+    'raw',
+    new TextEncoder().encode(secret),
+    { name: 'HMAC', hash: 'SHA-256' },
+    false,
+    ['sign'],
+  );
+  const sig = await crypto.subtle.sign('HMAC', key, new TextEncoder().encode(signedPayload));
+  const expectedSig = Array.from(new Uint8Array(sig)).map(b => b.toString(16).padStart(2, '0')).join('');
+
+  return expectedSig === signature;
+}
+
+Deno.serve(async (req) => {
+  const sigHeader = req.headers.get('stripe-signature');
+  if (!sigHeader) {
     return new Response('Missing signature', { status: 400 });
   }
 
   const body = await req.text();
 
-  let event: Stripe.Event;
-  try {
-    event = stripe.webhooks.constructEvent(body, signature, webhookSecret);
-  } catch (err) {
-    return new Response(`Webhook signature verification failed: ${err.message}`, { status: 400 });
+  if (WEBHOOK_SECRET) {
+    const valid = await verifySignature(body, sigHeader, WEBHOOK_SECRET);
+    if (!valid) {
+      return new Response('Invalid signature', { status: 400 });
+    }
   }
 
+  const event = JSON.parse(body);
   const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
   switch (event.type) {
     case 'checkout.session.completed': {
-      const session = event.data.object as Stripe.Checkout.Session;
+      const session = event.data.object;
       if (session.mode !== 'subscription') break;
 
-      const subscriptionId = session.subscription as string;
-      const customerId = session.customer as string;
-      const userId = session.subscription_data?.metadata?.supabase_user_id
-        || session.metadata?.supabase_user_id;
+      const subscriptionId = session.subscription;
+      const customerId = session.customer;
+      const userId = session.metadata?.supabase_user_id;
 
-      // Fetch the full subscription to get period end
-      const stripeSubscription = await stripe.subscriptions.retrieve(subscriptionId);
+      const stripeSub = await stripeGet(`/subscriptions/${subscriptionId}`);
 
-      // Find the user by stripe_customer_id or metadata
       let targetUserId = userId;
       if (!targetUserId) {
         const { data } = await supabase
           .from('subscriptions')
           .select('user_id')
           .eq('stripe_customer_id', customerId)
-          .single();
+          .maybeSingle();
         targetUserId = data?.user_id;
       }
 
@@ -59,9 +90,9 @@ serve(async (req) => {
           stripe_customer_id: customerId,
           stripe_subscription_id: subscriptionId,
           plan: 'premium',
-          status: stripeSubscription.status === 'active' ? 'active' : stripeSubscription.status,
-          current_period_end: new Date(stripeSubscription.current_period_end * 1000).toISOString(),
-          cancel_at_period_end: stripeSubscription.cancel_at_period_end,
+          status: stripeSub.status === 'active' ? 'active' : stripeSub.status,
+          current_period_end: new Date(stripeSub.current_period_end * 1000).toISOString(),
+          cancel_at_period_end: stripeSub.cancel_at_period_end,
           updated_at: new Date().toISOString(),
         },
         { onConflict: 'user_id' },
@@ -70,24 +101,21 @@ serve(async (req) => {
     }
 
     case 'customer.subscription.updated': {
-      const subscription = event.data.object as Stripe.Subscription;
-      const customerId = subscription.customer as string;
+      const subscription = event.data.object;
+      const customerId = subscription.customer;
 
       const { data: sub } = await supabase
         .from('subscriptions')
         .select('user_id')
         .eq('stripe_customer_id', customerId)
-        .single();
+        .maybeSingle();
 
       if (!sub) break;
 
       await supabase
         .from('subscriptions')
         .update({
-          status: subscription.status === 'active' ? 'active'
-            : subscription.status === 'past_due' ? 'past_due'
-            : subscription.status === 'trialing' ? 'trialing'
-            : subscription.status,
+          status: subscription.status,
           current_period_end: new Date(subscription.current_period_end * 1000).toISOString(),
           cancel_at_period_end: subscription.cancel_at_period_end,
           updated_at: new Date().toISOString(),
@@ -97,8 +125,8 @@ serve(async (req) => {
     }
 
     case 'customer.subscription.deleted': {
-      const subscription = event.data.object as Stripe.Subscription;
-      const customerId = subscription.customer as string;
+      const subscription = event.data.object;
+      const customerId = subscription.customer;
 
       await supabase
         .from('subscriptions')
@@ -113,8 +141,8 @@ serve(async (req) => {
     }
 
     case 'invoice.payment_failed': {
-      const invoice = event.data.object as Stripe.Invoice;
-      const customerId = invoice.customer as string;
+      const invoice = event.data.object;
+      const customerId = invoice.customer;
 
       await supabase
         .from('subscriptions')
