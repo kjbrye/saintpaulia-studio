@@ -17,22 +17,44 @@ import AppShell from './components/AppShell';
 import ToastContainer from './components/ui/ToastContainer';
 import ErrorBoundary from './components/ui/ErrorBoundary';
 
+// Wraps React.lazy so that a stale chunk after a deploy triggers a one-time
+// reload instead of an ErrorBoundary crash. Uses sessionStorage to avoid an
+// infinite reload loop if the failure is real (e.g., offline).
+function lazyWithRetry(componentImport) {
+  return lazy(async () => {
+    const reloadKey = 'page-has-been-force-refreshed';
+    const hasRefreshed = sessionStorage.getItem(reloadKey) === 'true';
+    try {
+      const component = await componentImport();
+      sessionStorage.setItem(reloadKey, 'false');
+      return component;
+    } catch (error) {
+      if (!hasRefreshed) {
+        sessionStorage.setItem(reloadKey, 'true');
+        window.location.reload();
+        return { default: () => null };
+      }
+      throw error;
+    }
+  });
+}
+
 // Lazy-loaded pages
-const Dashboard = lazy(() => import('./pages/Dashboard'));
-const Library = lazy(() => import('./pages/Library'));
-const PlantDetail = lazy(() => import('./pages/PlantDetail'));
-const AddPlant = lazy(() => import('./pages/AddPlant'));
-const CareLog = lazy(() => import('./pages/CareLog'));
-const Settings = lazy(() => import('./pages/Settings'));
-const Login = lazy(() => import('./pages/Login'));
-const About = lazy(() => import('./pages/About'));
-const Propagation = lazy(() => import('./pages/Propagation'));
-const PropagationDetail = lazy(() => import('./pages/PropagationDetail'));
-const Breeding = lazy(() => import('./pages/Breeding'));
-const CrossDetail = lazy(() => import('./pages/CrossDetail'));
-const Lineage = lazy(() => import('./pages/Lineage'));
-const Analytics = lazy(() => import('./pages/Analytics'));
-const NotFound = lazy(() => import('./pages/NotFound'));
+const Dashboard = lazyWithRetry(() => import('./pages/Dashboard'));
+const Library = lazyWithRetry(() => import('./pages/Library'));
+const PlantDetail = lazyWithRetry(() => import('./pages/PlantDetail'));
+const AddPlant = lazyWithRetry(() => import('./pages/AddPlant'));
+const CareLog = lazyWithRetry(() => import('./pages/CareLog'));
+const Settings = lazyWithRetry(() => import('./pages/Settings'));
+const Login = lazyWithRetry(() => import('./pages/Login'));
+const About = lazyWithRetry(() => import('./pages/About'));
+const Propagation = lazyWithRetry(() => import('./pages/Propagation'));
+const PropagationDetail = lazyWithRetry(() => import('./pages/PropagationDetail'));
+const Breeding = lazyWithRetry(() => import('./pages/Breeding'));
+const CrossDetail = lazyWithRetry(() => import('./pages/CrossDetail'));
+const Lineage = lazyWithRetry(() => import('./pages/Lineage'));
+const Analytics = lazyWithRetry(() => import('./pages/Analytics'));
+const NotFound = lazyWithRetry(() => import('./pages/NotFound'));
 
 // Create a client with sensible defaults
 const queryClient = new QueryClient({

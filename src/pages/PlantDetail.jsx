@@ -191,7 +191,7 @@ export default function PlantDetail() {
 
   // Handle save
   const handleSave = async () => {
-    if (!formData.cultivar_name.trim()) {
+    if (!formData.cultivar_name?.trim()) {
       toast.error('Cultivar name is required');
       return;
     }
