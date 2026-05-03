@@ -25,7 +25,7 @@ import {
 export default function Dashboard() {
   usePageTitle('Dashboard');
   const { user } = useAuth();
-  const { careThresholds } = useSettings();
+  const { settings, careThresholds } = useSettings();
   const { data: plants = [], isLoading, error } = usePlants();
   const { data: recentLogs = [], isLoading: logsLoading } = useRecentCareLogs(10);
   const { data: propagations = [] } = usePropagations();
@@ -39,7 +39,8 @@ export default function Dashboard() {
   );
   const activeCrosses = crosses.filter((c) => c.stage !== 'blooming' && c.stage !== 'failed');
   const stats = getCollectionCareStats(activePlants, careThresholds);
-  const displayName = user?.email?.split('@')[0] || 'Gardener';
+  const displayName =
+    settings.displayName?.trim() || user?.email?.split('@')[0] || 'Gardener';
 
   if (isLoading) {
     return (

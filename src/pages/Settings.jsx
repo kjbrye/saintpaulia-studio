@@ -112,7 +112,7 @@ export default function Settings() {
             <h2 className="text-label">Account</h2>
           </div>
 
-          <div className="card-inset p-4 flex items-center gap-4">
+          <div className="card-inset p-4 flex items-center gap-4 mb-4">
             <div className="w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center">
               <User size={24} color="var(--purple-400)" />
             </div>
@@ -121,6 +121,11 @@ export default function Settings() {
               <p className="text-small text-muted">Member since {memberSince}</p>
             </div>
           </div>
+
+          <DisplayNameRow
+            value={settings.displayName || ''}
+            onSave={(v) => updateSetting('displayName', v)}
+          />
         </section>
 
         {/* Subscription Section */}
@@ -389,6 +394,53 @@ export default function Settings() {
           </div>
         </div>
       )}
+    </div>
+  );
+}
+
+function DisplayNameRow({ value, onSave }) {
+  const [draft, setDraft] = useState(value);
+
+  useEffect(() => {
+    setDraft(value);
+  }, [value]);
+
+  const trimmed = draft.trim();
+  const dirty = trimmed !== value.trim();
+
+  const handleSave = () => {
+    if (!dirty) return;
+    onSave(trimmed);
+  };
+
+  return (
+    <div>
+      <label htmlFor="display-name" className="text-body block mb-1">
+        Preferred name
+      </label>
+      <p className="text-small text-muted mb-2">
+        Shown on your dashboard welcome message. Leave blank to use your email.
+      </p>
+      <div className="flex gap-2">
+        <input
+          id="display-name"
+          type="text"
+          value={draft}
+          onChange={(e) => setDraft(e.target.value)}
+          onBlur={handleSave}
+          onKeyDown={(e) => e.key === 'Enter' && handleSave()}
+          placeholder="e.g. Alex"
+          className="input flex-1 py-2"
+          maxLength={50}
+        />
+        <button
+          onClick={handleSave}
+          disabled={!dirty}
+          className="btn btn-primary"
+        >
+          Save
+        </button>
+      </div>
     </div>
   );
 }

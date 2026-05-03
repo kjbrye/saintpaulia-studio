@@ -8,6 +8,7 @@ import { useState, useEffect, useCallback, createContext, useContext, useRef } f
 import * as settingsService from '../services/settings';
 
 const DEFAULT_SETTINGS = {
+  displayName: '',
   wateringThreshold: 7,
   fertilizingThreshold: 14,
   groomingThreshold: 7,
