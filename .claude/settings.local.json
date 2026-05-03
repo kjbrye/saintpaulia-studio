@@ -7,7 +7,25 @@
       "Bash(git add:*)",
       "Bash(git commit:*)",
       "Bash(git push)",
-      "Bash(cat:*)"
+      "Bash(cat:*)",
+      "Bash(npm install:*)",
+      "Bash(npm ls:*)",
+      "WebFetch(domain:github.com)",
+      "Bash(gh api:*)",
+      "Bash(xargs wc:*)",
+      "Bash(head -100 /c/Users/kjbry/Code/saintpaulia-studio-v2/supabase/migrations/001*)",
+      "Bash(head -100 /c/Users/kjbry/Code/saintpaulia-studio-v2/supabase/migrations/002*)",
+      "Bash(find /c/Users/kjbry/Code/saintpaulia-studio-v2 -type f \\\\\\( -name \"*.sql\" -o -name \"*.md\" \\\\\\) -not -path \"*/node_modules/*\" -exec grep -l \"care_logs\" {} \\\\;)",
+      "Bash(find /c/Users/kjbry/Code/saintpaulia-studio-v2/supabase -type f -name \"*.sql\" -exec grep -l \"care_logs\" {} \\\\;)",
+      "Bash(find /c/Users/kjbry/Code/saintpaulia-studio-v2 -name \"*.md\" -exec grep -l \"care_logs\\\\|database\" {} \\\\;)",
+      "WebFetch(domain:katrina-4u.sentry.io)",
+      "WebSearch",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" -X OPTIONS https://dkfaqqwflwzxoyycqxlh.supabase.co/functions/v1/create-checkout-session -H \"Origin: http://localhost:5173\" -H \"Access-Control-Request-Method: POST\" -H \"Access-Control-Request-Headers: authorization,content-type\")",
+      "Bash(supabase --version)",
+      "Bash(supabase functions *)",
+      "Bash(supabase link *)",
+      "Bash(git fetch *)",
+      "Bash(git pull *)"
     ]
   }
 }

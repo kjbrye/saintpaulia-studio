@@ -7,7 +7,7 @@ import { useNavigate } from 'react-router-dom';
 
 /**
  * Hook that listens for global keyboard shortcuts.
- * All navigation shortcuts require Alt modifier to avoid conflicts with typing.
+ * Navigation shortcuts fire on single keypress when no input is focused.
  * @param {Object} options
  * @param {Function} options.onOpenCommandPalette - Called when ⌘K is pressed
  */
@@ -31,8 +31,8 @@ export function useKeyboardShortcuts({ onOpenCommandPalette }) {
         return;
       }
 
-      // Alt + key shortcuts for navigation
-      if (!e.altKey || e.metaKey || e.ctrlKey) return;
+      // Single-key navigation shortcuts (no modifier)
+      if (e.metaKey || e.ctrlKey || e.altKey) return;
 
       switch (e.key.toLowerCase()) {
         case 'k':
