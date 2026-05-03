@@ -20,3 +20,9 @@ Thumbs.db
 # Logs
 *.log
 npm-debug.log*
+
+# Supabase CLI temp files
+supabase/.temp/
+
+# Stray Windows redirection artifact
+nul
