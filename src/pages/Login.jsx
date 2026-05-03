@@ -47,7 +47,16 @@ export default function Login() {
         }
       }
     } catch (err) {
-      setError(err.message || 'Something went wrong');
+      const msg = err?.message || '';
+      const rateMatch = msg.match(/after (\d+) seconds?/i);
+      if (rateMatch) {
+        setError(
+          `An account with this email already has a pending confirmation. ` +
+          `Please check your inbox, or wait ${rateMatch[1]} seconds before retrying.`
+        );
+      } else {
+        setError(msg || 'Something went wrong');
+      }
     } finally {
       setSubmitting(false);
     }
