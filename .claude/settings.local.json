@@ -25,7 +25,17 @@
       "Bash(supabase functions *)",
       "Bash(supabase link *)",
       "Bash(git fetch *)",
-      "Bash(git pull *)"
+      "Bash(git pull *)",
+      "Bash(git -C /c/Users/kjbry/Code/saintpaulia-studio-backups add .)",
+      "Bash(git -C /c/Users/kjbry/Code/saintpaulia-studio-backups status)",
+      "Bash(git -C /c/Users/kjbry/Code/saintpaulia-studio-backups commit -m ' *)",
+      "Bash(git -C /c/Users/kjbry/Code/saintpaulia-studio-backups push -u origin main)",
+      "Bash(git -C /c/Users/kjbry/Code/saintpaulia-studio-backups pull)",
+      "Read(//c/Users/kjbry/Code/saintpaulia-studio-backups/dumps//**)",
+      "Bash(gunzip -c /c/Users/kjbry/Code/saintpaulia-studio-backups/dumps/2026-05-04.sql.gz)",
+      "Bash(git -C /c/Users/kjbry/Code/saintpaulia-studio-backups rm dumps/2026-05-04.sql.gz)",
+      "Bash(git -C /c/Users/kjbry/Code/saintpaulia-studio-backups add .github/workflows/backup.yml)",
+      "Bash(git -C /c/Users/kjbry/Code/saintpaulia-studio-backups push)"
     ]
   }
 }

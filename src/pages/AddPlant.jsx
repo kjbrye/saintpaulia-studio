@@ -34,6 +34,8 @@ export default function AddPlant() {
   const [formData, setFormData] = useState({
     cultivar_name: '',
     nickname: '',
+    avsa_number: '',
+    hybridizer: '',
     photo_url: null,
     acquisition_date: '',
     source: '',
@@ -78,6 +80,8 @@ export default function AddPlant() {
       const plant = await createPlant.mutateAsync({
         cultivar_name: formData.cultivar_name.trim(),
         nickname: formData.nickname.trim() || null,
+        avsa_number: formData.avsa_number.trim() || null,
+        hybridizer: formData.hybridizer.trim() || null,
         photo_url: formData.photo_url || null,
         acquisition_date: formData.acquisition_date || null,
         source: formData.source.trim() || null,
@@ -161,6 +165,26 @@ export default function AddPlant() {
 
           {/* Detail Fields - 2 column grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-8">
+            <FormField label="AVSA Number">
+              <input
+                type="text"
+                className="input w-full"
+                placeholder="e.g., 10827"
+                value={formData.avsa_number}
+                onChange={(e) => updateField('avsa_number', e.target.value)}
+              />
+            </FormField>
+
+            <FormField label="Hybridizer">
+              <input
+                type="text"
+                className="input w-full"
+                placeholder="e.g., Holtkamp"
+                value={formData.hybridizer}
+                onChange={(e) => updateField('hybridizer', e.target.value)}
+              />
+            </FormField>
+
             <FormField label="Acquired Date">
               <input
                 type="date"
