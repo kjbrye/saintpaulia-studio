@@ -45,3 +45,39 @@ export const EXTRA_BLOOM_COLORS = [
   { value: 'chimera', label: 'Chimera' },
   { value: 'fantasy', label: 'Fantasy' },
 ];
+
+export const LEAF_TYPE_OPTIONS = [
+  { value: '', label: 'Select leaf type...' },
+  { value: 'plain', label: 'Plain (Boy)' },
+  { value: 'girl', label: 'Girl' },
+  { value: 'quilted', label: 'Quilted' },
+  { value: 'spooned', label: 'Spooned' },
+  { value: 'wavy', label: 'Wavy' },
+  { value: 'ruffled', label: 'Ruffled' },
+  { value: 'serrated', label: 'Serrated' },
+  { value: 'pointed', label: 'Pointed' },
+  { value: 'longifolia', label: 'Longifolia' },
+  { value: 'strawberry', label: 'Strawberry / Holly' },
+];
+
+export const LEAF_TYPE_LABELS = LEAF_TYPE_OPTIONS.reduce((acc, o) => {
+  if (o.value) acc[o.value] = o.label;
+  return acc;
+}, {});
+
+export const LEAF_COLOR_OPTIONS = [
+  { value: '', label: 'Select leaf color...' },
+  { value: 'plain-green', label: 'Plain Green' },
+  { value: 'dark-green', label: 'Dark Green' },
+  { value: 'light-green', label: 'Light Green' },
+  { value: 'red-back', label: 'Red-back' },
+  { value: 'variegated-tommie-lou', label: 'Variegated — Tommie Lou' },
+  { value: 'variegated-crown', label: 'Variegated — Crown' },
+  { value: 'variegated-mosaic', label: 'Variegated — Mosaic' },
+  { value: 'variegated-champion', label: 'Variegated — Champion' },
+];
+
+export const LEAF_COLOR_LABELS = LEAF_COLOR_OPTIONS.reduce((acc, o) => {
+  if (o.value) acc[o.value] = o.label;
+  return acc;
+}, {});

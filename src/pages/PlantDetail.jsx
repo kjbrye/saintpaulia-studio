@@ -47,6 +47,10 @@ import {
   SIZE_CLASS_OPTIONS,
   SIZE_CLASS_LABELS,
   EXTRA_BLOOM_COLORS,
+  LEAF_TYPE_OPTIONS,
+  LEAF_TYPE_LABELS,
+  LEAF_COLOR_OPTIONS,
+  LEAF_COLOR_LABELS,
 } from '../constants/plantOptions';
 
 // Location options for select dropdown
@@ -174,6 +178,8 @@ export default function PlantDetail() {
         bloom_color: plant.bloom_color || '',
         bloom_type: plant.bloom_type || '',
         size_class: plant.size_class || '',
+        leaf_type: plant.leaf_type || '',
+        leaf_color: plant.leaf_color || '',
         avsa_number: plant.avsa_number || '',
         hybridizer: plant.hybridizer || '',
         lineage_notes: plant.lineage_notes || '',
@@ -222,6 +228,8 @@ export default function PlantDetail() {
           bloom_color: formData.bloom_color || null,
           bloom_type: formData.bloom_type || null,
           size_class: formData.size_class || null,
+          leaf_type: formData.leaf_type || null,
+          leaf_color: formData.leaf_color || null,
           avsa_number: formData.avsa_number || null,
           hybridizer: formData.hybridizer || null,
           lineage_notes: formData.lineage_notes || null,
@@ -534,6 +542,15 @@ export default function PlantDetail() {
             />
 
             <EditableField
+              label="Size Class"
+              value={isEditing ? formData?.size_class : plant.size_class}
+              displayValue={SIZE_CLASS_LABELS[plant.size_class] || 'Not set'}
+              isEditing={isEditing}
+              onChange={(v) => updateField('size_class', v)}
+              options={SIZE_CLASS_OPTIONS}
+            />
+
+            <EditableField
               label="Bloom Color"
               value={isEditing ? formData?.bloom_color : plant.bloom_color}
               displayValue={BLOOM_COLOR_LABELS[plant.bloom_color] || 'Not set'}
@@ -552,12 +569,21 @@ export default function PlantDetail() {
             />
 
             <EditableField
-              label="Size Class"
-              value={isEditing ? formData?.size_class : plant.size_class}
-              displayValue={SIZE_CLASS_LABELS[plant.size_class] || 'Not set'}
+              label="Leaf Type"
+              value={isEditing ? formData?.leaf_type : plant.leaf_type}
+              displayValue={LEAF_TYPE_LABELS[plant.leaf_type] || 'Not set'}
               isEditing={isEditing}
-              onChange={(v) => updateField('size_class', v)}
-              options={SIZE_CLASS_OPTIONS}
+              onChange={(v) => updateField('leaf_type', v)}
+              options={LEAF_TYPE_OPTIONS}
+            />
+
+            <EditableField
+              label="Leaf Color"
+              value={isEditing ? formData?.leaf_color : plant.leaf_color}
+              displayValue={LEAF_COLOR_LABELS[plant.leaf_color] || 'Not set'}
+              isEditing={isEditing}
+              onChange={(v) => updateField('leaf_color', v)}
+              options={LEAF_COLOR_OPTIONS}
             />
 
             <EditableField
@@ -635,35 +661,41 @@ export default function PlantDetail() {
         {!isEditing && (
           <>
             {/* Bloom History */}
-            <BloomHistory
-              logs={bloomLogs}
-              isLoading={bloomsLoading}
-              onCreateBloom={(data) => createBloomLog.mutateAsync({ ...data, plant_id: id })}
-              onEndBloom={(logId) =>
-                endBloom.mutateAsync({
-                  id: logId,
-                  plantId: id,
-                  endDate: new Date().toISOString().split('T')[0],
-                })
-              }
-              onDeleteBloom={(logId) => deleteBloomLog.mutateAsync(logId)}
-              isCreating={createBloomLog.isPending}
-              isEnding={endBloom.isPending}
-              isDeleting={deleteBloomLog.isPending}
-            />
+            <div className="mb-6">
+              <BloomHistory
+                logs={bloomLogs}
+                isLoading={bloomsLoading}
+                onCreateBloom={(data) => createBloomLog.mutateAsync({ ...data, plant_id: id })}
+                onEndBloom={(logId) =>
+                  endBloom.mutateAsync({
+                    id: logId,
+                    plantId: id,
+                    endDate: new Date().toISOString().split('T')[0],
+                  })
+                }
+                onDeleteBloom={(logId) => deleteBloomLog.mutateAsync(logId)}
+                isCreating={createBloomLog.isPending}
+                isEnding={endBloom.isPending}
+                isDeleting={deleteBloomLog.isPending}
+              />
+            </div>
 
             {/* Health Log */}
-            <HealthHistory
-              logs={healthLogs}
-              isLoading={healthLoading}
-              onCreateLog={(data) => createHealthLog.mutateAsync({ ...data, plant_id: id })}
-              onDeleteLog={(logId) => deleteHealthLog.mutateAsync(logId)}
-              isCreating={createHealthLog.isPending}
-              isDeleting={deleteHealthLog.isPending}
-            />
+            <div className="mb-6">
+              <HealthHistory
+                logs={healthLogs}
+                isLoading={healthLoading}
+                onCreateLog={(data) => createHealthLog.mutateAsync({ ...data, plant_id: id })}
+                onDeleteLog={(logId) => deleteHealthLog.mutateAsync(logId)}
+                isCreating={createHealthLog.isPending}
+                isDeleting={deleteHealthLog.isPending}
+              />
+            </div>
 
             {/* Care History */}
-            <CareHistory logs={careLogs} isLoading={logsLoading} />
+            <div className="mb-6">
+              <CareHistory logs={careLogs} isLoading={logsLoading} />
+            </div>
 
             {/* Journal Notes */}
             <section className="mt-6">

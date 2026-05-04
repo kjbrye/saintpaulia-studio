@@ -17,6 +17,8 @@ import {
   BLOOM_TYPE_OPTIONS,
   SIZE_CLASS_OPTIONS,
   EXTRA_BLOOM_COLORS,
+  LEAF_TYPE_OPTIONS,
+  LEAF_COLOR_OPTIONS,
 } from '../constants/plantOptions';
 
 export default function AddPlant() {
@@ -41,6 +43,8 @@ export default function AddPlant() {
     bloom_color: '',
     bloom_type: '',
     size_class: '',
+    leaf_type: '',
+    leaf_color: '',
     notes: '',
   });
 
@@ -83,6 +87,8 @@ export default function AddPlant() {
         bloom_color: formData.bloom_color || null,
         bloom_type: formData.bloom_type || null,
         size_class: formData.size_class || null,
+        leaf_type: formData.leaf_type || null,
+        leaf_color: formData.leaf_color || null,
         notes: formData.notes.trim() || null,
       });
 
@@ -224,6 +230,18 @@ export default function AddPlant() {
               </select>
             </FormField>
 
+            <FormField label="Size Class">
+              <select
+                className="input w-full"
+                value={formData.size_class}
+                onChange={(e) => updateField('size_class', e.target.value)}
+              >
+                {SIZE_CLASS_OPTIONS.map((o) => (
+                  <option key={o.value} value={o.value}>{o.label}</option>
+                ))}
+              </select>
+            </FormField>
+
             <FormField label="Bloom Color">
               <select
                 className="input w-full"
@@ -258,13 +276,25 @@ export default function AddPlant() {
               </select>
             </FormField>
 
-            <FormField label="Size Class">
+            <FormField label="Leaf Type">
               <select
                 className="input w-full"
-                value={formData.size_class}
-                onChange={(e) => updateField('size_class', e.target.value)}
+                value={formData.leaf_type}
+                onChange={(e) => updateField('leaf_type', e.target.value)}
               >
-                {SIZE_CLASS_OPTIONS.map((o) => (
+                {LEAF_TYPE_OPTIONS.map((o) => (
+                  <option key={o.value} value={o.value}>{o.label}</option>
+                ))}
+              </select>
+            </FormField>
+
+            <FormField label="Leaf Color">
+              <select
+                className="input w-full"
+                value={formData.leaf_color}
+                onChange={(e) => updateField('leaf_color', e.target.value)}
+              >
+                {LEAF_COLOR_OPTIONS.map((o) => (
                   <option key={o.value} value={o.value}>{o.label}</option>
                 ))}
               </select>
