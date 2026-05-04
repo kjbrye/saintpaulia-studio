@@ -13,6 +13,11 @@ import { PhotoUpload } from '../components/plants';
 import PlantLimitBanner from '../components/ui/PlantLimitBanner';
 import { usePageTitle } from '../hooks/usePageTitle';
 import { useSettings } from '../hooks/useSettings';
+import {
+  BLOOM_TYPE_OPTIONS,
+  SIZE_CLASS_OPTIONS,
+  EXTRA_BLOOM_COLORS,
+} from '../constants/plantOptions';
 
 export default function AddPlant() {
   usePageTitle('Add Plant');
@@ -34,6 +39,8 @@ export default function AddPlant() {
     status: 'healthy',
     pot_size: '',
     bloom_color: '',
+    bloom_type: '',
+    size_class: '',
     notes: '',
   });
 
@@ -74,6 +81,8 @@ export default function AddPlant() {
         status: formData.status,
         pot_size: formData.pot_size || null,
         bloom_color: formData.bloom_color || null,
+        bloom_type: formData.bloom_type || null,
+        size_class: formData.size_class || null,
         notes: formData.notes.trim() || null,
       });
 
@@ -231,6 +240,33 @@ export default function AddPlant() {
                 <option value="coral">Coral</option>
                 <option value="bi-color">Bi-color</option>
                 <option value="multi">Multi-color</option>
+                {EXTRA_BLOOM_COLORS.map((c) => (
+                  <option key={c.value} value={c.value}>{c.label}</option>
+                ))}
+              </select>
+            </FormField>
+
+            <FormField label="Bloom Type">
+              <select
+                className="input w-full"
+                value={formData.bloom_type}
+                onChange={(e) => updateField('bloom_type', e.target.value)}
+              >
+                {BLOOM_TYPE_OPTIONS.map((o) => (
+                  <option key={o.value} value={o.value}>{o.label}</option>
+                ))}
+              </select>
+            </FormField>
+
+            <FormField label="Size Class">
+              <select
+                className="input w-full"
+                value={formData.size_class}
+                onChange={(e) => updateField('size_class', e.target.value)}
+              >
+                {SIZE_CLASS_OPTIONS.map((o) => (
+                  <option key={o.value} value={o.value}>{o.label}</option>
+                ))}
               </select>
             </FormField>
           </div>

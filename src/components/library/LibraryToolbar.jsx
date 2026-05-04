@@ -3,6 +3,7 @@
  */
 
 import { Search, Grid3X3, List, Filter, X } from 'lucide-react';
+import { BLOOM_TYPE_FILTER_OPTIONS } from '../../constants/plantOptions';
 
 const POT_SIZE_OPTIONS = [
   { value: 'all', label: 'All Sizes' },
@@ -28,6 +29,8 @@ const BLOOM_COLOR_OPTIONS = [
   { value: 'coral', label: 'Coral' },
   { value: 'bi-color', label: 'Bi-color' },
   { value: 'multi', label: 'Multi-color' },
+  { value: 'chimera', label: 'Chimera' },
+  { value: 'fantasy', label: 'Fantasy' },
 ];
 
 function FilterChip({ label, active, onClick }) {
@@ -56,6 +59,8 @@ export default function LibraryToolbar({
   onPotSizeFilterChange,
   bloomColorFilter,
   onBloomColorFilterChange,
+  bloomTypeFilter,
+  onBloomTypeFilterChange,
   bloomingFilter,
   onBloomingFilterChange,
   careFilter,
@@ -66,6 +71,7 @@ export default function LibraryToolbar({
   const hasActiveFilters =
     potSizeFilter !== 'all' ||
     bloomColorFilter !== 'all' ||
+    bloomTypeFilter !== 'all' ||
     bloomingFilter !== 'all' ||
     careFilter !== 'all' ||
     collectionFilter !== 'active';
@@ -73,6 +79,7 @@ export default function LibraryToolbar({
   const clearAllFilters = () => {
     onPotSizeFilterChange('all');
     onBloomColorFilterChange('all');
+    onBloomTypeFilterChange('all');
     onBloomingFilterChange('all');
     onCareFilterChange('all');
     onCollectionFilterChange('active');
@@ -156,6 +163,19 @@ export default function LibraryToolbar({
           onChange={(e) => onBloomColorFilterChange(e.target.value)}
         >
           {BLOOM_COLOR_OPTIONS.map((option) => (
+            <option key={option.value} value={option.value}>
+              {option.label}
+            </option>
+          ))}
+        </select>
+
+        {/* Bloom Type Dropdown */}
+        <select
+          className="input input-small"
+          value={bloomTypeFilter}
+          onChange={(e) => onBloomTypeFilterChange(e.target.value)}
+        >
+          {BLOOM_TYPE_FILTER_OPTIONS.map((option) => (
             <option key={option.value} value={option.value}>
               {option.label}
             </option>

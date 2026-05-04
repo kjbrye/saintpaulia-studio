@@ -42,6 +42,7 @@ export default function Library() {
   const initialBloomingFilter = searchParams.get('filter') === 'blooming' ? 'blooming' : 'all';
   const [potSizeFilter, setPotSizeFilter] = useState('all');
   const [bloomColorFilter, setBloomColorFilter] = useState('all');
+  const [bloomTypeFilter, setBloomTypeFilter] = useState('all');
   const [bloomingFilter, setBloomingFilter] = useState(initialBloomingFilter);
   const [careFilter, setCareFilter] = useState(initialCareFilter);
   const [collectionFilter, setCollectionFilter] = useState('active');
@@ -87,6 +88,11 @@ export default function Library() {
       result = result.filter((p) => p.bloom_color === bloomColorFilter);
     }
 
+    // Bloom type filter
+    if (bloomTypeFilter !== 'all') {
+      result = result.filter((p) => p.bloom_type === bloomTypeFilter);
+    }
+
     // Blooming filter
     if (bloomingFilter === 'blooming') {
       result = result.filter((p) => p.is_blooming);
@@ -125,6 +131,7 @@ export default function Library() {
     careThresholds,
     potSizeFilter,
     bloomColorFilter,
+    bloomTypeFilter,
     bloomingFilter,
     careFilter,
     collectionFilter,
@@ -139,6 +146,7 @@ export default function Library() {
     plantsPerPage,
     potSizeFilter,
     bloomColorFilter,
+    bloomTypeFilter,
     bloomingFilter,
     careFilter,
     collectionFilter,
@@ -160,6 +168,7 @@ export default function Library() {
   const hasActiveFilters =
     potSizeFilter !== 'all' ||
     bloomColorFilter !== 'all' ||
+    bloomTypeFilter !== 'all' ||
     bloomingFilter !== 'all' ||
     careFilter !== 'all' ||
     collectionFilter !== 'active';
@@ -279,6 +288,8 @@ export default function Library() {
               onPotSizeFilterChange={setPotSizeFilter}
               bloomColorFilter={bloomColorFilter}
               onBloomColorFilterChange={setBloomColorFilter}
+              bloomTypeFilter={bloomTypeFilter}
+              onBloomTypeFilterChange={setBloomTypeFilter}
               bloomingFilter={bloomingFilter}
               onBloomingFilterChange={setBloomingFilter}
               careFilter={careFilter}

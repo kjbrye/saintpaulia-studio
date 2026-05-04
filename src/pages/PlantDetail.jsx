@@ -41,6 +41,13 @@ import {
   ARCHIVE_OPTIONS,
   isArchived,
 } from '../constants/plantStatus';
+import {
+  BLOOM_TYPE_OPTIONS,
+  BLOOM_TYPE_LABELS,
+  SIZE_CLASS_OPTIONS,
+  SIZE_CLASS_LABELS,
+  EXTRA_BLOOM_COLORS,
+} from '../constants/plantOptions';
 
 // Location options for select dropdown
 const LOCATION_OPTIONS = [
@@ -78,6 +85,7 @@ const BLOOM_COLOR_OPTIONS = [
   { value: 'coral', label: 'Coral' },
   { value: 'bi-color', label: 'Bi-color' },
   { value: 'multi', label: 'Multi-color' },
+  ...EXTRA_BLOOM_COLORS,
 ];
 
 const BLOOM_COLOR_LABELS = {
@@ -90,6 +98,8 @@ const BLOOM_COLOR_LABELS = {
   coral: 'Coral',
   'bi-color': 'Bi-color',
   multi: 'Multi-color',
+  chimera: 'Chimera',
+  fantasy: 'Fantasy',
 };
 
 const LOCATION_LABELS = {
@@ -162,6 +172,8 @@ export default function PlantDetail() {
         status: plant.status || 'healthy',
         pot_size: plant.pot_size || '',
         bloom_color: plant.bloom_color || '',
+        bloom_type: plant.bloom_type || '',
+        size_class: plant.size_class || '',
         avsa_number: plant.avsa_number || '',
         hybridizer: plant.hybridizer || '',
         lineage_notes: plant.lineage_notes || '',
@@ -208,6 +220,8 @@ export default function PlantDetail() {
           location: formData.location || null,
           pot_size: formData.pot_size || null,
           bloom_color: formData.bloom_color || null,
+          bloom_type: formData.bloom_type || null,
+          size_class: formData.size_class || null,
           avsa_number: formData.avsa_number || null,
           hybridizer: formData.hybridizer || null,
           lineage_notes: formData.lineage_notes || null,
@@ -526,6 +540,24 @@ export default function PlantDetail() {
               isEditing={isEditing}
               onChange={(v) => updateField('bloom_color', v)}
               options={BLOOM_COLOR_OPTIONS}
+            />
+
+            <EditableField
+              label="Bloom Type"
+              value={isEditing ? formData?.bloom_type : plant.bloom_type}
+              displayValue={BLOOM_TYPE_LABELS[plant.bloom_type] || 'Not set'}
+              isEditing={isEditing}
+              onChange={(v) => updateField('bloom_type', v)}
+              options={BLOOM_TYPE_OPTIONS}
+            />
+
+            <EditableField
+              label="Size Class"
+              value={isEditing ? formData?.size_class : plant.size_class}
+              displayValue={SIZE_CLASS_LABELS[plant.size_class] || 'Not set'}
+              isEditing={isEditing}
+              onChange={(v) => updateField('size_class', v)}
+              options={SIZE_CLASS_OPTIONS}
             />
 
             <EditableField
