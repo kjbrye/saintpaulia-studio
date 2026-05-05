@@ -48,6 +48,7 @@ const CareLog = lazyWithRetry(() => import('./pages/CareLog'));
 const Settings = lazyWithRetry(() => import('./pages/Settings'));
 const Login = lazyWithRetry(() => import('./pages/Login'));
 const About = lazyWithRetry(() => import('./pages/About'));
+const Legal = lazyWithRetry(() => import('./pages/Legal'));
 const Propagation = lazyWithRetry(() => import('./pages/Propagation'));
 const PropagationDetail = lazyWithRetry(() => import('./pages/PropagationDetail'));
 const Breeding = lazyWithRetry(() => import('./pages/Breeding'));
@@ -99,6 +100,7 @@ function AppRoutes() {
       {/* Public routes */}
       <Route path="/login" element={<Login />} />
       <Route path="/about" element={<About />} />
+      <Route path="/legal" element={<Legal />} />
 
       {/* Protected routes */}
       <Route

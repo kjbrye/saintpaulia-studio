@@ -13,6 +13,7 @@ import {
   BarChart3,
   Scissors,
   ExternalLink,
+  Shield,
 } from 'lucide-react';
 import { usePageTitle } from '../hooks/usePageTitle';
 
@@ -165,6 +166,23 @@ export default function About() {
             Visit Help Center
             <ExternalLink size={16} />
           </a>
+        </section>
+
+        {/* Legal */}
+        <section className="card p-8">
+          <div className="flex items-start gap-4 mb-4">
+            <div className="icon-container" style={{ width: 48, height: 48 }}>
+              <Shield size={24} style={{ color: 'var(--sage-600)' }} />
+            </div>
+            <h2 className="heading heading-lg pt-2">Privacy & Terms</h2>
+          </div>
+          <p className="leading-relaxed mb-4" style={{ color: 'var(--text-primary)' }}>
+            Read about how your data is handled and the terms that apply to using Saintpaulia
+            Studio.
+          </p>
+          <Link to="/legal" className="btn btn-secondary inline-flex items-center gap-2">
+            View Data Policy & Terms
+          </Link>
         </section>
 
         {/* Version / Credits */}
