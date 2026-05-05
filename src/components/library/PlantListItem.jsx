@@ -3,7 +3,16 @@
  */
 
 import { Link } from 'react-router-dom';
-import { Flower2, Sparkles, Droplets, ChevronRight, Check } from 'lucide-react';
+import {
+  Flower2,
+  Sparkles,
+  Droplets,
+  ChevronRight,
+  Check,
+  AlertTriangle,
+  HeartPulse,
+  Moon,
+} from 'lucide-react';
 import { useSettings } from '../../hooks/useSettings.jsx';
 import { plantNeedsCare } from '../../utils/careStatus';
 
@@ -74,7 +83,7 @@ export default function PlantListItem({
       </div>
 
       {/* Badges */}
-      <div className="flex gap-2 flex-shrink-0">
+      <div className="flex gap-2 flex-shrink-0 flex-wrap justify-end">
         {plant.is_blooming && (
           <span className="badge badge-purple">
             <Sparkles size={12} /> Blooming
@@ -83,6 +92,21 @@ export default function PlantListItem({
         {needsCare && (
           <span className="badge badge-warning">
             <Droplets size={12} /> Care
+          </span>
+        )}
+        {plant.status === 'struggling' && (
+          <span className="badge badge-alert">
+            <AlertTriangle size={12} /> Struggling
+          </span>
+        )}
+        {plant.status === 'recovering' && (
+          <span className="badge badge-recovering">
+            <HeartPulse size={12} /> Recovering
+          </span>
+        )}
+        {plant.status === 'dormant' && (
+          <span className="badge badge-dormant">
+            <Moon size={12} /> Dormant
           </span>
         )}
       </div>
