@@ -55,6 +55,7 @@ const Breeding = lazyWithRetry(() => import('./pages/Breeding'));
 const CrossDetail = lazyWithRetry(() => import('./pages/CrossDetail'));
 const Lineage = lazyWithRetry(() => import('./pages/Lineage'));
 const Analytics = lazyWithRetry(() => import('./pages/Analytics'));
+const Notes = lazyWithRetry(() => import('./pages/Notes'));
 const NotFound = lazyWithRetry(() => import('./pages/NotFound'));
 
 // Create a client with sensible defaults
@@ -194,6 +195,16 @@ function AppRoutes() {
         element={
           <ProtectedRoute>
             <Analytics />
+          </ProtectedRoute>
+        }
+      />
+
+      {/* Notes */}
+      <Route
+        path="/notes"
+        element={
+          <ProtectedRoute>
+            <Notes />
           </ProtectedRoute>
         }
       />

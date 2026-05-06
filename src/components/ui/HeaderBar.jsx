@@ -12,6 +12,7 @@ import {
   FlaskConical,
   GitFork,
   BarChart3,
+  StickyNote,
 } from 'lucide-react';
 
 export default function HeaderBar({ onSearchClick }) {
@@ -91,6 +92,18 @@ export default function HeaderBar({ onSearchClick }) {
             <BarChart3
               size={18}
               style={{ color: isActive('/analytics') ? 'var(--purple-500)' : 'var(--sage-600)' }}
+            />
+          </button>
+        </Link>
+        <Link to="/notes">
+          <button
+            className="icon-container"
+            title="Notes"
+            style={isActive('/notes') ? { background: 'var(--sage-200)' } : undefined}
+          >
+            <StickyNote
+              size={18}
+              style={{ color: isActive('/notes') ? 'var(--purple-500)' : 'var(--sage-600)' }}
             />
           </button>
         </Link>

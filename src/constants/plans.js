@@ -17,7 +17,7 @@ export const PLANS = {
   },
 };
 
-export const PREMIUM_FEATURES = ['breeding', 'propagation', 'lineage', 'analytics'];
+export const PREMIUM_FEATURES = ['breeding', 'propagation', 'lineage', 'analytics', 'note_attachments'];
 
 export const FEATURE_LABELS = {
   breeding: {
@@ -35,6 +35,10 @@ export const FEATURE_LABELS = {
   analytics: {
     name: 'Collection Analytics',
     description: 'Insights and stats about your growing collection.',
+  },
+  note_attachments: {
+    name: 'Photo Attachments on Notes',
+    description: 'Attach photos to notes — perfect for soil recipes, shop links, and visual references.',
   },
 };
 

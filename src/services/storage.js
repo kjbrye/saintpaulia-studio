@@ -61,3 +61,48 @@ export async function deletePlantPhoto(publicUrl) {
 
   if (error) throw error;
 }
+
+/**
+ * Upload a note attachment photo to Supabase Storage.
+ * Stored under {user_id}/notes/{filename} so existing storage policies
+ * (which scope on the first folder == auth.uid()) keep working.
+ */
+export async function uploadNotePhoto(file) {
+  if (!ALLOWED_TYPES.includes(file.type)) {
+    throw new Error('File must be JPEG, PNG, or WebP');
+  }
+
+  if (file.size > MAX_FILE_SIZE) {
+    throw new Error('File must be under 5MB');
+  }
+
+  const optimized = await optimizeImage(file);
+
+  const userId = await requireUserId();
+  const ext = optimized.name.split('.').pop();
+  const fileName = `${userId}/notes/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
+
+  const { error } = await supabase.storage.from(BUCKET).upload(fileName, optimized, {
+    cacheControl: '3600',
+    upsert: false,
+  });
+
+  if (error) throw error;
+
+  const {
+    data: { publicUrl },
+  } = supabase.storage.from(BUCKET).getPublicUrl(fileName);
+
+  return publicUrl;
+}
+
+/**
+ * Delete a note photo from Supabase Storage.
+ */
+export async function deleteNotePhoto(publicUrl) {
+  const path = publicUrl.split(`${BUCKET}/`)[1];
+  if (!path) return;
+
+  const { error } = await supabase.storage.from(BUCKET).remove([path]);
+  if (error) throw error;
+}

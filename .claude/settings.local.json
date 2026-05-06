@@ -52,7 +52,8 @@
       "Bash(npm audit *)",
       "Bash(git reset *)",
       "Bash(git stash *)",
-      "Bash(git restore *)"
+      "Bash(git restore *)",
+      "Bash(node -e \"const p = require\\('lucide-react'\\); const candidates = ['StickyNote','Notebook','NotebookPen','BookOpen','FileText','Book','Pen','PenLine']; candidates.forEach\\(c => console.log\\(c, c in p\\)\\);\")"
     ]
   }
 }
