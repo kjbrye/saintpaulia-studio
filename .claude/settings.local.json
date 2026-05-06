@@ -10,6 +10,10 @@
       "Bash(cat:*)",
       "Bash(npm install:*)",
       "Bash(npm ls:*)",
+      "Bash(npm run:*)",
+      "Bash(npm test:*)",
+      "Bash(npx prettier:*)",
+      "Bash(npx --no vite build)",
       "WebFetch(domain:github.com)",
       "Bash(gh api:*)",
       "Bash(xargs wc:*)",
@@ -18,6 +22,12 @@
       "Bash(find /c/Users/kjbry/Code/saintpaulia-studio-v2 -type f \\\\\\( -name \"*.sql\" -o -name \"*.md\" \\\\\\) -not -path \"*/node_modules/*\" -exec grep -l \"care_logs\" {} \\\\;)",
       "Bash(find /c/Users/kjbry/Code/saintpaulia-studio-v2/supabase -type f -name \"*.sql\" -exec grep -l \"care_logs\" {} \\\\;)",
       "Bash(find /c/Users/kjbry/Code/saintpaulia-studio-v2 -name \"*.md\" -exec grep -l \"care_logs\\\\|database\" {} \\\\;)",
+      "Bash(find /Users/katrinabrye/saintpaulia-studio -type f -name *.sql -o -name *schema* -o -name *migration*)",
+      "Read(//Users/katrinabrye/saintpaulia-studio/**)",
+      "Bash(ls /Users/katrinabrye/saintpaulia-studio/eslint.config.*)",
+      "Bash(ls /Users/katrinabrye/saintpaulia-studio/.eslintrc*)",
+      "Bash(ls /Users/katrinabrye/saintpaulia-studio/.prettierrc*)",
+      "Bash(node -e \"const p = require\\('eslint-plugin-react-hooks'\\); console.log\\(Object.keys\\(p.rules || {}\\)\\)\")",
       "WebFetch(domain:katrina-4u.sentry.io)",
       "WebSearch",
       "Bash(curl -s -o /dev/null -w \"%{http_code}\" -X OPTIONS https://dkfaqqwflwzxoyycqxlh.supabase.co/functions/v1/create-checkout-session -H \"Origin: http://localhost:5173\" -H \"Access-Control-Request-Method: POST\" -H \"Access-Control-Request-Headers: authorization,content-type\")",
@@ -36,7 +46,13 @@
       "Bash(git -C /c/Users/kjbry/Code/saintpaulia-studio-backups rm dumps/2026-05-04.sql.gz)",
       "Bash(git -C /c/Users/kjbry/Code/saintpaulia-studio-backups add .github/workflows/backup.yml)",
       "Bash(git -C /c/Users/kjbry/Code/saintpaulia-studio-backups push)",
-      "Bash(xargs grep *)"
+      "Bash(xargs grep *)",
+      "Bash(npm view *)",
+      "Bash(python3 -c \"import json, sys; v=json.load\\(sys.stdin\\); print\\([x for x in v if x.startswith\\('5.'\\)][-10:]\\)\")",
+      "Bash(npm audit *)",
+      "Bash(git reset *)",
+      "Bash(git stash *)",
+      "Bash(git restore *)"
     ]
   }
 }
