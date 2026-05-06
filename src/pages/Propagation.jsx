@@ -125,7 +125,7 @@ export default function Propagation() {
               </button>
             </Link>
             <div className="flex-1">
-              <h1 className="heading heading-xl">Propagation Tracker</h1>
+              <h1 className="heading heading-xl">Propagation</h1>
               <p className="text-body text-muted">Track leaf cuttings and plantlet growth</p>
             </div>
           </header>

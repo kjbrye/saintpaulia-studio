@@ -10,6 +10,7 @@ import {
   Scissors,
   Sparkles,
   Flower2,
+  Bug,
   Search,
   ArrowUpDown,
   Calendar,
@@ -26,6 +27,7 @@ const FILTER_OPTIONS = [
   { value: 'fertilizing', label: 'Fertilizing', icon: Sparkles },
   { value: 'grooming', label: 'Grooming', icon: Scissors },
   { value: 'repotting', label: 'Repotting', icon: Flower2 },
+  { value: 'treatment', label: 'Treatment', icon: Bug },
 ];
 
 const SORT_OPTIONS = [

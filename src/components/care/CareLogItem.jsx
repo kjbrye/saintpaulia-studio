@@ -3,13 +3,14 @@
  * Shows care type, optional plant name, date/time, and notes
  */
 
-import { Droplets, Scissors, Sparkles, Flower2 } from 'lucide-react';
+import { Droplets, Scissors, Sparkles, Flower2, Bug } from 'lucide-react';
 
 const CARE_ICONS = {
   watering: Droplets,
   fertilizing: Sparkles,
   grooming: Scissors,
   repotting: Flower2,
+  treatment: Bug,
 };
 
 const CARE_COLORS = {
@@ -17,6 +18,7 @@ const CARE_COLORS = {
   fertilizing: { icon: 'var(--purple-400)', bg: 'var(--purple-100)' },
   grooming: { icon: 'var(--copper-500)', bg: 'rgba(200, 141, 109, 0.15)' },
   repotting: { icon: 'var(--sage-700)', bg: 'var(--cream-300)' },
+  treatment: { icon: '#B45309', bg: 'rgba(180, 83, 9, 0.12)' },
 };
 
 const CARE_LABELS = {
@@ -24,6 +26,7 @@ const CARE_LABELS = {
   fertilizing: 'Fertilizing',
   grooming: 'Grooming',
   repotting: 'Repotting',
+  treatment: 'Treatment',
 };
 
 const FERTILIZER_LABELS = {
@@ -35,12 +38,24 @@ const FERTILIZER_LABELS = {
   other: 'Other',
 };
 
+const TREATMENT_LABELS = {
+  neem_oil: 'Neem Oil',
+  mosquito_bits: 'Mosquito Bits',
+  hydrogen_peroxide: 'Hydrogen Peroxide',
+  alcohol: 'Rubbing Alcohol',
+  insecticidal_soap: 'Insecticidal Soap',
+  other: 'Other',
+};
+
 export default function CareLogItem({ log, showPlantName = false, plantName }) {
   const Icon = CARE_ICONS[log.care_type] || Droplets;
   const colors = CARE_COLORS[log.care_type] || CARE_COLORS.watering;
   const label = CARE_LABELS[log.care_type] || 'Care';
   const fertilizerLabel = log.fertilizer_type
     ? FERTILIZER_LABELS[log.fertilizer_type] || log.fertilizer_type.replace(/^custom:/, '')
+    : null;
+  const treatmentLabel = log.treatment_type
+    ? TREATMENT_LABELS[log.treatment_type] || log.treatment_type.replace(/^custom:/, '')
     : null;
   const potSize = log.pot_size;
 
@@ -69,6 +84,12 @@ export default function CareLogItem({ log, showPlantName = false, plantName }) {
             <span style={{ color: 'var(--purple-400)' }} className="font-normal">
               {' '}
               - {fertilizerLabel}
+            </span>
+          )}
+          {treatmentLabel && (
+            <span style={{ color: '#B45309' }} className="font-normal">
+              {' '}
+              - {treatmentLabel}
             </span>
           )}
           {potSize && (

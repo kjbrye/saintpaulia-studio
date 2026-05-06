@@ -18,6 +18,7 @@ const DEFAULT_SETTINGS = {
   reducedMotion: false,
   largeText: false,
   customFertilizers: [],
+  customTreatments: [],
   customLocations: [],
 };
 

@@ -48,8 +48,8 @@ export function useLogCare() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ plantId, careType, notes, fertilizerType, potSize, careDate }) =>
-      careService.logCare(plantId, careType, notes, fertilizerType, potSize, careDate),
+    mutationFn: ({ plantId, careType, notes, fertilizerType, potSize, careDate, treatmentType }) =>
+      careService.logCare(plantId, careType, notes, fertilizerType, potSize, careDate, treatmentType),
     onSuccess: (newLog, { plantId, careType, potSize }) => {
       // Invalidate care logs
       queryClient.invalidateQueries({ queryKey: careKeys.all });
@@ -60,6 +60,7 @@ export function useLogCare() {
         fertilizing: 'last_fertilized',
         grooming: 'last_groomed',
         repotting: 'last_repotted',
+        treatment: 'last_treated',
       }[careType];
 
       if (updateField || (careType === 'repotting' && potSize)) {

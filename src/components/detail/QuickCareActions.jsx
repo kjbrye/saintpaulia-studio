@@ -11,6 +11,7 @@ import {
   ChevronDown,
   Flower2,
   Calendar,
+  Bug,
 } from 'lucide-react';
 import { useState, useRef, useEffect, useMemo } from 'react';
 import { useSettings } from '../../hooks/useSettings';
@@ -40,6 +41,13 @@ const careConfig = {
     hasOptions: true,
     optionType: 'potSize',
   },
+  treatment: {
+    icon: Bug,
+    label: 'Treat',
+    activeLabel: 'Treated',
+    hasOptions: true,
+    optionType: 'treatment',
+  },
 };
 
 const FERTILIZER_OPTIONS = [
@@ -48,6 +56,15 @@ const FERTILIZER_OPTIONS = [
   { value: 'foliage', label: 'Foliage/Growth' },
   { value: 'organic', label: 'Organic' },
   { value: 'slow_release', label: 'Slow Release' },
+  { value: 'other', label: 'Other' },
+];
+
+const TREATMENT_OPTIONS = [
+  { value: 'neem_oil', label: 'Neem Oil' },
+  { value: 'mosquito_bits', label: 'Mosquito Bits' },
+  { value: 'hydrogen_peroxide', label: 'Hydrogen Peroxide' },
+  { value: 'alcohol', label: 'Rubbing Alcohol' },
+  { value: 'insecticidal_soap', label: 'Insecticidal Soap' },
   { value: 'other', label: 'Other' },
 ];
 
@@ -63,7 +80,7 @@ const POT_SIZE_OPTIONS = [
   { value: '6"+', label: '6"+ (Extra Large)' },
 ];
 
-function CareButton({ careType, onLog, isLoading, recentlyLogged, currentPotSize, fertilizerOptions }) {
+function CareButton({ careType, onLog, isLoading, recentlyLogged, currentPotSize, fertilizerOptions, treatmentOptions }) {
   const [showOptions, setShowOptions] = useState(false);
   const optionsRef = useRef(null);
   const config = careConfig[careType];
@@ -95,6 +112,8 @@ function CareButton({ careType, onLog, isLoading, recentlyLogged, currentPotSize
     setShowOptions(false);
     if (config.optionType === 'potSize') {
       onLog(careType, null, selectedValue); // potSize as third param
+    } else if (config.optionType === 'treatment') {
+      onLog(careType, null, null, selectedValue); // treatmentType as fourth param
     } else {
       onLog(careType, selectedValue); // fertilizerType as second param
     }
@@ -110,9 +129,18 @@ function CareButton({ careType, onLog, isLoading, recentlyLogged, currentPotSize
   }
 
   // Get options based on type
-  const options = config.optionType === 'potSize' ? POT_SIZE_OPTIONS : (fertilizerOptions || FERTILIZER_OPTIONS);
+  const options =
+    config.optionType === 'potSize'
+      ? POT_SIZE_OPTIONS
+      : config.optionType === 'treatment'
+        ? (treatmentOptions || TREATMENT_OPTIONS)
+        : (fertilizerOptions || FERTILIZER_OPTIONS);
   const dropdownTitle =
-    config.optionType === 'potSize' ? 'Select new pot size' : 'Select fertilizer type';
+    config.optionType === 'potSize'
+      ? 'Select new pot size'
+      : config.optionType === 'treatment'
+        ? 'Select treatment type'
+        : 'Select fertilizer type';
 
   return (
     <div className="relative flex-1" ref={optionsRef}>
@@ -166,7 +194,7 @@ function CareButton({ careType, onLog, isLoading, recentlyLogged, currentPotSize
               )
             )}
 
-            {config.optionType === 'fertilizer' && (
+            {(config.optionType === 'fertilizer' || config.optionType === 'treatment') && (
               <div
                 style={{
                   borderTop: '1px solid var(--sage-200)',
@@ -206,13 +234,22 @@ export default function QuickCareActions({ plantId, onLogCare, isPending, curren
     return [...FERTILIZER_OPTIONS, { divider: true }, ...custom];
   }, [settings.customFertilizers]);
 
-  const handleLog = async (careType, fertilizerType = null, potSize = null) => {
+  const allTreatmentOptions = useMemo(() => {
+    const custom = (settings.customTreatments || []).map((name) => ({
+      value: `custom:${name}`,
+      label: name,
+    }));
+    if (custom.length === 0) return TREATMENT_OPTIONS;
+    return [...TREATMENT_OPTIONS, { divider: true }, ...custom];
+  }, [settings.customTreatments]);
+
+  const handleLog = async (careType, fertilizerType = null, potSize = null, treatmentType = null) => {
     setLoadingType(careType);
     try {
       const careDate = backdateValue
         ? new Date(backdateValue + 'T12:00:00').toISOString()
         : undefined;
-      await onLogCare({ plantId, careType, notes: '', fertilizerType, potSize, careDate });
+      await onLogCare({ plantId, careType, notes: '', fertilizerType, potSize, careDate, treatmentType });
       setRecentlyLogged((prev) => ({ ...prev, [careType]: true }));
       // Reset after 3 seconds
       setTimeout(() => {
@@ -250,7 +287,7 @@ export default function QuickCareActions({ plantId, onLogCare, isPending, curren
           )}
         </div>
       </div>
-      <div className="flex flex-col sm:flex-row gap-3">
+      <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
         <CareButton
           careType="watering"
           onLog={handleLog}
@@ -276,6 +313,13 @@ export default function QuickCareActions({ plantId, onLogCare, isPending, curren
           isLoading={loadingType === 'repotting' || isPending}
           recentlyLogged={recentlyLogged.repotting}
           currentPotSize={currentPotSize}
+        />
+        <CareButton
+          careType="treatment"
+          onLog={handleLog}
+          isLoading={loadingType === 'treatment' || isPending}
+          recentlyLogged={recentlyLogged.treatment}
+          treatmentOptions={allTreatmentOptions}
         />
       </div>
     </div>

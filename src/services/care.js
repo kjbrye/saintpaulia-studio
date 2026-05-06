@@ -64,6 +64,7 @@ export async function logCare(
   fertilizerType = null,
   potSize = null,
   careDate = null,
+  treatmentType = null,
 ) {
   const now = careDate || new Date().toISOString();
 
@@ -75,6 +76,7 @@ export async function logCare(
     notes,
     fertilizer_type: careType === 'fertilizing' ? fertilizerType : null,
     pot_size: careType === 'repotting' ? potSize : null,
+    treatment_type: careType === 'treatment' ? treatmentType : null,
   });
 
   // Update the plant's last care date
@@ -83,6 +85,7 @@ export async function logCare(
     fertilizing: 'last_fertilized',
     grooming: 'last_groomed',
     repotting: 'last_repotted',
+    treatment: 'last_treated',
   }[careType];
 
   // Build update object

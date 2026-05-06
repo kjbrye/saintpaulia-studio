@@ -35,7 +35,8 @@
       "Bash(gunzip -c /c/Users/kjbry/Code/saintpaulia-studio-backups/dumps/2026-05-04.sql.gz)",
       "Bash(git -C /c/Users/kjbry/Code/saintpaulia-studio-backups rm dumps/2026-05-04.sql.gz)",
       "Bash(git -C /c/Users/kjbry/Code/saintpaulia-studio-backups add .github/workflows/backup.yml)",
-      "Bash(git -C /c/Users/kjbry/Code/saintpaulia-studio-backups push)"
+      "Bash(git -C /c/Users/kjbry/Code/saintpaulia-studio-backups push)",
+      "Bash(xargs grep *)"
     ]
   }
 }

@@ -166,7 +166,7 @@ export default function Breeding() {
               </button>
             </Link>
             <div className="flex-1">
-              <h1 className="heading heading-xl">Breeding Tracker</h1>
+              <h1 className="heading heading-xl">Breeding</h1>
               <p className="text-body text-muted">Track cross-pollination attempts and offspring</p>
             </div>
           </header>
