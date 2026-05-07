@@ -36,8 +36,9 @@ const ACTIONS = [
   { id: 'breeding', label: 'Go to Breeding', icon: FlaskConical, path: '/breeding', shortcut: 'B' },
   { id: 'lineage', label: 'Go to Lineage', icon: GitFork, path: '/lineage', shortcut: 'G' },
   { id: 'analytics', label: 'Go to Analytics', icon: Sparkles, path: '/analytics', shortcut: 'A' },
-  { id: 'notes', label: 'Go to Notes', icon: StickyNote, path: '/notes', shortcut: 'O' },
-  { id: 'settings', label: 'Go to Settings', icon: Settings, path: '/settings' },
+  { id: 'sports', label: 'Go to Sports', icon: Sparkles, path: '/sports', shortcut: 'S' },
+  { id: 'notes', label: 'Go to Notes', icon: StickyNote, path: '/notes', shortcut: 'J' },
+  { id: 'settings', label: 'Go to Settings', icon: Settings, path: '/settings', shortcut: 'X' },
   {
     id: 'blooming',
     label: 'View blooming plants',

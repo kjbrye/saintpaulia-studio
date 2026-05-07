@@ -17,7 +17,7 @@ export const PLANS = {
   },
 };
 
-export const PREMIUM_FEATURES = ['breeding', 'propagation', 'lineage', 'analytics', 'note_attachments'];
+export const PREMIUM_FEATURES = ['breeding', 'propagation', 'lineage', 'analytics', 'note_attachments', 'sports'];
 
 export const FEATURE_LABELS = {
   breeding: {
@@ -39,6 +39,11 @@ export const FEATURE_LABELS = {
   note_attachments: {
     name: 'Photo Attachments on Notes',
     description: 'Attach photos to notes — perfect for soil recipes, shop links, and visual references.',
+  },
+  sports: {
+    name: 'Sports Tracking',
+    description:
+      'Document bloom and foliage variations, track stability across cycles, and prepare entries for AVSA registration.',
   },
 };
 

@@ -56,6 +56,11 @@ const CrossDetail = lazyWithRetry(() => import('./pages/CrossDetail'));
 const Lineage = lazyWithRetry(() => import('./pages/Lineage'));
 const Analytics = lazyWithRetry(() => import('./pages/Analytics'));
 const Notes = lazyWithRetry(() => import('./pages/Notes'));
+const Sports = lazyWithRetry(() => import('./pages/Sports'));
+const SportDetail = lazyWithRetry(() => import('./pages/SportDetail'));
+const SportRegistrationForm = lazyWithRetry(() =>
+  import('./components/sports/SportRegistrationForm'),
+);
 const NotFound = lazyWithRetry(() => import('./pages/NotFound'));
 
 // Create a client with sensible defaults
@@ -205,6 +210,32 @@ function AppRoutes() {
         element={
           <ProtectedRoute>
             <Notes />
+          </ProtectedRoute>
+        }
+      />
+
+      {/* Sports - /new must come before /:id */}
+      <Route
+        path="/sports"
+        element={
+          <ProtectedRoute>
+            <Sports />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/sports/new"
+        element={
+          <ProtectedRoute>
+            <SportRegistrationForm />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/sports/:id"
+        element={
+          <ProtectedRoute>
+            <SportDetail />
           </ProtectedRoute>
         }
       />

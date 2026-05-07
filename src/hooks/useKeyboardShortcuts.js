@@ -73,6 +73,14 @@ export function useKeyboardShortcuts({ onOpenCommandPalette }) {
           break;
         case 's':
           e.preventDefault();
+          navigate('/sports');
+          break;
+        case 'j':
+          e.preventDefault();
+          navigate('/notes');
+          break;
+        case 'x':
+          e.preventDefault();
           navigate('/settings');
           break;
       }

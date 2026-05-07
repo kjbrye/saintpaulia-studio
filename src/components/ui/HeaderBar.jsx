@@ -13,6 +13,7 @@ import {
   GitFork,
   BarChart3,
   StickyNote,
+  Sparkles,
 } from 'lucide-react';
 
 export default function HeaderBar({ onSearchClick }) {
@@ -68,6 +69,18 @@ export default function HeaderBar({ onSearchClick }) {
             <FlaskConical
               size={18}
               style={{ color: isActive('/breeding') ? 'var(--purple-500)' : 'var(--sage-600)' }}
+            />
+          </button>
+        </Link>
+        <Link to="/sports">
+          <button
+            className="icon-container"
+            title="Sports"
+            style={isActive('/sports') ? { background: 'var(--sage-200)' } : undefined}
+          >
+            <Sparkles
+              size={18}
+              style={{ color: isActive('/sports') ? 'var(--purple-500)' : 'var(--sage-600)' }}
             />
           </button>
         </Link>

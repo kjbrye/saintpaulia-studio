@@ -3,7 +3,15 @@
  */
 
 import { Link } from 'react-router-dom';
-import { BookOpen, Droplets, Plus, Scissors, FlaskConical, GitFork } from 'lucide-react';
+import {
+  BookOpen,
+  Droplets,
+  Plus,
+  Scissors,
+  FlaskConical,
+  GitFork,
+  Sparkles,
+} from 'lucide-react';
 
 export default function QuickActionsPanel() {
   return (
@@ -36,6 +44,11 @@ export default function QuickActionsPanel() {
           <FlaskConical size={18} />
           <span className="flex-1 text-left">Breeding</span>
           <span className="kbd">B</span>
+        </Link>
+        <Link to="/sports" className="quick-action-btn w-full">
+          <Sparkles size={18} />
+          <span className="flex-1 text-left">Sports</span>
+          <span className="kbd">S</span>
         </Link>
         <Link to="/lineage" className="quick-action-btn w-full">
           <GitFork size={18} />
