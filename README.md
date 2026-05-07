@@ -3,7 +3,7 @@
 A beautiful, production-ready plant collection management app designed specifically for African violet enthusiasts. Track your collection, log care activities, monitor blooms, manage propagation projects, and watch your violet family thrive.
 
 ![License](https://img.shields.io/badge/license-MIT-green)
-![Version](https://img.shields.io/badge/version-2.0.0-purple)
+![Version](https://img.shields.io/badge/version-1.4.1-purple)
 ![React](https://img.shields.io/badge/React-18.2-blue)
 ![Supabase](https://img.shields.io/badge/Supabase-Backend-emerald)
 
