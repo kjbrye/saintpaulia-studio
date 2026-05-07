@@ -13,7 +13,7 @@ const CARE_ICONS = {
   treatment: Bug,
 };
 
-const CARE_COLORS = {
+export const CARE_COLORS = {
   watering: { icon: 'var(--sage-600)', bg: 'var(--sage-100)' },
   fertilizing: { icon: 'var(--purple-400)', bg: 'var(--purple-100)' },
   grooming: { icon: 'var(--copper-500)', bg: 'rgba(200, 141, 109, 0.15)' },

@@ -11,6 +11,7 @@ import { useSettings } from '../hooks/useSettings.jsx';
 import { useRecentCareLogs } from '../hooks/useCare';
 import { usePropagations } from '../hooks/usePropagation';
 import { useCrosses } from '../hooks/useBreeding';
+import { useSports } from '../hooks/useSports';
 import { getCollectionCareStats } from '../utils/careStatus';
 import { isArchived } from '../constants/plantStatus';
 import { usePageTitle } from '../hooks/usePageTitle';
@@ -30,6 +31,7 @@ export default function Dashboard() {
   const { data: recentLogs = [], isLoading: logsLoading } = useRecentCareLogs(10);
   const { data: propagations = [] } = usePropagations();
   const { data: crosses = [] } = useCrosses();
+  const { data: sports = [] } = useSports();
 
   // Derived data — exclude archived plants from active views
   const activePlants = plants.filter((p) => !isArchived(p.status));
@@ -131,6 +133,7 @@ export default function Dashboard() {
               bloomingPlants={bloomingPlants}
               propagationCount={activePropagations.length}
               breedingCount={activeCrosses.length}
+              sportCount={sports.length}
             />
 
             {/* Recent Activity */}

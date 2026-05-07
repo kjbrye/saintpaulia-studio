@@ -13,12 +13,14 @@ import {
   Bug,
   Search,
   ArrowUpDown,
-  Calendar,
   ChevronDown,
+  List,
+  CalendarDays,
 } from 'lucide-react';
+import { format, isSameDay } from 'date-fns';
 import { useRecentCareLogs } from '../hooks/useCare';
 import { usePlants } from '../hooks/usePlants';
-import { CareLogItem } from '../components/care';
+import { CareLogItem, CareCalendar } from '../components/care';
 import { usePageTitle } from '../hooks/usePageTitle';
 
 const FILTER_OPTIONS = [
@@ -45,6 +47,12 @@ export default function CareLog() {
   const [sortBy, setSortBy] = useState('date-desc');
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
+  const [viewMode, setViewMode] = useState('calendar');
+  const [selectedDate, setSelectedDate] = useState(null);
+
+  const handleDayClick = (date) => {
+    setSelectedDate((prev) => (prev && isSameDay(prev, date) ? null : date));
+  };
 
   const { data: careLogs = [], isLoading, error } = useRecentCareLogs(100);
   const { data: plants = [] } = usePlants();
@@ -179,7 +187,39 @@ export default function CareLog() {
               <ArrowLeft size={20} style={{ color: 'var(--sage-600)' }} />
             </button>
           </Link>
-          <h1 className="heading heading-xl">Care Log</h1>
+          <h1 className="heading heading-xl flex-1">Care Log</h1>
+          <div className="flex gap-1">
+            <button
+              onClick={() => setViewMode('list')}
+              className="icon-container"
+              aria-label="List view"
+              style={{
+                background: viewMode === 'list' ? 'var(--sage-600)' : undefined,
+              }}
+            >
+              <List
+                size={18}
+                style={{
+                  color: viewMode === 'list' ? 'white' : 'var(--sage-600)',
+                }}
+              />
+            </button>
+            <button
+              onClick={() => setViewMode('calendar')}
+              className="icon-container"
+              aria-label="Calendar view"
+              style={{
+                background: viewMode === 'calendar' ? 'var(--sage-600)' : undefined,
+              }}
+            >
+              <CalendarDays
+                size={18}
+                style={{
+                  color: viewMode === 'calendar' ? 'white' : 'var(--sage-600)',
+                }}
+              />
+            </button>
+          </div>
         </header>
 
         {/* Filters */}
@@ -346,6 +386,13 @@ export default function CareLog() {
           <div className="card p-8 text-center">
             <p className="text-muted">Loading care history...</p>
           </div>
+        ) : viewMode === 'calendar' ? (
+          <CalendarView
+            logs={filteredLogs}
+            plantMap={plantMap}
+            selectedDate={selectedDate}
+            onDayClick={handleDayClick}
+          />
         ) : Object.keys(groupedLogs).length === 0 ? (
           <div className="card p-8 text-center">
             <div className="icon-container mx-auto mb-4" style={{ width: 64, height: 64 }}>
@@ -398,4 +445,65 @@ export default function CareLog() {
       </div>
     </div>
   );
+}
+
+function CalendarView({ logs, plantMap, selectedDate, onDayClick }) {
+  const dayLogs = selectedDate
+    ? logs.filter((log) => isSameDay(new Date(log.care_date), selectedDate))
+    : [];
+  const headerLabel = selectedDate ? formatDayHeader(selectedDate) : null;
+
+  return (
+    <div className="space-y-6">
+      <CareCalendar logs={logs} selectedDate={selectedDate} onDayClick={onDayClick} />
+
+      {selectedDate ? (
+        <section>
+          <h3 className="text-label mb-3">{headerLabel}</h3>
+          {dayLogs.length === 0 ? (
+            <div className="card p-6 text-center">
+              <p className="text-muted">No care logged on this day.</p>
+            </div>
+          ) : (
+            <div className="card p-4">
+              <div className="divide-y" style={{ borderColor: 'var(--sage-200)' }}>
+                {dayLogs.map((log) => {
+                  const plant = plantMap[log.plant_id];
+                  const plantName = plant?.nickname || plant?.cultivar_name || 'Deleted Plant';
+                  const content = (
+                    <CareLogItem log={log} showPlantName plantName={plantName} />
+                  );
+                  return plant ? (
+                    <Link
+                      key={log.id}
+                      to={`/plants/${log.plant_id}`}
+                      className="block hover:bg-[var(--sage-100)] -mx-4 px-4 transition-colors rounded-lg"
+                    >
+                      {content}
+                    </Link>
+                  ) : (
+                    <div key={log.id} className="-mx-4 px-4">
+                      {content}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+        </section>
+      ) : (
+        <div className="card p-6 text-center">
+          <p className="text-muted">Pick a day to see logged care.</p>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function formatDayHeader(date) {
+  const today = new Date();
+  const yesterday = new Date(Date.now() - 86400000);
+  if (isSameDay(date, today)) return 'Today';
+  if (isSameDay(date, yesterday)) return 'Yesterday';
+  return format(date, 'EEEE, MMMM d, yyyy');
 }

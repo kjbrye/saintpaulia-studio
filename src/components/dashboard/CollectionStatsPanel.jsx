@@ -3,7 +3,7 @@
  */
 
 import { Link } from 'react-router-dom';
-import { Flower2, Leaf, Scissors, Heart } from 'lucide-react';
+import { Flower2, Leaf, Scissors, Heart, Sparkles } from 'lucide-react';
 
 const MAX_AVATARS = 5;
 
@@ -36,6 +36,7 @@ export default function CollectionStatsPanel({
   bloomingPlants = [],
   propagationCount = 0,
   breedingCount = 0,
+  sportCount = 0,
 }) {
   return (
     <div className="stats-rows-container">
@@ -54,6 +55,14 @@ export default function CollectionStatsPanel({
             <Flower2 size={20} />
           </div>
         )}
+      </Link>
+
+      <Link to="/sports" className="stat-row stat-row-purple">
+        <span className="stat-row-count">{sportCount}</span>
+        <span className="stat-row-label">{sportCount === 1 ? 'Sport' : 'Sports'}</span>
+        <div className="stat-row-empty-icon">
+          <Sparkles size={20} />
+        </div>
       </Link>
 
       <Link to="/propagation" className="stat-row stat-row-copper">
