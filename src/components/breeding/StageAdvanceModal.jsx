@@ -54,6 +54,7 @@ const STAGE_FIELDS = {
 export default function StageAdvanceModal({ cross, targetStage, onConfirm, onCancel, isPending }) {
   const [notes, setNotes] = useState('');
   const [stageData, setStageData] = useState({});
+  const [error, setError] = useState(null);
 
   const stageInfo = BREEDING_STAGES.find((s) => s.key === targetStage.key) || targetStage;
   const Icon = stageInfo.icon;
@@ -64,14 +65,19 @@ export default function StageAdvanceModal({ cross, targetStage, onConfirm, onCan
     setStageData((prev) => ({ ...prev, [key]: value }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setError(null);
     const data = Object.keys(stageData).length > 0 ? stageData : undefined;
-    onConfirm({
-      stage: targetStage.key,
-      notes: notes.trim() || undefined,
-      data,
-    });
+    try {
+      await onConfirm({
+        stage: targetStage.key,
+        notes: notes.trim() || undefined,
+        data,
+      });
+    } catch (err) {
+      setError(err?.message || 'Something went wrong. Please try again.');
+    }
   };
 
   return (
@@ -150,6 +156,12 @@ export default function StageAdvanceModal({ cross, targetStage, onConfirm, onCan
               autoFocus={fields.length === 0}
             />
           </div>
+
+          {error && (
+            <p className="text-small" style={{ color: 'var(--color-error)' }}>
+              {error}
+            </p>
+          )}
 
           {/* Actions */}
           <div

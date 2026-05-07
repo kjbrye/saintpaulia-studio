@@ -17,24 +17,33 @@ import AppShell from './components/AppShell';
 import ToastContainer from './components/ui/ToastContainer';
 import ErrorBoundary from './components/ui/ErrorBoundary';
 
-// Wraps React.lazy so that a stale chunk after a deploy triggers a one-time
-// reload instead of an ErrorBoundary crash. Uses sessionStorage to avoid an
-// infinite reload loop if the failure is real (e.g., offline).
+// Wraps React.lazy so that a stale chunk after a deploy triggers a retry, then
+// a one-time reload, instead of an ErrorBoundary crash. Most import failures
+// are transient (flaky network, mobile suspend) — a quick in-place retry wins
+// without the full reload. Uses sessionStorage to avoid an infinite reload
+// loop if the failure is real (e.g., offline).
 function lazyWithRetry(componentImport) {
   return lazy(async () => {
     const reloadKey = 'page-has-been-force-refreshed';
     const hasRefreshed = sessionStorage.getItem(reloadKey) === 'true';
-    try {
-      const component = await componentImport();
-      sessionStorage.setItem(reloadKey, 'false');
-      return component;
-    } catch (error) {
-      if (!hasRefreshed) {
-        sessionStorage.setItem(reloadKey, 'true');
-        window.location.reload();
-        return { default: () => null };
+
+    for (let attempt = 0; attempt < 3; attempt++) {
+      try {
+        const component = await componentImport();
+        sessionStorage.setItem(reloadKey, 'false');
+        return component;
+      } catch (error) {
+        if (attempt < 2) {
+          await new Promise((r) => setTimeout(r, 200 * (attempt + 1)));
+          continue;
+        }
+        if (!hasRefreshed) {
+          sessionStorage.setItem(reloadKey, 'true');
+          window.location.reload();
+          return { default: () => null };
+        }
+        throw error;
       }
-      throw error;
     }
   });
 }
