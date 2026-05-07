@@ -9,7 +9,7 @@ import { usePlants, useCreatePlant } from '../hooks/usePlants';
 import { useSubscription } from '../hooks/useSubscription';
 import { useToast } from '../hooks/useToast';
 import FormField from '../components/ui/FormField';
-import { PhotoUpload } from '../components/plants';
+import { PhotoUpload, BloomColorPicker } from '../components/plants';
 import PlantLimitBanner from '../components/ui/PlantLimitBanner';
 import { usePageTitle } from '../hooks/usePageTitle';
 import { useSettings } from '../hooks/useSettings';
@@ -19,6 +19,7 @@ import {
   EXTRA_BLOOM_COLORS,
   LEAF_TYPE_OPTIONS,
   LEAF_COLOR_OPTIONS,
+  COMPOUND_BLOOM_COLORS,
 } from '../constants/plantOptions';
 
 export default function AddPlant() {
@@ -43,6 +44,7 @@ export default function AddPlant() {
     status: 'healthy',
     pot_size: '',
     bloom_color: '',
+    bloom_colors: [],
     bloom_type: '',
     size_class: '',
     leaf_type: '',
@@ -89,6 +91,10 @@ export default function AddPlant() {
         status: formData.status,
         pot_size: formData.pot_size || null,
         bloom_color: formData.bloom_color || null,
+        bloom_colors:
+          COMPOUND_BLOOM_COLORS.has(formData.bloom_color) && formData.bloom_colors.length
+            ? formData.bloom_colors
+            : null,
         bloom_type: formData.bloom_type || null,
         size_class: formData.size_class || null,
         leaf_type: formData.leaf_type || null,
@@ -270,7 +276,11 @@ export default function AddPlant() {
               <select
                 className="input w-full"
                 value={formData.bloom_color}
-                onChange={(e) => updateField('bloom_color', e.target.value)}
+                onChange={(e) => {
+                  const next = e.target.value;
+                  updateField('bloom_color', next);
+                  if (!COMPOUND_BLOOM_COLORS.has(next)) updateField('bloom_colors', []);
+                }}
               >
                 <option value="">Select color...</option>
                 <option value="pink">Pink</option>
@@ -287,6 +297,20 @@ export default function AddPlant() {
                 ))}
               </select>
             </FormField>
+
+            {COMPOUND_BLOOM_COLORS.has(formData.bloom_color) && (
+              <div className="md:col-span-2">
+                <BloomColorPicker
+                  value={formData.bloom_colors}
+                  onChange={(colors) => updateField('bloom_colors', colors)}
+                  hint={
+                    formData.bloom_color === 'bi-color'
+                      ? 'Pick the two colors that make up this bloom.'
+                      : 'Pick all colors present in this bloom.'
+                  }
+                />
+              </div>
+            )}
 
             <FormField label="Bloom Type">
               <select

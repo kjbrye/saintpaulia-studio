@@ -23,6 +23,7 @@ import {
 import { useToast } from '../hooks/useToast';
 import { useSettings } from '../hooks/useSettings.jsx';
 import { getPlantCareStatuses } from '../utils/careStatus';
+import { buildPlantDescription } from '../utils/plantDescription';
 import {
   CareStatusCard,
   QuickCareActions,
@@ -32,6 +33,7 @@ import {
 } from '../components/detail';
 import EditableField from '../components/ui/EditableField';
 import PhotoUpload from '../components/plants/PhotoUpload';
+import { BloomColorPicker } from '../components/plants';
 import NotesLog from '../components/ui/NotesLog';
 import { MiniPedigree } from '../components/lineage';
 import { usePageTitle } from '../hooks/usePageTitle';
@@ -47,6 +49,8 @@ import {
   SIZE_CLASS_OPTIONS,
   SIZE_CLASS_LABELS,
   EXTRA_BLOOM_COLORS,
+  COMPOUND_BLOOM_COLORS,
+  BI_MULTI_COLOR_OPTIONS,
   LEAF_TYPE_OPTIONS,
   LEAF_TYPE_LABELS,
   LEAF_COLOR_OPTIONS,
@@ -105,6 +109,21 @@ const BLOOM_COLOR_LABELS = {
   chimera: 'Chimera',
   fantasy: 'Fantasy',
 };
+
+const BI_MULTI_COLOR_LABELS = BI_MULTI_COLOR_OPTIONS.reduce((acc, o) => {
+  acc[o.value] = o.label;
+  return acc;
+}, {});
+
+function formatBloomColorDisplay(plant) {
+  const base = BLOOM_COLOR_LABELS[plant.bloom_color];
+  if (!base) return 'Not set';
+  if (!COMPOUND_BLOOM_COLORS.has(plant.bloom_color)) return base;
+  const detail = (plant.bloom_colors || [])
+    .map((c) => BI_MULTI_COLOR_LABELS[c] || c)
+    .join(' & ');
+  return detail ? `${base} (${detail})` : base;
+}
 
 const LOCATION_LABELS = {
   windowsill: 'Windowsill',
@@ -176,6 +195,7 @@ export default function PlantDetail() {
         status: plant.status || 'healthy',
         pot_size: plant.pot_size || '',
         bloom_color: plant.bloom_color || '',
+        bloom_colors: plant.bloom_colors || [],
         bloom_type: plant.bloom_type || '',
         size_class: plant.size_class || '',
         leaf_type: plant.leaf_type || '',
@@ -226,6 +246,10 @@ export default function PlantDetail() {
           location: formData.location || null,
           pot_size: formData.pot_size || null,
           bloom_color: formData.bloom_color || null,
+          bloom_colors:
+            COMPOUND_BLOOM_COLORS.has(formData.bloom_color) && formData.bloom_colors?.length
+              ? formData.bloom_colors
+              : null,
           bloom_type: formData.bloom_type || null,
           size_class: formData.size_class || null,
           leaf_type: formData.leaf_type || null,
@@ -490,6 +514,22 @@ export default function PlantDetail() {
                 onChange={(v) => updateField('nickname', v)}
                 placeholder="e.g., Grace"
               />
+
+              {!isEditing && buildPlantDescription(plant) && (
+                <div>
+                  <p className="text-label text-muted mb-1">Description</p>
+                  <p
+                    className="heading heading-sm"
+                    style={{
+                      color: 'var(--purple-500)',
+                      fontStyle: 'italic',
+                      lineHeight: 1.4,
+                    }}
+                  >
+                    {buildPlantDescription(plant)}
+                  </p>
+                </div>
+              )}
             </div>
           </div>
 
@@ -550,14 +590,32 @@ export default function PlantDetail() {
               options={SIZE_CLASS_OPTIONS}
             />
 
-            <EditableField
-              label="Bloom Color"
-              value={isEditing ? formData?.bloom_color : plant.bloom_color}
-              displayValue={BLOOM_COLOR_LABELS[plant.bloom_color] || 'Not set'}
-              isEditing={isEditing}
-              onChange={(v) => updateField('bloom_color', v)}
-              options={BLOOM_COLOR_OPTIONS}
-            />
+            <div>
+              <EditableField
+                label="Bloom Color"
+                value={isEditing ? formData?.bloom_color : plant.bloom_color}
+                displayValue={formatBloomColorDisplay(plant)}
+                isEditing={isEditing}
+                onChange={(v) => {
+                  updateField('bloom_color', v);
+                  if (!COMPOUND_BLOOM_COLORS.has(v)) updateField('bloom_colors', []);
+                }}
+                options={BLOOM_COLOR_OPTIONS}
+              />
+              {isEditing && COMPOUND_BLOOM_COLORS.has(formData?.bloom_color) && (
+                <div style={{ marginTop: 12 }}>
+                  <BloomColorPicker
+                    value={formData?.bloom_colors || []}
+                    onChange={(colors) => updateField('bloom_colors', colors)}
+                    hint={
+                      formData.bloom_color === 'bi-color'
+                        ? 'Pick the two colors that make up this bloom.'
+                        : 'Pick all colors present in this bloom.'
+                    }
+                  />
+                </div>
+              )}
+            </div>
 
             <EditableField
               label="Bloom Type"

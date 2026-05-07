@@ -54,6 +54,23 @@ export const EXTRA_BLOOM_COLORS = [
   { value: 'fantasy', label: 'Fantasy' },
 ];
 
+// Solid bloom colors selectable when a plant is bi-color or multi-color.
+// Used by the AddPlant form, the PlantDetail edit form, and the description builder.
+export const BI_MULTI_COLOR_OPTIONS = [
+  { value: 'pink', label: 'Pink' },
+  { value: 'purple', label: 'Purple' },
+  { value: 'blue', label: 'Blue' },
+  { value: 'white', label: 'White' },
+  { value: 'red', label: 'Red' },
+  { value: 'lavender', label: 'Lavender' },
+  { value: 'coral', label: 'Coral' },
+  { value: 'yellow', label: 'Yellow' },
+  { value: 'green', label: 'Green' },
+];
+
+// Bloom colors that need a follow-up multi-select for the actual colors.
+export const COMPOUND_BLOOM_COLORS = new Set(['bi-color', 'multi']);
+
 export const LEAF_TYPE_OPTIONS = [
   { value: '', label: 'Select leaf type...' },
   { value: 'plain', label: 'Plain (Boy)' },
