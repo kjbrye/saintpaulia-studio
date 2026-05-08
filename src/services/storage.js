@@ -31,7 +31,7 @@ export async function uploadPlantPhoto(file) {
 
   const userId = await requireUserId();
   const ext = optimized.name.split('.').pop();
-  const fileName = `${userId}/${Date.now()}.${ext}`;
+  const fileName = `${userId}/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
 
   const { error } = await supabase.storage.from(BUCKET).upload(fileName, optimized, {
     cacheControl: '3600',

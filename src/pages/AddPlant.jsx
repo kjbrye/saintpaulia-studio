@@ -4,12 +4,12 @@
 
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Plus, Loader2 } from 'lucide-react';
+import { ArrowLeft, Plus, Loader2, Sparkles } from 'lucide-react';
 import { usePlants, useCreatePlant } from '../hooks/usePlants';
 import { useSubscription } from '../hooks/useSubscription';
 import { useToast } from '../hooks/useToast';
 import FormField from '../components/ui/FormField';
-import { PhotoUpload, BloomColorPicker } from '../components/plants';
+import { PhotoUpload, BloomColorPicker, PlantPhotoGallery } from '../components/plants';
 import PlantLimitBanner from '../components/ui/PlantLimitBanner';
 import { usePageTitle } from '../hooks/usePageTitle';
 import { useSettings } from '../hooks/useSettings';
@@ -28,9 +28,10 @@ export default function AddPlant() {
   const toast = useToast();
   const createPlant = useCreatePlant();
   const { data: plants = [] } = usePlants();
-  const { plantLimit } = useSubscription();
+  const { plantLimit, canUseFeature } = useSubscription();
   const { settings } = useSettings();
   const atLimit = plants.length >= plantLimit;
+  const canAddMultiPhotos = canUseFeature('multi_photos');
 
   const [formData, setFormData] = useState({
     cultivar_name: '',
@@ -38,6 +39,7 @@ export default function AddPlant() {
     avsa_number: '',
     hybridizer: '',
     photo_url: null,
+    photo_urls: [],
     acquisition_date: '',
     source: '',
     location: '',
@@ -85,6 +87,7 @@ export default function AddPlant() {
         avsa_number: formData.avsa_number.trim() || null,
         hybridizer: formData.hybridizer.trim() || null,
         photo_url: formData.photo_url || null,
+        photo_urls: canAddMultiPhotos ? formData.photo_urls : [],
         acquisition_date: formData.acquisition_date || null,
         source: formData.source.trim() || null,
         location: formData.location || null,
@@ -131,11 +134,27 @@ export default function AddPlant() {
           {/* Photo + Primary Fields */}
           <div className="flex flex-col md:flex-row gap-8 mb-8">
             {/* Photo Upload */}
-            <div className="flex-shrink-0 mx-auto md:mx-0">
+            <div className="flex-shrink-0 mx-auto md:mx-0 space-y-3">
               <PhotoUpload
                 value={formData.photo_url}
                 onChange={(url) => updateField('photo_url', url)}
               />
+              {canAddMultiPhotos ? (
+                <div className="w-48">
+                  <label className="text-small text-muted block mb-2">More photos</label>
+                  <PlantPhotoGallery
+                    value={formData.photo_urls}
+                    onChange={(urls) => updateField('photo_urls', urls)}
+                  />
+                </div>
+              ) : (
+                <div className="w-48 flex items-center gap-2 px-2 py-1.5 rounded-lg" style={{ background: 'var(--cream-100)', border: '1px dashed var(--sage-300)' }}>
+                  <Sparkles size={12} style={{ color: 'var(--copper-500)' }} />
+                  <span className="text-small" style={{ color: 'var(--text-muted)', fontSize: 11 }}>
+                    Add up to 5 photos with Premium
+                  </span>
+                </div>
+              )}
             </div>
 
             {/* Primary Fields */}

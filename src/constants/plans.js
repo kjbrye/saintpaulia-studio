@@ -17,7 +17,9 @@ export const PLANS = {
   },
 };
 
-export const PREMIUM_FEATURES = ['breeding', 'propagation', 'lineage', 'analytics', 'note_attachments', 'sports'];
+export const PREMIUM_FEATURES = ['breeding', 'propagation', 'lineage', 'analytics', 'note_attachments', 'sports', 'multi_photos'];
+
+export const MAX_ADDITIONAL_PLANT_PHOTOS = 4;
 
 export const FEATURE_LABELS = {
   breeding: {
@@ -44,6 +46,11 @@ export const FEATURE_LABELS = {
     name: 'Sports Tracking',
     description:
       'Document bloom and foliage variations, track stability across cycles, and prepare entries for AVSA registration.',
+  },
+  multi_photos: {
+    name: 'Multiple Plant Photos',
+    description:
+      'Capture each plant from every angle — add up to 5 photos per plant to document growth, blooms, and foliage detail over time.',
   },
 };
 

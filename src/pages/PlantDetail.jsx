@@ -33,7 +33,9 @@ import {
 } from '../components/detail';
 import EditableField from '../components/ui/EditableField';
 import PhotoUpload from '../components/plants/PhotoUpload';
-import { BloomColorPicker } from '../components/plants';
+import { BloomColorPicker, PlantPhotoGallery } from '../components/plants';
+import { useSubscription } from '../hooks/useSubscription';
+import { Sparkles } from 'lucide-react';
 import NotesLog from '../components/ui/NotesLog';
 import { MiniPedigree } from '../components/lineage';
 import { usePageTitle } from '../hooks/usePageTitle';
@@ -181,6 +183,10 @@ export default function PlantDetail() {
   const [hasChanges, setHasChanges] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [showArchiveMenu, setShowArchiveMenu] = useState(false);
+  const [activePhoto, setActivePhoto] = useState(null);
+
+  const { canUseFeature } = useSubscription();
+  const canAddMultiPhotos = canUseFeature('multi_photos');
 
   // Initialize form data when entering edit mode
   useEffect(() => {
@@ -189,6 +195,7 @@ export default function PlantDetail() {
         cultivar_name: plant.cultivar_name || '',
         nickname: plant.nickname || '',
         photo_url: plant.photo_url || '',
+        photo_urls: plant.photo_urls || [],
         acquisition_date: plant.acquisition_date || '',
         source: plant.source || '',
         location: plant.location || '',
@@ -258,6 +265,7 @@ export default function PlantDetail() {
           hybridizer: formData.hybridizer || null,
           lineage_notes: formData.lineage_notes || null,
           notes: formData.notes || null,
+          photo_urls: canAddMultiPhotos ? (formData.photo_urls || []) : (plant.photo_urls || []),
         },
       });
 
@@ -472,27 +480,70 @@ export default function PlantDetail() {
         <div className="card p-6 mb-6">
           <div className="flex flex-col md:flex-row gap-6">
             {/* Plant Image */}
-            <div className="flex-shrink-0">
+            <div className="flex-shrink-0 space-y-3">
               {isEditing ? (
-                <PhotoUpload
-                  value={formData?.photo_url}
-                  onChange={(url) => updateField('photo_url', url)}
-                />
-              ) : (
-                <div
-                  className="w-48 h-48 rounded-xl overflow-hidden flex items-center justify-center"
-                  style={{ background: 'var(--cream-200)' }}
-                >
-                  {plant.photo_url ? (
-                    <img
-                      src={plant.photo_url}
-                      alt={displayName}
-                      className="w-full h-full object-cover"
-                    />
+                <>
+                  <PhotoUpload
+                    value={formData?.photo_url}
+                    onChange={(url) => updateField('photo_url', url)}
+                  />
+                  {canAddMultiPhotos ? (
+                    <div className="w-48">
+                      <label className="text-small text-muted block mb-2">More photos</label>
+                      <PlantPhotoGallery
+                        value={formData?.photo_urls || []}
+                        onChange={(urls) => updateField('photo_urls', urls)}
+                      />
+                    </div>
                   ) : (
-                    <Flower2 size={64} style={{ color: 'var(--sage-400)' }} />
+                    <div className="w-48 flex items-center gap-2 px-2 py-1.5 rounded-lg" style={{ background: 'var(--cream-100)', border: '1px dashed var(--sage-300)' }}>
+                      <Sparkles size={12} style={{ color: 'var(--copper-500)' }} />
+                      <span className="text-small" style={{ color: 'var(--text-muted)', fontSize: 11 }}>
+                        Add up to 5 photos with Premium
+                      </span>
+                    </div>
                   )}
-                </div>
+                </>
+              ) : (
+                <>
+                  <div
+                    className="w-48 h-48 rounded-xl overflow-hidden flex items-center justify-center"
+                    style={{ background: 'var(--cream-200)' }}
+                  >
+                    {(activePhoto || plant.photo_url) ? (
+                      <img
+                        src={activePhoto || plant.photo_url}
+                        alt={displayName}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <Flower2 size={64} style={{ color: 'var(--sage-400)' }} />
+                    )}
+                  </div>
+                  {(plant.photo_urls?.length > 0) && (
+                    <div className="flex flex-wrap gap-2 w-48">
+                      {[plant.photo_url, ...(plant.photo_urls || [])]
+                        .filter(Boolean)
+                        .map((url) => {
+                          const current = (activePhoto || plant.photo_url) === url;
+                          return (
+                            <button
+                              key={url}
+                              type="button"
+                              onClick={() => setActivePhoto(url)}
+                              className="w-10 h-10 rounded-md overflow-hidden"
+                              style={{
+                                outline: current ? '2px solid var(--sage-500)' : '1px solid var(--sage-200)',
+                                outlineOffset: current ? 1 : 0,
+                              }}
+                            >
+                              <img src={url} alt="" className="w-full h-full object-cover" />
+                            </button>
+                          );
+                        })}
+                    </div>
+                  )}
+                </>
               )}
             </div>
 
