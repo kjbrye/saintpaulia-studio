@@ -7,6 +7,7 @@
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import * as sportsService from '../services/sports';
+import { dashboardKeys } from './useDashboard';
 import { useAuth } from './useAuth';
 
 export const sportKeys = {
@@ -61,6 +62,7 @@ export function useCreateSport() {
     mutationFn: (data) => sportsService.createSport(data),
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: sportKeys.lists() });
+      queryClient.invalidateQueries({ queryKey: dashboardKeys.all });
       if (data?.parent_plant_id) {
         queryClient.invalidateQueries({ queryKey: sportKeys.byParent(data.parent_plant_id) });
       }
@@ -77,6 +79,7 @@ export function useUpdateSport() {
         old ? { ...old, ...data } : data,
       );
       queryClient.invalidateQueries({ queryKey: sportKeys.lists() });
+      queryClient.invalidateQueries({ queryKey: dashboardKeys.all });
       if (data?.parent_plant_id) {
         queryClient.invalidateQueries({ queryKey: sportKeys.byParent(data.parent_plant_id) });
       }
@@ -92,6 +95,7 @@ export function useDeleteSport() {
       queryClient.removeQueries({ queryKey: sportKeys.detail(id) });
       queryClient.invalidateQueries({ queryKey: sportKeys.lists() });
       queryClient.invalidateQueries({ queryKey: [...sportKeys.all, 'byParent'] });
+      queryClient.invalidateQueries({ queryKey: dashboardKeys.all });
     },
   });
 }

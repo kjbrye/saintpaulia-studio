@@ -7,6 +7,7 @@
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import * as propagationService from '../services/propagation';
+import { dashboardKeys } from './useDashboard';
 import { useAuth } from './useAuth';
 
 // Query key factory
@@ -51,6 +52,7 @@ export function useCreatePropagation() {
     mutationFn: (data) => propagationService.createPropagation(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: propagationKeys.lists() });
+      queryClient.invalidateQueries({ queryKey: dashboardKeys.all });
     },
   });
 }
@@ -65,6 +67,7 @@ export function useUpdatePropagation() {
     onSuccess: (data, { id }) => {
       queryClient.setQueryData(propagationKeys.detail(id), data);
       queryClient.invalidateQueries({ queryKey: propagationKeys.lists() });
+      queryClient.invalidateQueries({ queryKey: dashboardKeys.all });
     },
   });
 }
@@ -79,6 +82,7 @@ export function useDeletePropagation() {
     onSuccess: (_, id) => {
       queryClient.removeQueries({ queryKey: propagationKeys.detail(id) });
       queryClient.invalidateQueries({ queryKey: propagationKeys.lists() });
+      queryClient.invalidateQueries({ queryKey: dashboardKeys.all });
     },
   });
 }

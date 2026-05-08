@@ -3,7 +3,7 @@
  */
 
 import { useState, useMemo } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import {
   ArrowLeft,
   Droplets,
@@ -39,9 +39,18 @@ const SORT_OPTIONS = [
   { value: 'plant-name', label: 'Plant Name' },
 ];
 
+// Map dashboard ?filter=…-overdue deep-links onto the care-type chip filter.
+const URL_FILTER_MAP = {
+  'water-overdue': 'watering',
+  'fertilize-overdue': 'fertilizing',
+  'groom-overdue': 'grooming',
+};
+
 export default function CareLog() {
   usePageTitle('Care Log');
-  const [filter, setFilter] = useState('all');
+  const [searchParams] = useSearchParams();
+  const initialFilter = URL_FILTER_MAP[searchParams.get('filter')] ?? 'all';
+  const [filter, setFilter] = useState(initialFilter);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedPlantId, setSelectedPlantId] = useState('all');
   const [sortBy, setSortBy] = useState('date-desc');

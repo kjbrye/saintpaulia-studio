@@ -7,6 +7,7 @@
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import * as plantsService from '../services/plants';
+import { dashboardKeys } from './useDashboard';
 import { useAuth } from './useAuth';
 
 // Query key factory - keeps keys consistent across the app
@@ -53,6 +54,7 @@ export function useCreatePlant() {
     onSuccess: () => {
       // Invalidate plant list to refetch
       queryClient.invalidateQueries({ queryKey: plantKeys.lists() });
+      queryClient.invalidateQueries({ queryKey: dashboardKeys.all });
     },
   });
 }
@@ -70,6 +72,7 @@ export function useUpdatePlant() {
       queryClient.setQueryData(plantKeys.detail(id), data);
       // Invalidate list to refetch
       queryClient.invalidateQueries({ queryKey: plantKeys.lists() });
+      queryClient.invalidateQueries({ queryKey: dashboardKeys.all });
     },
   });
 }
@@ -87,6 +90,7 @@ export function useDeletePlant() {
       queryClient.removeQueries({ queryKey: plantKeys.detail(id) });
       // Invalidate list to refetch
       queryClient.invalidateQueries({ queryKey: plantKeys.lists() });
+      queryClient.invalidateQueries({ queryKey: dashboardKeys.all });
     },
   });
 }

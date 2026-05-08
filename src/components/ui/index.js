@@ -11,3 +11,4 @@ export { default as EditableField } from './EditableField';
 export { default as FormField } from './FormField';
 export { default as Seal } from './Seal';
 export { default as PlantPreview } from './PlantPreview';
+export { default as PremiumFeatureModal } from './PremiumFeatureModal';

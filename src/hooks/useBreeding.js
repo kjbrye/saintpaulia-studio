@@ -7,6 +7,7 @@
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import * as breedingService from '../services/breeding';
+import { dashboardKeys } from './useDashboard';
 import { useAuth } from './useAuth';
 
 // Query key factory
@@ -52,6 +53,7 @@ export function useCreateCross() {
     mutationFn: (data) => breedingService.createCross(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: breedingKeys.lists() });
+      queryClient.invalidateQueries({ queryKey: dashboardKeys.all });
     },
   });
 }
@@ -66,6 +68,7 @@ export function useUpdateCross() {
     onSuccess: (data, { id }) => {
       queryClient.setQueryData(breedingKeys.detail(id), data);
       queryClient.invalidateQueries({ queryKey: breedingKeys.lists() });
+      queryClient.invalidateQueries({ queryKey: dashboardKeys.all });
     },
   });
 }
@@ -80,6 +83,7 @@ export function useDeleteCross() {
     onSuccess: (_, id) => {
       queryClient.removeQueries({ queryKey: breedingKeys.detail(id) });
       queryClient.invalidateQueries({ queryKey: breedingKeys.lists() });
+      queryClient.invalidateQueries({ queryKey: dashboardKeys.all });
     },
   });
 }
@@ -140,6 +144,7 @@ export function useAdvanceStage() {
       );
       queryClient.invalidateQueries({ queryKey: breedingKeys.stageLogs(crossId) });
       queryClient.invalidateQueries({ queryKey: breedingKeys.lists() });
+      queryClient.invalidateQueries({ queryKey: dashboardKeys.all });
     },
   });
 }
@@ -156,6 +161,7 @@ export function useUpdateCrossStatus() {
         old ? { ...old, ...data } : data,
       );
       queryClient.invalidateQueries({ queryKey: breedingKeys.lists() });
+      queryClient.invalidateQueries({ queryKey: dashboardKeys.all });
     },
   });
 }

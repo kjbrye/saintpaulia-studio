@@ -7,6 +7,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import * as bloomService from '../services/blooms';
 import { plantKeys } from './usePlants';
+import { dashboardKeys } from './useDashboard';
 import { useAuth } from './useAuth';
 
 // Query key factory
@@ -38,6 +39,7 @@ export function useCreateBloomLog() {
     mutationFn: (bloomLog) => bloomService.createBloomLog(bloomLog),
     onSuccess: (_data, variables) => {
       queryClient.invalidateQueries({ queryKey: bloomKeys.all });
+      queryClient.invalidateQueries({ queryKey: dashboardKeys.all });
       if (variables.plant_id) {
         queryClient.setQueryData(plantKeys.detail(variables.plant_id), (old) => {
           if (!old) return old;
@@ -59,6 +61,7 @@ export function useUpdateBloomLog() {
     mutationFn: ({ id, updates }) => bloomService.updateBloomLog(id, updates),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: bloomKeys.all });
+      queryClient.invalidateQueries({ queryKey: dashboardKeys.all });
     },
   });
 }
@@ -74,6 +77,7 @@ export function useDeleteBloomLog() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: bloomKeys.all });
       queryClient.invalidateQueries({ queryKey: plantKeys.all });
+      queryClient.invalidateQueries({ queryKey: dashboardKeys.all });
     },
   });
 }
@@ -90,6 +94,7 @@ export function useEndBloom() {
       queryClient.invalidateQueries({ queryKey: bloomKeys.all });
       queryClient.invalidateQueries({ queryKey: plantKeys.detail(plantId) });
       queryClient.invalidateQueries({ queryKey: plantKeys.lists() });
+      queryClient.invalidateQueries({ queryKey: dashboardKeys.all });
     },
   });
 }

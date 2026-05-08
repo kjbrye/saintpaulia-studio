@@ -733,6 +733,47 @@ textarea.input {
   }
 }
 
+/* Today section — 2x2 task grid (single column on mobile) */
+.today-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+}
+
+@media (min-width: 640px) {
+  .today-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+}
+
+/* Collection at a glance — 3 columns, 2 on mobile */
+.collection-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+@media (min-width: 768px) {
+  .collection-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+}
+
+/* Task card hover — works for both default and premium variants */
+.task-card:hover,
+.premium-discovery-tile:hover,
+.collection-tile:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(74, 88, 66, 0.08);
+}
+
+.task-card:active,
+.premium-discovery-tile:active {
+  transform: translateY(0);
+}
+
 /* Command center panel */
 .panel {
   background: var(--gradient-sage-card);

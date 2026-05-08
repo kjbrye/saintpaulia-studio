@@ -7,6 +7,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import * as careService from '../services/care';
 import { plantKeys } from './usePlants';
+import { dashboardKeys } from './useDashboard';
 import { useAuth } from './useAuth';
 
 // Query key factory
@@ -53,6 +54,7 @@ export function useLogCare() {
     onSuccess: (newLog, { plantId, careType, potSize }) => {
       // Invalidate care logs
       queryClient.invalidateQueries({ queryKey: careKeys.all });
+      queryClient.invalidateQueries({ queryKey: dashboardKeys.all });
 
       // Update the plant's last care date in the cache
       const updateField = {

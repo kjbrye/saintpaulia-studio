@@ -7,7 +7,7 @@ import { Link, useSearchParams } from 'react-router-dom';
 import { ArrowLeft, Plus, ChevronLeft, ChevronRight, CheckSquare, Square } from 'lucide-react';
 import { usePlants } from '../hooks/usePlants';
 import { useSettings } from '../hooks/useSettings.jsx';
-import { plantNeedsCare } from '../utils/careStatus';
+import { plantNeedsCare, getOverdueCareTypes } from '../utils/careStatus';
 import { isArchived } from '../constants/plantStatus';
 import PlantCard from '../components/library/PlantCard';
 import PlantListItem from '../components/library/PlantListItem';
@@ -32,14 +32,24 @@ export default function Library() {
   const [sortBy, setSortBy] = useState('updated');
   const [currentPage, setCurrentPage] = useState(1);
 
-  // Filter state
-  const initialCareFilter =
-    searchParams.get('filter') === 'needs-care'
-      ? 'needs-care'
-      : searchParams.get('filter') === 'blooming'
-        ? 'all'
-        : 'all';
-  const initialBloomingFilter = searchParams.get('filter') === 'blooming' ? 'blooming' : 'all';
+  // Filter state — seeded from ?filter=… for dashboard deep-links.
+  // The dashboard's overdue TaskCards link here with one of:
+  //   needs-care | water-overdue | fertilize-overdue | groom-overdue
+  // Per-care-type values map onto a careFilter that filters the plant
+  // grid to plants overdue on that specific care action.
+  const filterParam = searchParams.get('filter');
+  const initialCareFilter = (() => {
+    if (filterParam === 'needs-care') return 'needs-care';
+    if (filterParam === 'water-overdue') return 'water-overdue';
+    if (filterParam === 'fertilize-overdue') return 'fertilize-overdue';
+    if (filterParam === 'groom-overdue') return 'groom-overdue';
+    return 'all';
+  })();
+  // ?filter=needs-bloom-update is aliased to the blooming filter — a
+  // stricter "active 30+ days" check would require bloom_log data that
+  // Library doesn't currently fetch.
+  const initialBloomingFilter =
+    filterParam === 'blooming' || filterParam === 'needs-bloom-update' ? 'blooming' : 'all';
   const [potSizeFilter, setPotSizeFilter] = useState('all');
   const [bloomColorFilter, setBloomColorFilter] = useState('all');
   const [bloomTypeFilter, setBloomTypeFilter] = useState('all');
@@ -100,11 +110,24 @@ export default function Library() {
       result = result.filter((p) => !p.is_blooming);
     }
 
-    // Care filter (needs care / up to date)
+    // Care filter (needs care / up to date / per-care-type from dashboard)
     if (careFilter === 'needs-care') {
       result = result.filter((p) => plantNeedsCare(p, careThresholds));
     } else if (careFilter === 'up-to-date') {
       result = result.filter((p) => !plantNeedsCare(p, careThresholds));
+    } else if (
+      careFilter === 'water-overdue' ||
+      careFilter === 'fertilize-overdue' ||
+      careFilter === 'groom-overdue'
+    ) {
+      const careTypeKey = {
+        'water-overdue': 'watering',
+        'fertilize-overdue': 'fertilizing',
+        'groom-overdue': 'grooming',
+      }[careFilter];
+      result = result.filter((p) =>
+        getOverdueCareTypes(p, careThresholds).includes(careTypeKey),
+      );
     }
 
     // Sort
