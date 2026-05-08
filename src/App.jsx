@@ -56,6 +56,7 @@ const AddPlant = lazyWithRetry(() => import('./pages/AddPlant'));
 const CareLog = lazyWithRetry(() => import('./pages/CareLog'));
 const Settings = lazyWithRetry(() => import('./pages/Settings'));
 const Login = lazyWithRetry(() => import('./pages/Login'));
+const Landing = lazyWithRetry(() => import('./pages/Landing'));
 const About = lazyWithRetry(() => import('./pages/About'));
 const Legal = lazyWithRetry(() => import('./pages/Legal'));
 const Propagation = lazyWithRetry(() => import('./pages/Propagation'));
@@ -102,6 +103,21 @@ function ProtectedRoute({ children }) {
   return children;
 }
 
+// Home route — shows Landing for signed-out users, Dashboard for signed-in users
+function HomeRoute() {
+  const { isAuthenticated, loading } = useAuth();
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p className="text-[var(--text-muted)]">Loading...</p>
+      </div>
+    );
+  }
+
+  return isAuthenticated ? <Dashboard /> : <Landing />;
+}
+
 // App routes
 function AppRoutes() {
   return (
@@ -118,15 +134,10 @@ function AppRoutes() {
       <Route path="/about" element={<About />} />
       <Route path="/legal" element={<Legal />} />
 
+      {/* Home — auth-aware: Landing for signed-out, Dashboard for signed-in */}
+      <Route path="/" element={<HomeRoute />} />
+
       {/* Protected routes */}
-      <Route
-        path="/"
-        element={
-          <ProtectedRoute>
-            <Dashboard />
-          </ProtectedRoute>
-        }
-      />
 
       {/* Library */}
       <Route
