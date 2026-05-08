@@ -9,6 +9,7 @@ import {
   Scissors,
   Clock,
   Flower2,
+  Bug,
   ArrowUpDown,
   ChevronDown,
 } from 'lucide-react';
@@ -34,6 +35,11 @@ const careConfig = {
     label: 'Repotted',
     color: 'var(--sage-700)',
   },
+  treatment: {
+    icon: Bug,
+    label: 'Treated',
+    color: '#B45309',
+  },
 };
 
 const FERTILIZER_LABELS = {
@@ -45,12 +51,22 @@ const FERTILIZER_LABELS = {
   other: 'Other',
 };
 
+const TREATMENT_LABELS = {
+  neem_oil: 'Neem Oil',
+  mosquito_bits: 'Mosquito Bits',
+  hydrogen_peroxide: 'Hydrogen Peroxide',
+  alcohol: 'Rubbing Alcohol',
+  insecticidal_soap: 'Insecticidal Soap',
+  other: 'Other',
+};
+
 const FILTER_OPTIONS = [
   { value: 'all', label: 'All' },
   { value: 'watering', label: 'Watering' },
   { value: 'fertilizing', label: 'Fertilizing' },
   { value: 'grooming', label: 'Grooming' },
   { value: 'repotting', label: 'Repotting' },
+  { value: 'treatment', label: 'Treatment' },
 ];
 
 const SORT_OPTIONS = [
@@ -64,6 +80,9 @@ function CareLogItem({ log }) {
   const Icon = config.icon;
   const fertilizerLabel = log.fertilizer_type
     ? FERTILIZER_LABELS[log.fertilizer_type] || log.fertilizer_type.replace(/^custom:/, '')
+    : null;
+  const treatmentLabel = log.treatment_type
+    ? TREATMENT_LABELS[log.treatment_type] || log.treatment_type.replace(/^custom:/, '')
     : null;
   const potSize = log.pot_size;
 
@@ -97,6 +116,12 @@ function CareLogItem({ log }) {
             <span style={{ color: 'var(--purple-400)' }} className="font-normal">
               {' '}
               - {fertilizerLabel}
+            </span>
+          )}
+          {treatmentLabel && (
+            <span style={{ color: '#B45309' }} className="font-normal">
+              {' '}
+              - {treatmentLabel}
             </span>
           )}
           {potSize && (
