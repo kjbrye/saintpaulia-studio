@@ -6,7 +6,7 @@
 
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { ArrowLeft, User, Bell, Layout, LogOut, AlertTriangle, Eye, Download, Upload, Crown, Sparkles, Plus, X, MapPin } from 'lucide-react';
+import { ArrowLeft, User, Bell, Layout, LogOut, AlertTriangle, Eye, Download, Upload, Crown, Sparkles, Plus, X, MapPin, Bug } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import { useToast } from '../hooks/useToast';
 import { useSettings } from '../hooks/useSettings.jsx';
@@ -267,6 +267,17 @@ export default function Settings() {
           items={settings.customFertilizers || []}
           onChange={(list) => updateSetting('customFertilizers', list)}
           placeholder="e.g. Schultz 10-15-10"
+        />
+
+        {/* Custom Treatments Section */}
+        <CustomListSection
+          icon={Bug}
+          iconColor="var(--copper-500)"
+          title="Custom Treatments"
+          description="Add your own treatment types to use when logging care"
+          items={settings.customTreatments || []}
+          onChange={(list) => updateSetting('customTreatments', list)}
+          placeholder="e.g. Neem oil, Captan drench"
         />
 
         {/* Custom Locations Section */}
