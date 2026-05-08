@@ -48,6 +48,37 @@ export const SIZE_CLASS_LABELS = SIZE_CLASS_OPTIONS.reduce((acc, o) => {
   return acc;
 }, {});
 
+/**
+ * Compact variety class buckets used by the Library filter drawer and the
+ * eyebrow/column display on cards & list rows. The full size_class list has
+ * mini-trailer / semi-trailer variants we collapse into a single "Trailer"
+ * bucket so the filter chips stay scannable.
+ */
+export const VARIETY_CLASS_BUCKETS = [
+  { value: 'standard', label: 'Standard', includes: ['standard', 'large'] },
+  { value: 'semiminiature', label: 'Semi-mini', includes: ['semiminiature'] },
+  { value: 'miniature', label: 'Mini', includes: ['miniature'] },
+  { value: 'trailer', label: 'Trailer', includes: ['trailer', 'mini-trailer', 'semi-trailer'] },
+];
+
+export const VARIETY_CLASS_BUCKET_BY_SIZE = VARIETY_CLASS_BUCKETS.reduce((acc, bucket) => {
+  for (const value of bucket.includes) acc[value] = bucket;
+  return acc;
+}, {});
+
+/**
+ * Short uppercase eyebrow label for a plant's size_class (e.g. "STANDARD",
+ * "SEMI-MINI"). Returns null when there's no size_class so callers can
+ * conditionally render.
+ */
+export function getVarietyClassEyebrow(sizeClass) {
+  if (!sizeClass) return null;
+  const bucket = VARIETY_CLASS_BUCKET_BY_SIZE[sizeClass];
+  if (bucket) return bucket.label.toUpperCase();
+  const fallback = SIZE_CLASS_LABELS[sizeClass];
+  return fallback ? fallback.toUpperCase() : null;
+}
+
 // Extra bloom colors added alongside this feature (Chimera, Fantasy patterns).
 export const EXTRA_BLOOM_COLORS = [
   { value: 'chimera', label: 'Chimera' },

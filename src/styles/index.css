@@ -609,6 +609,133 @@ a:hover {
 }
 
 /* ===========================================
+   LIBRARY VIEW TOGGLE (grid/list)
+   Sage gradient when active, matches the primary "Add Plant" button.
+   =========================================== */
+.library-view-toggle {
+  width: 34px;
+  height: 34px;
+  border-radius: var(--radius-sm);
+  border: var(--border-sage-light);
+  background: var(--gradient-sage-button);
+  color: var(--sage-600);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.library-view-toggle[data-active='true'] {
+  background: var(--gradient-sage-primary);
+  color: var(--text-on-dark);
+  border-color: var(--sage-600);
+  box-shadow: var(--shadow-sage-primary);
+}
+
+.library-view-toggle[data-active='true']:hover {
+  transform: translateY(-1px);
+}
+
+/* ===========================================
+   PLANT LIST ROW (dense list view)
+   =========================================== */
+.plant-list-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  min-height: 72px;
+  background: var(--gradient-sage-card);
+  border-radius: var(--radius-lg);
+  border: var(--border-sage-light);
+  box-shadow: var(--shadow-sage-subtle);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.plant-list-row:hover {
+  border-color: rgba(181, 192, 171, 0.6);
+  transform: translateX(2px);
+}
+
+.plant-list-row:active {
+  box-shadow: var(--shadow-sage-pressed);
+  transform: translateX(0);
+}
+
+.plant-list-row-selected {
+  outline: 2px solid var(--sage-500);
+  outline-offset: -2px;
+}
+
+.plant-list-thumb {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.plant-list-name {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-width: 0;
+}
+
+.plant-list-variety {
+  display: none;
+}
+
+.plant-list-pills {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.plant-list-eyebrow-inline {
+  display: block;
+}
+
+/* Desktop: switch to grid so the variety column lines up across rows
+   regardless of how wide the pills get. */
+@media (min-width: 768px) {
+  .plant-list-row {
+    display: grid;
+    grid-template-columns: 48px minmax(0, 1fr) 110px minmax(0, 260px) 16px;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 18px;
+    min-height: 76px;
+  }
+
+  .plant-list-row[data-mode='select'] {
+    grid-template-columns: 22px 48px minmax(0, 1fr) 110px minmax(0, 260px);
+  }
+
+  .plant-list-variety {
+    display: block;
+    text-align: left;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .plant-list-eyebrow-inline {
+    display: none;
+  }
+}
+
+/* ===========================================
    PLANT CARD HOVER (grid view)
    =========================================== */
 .plant-card-grid:hover {

@@ -6,9 +6,12 @@ import { Link } from 'react-router-dom';
 import { Flower2, Sparkles, Droplets, Check, AlertTriangle, HeartPulse, Moon } from 'lucide-react';
 import { useSettings } from '../../hooks/useSettings.jsx';
 import { plantNeedsCare } from '../../utils/careStatus';
+import { getVarietyClassEyebrow } from '../../constants/plantOptions';
+import { getBloomHistoryLine } from '../../utils/bloomHistory';
 
 export default function PlantCard({
   plant,
+  bloomHistory,
   selectionMode = false,
   isSelected = false,
   onToggleSelect,
@@ -16,6 +19,18 @@ export default function PlantCard({
   const { careThresholds } = useSettings();
   const displayName = plant.nickname || plant.cultivar_name || 'Unnamed Plant';
   const needsCare = plantNeedsCare(plant, careThresholds);
+  const eyebrow = getVarietyClassEyebrow(plant.size_class);
+  const showCultivar =
+    plant.nickname &&
+    plant.cultivar_name &&
+    plant.cultivar_name.trim() &&
+    plant.cultivar_name.trim() !== plant.nickname.trim() &&
+    plant.cultivar_name.trim().toUpperCase() !== 'NOID';
+
+  const bloomDurationDays = plant.is_blooming ? bloomHistory?.active?.daysSinceStart : null;
+  const historyLine = !plant.is_blooming
+    ? getBloomHistoryLine({ plant, bloomHistory })
+    : null;
 
   const handleClick = (e) => {
     if (selectionMode && onToggleSelect) {
@@ -32,7 +47,7 @@ export default function PlantCard({
 
   const CardContent = (
     <div
-      className={`card-subtle plant-card-grid p-4 cursor-pointer relative ${
+      className={`card-subtle plant-card-grid p-4 cursor-pointer relative h-full ${
         isSelected ? 'ring-2 ring-[var(--sage-500)]' : ''
       }`}
       onClick={selectionMode ? handleClick : undefined}
@@ -67,15 +82,41 @@ export default function PlantCard({
         )}
       </div>
 
-      {/* Plant Info */}
-      <h3 className="heading heading-md truncate">{displayName}</h3>
-      {plant.nickname && <p className="text-small text-muted truncate">{plant.cultivar_name}</p>}
+      {/* Variety class eyebrow — always rendered so cards line up */}
+      <p
+        className="mb-1"
+        style={{
+          fontSize: '10px',
+          fontWeight: 700,
+          letterSpacing: '0.14em',
+          color: 'var(--sage-500)',
+          minHeight: '14px',
+          lineHeight: '14px',
+        }}
+      >
+        {eyebrow || ' '}
+      </p>
 
-      {/* Status Badges */}
-      <div className="flex flex-wrap gap-2 mt-3">
+      {/* Plant Info — cultivar slot always reserved */}
+      <h3 className="heading heading-md truncate">{displayName}</h3>
+      <p
+        className="text-small text-muted truncate"
+        style={{ minHeight: '20px', lineHeight: '20px' }}
+      >
+        {showCultivar ? plant.cultivar_name : ' '}
+      </p>
+
+      {/* Status Badges — always present, blank space if none apply */}
+      <div
+        className="flex flex-wrap gap-2 mt-3"
+        style={{ minHeight: '24px' }}
+      >
         {plant.is_blooming && (
           <span className="badge badge-purple">
-            <Sparkles size={12} /> Blooming
+            <Sparkles size={12} />
+            {bloomDurationDays != null
+              ? `Blooming · ${bloomDurationDays}d`
+              : 'Blooming'}
           </span>
         )}
         {needsCare && (
@@ -99,6 +140,21 @@ export default function PlantCard({
           </span>
         )}
       </div>
+
+      {/* Bloom history line — always rendered to keep card heights aligned */}
+      <p
+        className="mt-2 truncate"
+        style={{
+          fontFamily: 'var(--font-heading)',
+          fontStyle: 'italic',
+          fontSize: '11px',
+          color: 'var(--text-muted)',
+          minHeight: '16px',
+          lineHeight: '16px',
+        }}
+      >
+        {historyLine || ' '}
+      </p>
     </div>
   );
 

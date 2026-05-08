@@ -1,5 +1,5 @@
 /**
- * PlantListItem - List view row for plant library
+ * PlantListItem - Dense list row for the plant library
  */
 
 import { Link } from 'react-router-dom';
@@ -15,9 +15,11 @@ import {
 } from 'lucide-react';
 import { useSettings } from '../../hooks/useSettings.jsx';
 import { plantNeedsCare } from '../../utils/careStatus';
+import { getVarietyClassEyebrow } from '../../constants/plantOptions';
 
 export default function PlantListItem({
   plant,
+  bloomHistory,
   selectionMode = false,
   isSelected = false,
   onToggleSelect,
@@ -25,6 +27,22 @@ export default function PlantListItem({
   const { careThresholds } = useSettings();
   const displayName = plant.nickname || plant.cultivar_name || 'Unnamed Plant';
   const needsCare = plantNeedsCare(plant, careThresholds);
+  const eyebrow = getVarietyClassEyebrow(plant.size_class);
+  const cultivarTrim = plant.cultivar_name?.trim();
+  const showCultivar =
+    plant.nickname &&
+    cultivarTrim &&
+    cultivarTrim !== plant.nickname.trim() &&
+    cultivarTrim.toUpperCase() !== 'NOID';
+
+  const bloomDurationDays = plant.is_blooming ? bloomHistory?.active?.daysSinceStart : null;
+  const hasStateOfNote =
+    plant.is_blooming ||
+    needsCare ||
+    plant.status === 'struggling' ||
+    plant.status === 'recovering' ||
+    plant.status === 'dormant';
+  const upToDate = !hasStateOfNote;
 
   const handleClick = (e) => {
     if (selectionMode && onToggleSelect) {
@@ -41,9 +59,8 @@ export default function PlantListItem({
 
   const ItemContent = (
     <div
-      className={`card-subtle p-4 flex items-center gap-4 cursor-pointer ${
-        isSelected ? 'ring-2 ring-[var(--sage-500)]' : ''
-      }`}
+      className={`plant-list-row ${isSelected ? 'plant-list-row-selected' : ''}`}
+      data-mode={selectionMode ? 'select' : 'browse'}
       onClick={selectionMode ? handleClick : undefined}
     >
       {/* Checkbox */}
@@ -51,7 +68,7 @@ export default function PlantListItem({
         <button
           onClick={handleCheckboxClick}
           className={`
-            w-6 h-6 rounded-md flex items-center justify-center flex-shrink-0
+            w-5 h-5 rounded flex items-center justify-center flex-shrink-0
             transition-colors border
             ${
               isSelected
@@ -60,67 +77,122 @@ export default function PlantListItem({
             }
           `}
         >
-          {isSelected && <Check size={14} color="white" strokeWidth={3} />}
+          {isSelected && <Check size={12} color="white" strokeWidth={3} />}
         </button>
       )}
 
       {/* Thumbnail */}
       <div
-        className="w-14 h-14 rounded-lg flex-shrink-0 overflow-hidden flex items-center justify-center"
+        className="plant-list-thumb"
         style={{ background: 'var(--cream-200)' }}
       >
         {plant.photo_url ? (
           <img src={plant.photo_url} alt="" className="w-full h-full object-cover" />
         ) : (
-          <Flower2 size={24} style={{ color: 'var(--sage-400)' }} />
+          <Flower2 size={20} style={{ color: 'var(--sage-400)' }} />
         )}
       </div>
 
-      {/* Info */}
-      <div className="flex-1 min-w-0">
-        <h3 className="heading heading-md truncate">{displayName}</h3>
-        <p className="text-small text-muted truncate">{plant.cultivar_name}</p>
+      {/* Name + cultivar */}
+      <div className="plant-list-name min-w-0">
+        <h3
+          className="truncate"
+          style={{
+            fontFamily: 'var(--font-heading)',
+            fontWeight: 600,
+            fontSize: '17px',
+            lineHeight: 1.15,
+            color: 'var(--text-primary)',
+          }}
+        >
+          {displayName}
+        </h3>
+        {showCultivar && (
+          <p
+            className="truncate"
+            style={{ fontSize: '12px', color: 'var(--sage-600)', marginTop: 2 }}
+          >
+            {plant.cultivar_name}
+          </p>
+        )}
+        {/* Mobile-only inline eyebrow under the name */}
+        {eyebrow && (
+          <p
+            className="plant-list-eyebrow-inline truncate"
+            style={{
+              fontSize: '10px',
+              fontWeight: 700,
+              letterSpacing: '0.14em',
+              color: 'var(--sage-500)',
+              marginTop: 2,
+            }}
+          >
+            {eyebrow}
+          </p>
+        )}
       </div>
 
-      {/* Badges */}
-      <div className="flex gap-2 flex-shrink-0 flex-wrap justify-end">
+      {/* Variety class column (hidden on mobile) */}
+      <div
+        className="plant-list-variety truncate"
+        style={{
+          fontSize: '10px',
+          fontWeight: 700,
+          letterSpacing: '0.14em',
+          color: 'var(--sage-500)',
+        }}
+      >
+        {eyebrow || ''}
+      </div>
+
+      {/* Status pills */}
+      <div className="plant-list-pills">
         {plant.is_blooming && (
           <span className="badge badge-purple">
-            <Sparkles size={12} /> Blooming
+            <Sparkles size={11} />
+            {bloomDurationDays != null
+              ? `Blooming · ${bloomDurationDays}d`
+              : 'Blooming'}
           </span>
         )}
         {needsCare && (
           <span className="badge badge-warning">
-            <Droplets size={12} /> Care
+            <Droplets size={11} />
+            {plant.is_blooming ? 'Care' : 'Needs care'}
           </span>
         )}
         {plant.status === 'struggling' && (
           <span className="badge badge-alert">
-            <AlertTriangle size={12} /> Struggling
+            <AlertTriangle size={11} /> Struggling
           </span>
         )}
         {plant.status === 'recovering' && (
           <span className="badge badge-recovering">
-            <HeartPulse size={12} /> Recovering
+            <HeartPulse size={11} /> Recovering
           </span>
         )}
         {plant.status === 'dormant' && (
           <span className="badge badge-dormant">
-            <Moon size={12} /> Dormant
+            <Moon size={11} /> Dormant
+          </span>
+        )}
+        {upToDate && (
+          <span className="badge badge-success">
+            <Check size={11} /> Up to date
           </span>
         )}
       </div>
 
       {/* Chevron (only in non-selection mode) */}
       {!selectionMode && (
-        <div className="icon-container icon-container-sm flex-shrink-0">
-          <ChevronRight size={16} style={{ color: 'var(--sage-500)' }} />
-        </div>
+        <ChevronRight
+          size={16}
+          style={{ color: 'var(--sage-500)', flexShrink: 0 }}
+        />
       )}
     </div>
   );
 
-  // In selection mode, don't wrap with Link
   if (selectionMode) {
     return ItemContent;
   }

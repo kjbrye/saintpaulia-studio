@@ -6,15 +6,47 @@ import { useState, useMemo, useEffect, useCallback, useRef } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { ArrowLeft, Plus, ChevronLeft, ChevronRight, CheckSquare, Square } from 'lucide-react';
 import { usePlants } from '../hooks/usePlants';
+import { useBloomLogs } from '../hooks/useBlooms';
 import { useSettings } from '../hooks/useSettings.jsx';
 import { plantNeedsCare, getOverdueCareTypes } from '../utils/careStatus';
 import { isArchived } from '../constants/plantStatus';
+import {
+  VARIETY_CLASS_BUCKETS,
+  VARIETY_CLASS_BUCKET_BY_SIZE,
+  BLOOM_TYPE_LABELS,
+} from '../constants/plantOptions';
+import { buildBloomHistoryMap } from '../utils/bloomHistory';
 import PlantCard from '../components/library/PlantCard';
 import PlantListItem from '../components/library/PlantListItem';
-import LibraryToolbar from '../components/library/LibraryToolbar';
+import LibraryFilterBar, { SORT_LABELS } from '../components/library/LibraryFilterBar';
+import LibraryFilterDrawer from '../components/library/LibraryFilterDrawer';
 import BatchActionsToolbar from '../components/library/BatchActionsToolbar';
 import { EmptyLibrary, NoResults } from '../components/library/EmptyState';
 import { usePageTitle } from '../hooks/usePageTitle';
+
+const POT_SIZE_ORDER = ['2"', '2.5"', '3"', '3.5"', '4"', '4.5"', '5"', '6"', '6"+'];
+const POT_SIZE_INDEX = POT_SIZE_ORDER.reduce((acc, v, i) => {
+  acc[v] = i;
+  return acc;
+}, {});
+
+const EMPTY_FILTERS = {
+  potSize: 'all',
+  bloomColor: 'all',
+  bloomType: 'all',
+  bloomingFilter: 'all',
+  varietyClasses: [],
+  hybridizer: 'all',
+};
+
+const titleCase = (str) =>
+  str
+    ? str
+        .split(/[\s-]/)
+        .filter(Boolean)
+        .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+        .join(' ')
+    : str;
 
 export default function Library() {
   usePageTitle('Library');
@@ -29,14 +61,12 @@ export default function Library() {
     searchTimerRef.current = setTimeout(() => setDebouncedSearch(value), 200);
   }, []);
   const [viewMode, setViewMode] = useState(settings.defaultView);
-  const [sortBy, setSortBy] = useState('updated');
+  const [sortBy, setSortBy] = useState('watered');
   const [currentPage, setCurrentPage] = useState(1);
 
-  // Filter state — seeded from ?filter=… for dashboard deep-links.
-  // The dashboard's overdue TaskCards link here with one of:
-  //   needs-care | water-overdue | fertilize-overdue | groom-overdue
-  // Per-care-type values map onto a careFilter that filters the plant
-  // grid to plants overdue on that specific care action.
+  // Care filter is URL-driven — the dashboard's overdue TaskCards link here
+  // with one of needs-care | water-overdue | fertilize-overdue | groom-overdue
+  // and this filter renders as a removable chip in the bar.
   const filterParam = searchParams.get('filter');
   const initialCareFilter = (() => {
     if (filterParam === 'needs-care') return 'needs-care';
@@ -45,72 +75,91 @@ export default function Library() {
     if (filterParam === 'groom-overdue') return 'groom-overdue';
     return 'all';
   })();
-  // ?filter=needs-bloom-update is aliased to the blooming filter — a
-  // stricter "active 30+ days" check would require bloom_log data that
-  // Library doesn't currently fetch.
+  // ?filter=needs-bloom-update is aliased to the blooming filter — a stricter
+  // "active 30+ days" check would require bloom_log data we don't query for
+  // every render here.
   const initialBloomingFilter =
     filterParam === 'blooming' || filterParam === 'needs-bloom-update' ? 'blooming' : 'all';
-  const [potSizeFilter, setPotSizeFilter] = useState('all');
-  const [bloomColorFilter, setBloomColorFilter] = useState('all');
-  const [bloomTypeFilter, setBloomTypeFilter] = useState('all');
-  const [bloomingFilter, setBloomingFilter] = useState(initialBloomingFilter);
+
   const [careFilter, setCareFilter] = useState(initialCareFilter);
-  const [collectionFilter, setCollectionFilter] = useState('active');
+  const [tab, setTab] = useState('active'); // active | archive
+  const [filters, setFilters] = useState({
+    ...EMPTY_FILTERS,
+    bloomingFilter: initialBloomingFilter,
+  });
+  const [drawerOpen, setDrawerOpen] = useState(false);
 
   // Selection state
   const [selectionMode, setSelectionMode] = useState(false);
   const [selectedIds, setSelectedIds] = useState(new Set());
 
   const { data: plants = [], isLoading, error } = usePlants();
+  const { data: bloomLogs = [] } = useBloomLogs({ limit: 1000 });
   const plantsPerPage = settings.plantsPerPage;
 
-  // Filter and sort
-  // Count of active plants (for header display, excludes archived)
+  const bloomHistoryMap = useMemo(() => buildBloomHistoryMap(bloomLogs), [bloomLogs]);
+
   const activePlants = useMemo(() => plants.filter((p) => !isArchived(p.status)), [plants]);
+  const archivedPlants = useMemo(() => plants.filter((p) => isArchived(p.status)), [plants]);
+
+  // Header subtitle counts
+  const bloomingCount = useMemo(
+    () => activePlants.filter((p) => p.is_blooming).length,
+    [activePlants],
+  );
+  const upToDateCount = useMemo(
+    () => activePlants.filter((p) => !plantNeedsCare(p, careThresholds)).length,
+    [activePlants, careThresholds],
+  );
+
+  const hybridizers = useMemo(() => {
+    const set = new Set();
+    plants.forEach((p) => {
+      if (p.hybridizer && p.hybridizer.trim()) set.add(p.hybridizer.trim());
+    });
+    return Array.from(set).sort((a, b) => a.localeCompare(b));
+  }, [plants]);
 
   const filteredPlants = useMemo(() => {
-    let result = plants;
+    // Tab determines the source pool — these are views, not filters.
+    let result = tab === 'archive' ? archivedPlants : activePlants;
 
-    // Collection filter (active/archived/all)
-    if (collectionFilter === 'active') {
-      result = result.filter((p) => !isArchived(p.status));
-    } else if (collectionFilter === 'archived') {
-      result = result.filter((p) => isArchived(p.status));
-    }
-
-    // Search filter
     if (debouncedSearch) {
       const query = debouncedSearch.toLowerCase();
       result = result.filter(
         (p) =>
           p.nickname?.toLowerCase().includes(query) ||
-          p.cultivar_name?.toLowerCase().includes(query),
+          p.cultivar_name?.toLowerCase().includes(query) ||
+          p.hybridizer?.toLowerCase().includes(query) ||
+          p.notes?.toLowerCase().includes(query),
       );
     }
 
-    // Pot size filter
-    if (potSizeFilter !== 'all') {
-      result = result.filter((p) => p.pot_size === potSizeFilter);
+    if (filters.potSize !== 'all') {
+      result = result.filter((p) => p.pot_size === filters.potSize);
     }
-
-    // Bloom color filter
-    if (bloomColorFilter !== 'all') {
-      result = result.filter((p) => p.bloom_color === bloomColorFilter);
+    if (filters.bloomColor !== 'all') {
+      result = result.filter((p) => p.bloom_color === filters.bloomColor);
     }
-
-    // Bloom type filter
-    if (bloomTypeFilter !== 'all') {
-      result = result.filter((p) => p.bloom_type === bloomTypeFilter);
+    if (filters.bloomType !== 'all') {
+      result = result.filter((p) => p.bloom_type === filters.bloomType);
     }
-
-    // Blooming filter
-    if (bloomingFilter === 'blooming') {
+    if (filters.bloomingFilter === 'blooming') {
       result = result.filter((p) => p.is_blooming);
-    } else if (bloomingFilter === 'not-blooming') {
+    } else if (filters.bloomingFilter === 'not-blooming') {
       result = result.filter((p) => !p.is_blooming);
     }
+    if (filters.varietyClasses.length > 0) {
+      const allowed = new Set(filters.varietyClasses);
+      result = result.filter((p) => {
+        const bucket = VARIETY_CLASS_BUCKET_BY_SIZE[p.size_class];
+        return bucket && allowed.has(bucket.value);
+      });
+    }
+    if (filters.hybridizer !== 'all') {
+      result = result.filter((p) => p.hybridizer === filters.hybridizer);
+    }
 
-    // Care filter (needs care / up to date / per-care-type from dashboard)
     if (careFilter === 'needs-care') {
       result = result.filter((p) => plantNeedsCare(p, careThresholds));
     } else if (careFilter === 'up-to-date') {
@@ -139,43 +188,43 @@ export default function Library() {
           );
         case 'acquired':
           return new Date(b.acquisition_date || 0) - new Date(a.acquisition_date || 0);
-        case 'care':
-          return plantNeedsCare(b, careThresholds) - plantNeedsCare(a, careThresholds);
-        default: // 'updated'
-          return new Date(b.updated_at || 0) - new Date(a.updated_at || 0);
+        case 'lastBloomed': {
+          const bloomDate = (p) => {
+            const h = bloomHistoryMap.get(p.id);
+            const active = h?.active?.startDate;
+            const latest = h?.latest?.endDate;
+            return new Date(active || latest || 0).getTime();
+          };
+          return bloomDate(b) - bloomDate(a);
+        }
+        case 'potSize': {
+          const idx = (size) => POT_SIZE_INDEX[size] ?? -1;
+          return idx(a.pot_size) - idx(b.pot_size);
+        }
+        case 'watered':
+        default:
+          return new Date(b.last_watered || 0) - new Date(a.last_watered || 0);
       }
     });
 
     return result;
   }, [
-    plants,
+    tab,
+    activePlants,
+    archivedPlants,
     debouncedSearch,
+    filters,
+    careFilter,
     sortBy,
     careThresholds,
-    potSizeFilter,
-    bloomColorFilter,
-    bloomTypeFilter,
-    bloomingFilter,
-    careFilter,
-    collectionFilter,
+    bloomHistoryMap,
   ]);
 
-  // Reset to page 1 when search, sort, or filters change
+  // Reset to page 1 when search, sort, filters, or tab changes
   useEffect(() => {
     setCurrentPage(1);
-  }, [
-    debouncedSearch,
-    sortBy,
-    plantsPerPage,
-    potSizeFilter,
-    bloomColorFilter,
-    bloomTypeFilter,
-    bloomingFilter,
-    careFilter,
-    collectionFilter,
-  ]);
+  }, [debouncedSearch, sortBy, plantsPerPage, filters, careFilter, tab]);
 
-  // Clear selection when exiting selection mode
   useEffect(() => {
     if (!selectionMode) {
       setSelectedIds(new Set());
@@ -187,24 +236,96 @@ export default function Library() {
   const startIndex = (currentPage - 1) * plantsPerPage;
   const paginatedPlants = filteredPlants.slice(startIndex, startIndex + plantsPerPage);
 
-  // Check if any filters are active
-  const hasActiveFilters =
-    potSizeFilter !== 'all' ||
-    bloomColorFilter !== 'all' ||
-    bloomTypeFilter !== 'all' ||
-    bloomingFilter !== 'all' ||
-    careFilter !== 'all' ||
-    collectionFilter !== 'active';
+  // Active drawer-driven filters
+  const activeFilterCount =
+    (filters.potSize !== 'all' ? 1 : 0) +
+    (filters.bloomColor !== 'all' ? 1 : 0) +
+    (filters.bloomType !== 'all' ? 1 : 0) +
+    (filters.bloomingFilter !== 'all' ? 1 : 0) +
+    filters.varietyClasses.length +
+    (filters.hybridizer !== 'all' ? 1 : 0);
+
+  // Build chips for the bar
+  const activeChips = useMemo(() => {
+    const chips = [];
+    if (filters.potSize !== 'all') {
+      chips.push({
+        key: 'potSize',
+        label: `Pot ${filters.potSize}`,
+        onRemove: () => setFilters((f) => ({ ...f, potSize: 'all' })),
+      });
+    }
+    if (filters.bloomColor !== 'all') {
+      chips.push({
+        key: 'bloomColor',
+        label: titleCase(filters.bloomColor),
+        onRemove: () => setFilters((f) => ({ ...f, bloomColor: 'all' })),
+      });
+    }
+    if (filters.bloomType !== 'all') {
+      chips.push({
+        key: 'bloomType',
+        label: BLOOM_TYPE_LABELS[filters.bloomType] || filters.bloomType,
+        onRemove: () => setFilters((f) => ({ ...f, bloomType: 'all' })),
+      });
+    }
+    if (filters.bloomingFilter !== 'all') {
+      chips.push({
+        key: 'bloomingFilter',
+        label: filters.bloomingFilter === 'blooming' ? 'Blooming' : 'Not blooming',
+        onRemove: () => setFilters((f) => ({ ...f, bloomingFilter: 'all' })),
+      });
+    }
+    filters.varietyClasses.forEach((value) => {
+      const bucket = VARIETY_CLASS_BUCKETS.find((b) => b.value === value);
+      if (!bucket) return;
+      chips.push({
+        key: `variety-${value}`,
+        label: bucket.label,
+        onRemove: () =>
+          setFilters((f) => ({
+            ...f,
+            varietyClasses: f.varietyClasses.filter((v) => v !== value),
+          })),
+      });
+    });
+    if (filters.hybridizer !== 'all') {
+      chips.push({
+        key: 'hybridizer',
+        label: filters.hybridizer,
+        onRemove: () => setFilters((f) => ({ ...f, hybridizer: 'all' })),
+      });
+    }
+    if (careFilter !== 'all') {
+      const careLabels = {
+        'needs-care': 'Needs care',
+        'up-to-date': 'Up to date',
+        'water-overdue': 'Water overdue',
+        'fertilize-overdue': 'Fertilize overdue',
+        'groom-overdue': 'Groom overdue',
+      };
+      chips.push({
+        key: 'careFilter',
+        label: careLabels[careFilter] || careFilter,
+        onRemove: () => setCareFilter('all'),
+      });
+    }
+    return chips;
+  }, [filters, careFilter]);
+
+  const hasActiveFilters = activeChips.length > 0;
+
+  const clearAllFilters = useCallback(() => {
+    setFilters(EMPTY_FILTERS);
+    setCareFilter('all');
+  }, []);
 
   // Selection handlers
   const handleToggleSelect = useCallback((plantId) => {
     setSelectedIds((prev) => {
       const next = new Set(prev);
-      if (next.has(plantId)) {
-        next.delete(plantId);
-      } else {
-        next.add(plantId);
-      }
+      if (next.has(plantId)) next.delete(plantId);
+      else next.add(plantId);
       return next;
     });
   }, []);
@@ -244,22 +365,39 @@ export default function Library() {
     );
   }
 
+  const subtitle =
+    activePlants.length === 0
+      ? 'Your collection is waiting'
+      : `${activePlants.length} ${activePlants.length === 1 ? 'plant' : 'plants'} · ${bloomingCount} blooming · ${upToDateCount} up to date`;
+
   return (
     <div className="min-h-screen p-6 md:p-10">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
-        <header className="flex items-center justify-between mb-8">
-          <div className="flex items-center gap-4">
+        <header className="flex items-start justify-between mb-6 gap-4">
+          <div className="flex items-start gap-4">
             <Link to="/">
               <button className="icon-container">
                 <ArrowLeft size={20} style={{ color: 'var(--sage-600)' }} />
               </button>
             </Link>
-            <h1 className="heading heading-xl">Plant Library</h1>
+            <div>
+              <h1 className="heading heading-xl">Plant Library</h1>
+              <p
+                className="mt-1"
+                style={{
+                  fontFamily: 'var(--font-heading)',
+                  fontStyle: 'italic',
+                  fontSize: 16,
+                  color: 'var(--purple-500)',
+                }}
+              >
+                {subtitle}
+              </p>
+            </div>
           </div>
 
-          <div className="flex items-center gap-3">
-            {/* Selection mode toggle */}
+          <div className="flex items-center gap-3 mt-2">
             {plants.length > 0 && (
               <button
                 onClick={toggleSelectionMode}
@@ -284,11 +422,29 @@ export default function Library() {
         </header>
 
         {/* Empty state - no plants at all */}
-        {activePlants.length === 0 && collectionFilter === 'active' && <EmptyLibrary />}
+        {activePlants.length === 0 && tab === 'active' && <EmptyLibrary />}
 
-        {/* Has plants */}
-        {(activePlants.length > 0 || collectionFilter !== 'active') && (
+        {(activePlants.length > 0 || tab === 'archive') && (
           <>
+            {/* Active / Archived tabs */}
+            <div
+              className="flex items-center gap-6 mb-5"
+              style={{ borderBottom: '1px solid var(--sage-200)' }}
+            >
+              <TabButton
+                active={tab === 'active'}
+                onClick={() => setTab('active')}
+                label="Active Collection"
+                count={activePlants.length}
+              />
+              <TabButton
+                active={tab === 'archive'}
+                onClick={() => setTab('archive')}
+                label="Archive"
+                count={archivedPlants.length}
+              />
+            </div>
+
             {/* Batch Actions Toolbar */}
             {selectionMode && (
               <BatchActionsToolbar
@@ -299,27 +455,40 @@ export default function Library() {
               />
             )}
 
-            {/* Toolbar */}
-            <LibraryToolbar
+            {/* Filter bar */}
+            <LibraryFilterBar
               searchQuery={searchQuery}
               onSearchChange={handleSearch}
               viewMode={viewMode}
               onViewModeChange={setViewMode}
               sortBy={sortBy}
               onSortChange={setSortBy}
-              potSizeFilter={potSizeFilter}
-              onPotSizeFilterChange={setPotSizeFilter}
-              bloomColorFilter={bloomColorFilter}
-              onBloomColorFilterChange={setBloomColorFilter}
-              bloomTypeFilter={bloomTypeFilter}
-              onBloomTypeFilterChange={setBloomTypeFilter}
-              bloomingFilter={bloomingFilter}
-              onBloomingFilterChange={setBloomingFilter}
-              careFilter={careFilter}
-              onCareFilterChange={setCareFilter}
-              collectionFilter={collectionFilter}
-              onCollectionFilterChange={setCollectionFilter}
+              activeFilterCount={activeFilterCount}
+              onOpenFilters={() => setDrawerOpen(true)}
+              activeChips={activeChips}
+              onClearAllFilters={clearAllFilters}
             />
+
+            {/* Results meta */}
+            {filteredPlants.length > 0 && (
+              <div className="flex items-center justify-between mb-3 px-1">
+                <span style={{ fontSize: 13, color: 'var(--text-muted)' }}>
+                  Showing {filteredPlants.length} of{' '}
+                  {tab === 'archive' ? archivedPlants.length : activePlants.length}{' '}
+                  plants
+                </span>
+                <span
+                  style={{
+                    fontFamily: 'var(--font-heading)',
+                    fontStyle: 'italic',
+                    fontSize: 14,
+                    color: 'var(--sage-600)',
+                  }}
+                >
+                  Sorted by {SORT_LABELS[sortBy]}
+                </span>
+              </div>
+            )}
 
             {/* No search/filter results */}
             {filteredPlants.length === 0 && (searchQuery || hasActiveFilters) && (
@@ -333,6 +502,7 @@ export default function Library() {
                   <PlantCard
                     key={plant.id}
                     plant={plant}
+                    bloomHistory={bloomHistoryMap.get(plant.id)}
                     selectionMode={selectionMode}
                     isSelected={selectedIds.has(plant.id)}
                     onToggleSelect={handleToggleSelect}
@@ -343,11 +513,12 @@ export default function Library() {
 
             {/* List View */}
             {filteredPlants.length > 0 && viewMode === 'list' && (
-              <div className="flex flex-col gap-4">
+              <div className="flex flex-col gap-3">
                 {paginatedPlants.map((plant) => (
                   <PlantListItem
                     key={plant.id}
                     plant={plant}
+                    bloomHistory={bloomHistoryMap.get(plant.id)}
                     selectionMode={selectionMode}
                     isSelected={selectedIds.has(plant.id)}
                     onToggleSelect={handleToggleSelect}
@@ -359,7 +530,6 @@ export default function Library() {
             {/* Pagination & Footer */}
             {filteredPlants.length > 0 && (
               <div className="mt-8 space-y-4">
-                {/* Pagination Controls */}
                 {totalPages > 1 && (
                   <div className="flex items-center justify-center gap-4">
                     <button
@@ -384,18 +554,55 @@ export default function Library() {
                   </div>
                 )}
 
-                {/* Count */}
                 <p className="text-center text-muted">
                   Showing {startIndex + 1}–
                   {Math.min(startIndex + plantsPerPage, filteredPlants.length)} of{' '}
                   {filteredPlants.length} plants
-                  {filteredPlants.length !== plants.length && ` (${plants.length} total)`}
                 </p>
               </div>
             )}
           </>
         )}
       </div>
+
+      {/* Filter drawer */}
+      <LibraryFilterDrawer
+        open={drawerOpen}
+        onClose={() => setDrawerOpen(false)}
+        filters={filters}
+        onApply={setFilters}
+        hybridizers={hybridizers}
+      />
     </div>
+  );
+}
+
+function TabButton({ active, onClick, label, count }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className="pb-2 -mb-px transition-colors"
+      style={{
+        fontFamily: 'var(--font-heading)',
+        fontWeight: 600,
+        fontSize: 18,
+        color: active ? 'var(--sage-700)' : 'var(--text-muted)',
+        borderBottom: active ? '2px solid var(--sage-500)' : '2px solid transparent',
+      }}
+    >
+      {label}
+      <span
+        className="ml-1.5"
+        style={{
+          fontFamily: 'var(--font-body)',
+          fontSize: 13,
+          fontWeight: 600,
+          color: active ? 'var(--sage-500)' : 'var(--text-muted)',
+        }}
+      >
+        {count}
+      </span>
+    </button>
   );
 }
