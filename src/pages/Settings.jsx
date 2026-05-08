@@ -6,7 +6,7 @@
 
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { ArrowLeft, User, Bell, Layout, LogOut, AlertTriangle, Eye, Download, Crown, Sparkles, Plus, X, MapPin } from 'lucide-react';
+import { ArrowLeft, User, Bell, Layout, LogOut, AlertTriangle, Eye, Download, Upload, Crown, Sparkles, Plus, X, MapPin } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import { useToast } from '../hooks/useToast';
 import { useSettings } from '../hooks/useSettings.jsx';
@@ -333,6 +333,22 @@ export default function Settings() {
               onChange={(v) => updateSetting('largeText', v)}
             />
           </div>
+        </section>
+
+        {/* Data Import */}
+        <section className="card p-6 mb-6">
+          <div className="flex items-center gap-2 mb-4">
+            <Upload size={18} color="var(--sage-600)" />
+            <h2 className="text-label">Data Import</h2>
+          </div>
+          <p className="text-small text-muted mb-4">
+            Bring an existing collection over from a CSV or XLSX spreadsheet.
+            Map your columns, review your plants, and import in one batch.
+          </p>
+          <Link to="/import" className="btn btn-secondary flex items-center gap-2 inline-flex">
+            <Upload size={18} />
+            Import Plants
+          </Link>
         </section>
 
         {/* Data Export */}

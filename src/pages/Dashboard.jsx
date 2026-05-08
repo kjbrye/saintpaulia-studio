@@ -4,7 +4,7 @@
  */
 
 import { Link } from 'react-router-dom';
-import { Flower2, Plus } from 'lucide-react';
+import { Flower2, Plus, Upload } from 'lucide-react';
 import { usePlants } from '../hooks/usePlants';
 import { useAuth } from '../hooks/useAuth';
 import { useSettings } from '../hooks/useSettings.jsx';
@@ -98,14 +98,24 @@ export default function Dashboard() {
             <p className="text-muted mb-6">
               Add your first African violet to begin tracking care, growth, and blooming cycles.
             </p>
-            <Link to="/plants/new" className="btn btn-primary">
-              <Plus size={18} /> Add Your First Plant
-            </Link>
+            <div className="flex flex-col sm:flex-row gap-3 justify-center">
+              <Link to="/plants/new" className="btn btn-primary">
+                <Plus size={18} /> Add Your First Plant
+              </Link>
+              <Link to="/import" className="btn btn-secondary">
+                <Upload size={18} /> Import a spreadsheet
+              </Link>
+            </div>
+            <p className="text-small mt-4" style={{ color: 'var(--text-muted)' }}>
+              Already have your collection in Excel or Google Sheets? Bring it over in one go.
+            </p>
           </div>
         </div>
       </div>
     );
   }
+
+  const showImportPrompt = activePlants.length > 0 && activePlants.length < 5;
 
   return (
     <div className="min-h-screen">
@@ -118,6 +128,29 @@ export default function Dashboard() {
             <h1 className="heading heading-lg">Welcome back, {displayName}</h1>
             <p className="text-body text-muted">Here's your collection at a glance</p>
           </div>
+
+          {showImportPrompt && (
+            <Link
+              to="/import"
+              className="card-subtle p-4 mb-6 flex items-center gap-3 no-underline"
+              style={{ color: 'var(--text-secondary)' }}
+            >
+              <div className="icon-container icon-container-sm">
+                <Upload size={16} style={{ color: 'var(--sage-600)' }} />
+              </div>
+              <div className="flex-1">
+                <p className="font-semibold" style={{ color: 'var(--text-primary)' }}>
+                  Got more plants on a spreadsheet?
+                </p>
+                <p className="text-small" style={{ color: 'var(--text-muted)' }}>
+                  Import the rest of your collection from CSV or XLSX in one go.
+                </p>
+              </div>
+              <span className="text-small font-semibold" style={{ color: 'var(--sage-600)' }}>
+                Import →
+              </span>
+            </Link>
+          )}
 
           {/* Command Center Grid */}
           <div className="dashboard-grid">

@@ -67,6 +67,7 @@ const Analytics = lazyWithRetry(() => import('./pages/Analytics'));
 const Notes = lazyWithRetry(() => import('./pages/Notes'));
 const Sports = lazyWithRetry(() => import('./pages/Sports'));
 const SportDetail = lazyWithRetry(() => import('./pages/SportDetail'));
+const ImportPlants = lazyWithRetry(() => import('./pages/Import'));
 const SportRegistrationForm = lazyWithRetry(() =>
   import('./components/sports/SportRegistrationForm'),
 );
@@ -245,6 +246,16 @@ function AppRoutes() {
         element={
           <ProtectedRoute>
             <SportDetail />
+          </ProtectedRoute>
+        }
+      />
+
+      {/* Import */}
+      <Route
+        path="/import"
+        element={
+          <ProtectedRoute>
+            <ImportPlants />
           </ProtectedRoute>
         }
       />
