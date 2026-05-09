@@ -5,7 +5,7 @@
 import { useState } from 'react';
 import { Loader2, Plus } from 'lucide-react';
 import FormField from '../ui/FormField';
-import { METHOD_LABELS } from './PropagationCard';
+import { METHOD_LABELS } from '../../utils/propagationStages';
 
 export default function PropagationForm({ plants = [], onSubmit, onCancel, isPending }) {
   const [formData, setFormData] = useState({

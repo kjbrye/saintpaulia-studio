@@ -3,9 +3,10 @@
  */
 
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Plus, Loader2, Sparkles } from 'lucide-react';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
+import { ArrowLeft, Plus, Loader2, Sparkles, Sprout } from 'lucide-react';
 import { usePlants, useCreatePlant } from '../hooks/usePlants';
+import { useEstablishPropagation } from '../hooks/usePropagation';
 import { useSubscription } from '../hooks/useSubscription';
 import { useToast } from '../hooks/useToast';
 import FormField from '../components/ui/FormField';
@@ -25,8 +26,14 @@ import {
 export default function AddPlant() {
   usePageTitle('Add Plant');
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const toast = useToast();
   const createPlant = useCreatePlant();
+  const establishPropagation = useEstablishPropagation();
+  const propagationId = searchParams.get('propagation_id');
+  const prefillCultivar = searchParams.get('cultivar_name') || '';
+  const prefillParentId = searchParams.get('parent_plant_id') || '';
+  const isEstablishing = !!propagationId;
   const { data: plants = [] } = usePlants();
   const { plantLimit, canUseFeature } = useSubscription();
   const { settings } = useSettings();
@@ -34,7 +41,7 @@ export default function AddPlant() {
   const canAddMultiPhotos = canUseFeature('multi_photos');
 
   const [formData, setFormData] = useState({
-    cultivar_name: '',
+    cultivar_name: prefillCultivar,
     nickname: '',
     avsa_number: '',
     hybridizer: '',
@@ -81,6 +88,12 @@ export default function AddPlant() {
     if (!validate()) return;
 
     try {
+      const parentForLineage = isEstablishing && prefillParentId ? prefillParentId : null;
+      const parentNameForSource = (() => {
+        if (!isEstablishing || !prefillParentId) return null;
+        const p = plants.find((pl) => pl.id === prefillParentId);
+        return p?.cultivar_name || p?.nickname || null;
+      })();
       const plant = await createPlant.mutateAsync({
         cultivar_name: formData.cultivar_name.trim(),
         nickname: formData.nickname.trim() || null,
@@ -89,7 +102,11 @@ export default function AddPlant() {
         photo_url: formData.photo_url || null,
         photo_urls: canAddMultiPhotos ? formData.photo_urls : [],
         acquisition_date: formData.acquisition_date || null,
-        source: formData.source.trim() || null,
+        source:
+          formData.source.trim() ||
+          (isEstablishing && parentNameForSource
+            ? `Propagated from ${parentNameForSource}`
+            : null),
         location: formData.location || null,
         status: formData.status,
         pot_size: formData.pot_size || null,
@@ -103,7 +120,18 @@ export default function AddPlant() {
         leaf_type: formData.leaf_type || null,
         leaf_color: formData.leaf_color || null,
         notes: formData.notes.trim() || null,
+        ...(parentForLineage
+          ? { lineage_notes: `Leaf-cutting propagation from parent plant.` }
+          : {}),
       });
+
+      if (isEstablishing && propagationId) {
+        try {
+          await establishPropagation.mutateAsync({ id: propagationId, plantId: plant.id });
+        } catch {
+          toast.error('Plant created, but failed to mark propagation as established.');
+        }
+      }
 
       navigate(`/plants/${plant.id}`);
     } catch (error) {
@@ -124,8 +152,28 @@ export default function AddPlant() {
               <ArrowLeft size={20} style={{ color: 'var(--sage-600)' }} />
             </button>
           </Link>
-          <h1 className="heading heading-xl">Add New Plant</h1>
+          <h1 className="heading heading-xl">
+            {isEstablishing ? 'Establish Propagation' : 'Add New Plant'}
+          </h1>
         </header>
+
+        {isEstablishing && (
+          <div
+            className="card p-4 mb-6 flex items-start gap-3"
+            style={{ background: 'var(--purple-100)' }}
+          >
+            <Sprout size={18} style={{ color: 'var(--purple-500)', marginTop: 2 }} />
+            <div>
+              <p className="text-body" style={{ color: 'var(--sage-800)' }}>
+                You’re adding an established propagation to your collection.
+              </p>
+              <p className="text-small text-muted mt-1">
+                Once you save, the propagation will be marked as established and linked to this new
+                plant entry for lineage.
+              </p>
+            </div>
+          </div>
+        )}
 
         <PlantLimitBanner plantCount={plants.length} />
 

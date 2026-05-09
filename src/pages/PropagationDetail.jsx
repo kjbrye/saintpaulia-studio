@@ -1,25 +1,18 @@
 /**
- * PropagationDetail Page - Individual propagation view with editing
+ * PropagationDetail Page — vertical stage timeline + quick info + notes.
  */
 
 import { useState } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
-import {
-  ArrowLeft,
-  Trash2,
-  Scissors,
-  Sprout,
-  Leaf,
-  Flower2,
-  Check,
-  Plus,
-  Minus,
-} from 'lucide-react';
+import { ArrowLeft, Trash2, X, RotateCcw } from 'lucide-react';
 import { format } from 'date-fns';
 import {
   usePropagation,
   useUpdatePropagation,
   useDeletePropagation,
+  useAdvanceStage,
+  useMarkFailed,
+  useUnmarkFailed,
 } from '../hooks/usePropagation';
 import {
   usePropagationJournal,
@@ -28,32 +21,42 @@ import {
   journalKeys,
 } from '../hooks/useJournal';
 import HeaderBar from '../components/ui/HeaderBar';
-import { StageIndicator } from '../components/propagation';
-import { PROPAGATION_STAGES, METHOD_LABELS } from '../components/propagation/PropagationCard';
+import { StageTimeline, AdvanceStageModal } from '../components/propagation';
 import NotesLog from '../components/ui/NotesLog';
 import PremiumGate from '../components/ui/PremiumGate';
 import { usePageTitle } from '../hooks/usePageTitle';
+import {
+  METHOD_LABELS,
+  getNextStage,
+  daysBetween,
+  isFailed,
+  isEstablished,
+} from '../utils/propagationStages';
 
 export default function PropagationDetail() {
   usePageTitle('Propagation Detail');
   const { id } = useParams();
   const navigate = useNavigate();
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [advanceOpen, setAdvanceOpen] = useState(false);
 
   const { data: propagation, isLoading, error } = usePropagation(id);
   const updatePropagation = useUpdatePropagation();
   const deletePropagation = useDeletePropagation();
+  const advanceStage = useAdvanceStage();
+  const markFailedMutation = useMarkFailed();
+  const unmarkFailedMutation = useUnmarkFailed();
 
-  // Journal entries
   const { data: journalEntries = [], isLoading: journalLoading } = usePropagationJournal(id);
   const createJournalEntry = useCreateJournalEntry();
   const deleteJournalEntry = useDeleteJournalEntry();
 
-  const isPending = updatePropagation.isPending || deletePropagation.isPending;
-
-  const handleUpdate = (updates) => {
-    updatePropagation.mutate({ id, updates });
-  };
+  const isPending =
+    updatePropagation.isPending ||
+    deletePropagation.isPending ||
+    advanceStage.isPending ||
+    markFailedMutation.isPending ||
+    unmarkFailedMutation.isPending;
 
   const handleDelete = async () => {
     await deletePropagation.mutateAsync(id);
@@ -62,7 +65,46 @@ export default function PropagationDetail() {
 
   const handlePlantletCount = (delta) => {
     const newCount = Math.max(0, (propagation.plantlet_count || 0) + delta);
-    handleUpdate({ plantlet_count: newCount });
+    updatePropagation.mutate({ id, updates: { plantlet_count: newCount } });
+  };
+
+  const triggerAdvance = () => {
+    if (!propagation) return;
+    const next = getNextStage(propagation.stage);
+    if (!next) return;
+    if (next.key === 'complete') {
+      const params = new URLSearchParams({
+        propagation_id: propagation.id,
+        cultivar_name:
+          propagation.parent_plant?.cultivar_name ||
+          propagation.parent_plant_name ||
+          '',
+      });
+      if (propagation.parent_plant_id) {
+        params.set('parent_plant_id', propagation.parent_plant_id);
+      }
+      navigate(`/plants/new?${params.toString()}`);
+      return;
+    }
+    setAdvanceOpen(true);
+  };
+
+  const handleAdvanceConfirm = async ({ note }) => {
+    const next = getNextStage(propagation.stage);
+    await advanceStage.mutateAsync({ id, nextStage: next.key, note });
+    setAdvanceOpen(false);
+  };
+
+  const handleSkipTo = async (stageKey) => {
+    await advanceStage.mutateAsync({ id, nextStage: stageKey, note: 'Skipped ahead' });
+  };
+
+  const handleMarkFailed = async () => {
+    await markFailedMutation.mutateAsync({ id });
+  };
+
+  const handleUnmarkFailed = async () => {
+    await unmarkFailedMutation.mutateAsync({ id });
   };
 
   if (isLoading) {
@@ -101,204 +143,210 @@ export default function PropagationDetail() {
     );
   }
 
-  const isFailed = propagation.stage === 'failed';
-  const isComplete = propagation.stage === 'complete';
+  const failed = isFailed(propagation);
+  const established = isEstablished(propagation);
   const parentName =
     propagation.parent_plant?.cultivar_name ||
     propagation.parent_plant?.nickname ||
     propagation.parent_plant_name ||
     'Unknown parent';
+  const startDate = propagation.cutting_date || propagation.created_at;
+  const daysSinceStart = daysBetween(startDate);
+  const propName = `${parentName} leaf`;
 
   return (
     <div className="min-h-screen">
       <HeaderBar />
       <PremiumGate feature="propagation">
-      <main className="p-4 md:p-6 lg:p-8">
-        <div className="max-w-3xl mx-auto">
-          {/* Header */}
-          <header className="flex items-center justify-between mb-6">
-            <div className="flex items-center gap-4">
-              <button onClick={() => navigate('/propagation')} className="icon-container">
-                <ArrowLeft size={20} style={{ color: 'var(--sage-600)' }} />
-              </button>
-              <div>
-                <h1 className="heading heading-xl">{parentName} leaf</h1>
-                <p className="text-body text-muted">
-                  Started {format(new Date(propagation.cutting_date), 'MMMM d, yyyy')}
+        <main className="p-4 md:p-6 lg:p-8">
+          <div className="max-w-3xl mx-auto">
+            {/* Header */}
+            <header className="flex items-start justify-between gap-4 mb-6">
+              <div className="flex items-start gap-4 min-w-0">
+                <button onClick={() => navigate('/propagation')} className="icon-container flex-shrink-0">
+                  <ArrowLeft size={20} style={{ color: 'var(--sage-600)' }} />
+                </button>
+                <div className="min-w-0">
+                  <p
+                    className="text-label text-muted truncate"
+                    style={{ textTransform: 'uppercase', letterSpacing: '0.08em' }}
+                  >
+                    From{' '}
+                    {propagation.parent_plant_id ? (
+                      <Link
+                        to={`/plants/${propagation.parent_plant_id}`}
+                        className="hover:underline"
+                        style={{ color: 'var(--purple-500)' }}
+                      >
+                        {parentName}
+                      </Link>
+                    ) : (
+                      parentName
+                    )}
+                    {propagation.method && (
+                      <> · {METHOD_LABELS[propagation.method]?.toLowerCase()} rooting</>
+                    )}
+                  </p>
+                  <h1 className="heading" style={{ fontSize: 28, fontFamily: 'var(--font-heading)' }}>
+                    {propName}
+                  </h1>
+                  <p className="text-body text-muted">
+                    started {startDate ? format(new Date(startDate), 'MMM d, yyyy') : '—'}
+                    {' · '}
+                    {daysSinceStart} {daysSinceStart === 1 ? 'day' : 'days'} ago
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                {failed && (
+                  <button
+                    type="button"
+                    className="btn btn-secondary btn-small flex items-center gap-1.5"
+                    onClick={handleUnmarkFailed}
+                    title="Restore propagation"
+                    disabled={isPending}
+                  >
+                    <RotateCcw size={14} />
+                    Restore
+                  </button>
+                )}
+                {!failed && !established && (
+                  <button
+                    type="button"
+                    className="icon-container"
+                    onClick={handleMarkFailed}
+                    title="Mark failed"
+                    disabled={isPending}
+                  >
+                    <X size={18} style={{ color: 'var(--copper-500)' }} />
+                  </button>
+                )}
+                <button
+                  type="button"
+                  className="icon-container"
+                  onClick={() => setShowDeleteConfirm(true)}
+                  title="Delete propagation"
+                >
+                  <Trash2 size={18} style={{ color: 'var(--copper-500)' }} />
+                </button>
+              </div>
+            </header>
+
+            {/* Stage timeline */}
+            <StageTimeline
+              propagation={propagation}
+              onAdvance={triggerAdvance}
+              onMarkFailed={handleMarkFailed}
+              onSkipTo={handleSkipTo}
+              onPlantletCount={handlePlantletCount}
+              isPending={isPending}
+            />
+
+            {/* Quick info */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+              <div className="card p-5" style={{ background: 'var(--cream-100)' }}>
+                <p
+                  className="text-label text-muted mb-1"
+                  style={{ textTransform: 'uppercase', letterSpacing: '0.08em' }}
+                >
+                  Parent plant
+                </p>
+                {propagation.parent_plant_id ? (
+                  <Link
+                    to={`/plants/${propagation.parent_plant_id}`}
+                    className="heading heading-sm hover:underline"
+                    style={{ color: 'var(--purple-500)' }}
+                  >
+                    {parentName}
+                  </Link>
+                ) : (
+                  <p className="heading heading-sm">{parentName}</p>
+                )}
+              </div>
+
+              <div className="card p-5" style={{ background: 'var(--cream-100)' }}>
+                <p
+                  className="text-label text-muted mb-1"
+                  style={{ textTransform: 'uppercase', letterSpacing: '0.08em' }}
+                >
+                  Method
+                </p>
+                <p className="heading heading-sm">
+                  {propagation.method ? METHOD_LABELS[propagation.method] : 'Not specified'}
                 </p>
               </div>
             </div>
-            <button
-              className="icon-container"
-              onClick={() => setShowDeleteConfirm(true)}
-              title="Delete propagation"
-            >
-              <Trash2 size={18} style={{ color: 'var(--color-error)' }} />
-            </button>
-          </header>
 
-          {/* Stage Progress */}
-          <div className="card p-6 mb-6">
-            <h2 className="heading heading-md mb-4">Progress</h2>
-            <StageIndicator
-              currentStage={propagation.stage}
-              stages={PROPAGATION_STAGES}
-              failed={isFailed}
-            />
-            <div className="mt-3 flex items-center gap-2">
-              <span
-                className="text-small font-semibold"
-                style={{
-                  color: isFailed
-                    ? 'var(--color-error)'
-                    : isComplete
-                      ? 'var(--color-success)'
-                      : 'var(--purple-400)',
-                }}
-              >
-                {isFailed
-                  ? 'Failed'
-                  : isComplete
-                    ? 'Complete'
-                    : PROPAGATION_STAGES.find((s) => s.key === propagation.stage)?.label}
-              </span>
-            </div>
-
-            {/* Stage advance buttons */}
-            {!isComplete && !isFailed && (
-              <div
-                className="flex flex-wrap items-center gap-2 mt-4 pt-4"
-                style={{ borderTop: '1px solid var(--sage-200)' }}
-              >
-                {PROPAGATION_STAGES.map((stage, i) => {
-                  const currentIdx = PROPAGATION_STAGES.findIndex(
-                    (s) => s.key === propagation.stage,
-                  );
-                  if (i <= currentIdx || stage.key === 'complete') return null;
-                  const Icon = stage.icon;
-                  return (
-                    <button
-                      key={stage.key}
-                      className="btn btn-secondary btn-small flex items-center gap-1.5"
-                      onClick={() => handleUpdate({ stage: stage.key })}
-                      disabled={isPending}
-                    >
-                      <Icon size={14} />
-                      {stage.label}
-                    </button>
-                  );
-                })}
+            {/* Established link */}
+            {established && propagation.established_plant_id && (
+              <div className="card p-5 mb-6 flex items-center justify-between gap-3">
+                <div>
+                  <p className="text-label text-muted" style={{ textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+                    Now in your collection
+                  </p>
+                  <p className="heading heading-sm mt-1">
+                    {propagation.established_plant?.cultivar_name ||
+                      propagation.established_plant?.nickname ||
+                      'View plant'}
+                  </p>
+                </div>
+                <Link to={`/plants/${propagation.established_plant_id}`}>
+                  <button className="btn btn-secondary btn-small">View plant</button>
+                </Link>
               </div>
             )}
+
+            {/* Notes */}
+            <NotesLog
+              entries={journalEntries}
+              onAdd={async (content) => {
+                await createJournalEntry.mutateAsync({ propagation_id: id, content });
+              }}
+              onDelete={(entryId) => {
+                deleteJournalEntry.mutate({ id: entryId, parentKey: journalKeys.forPropagation(id) });
+              }}
+              isLoading={journalLoading}
+              isPending={createJournalEntry.isPending || deleteJournalEntry.isPending}
+            />
           </div>
 
-          {/* Details Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
-            {/* Parent Plant */}
-            <div className="card p-5">
-              <p className="text-label text-muted mb-1">Parent Plant</p>
-              {propagation.parent_plant_id ? (
-                <Link
-                  to={`/plants/${propagation.parent_plant_id}`}
-                  className="heading heading-sm hover:underline"
-                  style={{ color: 'var(--purple-400)' }}
-                >
-                  {parentName}
-                </Link>
-              ) : (
-                <p className="heading heading-sm">{parentName}</p>
-              )}
-            </div>
-
-            {/* Method */}
-            <div className="card p-5">
-              <p className="text-label text-muted mb-1">Rooting Method</p>
-              <p className="heading heading-sm">
-                {propagation.method ? METHOD_LABELS[propagation.method] : 'Not specified'}
-              </p>
-            </div>
-
-            {/* Plantlet Count */}
-            <div className="card p-5">
-              <p className="text-label text-muted mb-2">Plantlet Count</p>
-              <div className="flex items-center gap-2">
-                <button
-                  className="icon-container"
-                  style={{ width: 32, height: 32 }}
-                  onClick={() => handlePlantletCount(-1)}
-                  disabled={isPending || (propagation.plantlet_count || 0) <= 0}
-                >
-                  <Minus size={14} style={{ color: 'var(--sage-600)' }} />
-                </button>
-                <span className="heading heading-lg w-10 text-center">
-                  {propagation.plantlet_count || 0}
-                </span>
-                <button
-                  className="icon-container"
-                  style={{ width: 32, height: 32 }}
-                  onClick={() => handlePlantletCount(1)}
-                  disabled={isPending}
-                >
-                  <Plus size={14} style={{ color: 'var(--sage-600)' }} />
-                </button>
+          {/* Delete confirmation */}
+          {showDeleteConfirm && (
+            <div
+              className="fixed inset-0 flex items-center justify-center z-50 p-4"
+              style={{ background: 'rgba(0, 0, 0, 0.5)' }}
+            >
+              <div className="card p-8 max-w-md w-full">
+                <h2 className="heading heading-lg mb-2">Delete Propagation?</h2>
+                <p className="text-muted mb-6">
+                  Are you sure you want to delete this propagation project? This cannot be undone.
+                </p>
+                <div className="flex justify-end gap-3">
+                  <button className="btn btn-secondary" onClick={() => setShowDeleteConfirm(false)}>
+                    Cancel
+                  </button>
+                  <button
+                    className="btn btn-danger"
+                    onClick={handleDelete}
+                    disabled={deletePropagation.isPending}
+                  >
+                    {deletePropagation.isPending ? 'Deleting...' : 'Delete'}
+                  </button>
+                </div>
               </div>
             </div>
-
-            {/* Stage */}
-            <div className="card p-5">
-              <p className="text-label text-muted mb-1">Current Stage</p>
-              <p className="heading heading-sm">
-                {isFailed
-                  ? 'Failed'
-                  : isComplete
-                    ? 'Complete'
-                    : PROPAGATION_STAGES.find((s) => s.key === propagation.stage)?.label}
-              </p>
-            </div>
-          </div>
-
-          {/* Journal Notes */}
-          <NotesLog
-            entries={journalEntries}
-            onAdd={async (content) => {
-              await createJournalEntry.mutateAsync({ propagation_id: id, content });
-            }}
-            onDelete={(entryId) => {
-              deleteJournalEntry.mutate({ id: entryId, parentKey: journalKeys.forPropagation(id) });
-            }}
-            isLoading={journalLoading}
-            isPending={createJournalEntry.isPending || deleteJournalEntry.isPending}
-          />
-        </div>
-
-        {/* Delete Confirmation */}
-        {showDeleteConfirm && (
-          <div
-            className="fixed inset-0 flex items-center justify-center z-50 p-4"
-            style={{ background: 'rgba(0, 0, 0, 0.5)' }}
-          >
-            <div className="card p-8 max-w-md w-full">
-              <h2 className="heading heading-lg mb-2">Delete Propagation?</h2>
-              <p className="text-muted mb-6">
-                Are you sure you want to delete this propagation project? This cannot be undone.
-              </p>
-              <div className="flex justify-end gap-3">
-                <button className="btn btn-secondary" onClick={() => setShowDeleteConfirm(false)}>
-                  Cancel
-                </button>
-                <button
-                  className="btn btn-danger"
-                  onClick={handleDelete}
-                  disabled={deletePropagation.isPending}
-                >
-                  {deletePropagation.isPending ? 'Deleting...' : 'Delete'}
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
-      </main>
+          )}
+        </main>
       </PremiumGate>
+
+      <AdvanceStageModal
+        open={advanceOpen}
+        propagation={propagation}
+        nextStageKey={getNextStage(propagation.stage)?.key}
+        onConfirm={handleAdvanceConfirm}
+        onCancel={() => setAdvanceOpen(false)}
+        isPending={advanceStage.isPending}
+      />
     </div>
   );
 }

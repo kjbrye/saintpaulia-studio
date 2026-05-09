@@ -280,7 +280,7 @@ export async function getLatestMilestone({ isPremium = false } = {}) {
           updated_at,
           parent_plant_id,
           parent_plant_name,
-          parent_plant:plants(${PLANT_THUMB_FIELDS})
+          parent_plant:plants!parent_plant_id(${PLANT_THUMB_FIELDS})
         `)
         .in('stage', ROOTING_OR_LATER_STAGES)
         .order('updated_at', { ascending: false })
