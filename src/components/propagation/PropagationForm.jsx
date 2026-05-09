@@ -12,6 +12,7 @@ export default function PropagationForm({ plants = [], onSubmit, onCancel, isPen
     parent_plant_id: '',
     cutting_date: new Date().toISOString().split('T')[0],
     method: 'water',
+    label: '',
     notes: '',
   });
   const [errors, setErrors] = useState({});
@@ -46,6 +47,7 @@ export default function PropagationForm({ plants = [], onSubmit, onCancel, isPen
         parent_plant_name: selectedPlant?.cultivar_name || selectedPlant?.nickname || 'Unknown',
         cutting_date: formData.cutting_date,
         method: formData.method,
+        label: formData.label.trim() || null,
         notes: formData.notes.trim() || null,
       });
     } catch {
@@ -95,6 +97,19 @@ export default function PropagationForm({ plants = [], onSubmit, onCancel, isPen
           </select>
         </FormField>
       </div>
+
+      <FormField label="Label (optional)">
+        <input
+          type="text"
+          className="input w-full"
+          placeholder="e.g. left jar, sphagnum batch"
+          value={formData.label}
+          onChange={(e) => updateField('label', e.target.value)}
+        />
+        <p className="text-small text-muted mt-1">
+          Useful when you start multiple cuttings from the same plant on the same day.
+        </p>
+      </FormField>
 
       <FormField label="Notes">
         <textarea

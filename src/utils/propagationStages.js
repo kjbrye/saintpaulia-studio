@@ -118,6 +118,49 @@ export function daysAtCurrentStage(prop) {
   return daysBetween(last?.entered_at);
 }
 
+export function getParentName(prop) {
+  return (
+    prop?.parent_plant?.cultivar_name ||
+    prop?.parent_plant?.nickname ||
+    prop?.parent_plant_name ||
+    'Unknown parent'
+  );
+}
+
+/**
+ * Display name for a propagation. Resolves disambiguation among siblings
+ * (same parent + same cutting date):
+ *   - explicit label    → "{parent} leaf · {label}"
+ *   - 2+ unlabeled siblings → "{parent} leaf #N" (N = 1-based creation order)
+ *   - otherwise         → "{parent} leaf"
+ *
+ * `allPropagations` is the full list available in the surrounding view; if
+ * omitted we fall back to a non-suffixed name (used in lightweight contexts
+ * like dashboard widgets).
+ */
+export function getPropagationDisplayName(prop, allPropagations = null) {
+  if (!prop) return '';
+  const parent = getParentName(prop);
+  const base = `${parent} leaf`;
+  if (prop.label && prop.label.trim()) {
+    return `${base} · ${prop.label.trim()}`;
+  }
+  if (!Array.isArray(allPropagations) || !prop.parent_plant_id || !prop.cutting_date) {
+    return base;
+  }
+  const unlabeledSiblings = allPropagations
+    .filter(
+      (p) =>
+        p.parent_plant_id === prop.parent_plant_id &&
+        p.cutting_date === prop.cutting_date &&
+        !(p.label && p.label.trim()),
+    )
+    .sort((a, b) => new Date(a.created_at || 0) - new Date(b.created_at || 0));
+  if (unlabeledSiblings.length < 2) return base;
+  const idx = unlabeledSiblings.findIndex((p) => p.id === prop.id);
+  return idx >= 0 ? `${base} #${idx + 1}` : base;
+}
+
 export const METHOD_LABELS = {
   water: 'Water',
   soil: 'Soil',

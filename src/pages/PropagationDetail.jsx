@@ -8,6 +8,7 @@ import { ArrowLeft, Trash2, X, RotateCcw } from 'lucide-react';
 import { format } from 'date-fns';
 import {
   usePropagation,
+  usePropagations,
   useUpdatePropagation,
   useDeletePropagation,
   useAdvanceStage,
@@ -31,6 +32,8 @@ import {
   daysBetween,
   isFailed,
   isEstablished,
+  getParentName,
+  getPropagationDisplayName,
 } from '../utils/propagationStages';
 
 export default function PropagationDetail() {
@@ -39,8 +42,11 @@ export default function PropagationDetail() {
   const navigate = useNavigate();
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [advanceOpen, setAdvanceOpen] = useState(false);
+  const [editingLabel, setEditingLabel] = useState(false);
+  const [labelDraft, setLabelDraft] = useState('');
 
   const { data: propagation, isLoading, error } = usePropagation(id);
+  const { data: allPropagations = [] } = usePropagations();
   const updatePropagation = useUpdatePropagation();
   const deletePropagation = useDeletePropagation();
   const advanceStage = useAdvanceStage();
@@ -107,6 +113,19 @@ export default function PropagationDetail() {
     await unmarkFailedMutation.mutateAsync({ id });
   };
 
+  const startLabelEdit = () => {
+    setLabelDraft(propagation?.label || '');
+    setEditingLabel(true);
+  };
+
+  const commitLabelEdit = () => {
+    const next = labelDraft.trim() || null;
+    if (next !== (propagation?.label || null)) {
+      updatePropagation.mutate({ id, updates: { label: next } });
+    }
+    setEditingLabel(false);
+  };
+
   if (isLoading) {
     return (
       <div className="min-h-screen">
@@ -145,14 +164,10 @@ export default function PropagationDetail() {
 
   const failed = isFailed(propagation);
   const established = isEstablished(propagation);
-  const parentName =
-    propagation.parent_plant?.cultivar_name ||
-    propagation.parent_plant?.nickname ||
-    propagation.parent_plant_name ||
-    'Unknown parent';
+  const parentName = getParentName(propagation);
   const startDate = propagation.cutting_date || propagation.created_at;
   const daysSinceStart = daysBetween(startDate);
-  const propName = `${parentName} leaf`;
+  const propName = getPropagationDisplayName(propagation, allPropagations);
 
   return (
     <div className="min-h-screen">
@@ -187,9 +202,42 @@ export default function PropagationDetail() {
                       <> · {METHOD_LABELS[propagation.method]?.toLowerCase()} rooting</>
                     )}
                   </p>
-                  <h1 className="heading" style={{ fontSize: 28, fontFamily: 'var(--font-heading)' }}>
-                    {propName}
-                  </h1>
+                  {editingLabel ? (
+                    <div className="flex items-baseline gap-2">
+                      <span
+                        style={{ fontSize: 28, fontFamily: 'var(--font-heading)', color: 'var(--sage-800)' }}
+                      >
+                        {parentName} leaf ·
+                      </span>
+                      <input
+                        type="text"
+                        autoFocus
+                        className="input"
+                        style={{ fontSize: 22, fontFamily: 'var(--font-heading)', minWidth: 180 }}
+                        placeholder="label"
+                        value={labelDraft}
+                        onChange={(e) => setLabelDraft(e.target.value)}
+                        onBlur={commitLabelEdit}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter') {
+                            e.preventDefault();
+                            commitLabelEdit();
+                          } else if (e.key === 'Escape') {
+                            setEditingLabel(false);
+                          }
+                        }}
+                      />
+                    </div>
+                  ) : (
+                    <h1
+                      className="heading"
+                      style={{ fontSize: 28, fontFamily: 'var(--font-heading)', cursor: 'text' }}
+                      onClick={startLabelEdit}
+                      title="Click to edit label"
+                    >
+                      {propName}
+                    </h1>
+                  )}
                   <p className="text-body text-muted">
                     started {startDate ? format(new Date(startDate), 'MMM d, yyyy') : '—'}
                     {' · '}

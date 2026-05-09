@@ -14,6 +14,8 @@ import {
   daysAtCurrentStage,
   isFailed,
   isEstablished,
+  getParentName,
+  getPropagationDisplayName,
 } from '../../utils/propagationStages';
 
 const METHOD_ICON = {
@@ -24,20 +26,7 @@ const METHOD_ICON = {
   other: FlaskConical,
 };
 
-function parentName(prop) {
-  return (
-    prop.parent_plant?.cultivar_name ||
-    prop.parent_plant?.nickname ||
-    prop.parent_plant_name ||
-    'Unknown parent'
-  );
-}
-
-function rowName(prop) {
-  return `${parentName(prop)} leaf`;
-}
-
-export default function PropagationRow({ propagation, onAdvance, onRestore }) {
+export default function PropagationRow({ propagation, onAdvance, onRestore, allPropagations }) {
   const navigate = useNavigate();
   const stage = STAGE_BY_KEY[propagation.stage];
   const StageIcon = stage?.icon;
@@ -63,7 +52,7 @@ export default function PropagationRow({ propagation, onAdvance, onRestore }) {
               className="heading"
               style={{ fontFamily: 'var(--font-heading)', fontSize: 19, color: 'var(--sage-800)' }}
             >
-              {rowName(propagation)}
+              {getPropagationDisplayName(propagation, allPropagations)}
             </span>
             <span className="text-small" style={{ color: 'var(--sage-500)' }}>
               from{' '}
@@ -74,10 +63,10 @@ export default function PropagationRow({ propagation, onAdvance, onRestore }) {
                   className="hover:underline"
                   style={{ color: 'var(--purple-500)' }}
                 >
-                  {parentName(propagation)}
+                  {getParentName(propagation)}
                 </Link>
               ) : (
-                parentName(propagation)
+                getParentName(propagation)
               )}
             </span>
           </div>

@@ -270,6 +270,7 @@ export default function Propagation() {
                   <PropagationRow
                     key={prop.id}
                     propagation={prop}
+                    allPropagations={propagations}
                     onAdvance={handleAdvanceClick}
                     onRestore={(p) => unmarkFailed.mutate({ id: p.id })}
                   />
