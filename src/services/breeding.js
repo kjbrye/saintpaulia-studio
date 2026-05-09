@@ -200,6 +200,53 @@ export async function advanceStage(crossId, newStage, { notes, data: stageData }
 }
 
 /**
+ * Mark a cross as failed. Records a "failed" stage log and sets status='failed'.
+ * The cross's `stage` column is left untouched so the timeline still shows
+ * which stage it failed at.
+ */
+export async function markFailed(id, { notes } = {}) {
+  const user_id = await requireUserId();
+  const { error: logError } = await supabase.from('cross_stage_logs').insert({
+    cross_id: id,
+    user_id,
+    stage: 'failed',
+    notes: notes || null,
+  });
+  if (logError) throw logError;
+
+  const { data, error } = await supabase
+    .from('breeding_crosses')
+    .update({ status: 'failed', updated_at: new Date().toISOString() })
+    .eq('id', id)
+    .select()
+    .single();
+  if (error) throw error;
+  return data;
+}
+
+/**
+ * Restore a previously-failed cross back to active. Removes any failed-stage
+ * logs so the timeline returns to its prior state.
+ */
+export async function unmarkFailed(id) {
+  const { error: delError } = await supabase
+    .from('cross_stage_logs')
+    .delete()
+    .eq('cross_id', id)
+    .eq('stage', 'failed');
+  if (delError) throw delError;
+
+  const { data, error } = await supabase
+    .from('breeding_crosses')
+    .update({ status: 'active', updated_at: new Date().toISOString() })
+    .eq('id', id)
+    .select()
+    .single();
+  if (error) throw error;
+  return data;
+}
+
+/**
  * Update cross status (e.g., archive)
  */
 export async function updateCrossStatus(id, status) {

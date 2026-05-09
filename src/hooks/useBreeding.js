@@ -150,6 +150,42 @@ export function useAdvanceStage() {
 }
 
 /**
+ * Mark a cross as failed (records stage log + sets status='failed').
+ */
+export function useMarkFailed() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, notes }) => breedingService.markFailed(id, { notes }),
+    onSuccess: (data, { id }) => {
+      queryClient.setQueryData(breedingKeys.detail(id), (old) =>
+        old ? { ...old, ...data } : data,
+      );
+      queryClient.invalidateQueries({ queryKey: breedingKeys.stageLogs(id) });
+      queryClient.invalidateQueries({ queryKey: breedingKeys.lists() });
+      queryClient.invalidateQueries({ queryKey: dashboardKeys.all });
+    },
+  });
+}
+
+/**
+ * Restore a failed cross back to active.
+ */
+export function useUnmarkFailed() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id }) => breedingService.unmarkFailed(id),
+    onSuccess: (data, { id }) => {
+      queryClient.setQueryData(breedingKeys.detail(id), (old) =>
+        old ? { ...old, ...data } : data,
+      );
+      queryClient.invalidateQueries({ queryKey: breedingKeys.stageLogs(id) });
+      queryClient.invalidateQueries({ queryKey: breedingKeys.lists() });
+      queryClient.invalidateQueries({ queryKey: dashboardKeys.all });
+    },
+  });
+}
+
+/**
  * Update cross status (archive, reactivate, etc.)
  */
 export function useUpdateCrossStatus() {

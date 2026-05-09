@@ -1,19 +1,23 @@
 /**
- * CrossDetail Page - Individual breeding cross view with stage timeline and offspring
+ * CrossDetail Page — parents card + vertical stage timeline + offspring + notes.
+ *
+ * Mirrors the propagation detail page structurally; both are parallel concepts.
  */
 
 import { useState } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Trash2, Archive, RotateCcw, X } from 'lucide-react';
+import { ArrowLeft, Trash2, X, RotateCcw, Archive } from 'lucide-react';
 import { format } from 'date-fns';
 import {
   useCross,
+  useStageLogs,
   useUpdateCross,
   useDeleteCross,
-  useRemoveOffspring,
   useAddOffspring,
-  useStageLogs,
+  useRemoveOffspring,
   useAdvanceStage,
+  useMarkFailed,
+  useUnmarkFailed,
   useUpdateCrossStatus,
 } from '../hooks/useBreeding';
 import { usePlants, useCreatePlant } from '../hooks/usePlants';
@@ -25,35 +29,43 @@ import {
 } from '../hooks/useJournal';
 import HeaderBar from '../components/ui/HeaderBar';
 import {
-  StageTimeline,
-  StageAdvanceModal,
-  OffspringList,
-  LineageView,
+  ParentsCard,
+  CrossStageTimeline,
+  AdvanceCrossStageModal,
+  OffspringSection,
 } from '../components/breeding';
-import { BREEDING_STAGES } from '../components/breeding/CrossCard';
 import NotesLog from '../components/ui/NotesLog';
 import PremiumGate from '../components/ui/PremiumGate';
 import { usePageTitle } from '../hooks/usePageTitle';
+import {
+  getNextStage,
+  daysBetween,
+  isFailed,
+  isComplete,
+  getPodParentName,
+  getPollenParentName,
+} from '../utils/breedingStages';
 
 export default function CrossDetail() {
   usePageTitle('Cross Detail');
   const { id } = useParams();
   const navigate = useNavigate();
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
-  const [advanceTarget, setAdvanceTarget] = useState(null);
+  const [advanceOpen, setAdvanceOpen] = useState(false);
 
   const { data: cross, isLoading, error } = useCross(id);
   const { data: stageLogs = [] } = useStageLogs(id);
   const { data: plants = [] } = usePlants();
   const updateCross = useUpdateCross();
   const deleteCross = useDeleteCross();
-  const removeOffspring = useRemoveOffspring();
   const addOffspring = useAddOffspring();
+  const removeOffspring = useRemoveOffspring();
   const createPlant = useCreatePlant();
   const advanceStage = useAdvanceStage();
+  const markFailedMutation = useMarkFailed();
+  const unmarkFailedMutation = useUnmarkFailed();
   const updateStatus = useUpdateCrossStatus();
 
-  // Journal entries
   const { data: journalEntries = [], isLoading: journalLoading } = useCrossJournal(id);
   const createJournalEntry = useCreateJournalEntry();
   const deleteJournalEntry = useDeleteJournalEntry();
@@ -61,10 +73,12 @@ export default function CrossDetail() {
   const isPending =
     updateCross.isPending ||
     deleteCross.isPending ||
-    removeOffspring.isPending ||
     addOffspring.isPending ||
+    removeOffspring.isPending ||
     createPlant.isPending ||
     advanceStage.isPending ||
+    markFailedMutation.isPending ||
+    unmarkFailedMutation.isPending ||
     updateStatus.isPending;
 
   const handleDelete = async () => {
@@ -72,25 +86,37 @@ export default function CrossDetail() {
     navigate('/breeding');
   };
 
-  const handleAdvanceConfirm = async ({ stage, notes, data }) => {
-    // If stage data includes counts, also update them on the cross
-    const stageData = { ...data };
-    if (stageData.seed_count != null) {
-      await updateCross.mutateAsync({ id, updates: { seed_count: stageData.seed_count } });
-    }
-    if (stageData.germination_count != null) {
-      await updateCross.mutateAsync({
-        id,
-        updates: { germination_count: stageData.germination_count },
-      });
-    }
-
-    await advanceStage.mutateAsync({ crossId: id, stage, notes, data: stageData });
-    setAdvanceTarget(null);
+  const triggerAdvance = () => {
+    if (!cross) return;
+    const next = getNextStage(cross.stage);
+    if (!next) return;
+    setAdvanceOpen(true);
   };
 
-  const handleMarkFailed = () => {
-    setAdvanceTarget({ key: 'failed', label: 'Failed', icon: X });
+  const handleAdvanceConfirm = async ({ note }) => {
+    const next = getNextStage(cross.stage);
+    await advanceStage.mutateAsync({
+      crossId: id,
+      stage: next.key,
+      notes: note || undefined,
+    });
+    setAdvanceOpen(false);
+  };
+
+  const handleSkipTo = async (stageKey) => {
+    await advanceStage.mutateAsync({
+      crossId: id,
+      stage: stageKey,
+      notes: 'Skipped ahead',
+    });
+  };
+
+  const handleMarkFailed = async () => {
+    await markFailedMutation.mutateAsync({ id });
+  };
+
+  const handleUnmarkFailed = async () => {
+    await unmarkFailedMutation.mutateAsync({ id });
   };
 
   const handleArchive = () => {
@@ -102,8 +128,8 @@ export default function CrossDetail() {
   };
 
   const handleCreateAndLink = async (crossId, plantName) => {
-    const podName = cross.pod_parent_name || 'Unknown';
-    const pollenName = cross.pollen_parent_name || 'Unknown';
+    const podName = getPodParentName(cross);
+    const pollenName = getPollenParentName(cross);
     const plant = await createPlant.mutateAsync({
       cultivar_name: plantName,
       source: `Hybrid: ${podName} × ${pollenName}`,
@@ -151,219 +177,221 @@ export default function CrossDetail() {
     );
   }
 
-  const isFailed = cross.status === 'failed' || cross.stage === 'failed';
-  const isComplete = cross.status === 'complete' || cross.stage === 'blooming';
-  const isArchived = cross.status === 'archived';
-  const podName =
-    cross.pod_parent?.cultivar_name ||
-    cross.pod_parent?.nickname ||
-    cross.pod_parent_name ||
-    'Unknown';
-  const pollenName =
-    cross.pollen_parent?.cultivar_name ||
-    cross.pollen_parent?.nickname ||
-    cross.pollen_parent_name ||
-    'Unknown';
-
-  const statusBadge = isArchived
-    ? { label: 'Archived', style: { background: 'var(--sage-200)', color: 'var(--sage-700)' } }
-    : isFailed
-      ? { label: 'Failed', style: { background: 'var(--color-error)', color: 'white' } }
-      : isComplete
-        ? { label: 'Complete', style: { background: 'var(--color-success)', color: 'white' } }
-        : null;
+  const failed = isFailed(cross);
+  const complete = isComplete(cross);
+  const archived = cross.status === 'archived';
+  const podName = getPodParentName(cross);
+  const pollenName = getPollenParentName(cross);
+  const startDate = cross.cross_date || cross.created_at;
+  const daysSinceStart = daysBetween(startDate);
 
   return (
     <div className="min-h-screen">
       <HeaderBar />
       <PremiumGate feature="breeding">
-      <main className="p-4 md:p-6 lg:p-8">
-        <div className="max-w-3xl mx-auto">
-          {/* Header */}
-          <header className="flex items-center justify-between mb-6">
-            <div className="flex items-center gap-4">
-              <button onClick={() => navigate('/breeding')} className="icon-container">
-                <ArrowLeft size={20} style={{ color: 'var(--sage-600)' }} />
-              </button>
-              <div>
-                <div className="flex items-center gap-2">
-                  <h1 className="heading heading-xl">
-                    {podName} <span className="text-[var(--purple-400)]">×</span> {pollenName}
-                  </h1>
-                  {statusBadge && (
-                    <span className="badge" style={statusBadge.style}>
-                      {statusBadge.label}
-                    </span>
+        <main className="p-4 md:p-6 lg:p-8">
+          <div className="max-w-3xl mx-auto">
+            {/* Header */}
+            <header className="flex items-start justify-between gap-4 mb-6">
+              <div className="flex items-start gap-4 min-w-0">
+                <button
+                  onClick={() => navigate('/breeding')}
+                  className="icon-container flex-shrink-0"
+                >
+                  <ArrowLeft size={20} style={{ color: 'var(--sage-600)' }} />
+                </button>
+                <div className="min-w-0">
+                  {cross.goals && (
+                    <p
+                      className="truncate"
+                      style={{
+                        fontSize: 11,
+                        letterSpacing: '0.1em',
+                        textTransform: 'uppercase',
+                        color: 'var(--sage-500)',
+                        fontWeight: 600,
+                      }}
+                    >
+                      GOAL · {cross.goals}
+                    </p>
                   )}
+                  <h1
+                    className="heading"
+                    style={{ fontSize: 28, fontFamily: 'var(--font-heading)' }}
+                  >
+                    {cross.pod_parent_id ? (
+                      <Link
+                        to={`/plants/${cross.pod_parent_id}`}
+                        className="hover:underline"
+                        style={{ color: 'var(--sage-800)' }}
+                      >
+                        {podName}
+                      </Link>
+                    ) : (
+                      <span style={{ color: 'var(--sage-800)' }}>{podName}</span>
+                    )}
+                    <span className="mx-2" style={{ color: 'var(--purple-400)' }}>
+                      ×
+                    </span>
+                    {cross.pollen_parent_id ? (
+                      <Link
+                        to={`/plants/${cross.pollen_parent_id}`}
+                        className="hover:underline"
+                        style={{ color: 'var(--sage-800)' }}
+                      >
+                        {pollenName}
+                      </Link>
+                    ) : (
+                      <span style={{ color: 'var(--sage-800)' }}>{pollenName}</span>
+                    )}
+                  </h1>
+                  <p className="text-body text-muted">
+                    crossed {startDate ? format(new Date(startDate), 'MMM d, yyyy') : '—'}
+                    {' · '}
+                    {daysSinceStart} {daysSinceStart === 1 ? 'day' : 'days'} ago
+                  </p>
                 </div>
-                <p className="text-body text-muted">
-                  Crossed {format(new Date(cross.cross_date), 'MMMM d, yyyy')}
-                </p>
               </div>
-            </div>
-            <div className="flex items-center gap-1">
-              {(isComplete || isFailed) && !isArchived && (
+              <div className="flex items-center gap-2">
+                {failed && (
+                  <button
+                    type="button"
+                    className="btn btn-secondary btn-small flex items-center gap-1.5"
+                    onClick={handleUnmarkFailed}
+                    title="Restore cross"
+                    disabled={isPending}
+                  >
+                    <RotateCcw size={14} />
+                    Restore
+                  </button>
+                )}
+                {!failed && !complete && !archived && (
+                  <button
+                    type="button"
+                    className="icon-container"
+                    onClick={handleMarkFailed}
+                    title="Mark failed"
+                    disabled={isPending}
+                  >
+                    <X size={18} style={{ color: 'var(--copper-500)' }} />
+                  </button>
+                )}
+                {(complete || failed) && !archived && (
+                  <button
+                    type="button"
+                    className="icon-container"
+                    onClick={handleArchive}
+                    title="Archive cross"
+                    disabled={isPending}
+                  >
+                    <Archive size={18} style={{ color: 'var(--sage-500)' }} />
+                  </button>
+                )}
+                {archived && (
+                  <button
+                    type="button"
+                    className="icon-container"
+                    onClick={handleReactivate}
+                    title="Unarchive cross"
+                    disabled={isPending}
+                  >
+                    <RotateCcw size={18} style={{ color: 'var(--sage-500)' }} />
+                  </button>
+                )}
                 <button
+                  type="button"
                   className="icon-container"
-                  onClick={handleArchive}
-                  title="Archive cross"
-                  disabled={isPending}
+                  onClick={() => setShowDeleteConfirm(true)}
+                  title="Delete cross"
                 >
-                  <Archive size={18} style={{ color: 'var(--sage-500)' }} />
+                  <Trash2 size={18} style={{ color: 'var(--copper-500)' }} />
                 </button>
-              )}
-              {isArchived && (
-                <button
-                  className="icon-container"
-                  onClick={handleReactivate}
-                  title="Unarchive cross"
-                  disabled={isPending}
-                >
-                  <RotateCcw size={18} style={{ color: 'var(--sage-500)' }} />
-                </button>
-              )}
-              <button
-                className="icon-container"
-                onClick={() => setShowDeleteConfirm(true)}
-                title="Delete cross"
-              >
-                <Trash2 size={18} style={{ color: 'var(--color-error)' }} />
-              </button>
-            </div>
-          </header>
+              </div>
+            </header>
 
-          {/* Goals */}
-          {cross.goals && (
-            <div className="card p-6 mb-6">
-              <h2 className="heading heading-md mb-2">Goals</h2>
-              <p className="text-body" style={{ color: 'var(--purple-400)' }}>
-                {cross.goals}
-              </p>
-            </div>
-          )}
+            {/* Parents */}
+            <ParentsCard cross={cross} plants={plants} />
 
-          {/* Stage Timeline */}
-          <div className="card p-6 mb-6">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="heading heading-md">Stage Progress</h2>
-              {!isComplete && !isFailed && !isArchived && (
-                <button
-                  className="btn btn-secondary btn-small"
-                  onClick={handleMarkFailed}
-                  disabled={isPending}
-                >
-                  <X size={14} /> Mark Failed
-                </button>
-              )}
-            </div>
-            <StageTimeline
+            {/* Stage timeline */}
+            <CrossStageTimeline
               cross={cross}
               stageLogs={stageLogs}
-              onAdvance={(stage) => setAdvanceTarget(stage)}
+              onAdvance={triggerAdvance}
+              onMarkFailed={handleMarkFailed}
+              onSkipTo={handleSkipTo}
               isPending={isPending}
+            />
+
+            {/* Offspring */}
+            <OffspringSection
+              cross={cross}
+              plants={plants}
+              onAddOffspring={(data) => addOffspring.mutateAsync(data)}
+              onCreateAndLink={handleCreateAndLink}
+              onRemoveOffspring={(offspringId) =>
+                removeOffspring.mutate({ id: offspringId, cross_id: id })
+              }
+              isPending={isPending}
+            />
+
+            {/* Notes */}
+            <NotesLog
+              entries={journalEntries}
+              onAdd={async (content) => {
+                await createJournalEntry.mutateAsync({ cross_id: id, content });
+              }}
+              onDelete={(entryId) => {
+                deleteJournalEntry.mutate({
+                  id: entryId,
+                  parentKey: journalKeys.forCross(id),
+                });
+              }}
+              isLoading={journalLoading}
+              isPending={createJournalEntry.isPending || deleteJournalEntry.isPending}
             />
           </div>
 
-          {/* Counts summary */}
-          {(cross.seed_count > 0 || cross.germination_count > 0) && (
-            <div className="grid grid-cols-2 gap-4 mb-6">
-              <div className="card p-4 text-center">
-                <p className="text-label text-muted mb-1">Seeds</p>
-                <p className="heading heading-lg">{cross.seed_count || 0}</p>
-              </div>
-              <div className="card p-4 text-center">
-                <p className="text-label text-muted mb-1">Germinated</p>
-                <p className="heading heading-lg">{cross.germination_count || 0}</p>
-                {cross.seed_count > 0 && cross.germination_count > 0 && (
-                  <p className="text-small text-muted">
-                    {Math.round((cross.germination_count / cross.seed_count) * 100)}% rate
-                  </p>
-                )}
+          {/* Delete confirmation */}
+          {showDeleteConfirm && (
+            <div
+              className="fixed inset-0 flex items-center justify-center z-50 p-4"
+              style={{ background: 'rgba(0, 0, 0, 0.5)' }}
+            >
+              <div className="card p-8 max-w-md w-full">
+                <h2 className="heading heading-lg mb-2">Delete Cross?</h2>
+                <p className="text-muted mb-6">
+                  Are you sure you want to delete this cross? All stage logs and offspring
+                  records will also be removed. This cannot be undone.
+                </p>
+                <div className="flex justify-end gap-3">
+                  <button
+                    className="btn btn-secondary"
+                    onClick={() => setShowDeleteConfirm(false)}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    className="btn btn-danger"
+                    onClick={handleDelete}
+                    disabled={deleteCross.isPending}
+                  >
+                    {deleteCross.isPending ? 'Deleting...' : 'Delete'}
+                  </button>
+                </div>
               </div>
             </div>
           )}
-
-          {/* Offspring */}
-          <div className="mb-6">
-            <OffspringList
-              offspring={cross.offspring || []}
-              plants={plants}
-              crossId={id}
-              onAddOffspring={(data) => addOffspring.mutateAsync(data)}
-              onRemoveOffspring={(offspringId) =>
-                removeOffspring.mutate({ id: offspringId, cross_id: id })
-              }
-              onCreateAndLink={handleCreateAndLink}
-              isPending={isPending}
-            />
-          </div>
-
-          {/* Lineage View */}
-          <div className="card p-6 mb-6">
-            <h2 className="heading heading-md mb-4">Lineage</h2>
-            <LineageView
-              cross={cross}
-              onRemoveOffspring={(offspringId) =>
-                removeOffspring.mutate({ id: offspringId, cross_id: id })
-              }
-              isPending={isPending}
-            />
-          </div>
-
-          {/* Journal Notes */}
-          <NotesLog
-            entries={journalEntries}
-            onAdd={async (content) => {
-              await createJournalEntry.mutateAsync({ cross_id: id, content });
-            }}
-            onDelete={(entryId) => {
-              deleteJournalEntry.mutate({ id: entryId, parentKey: journalKeys.forCross(id) });
-            }}
-            isLoading={journalLoading}
-            isPending={createJournalEntry.isPending || deleteJournalEntry.isPending}
-          />
-        </div>
-
-        {/* Stage Advance Modal */}
-        {advanceTarget && (
-          <StageAdvanceModal
-            cross={cross}
-            targetStage={advanceTarget}
-            onConfirm={handleAdvanceConfirm}
-            onCancel={() => setAdvanceTarget(null)}
-            isPending={advanceStage.isPending}
-          />
-        )}
-
-        {/* Delete Confirmation */}
-        {showDeleteConfirm && (
-          <div
-            className="fixed inset-0 flex items-center justify-center z-50 p-4"
-            style={{ background: 'rgba(0, 0, 0, 0.5)' }}
-          >
-            <div className="card p-8 max-w-md w-full">
-              <h2 className="heading heading-lg mb-2">Delete Cross?</h2>
-              <p className="text-muted mb-6">
-                Are you sure you want to delete this cross? All stage logs and offspring records
-                will also be removed. This cannot be undone.
-              </p>
-              <div className="flex justify-end gap-3">
-                <button className="btn btn-secondary" onClick={() => setShowDeleteConfirm(false)}>
-                  Cancel
-                </button>
-                <button
-                  className="btn btn-danger"
-                  onClick={handleDelete}
-                  disabled={deleteCross.isPending}
-                >
-                  {deleteCross.isPending ? 'Deleting...' : 'Delete'}
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
-      </main>
+        </main>
       </PremiumGate>
+
+      <AdvanceCrossStageModal
+        open={advanceOpen}
+        cross={cross}
+        nextStageKey={getNextStage(cross.stage)?.key}
+        onConfirm={handleAdvanceConfirm}
+        onCancel={() => setAdvanceOpen(false)}
+        isPending={advanceStage.isPending}
+      />
     </div>
   );
 }
