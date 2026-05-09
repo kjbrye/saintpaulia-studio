@@ -1,19 +1,24 @@
 /**
- * PlantDetail Page - Individual plant view with care management and edit functionality
+ * PlantDetail Page - Individual plant view.
+ *
+ * View mode renders the revamped layout (hero / care / bloom history /
+ * activity / notes / details / lineage). Edit mode reuses the existing
+ * EditableField grid in-place.
  */
 
 import { useState, useEffect, useMemo } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Pencil, Trash2, Check, Loader2, Flower2, Archive, RotateCcw } from 'lucide-react';
+import { ArrowLeft, Pencil, Trash2, Check, Loader2, Archive, RotateCcw } from 'lucide-react';
 import { usePlant, useUpdatePlant, useDeletePlant } from '../hooks/usePlants';
 import { useCareLogs, useLogCare } from '../hooks/useCare';
 import {
   useBloomLogs,
   useCreateBloomLog,
   useEndBloom,
+  useUpdateBloomLog,
   useDeleteBloomLog,
 } from '../hooks/useBlooms';
-import { useHealthLogs, useCreateHealthLog, useDeleteHealthLog } from '../hooks/useHealth';
+import { useHealthLogs, useCreateHealthLog } from '../hooks/useHealth';
 import {
   usePlantJournal,
   useCreateJournalEntry,
@@ -23,13 +28,12 @@ import {
 import { useToast } from '../hooks/useToast';
 import { useSettings } from '../hooks/useSettings.jsx';
 import { getPlantCareStatuses } from '../utils/careStatus';
-import { buildPlantDescription } from '../utils/plantDescription';
 import {
-  CareStatusCard,
-  QuickCareActions,
-  CareHistory,
-  BloomHistory,
-  HealthHistory,
+  PlantHero,
+  CareSection,
+  BloomHistorySection,
+  ActivityLog,
+  DetailsSection,
 } from '../components/detail';
 import EditableField from '../components/ui/EditableField';
 import PhotoUpload from '../components/plants/PhotoUpload';
@@ -59,7 +63,6 @@ import {
   LEAF_COLOR_LABELS,
 } from '../constants/plantOptions';
 
-// Location options for select dropdown
 const LOCATION_OPTIONS = [
   { value: '', label: 'Select location...' },
   { value: 'windowsill', label: 'Windowsill' },
@@ -69,7 +72,6 @@ const LOCATION_OPTIONS = [
   { value: 'other', label: 'Other' },
 ];
 
-// Pot size options for select dropdown
 const POT_SIZE_OPTIONS = [
   { value: '', label: 'Select size...' },
   { value: '2"', label: '2" (Mini/Starter)' },
@@ -83,7 +85,6 @@ const POT_SIZE_OPTIONS = [
   { value: '6"+', label: '6"+ (Extra Large)' },
 ];
 
-// Bloom color options for select dropdown
 const BLOOM_COLOR_OPTIONS = [
   { value: '', label: 'Select color...' },
   { value: 'pink', label: 'Pink' },
@@ -150,45 +151,35 @@ export default function PlantDetail() {
     return [...LOCATION_OPTIONS, ...custom];
   }, [settings.customLocations]);
 
-  // Data fetching
   const { data: plant, isLoading, error } = usePlant(id);
   usePageTitle(plant?.nickname || plant?.cultivar_name || 'Plant Detail');
-  const { data: careLogs = [], isLoading: logsLoading } = useCareLogs({
-    plantId: id,
-    limit: 10,
-  });
-  const { mutateAsync: logCare, isPending } = useLogCare();
+  const { data: careLogs = [], isLoading: logsLoading } = useCareLogs({ plantId: id, limit: 50 });
+  const { mutateAsync: logCare, isPending: isLoggingCare } = useLogCare();
   const updatePlant = useUpdatePlant();
   const deletePlant = useDeletePlant();
 
-  // Bloom logs
   const { data: bloomLogs = [], isLoading: bloomsLoading } = useBloomLogs({ plantId: id });
   const createBloomLog = useCreateBloomLog();
   const endBloom = useEndBloom();
+  const updateBloomLog = useUpdateBloomLog();
   const deleteBloomLog = useDeleteBloomLog();
 
-  // Health logs
   const { data: healthLogs = [], isLoading: healthLoading } = useHealthLogs({ plantId: id });
   const createHealthLog = useCreateHealthLog();
-  const deleteHealthLog = useDeleteHealthLog();
 
-  // Journal entries
   const { data: journalEntries = [], isLoading: journalLoading } = usePlantJournal(id);
   const createJournalEntry = useCreateJournalEntry();
   const deleteJournalEntry = useDeleteJournalEntry();
 
-  // Edit mode state
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState(null);
   const [hasChanges, setHasChanges] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [showArchiveMenu, setShowArchiveMenu] = useState(false);
-  const [activePhoto, setActivePhoto] = useState(null);
 
   const { canUseFeature } = useSubscription();
   const canAddMultiPhotos = canUseFeature('multi_photos');
 
-  // Initialize form data when entering edit mode
   useEffect(() => {
     if (plant && isEditing && !formData) {
       setFormData({
@@ -215,7 +206,6 @@ export default function PlantDetail() {
     }
   }, [plant, isEditing, formData]);
 
-  // Warn on navigation with unsaved changes
   useEffect(() => {
     const handleBeforeUnload = (e) => {
       if (hasChanges) {
@@ -223,30 +213,25 @@ export default function PlantDetail() {
         e.returnValue = '';
       }
     };
-
     window.addEventListener('beforeunload', handleBeforeUnload);
     return () => window.removeEventListener('beforeunload', handleBeforeUnload);
   }, [hasChanges]);
 
-  // Update a form field
   const updateField = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
     setHasChanges(true);
   };
 
-  // Handle save
   const handleSave = async () => {
     if (!formData.cultivar_name?.trim()) {
       toast.error('Cultivar name is required');
       return;
     }
-
     try {
       await updatePlant.mutateAsync({
         id: plant.id,
         updates: {
           ...formData,
-          // Clean empty strings to null
           nickname: formData.nickname || null,
           acquisition_date: formData.acquisition_date || null,
           source: formData.source || null,
@@ -268,69 +253,57 @@ export default function PlantDetail() {
           photo_urls: canAddMultiPhotos ? (formData.photo_urls || []) : (plant.photo_urls || []),
         },
       });
-
       setIsEditing(false);
       setFormData(null);
       setHasChanges(false);
     } catch (err) {
-      // Sentry captures this automatically
       toast.error('Failed to save changes. Please try again.');
     }
   };
 
-  // Handle cancel
   const handleCancel = () => {
-    if (hasChanges) {
-      if (window.confirm('You have unsaved changes. Are you sure you want to cancel?')) {
-        setIsEditing(false);
-        setFormData(null);
-        setHasChanges(false);
-      }
-    } else {
-      setIsEditing(false);
-      setFormData(null);
-    }
+    if (hasChanges && !window.confirm('You have unsaved changes. Cancel anyway?')) return;
+    setIsEditing(false);
+    setFormData(null);
+    setHasChanges(false);
   };
 
-  // Handle delete
   const handleDelete = async () => {
     try {
       await deletePlant.mutateAsync(plant.id);
       navigate('/library');
-    } catch (err) {
-      // Sentry captures this automatically
+    } catch {
       toast.error('Failed to delete plant. Please try again.');
     }
   };
 
-  // Handle archive (mark as deceased/gifted/sold)
   const handleArchive = async (archiveStatus) => {
     try {
-      await updatePlant.mutateAsync({
-        id: plant.id,
-        updates: { status: archiveStatus },
-      });
+      await updatePlant.mutateAsync({ id: plant.id, updates: { status: archiveStatus } });
       setShowArchiveMenu(false);
       toast.success(`Plant marked as ${STATUS_LABELS[archiveStatus].toLowerCase()}`);
-    } catch (err) {
+    } catch {
       toast.error('Failed to archive plant. Please try again.');
     }
   };
 
-  // Handle restore (move back to active)
   const handleRestore = async () => {
     try {
-      await updatePlant.mutateAsync({
-        id: plant.id,
-        updates: { status: 'healthy' },
-      });
+      await updatePlant.mutateAsync({ id: plant.id, updates: { status: 'healthy' } });
       toast.success('Plant restored to active collection');
-    } catch (err) {
+    } catch {
       toast.error('Failed to restore plant. Please try again.');
     }
   };
 
-  // Format date for display
+  const handlePhotoUrlsChange = async (urls) => {
+    try {
+      await updatePlant.mutateAsync({ id: plant.id, updates: { photo_urls: urls } });
+    } catch {
+      toast.error('Failed to update photos.');
+    }
+  };
+
   const formatDate = (dateStr) => {
     if (!dateStr) return null;
     return new Date(dateStr).toLocaleDateString('en-US', {
@@ -367,11 +340,12 @@ export default function PlantDetail() {
   const careStatuses = getPlantCareStatuses(plant, careThresholds);
   const displayName = plant.nickname || plant.cultivar_name || 'Unnamed Plant';
   const plantIsArchived = isArchived(plant.status);
+  const activeBloom = bloomLogs.find((l) => !l.bloom_end_date);
 
   return (
     <div className="min-h-screen p-6 md:p-10">
       <div className="max-w-4xl mx-auto">
-        {/* Header Navigation */}
+        {/* Toolbar */}
         <header className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-4">
             <button onClick={() => navigate(-1)} className="icon-container">
@@ -379,7 +353,6 @@ export default function PlantDetail() {
             </button>
             {isEditing && <h1 className="heading heading-lg">Edit Plant</h1>}
           </div>
-
           <div className="flex items-center gap-3">
             {isEditing ? (
               <>
@@ -392,15 +365,9 @@ export default function PlantDetail() {
                   disabled={updatePlant.isPending}
                 >
                   {updatePlant.isPending ? (
-                    <>
-                      <Loader2 size={18} className="animate-spin" />
-                      Saving...
-                    </>
+                    <><Loader2 size={18} className="animate-spin" /> Saving...</>
                   ) : (
-                    <>
-                      <Check size={18} />
-                      Save Changes
-                    </>
+                    <><Check size={18} /> Save Changes</>
                   )}
                 </button>
               </>
@@ -408,8 +375,7 @@ export default function PlantDetail() {
               <>
                 {plantIsArchived ? (
                   <button className="btn btn-secondary" onClick={handleRestore}>
-                    <RotateCcw size={18} />
-                    Restore
+                    <RotateCcw size={18} /> Restore
                   </button>
                 ) : (
                   <div className="relative">
@@ -417,8 +383,7 @@ export default function PlantDetail() {
                       className="btn btn-secondary"
                       onClick={() => setShowArchiveMenu(!showArchiveMenu)}
                     >
-                      <Archive size={18} />
-                      Archive
+                      <Archive size={18} /> Archive
                     </button>
                     {showArchiveMenu && (
                       <div className="absolute right-0 top-full mt-2 z-10 card p-2 shadow-lg min-w-[180px]">
@@ -440,8 +405,7 @@ export default function PlantDetail() {
                   </div>
                 )}
                 <button className="btn btn-secondary" onClick={() => setIsEditing(true)}>
-                  <Pencil size={18} />
-                  Edit
+                  <Pencil size={18} /> Edit
                 </button>
                 <button
                   className="icon-container"
@@ -455,7 +419,6 @@ export default function PlantDetail() {
           </div>
         </header>
 
-        {/* Archived Banner */}
         {plantIsArchived && !isEditing && (
           <div
             className="card p-4 mb-6 flex items-center justify-between"
@@ -470,361 +433,109 @@ export default function PlantDetail() {
               </p>
             </div>
             <button className="btn btn-secondary btn-small" onClick={handleRestore}>
-              <RotateCcw size={16} />
-              Restore
+              <RotateCcw size={16} /> Restore
             </button>
           </div>
         )}
 
-        {/* Plant Info Card (View/Edit Mode) */}
-        <div className="card p-6 mb-6">
-          <div className="flex flex-col md:flex-row gap-6">
-            {/* Plant Image */}
-            <div className="flex-shrink-0 space-y-3">
-              {isEditing ? (
-                <>
-                  <PhotoUpload
-                    value={formData?.photo_url}
-                    onChange={(url) => updateField('photo_url', url)}
-                  />
-                  {canAddMultiPhotos ? (
-                    <div className="w-48">
-                      <label className="text-small text-muted block mb-2">More photos</label>
-                      <PlantPhotoGallery
-                        value={formData?.photo_urls || []}
-                        onChange={(urls) => updateField('photo_urls', urls)}
-                      />
-                    </div>
-                  ) : (
-                    <div className="w-48 flex items-center gap-2 px-2 py-1.5 rounded-lg" style={{ background: 'var(--cream-100)', border: '1px dashed var(--sage-300)' }}>
-                      <Sparkles size={12} style={{ color: 'var(--copper-500)' }} />
-                      <span className="text-small" style={{ color: 'var(--text-muted)', fontSize: 11 }}>
-                        Add up to 5 photos with Premium
-                      </span>
-                    </div>
-                  )}
-                </>
-              ) : (
-                <>
-                  <div
-                    className="w-48 h-48 rounded-xl overflow-hidden flex items-center justify-center"
-                    style={{ background: 'var(--cream-200)' }}
-                  >
-                    {(activePhoto || plant.photo_url) ? (
-                      <img
-                        src={activePhoto || plant.photo_url}
-                        alt={displayName}
-                        className="w-full h-full object-cover"
-                      />
-                    ) : (
-                      <Flower2 size={64} style={{ color: 'var(--sage-400)' }} />
-                    )}
-                  </div>
-                  {(plant.photo_urls?.length > 0) && (
-                    <div className="flex flex-wrap gap-2 w-48">
-                      {[plant.photo_url, ...(plant.photo_urls || [])]
-                        .filter(Boolean)
-                        .map((url) => {
-                          const current = (activePhoto || plant.photo_url) === url;
-                          return (
-                            <button
-                              key={url}
-                              type="button"
-                              onClick={() => setActivePhoto(url)}
-                              className="w-10 h-10 rounded-md overflow-hidden"
-                              style={{
-                                outline: current ? '2px solid var(--sage-500)' : '1px solid var(--sage-200)',
-                                outlineOffset: current ? 1 : 0,
-                              }}
-                            >
-                              <img src={url} alt="" className="w-full h-full object-cover" />
-                            </button>
-                          );
-                        })}
-                    </div>
-                  )}
-                </>
-              )}
-            </div>
-
-            {/* Primary Info */}
-            <div className="flex-1 min-w-0 space-y-5">
-              <EditableField
-                label="Cultivar Name"
-                value={isEditing ? formData?.cultivar_name : plant.cultivar_name}
-                isEditing={isEditing}
-                onChange={(v) => updateField('cultivar_name', v)}
-                placeholder="e.g., Optimara EverGrace"
-                required
-              />
-
-              <EditableField
-                label="Nickname"
-                value={isEditing ? formData?.nickname : plant.nickname}
-                isEditing={isEditing}
-                onChange={(v) => updateField('nickname', v)}
-                placeholder="e.g., Grace"
-              />
-
-              {!isEditing && buildPlantDescription(plant) && (
-                <div>
-                  <p className="text-label text-muted mb-1">Description</p>
-                  <p
-                    className="heading heading-sm"
-                    style={{
-                      color: 'var(--purple-500)',
-                      fontStyle: 'italic',
-                      lineHeight: 1.4,
-                    }}
-                  >
-                    {buildPlantDescription(plant)}
-                  </p>
-                </div>
-              )}
-            </div>
-          </div>
-
-          <div className="my-6" style={{ borderTop: '1px solid var(--sage-200)' }} />
-
-          {/* Detail Fields */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <EditableField
-              label="Acquired Date"
-              value={isEditing ? formData?.acquisition_date : plant.acquisition_date}
-              displayValue={formatDate(plant.acquisition_date)}
-              isEditing={isEditing}
-              onChange={(v) => updateField('acquisition_date', v)}
-              type="date"
-            />
-
-            <EditableField
-              label="Source"
-              value={isEditing ? formData?.source : plant.source}
-              isEditing={isEditing}
-              onChange={(v) => updateField('source', v)}
-              placeholder="e.g., Local nursery"
-            />
-
-            <EditableField
-              label="Location"
-              value={isEditing ? formData?.location : plant.location}
-              displayValue={LOCATION_LABELS[plant.location] || (plant.location && plant.location.replace(/^custom:/, ''))}
-              isEditing={isEditing}
-              onChange={(v) => updateField('location', v)}
-              options={allLocationOptions}
-            />
-
-            <EditableField
-              label="Status"
-              value={isEditing ? formData?.status : plant.status}
-              displayValue={STATUS_LABELS[plant.status]}
-              isEditing={isEditing}
-              onChange={(v) => updateField('status', v)}
-              options={STATUS_OPTIONS}
-            />
-
-            <EditableField
-              label="Pot Size"
-              value={isEditing ? formData?.pot_size : plant.pot_size}
-              displayValue={plant.pot_size || 'Not set'}
-              isEditing={isEditing}
-              onChange={(v) => updateField('pot_size', v)}
-              options={POT_SIZE_OPTIONS}
-            />
-
-            <EditableField
-              label="Size Class"
-              value={isEditing ? formData?.size_class : plant.size_class}
-              displayValue={SIZE_CLASS_LABELS[plant.size_class] || 'Not set'}
-              isEditing={isEditing}
-              onChange={(v) => updateField('size_class', v)}
-              options={SIZE_CLASS_OPTIONS}
-            />
-
-            <div>
-              <EditableField
-                label="Bloom Color"
-                value={isEditing ? formData?.bloom_color : plant.bloom_color}
-                displayValue={formatBloomColorDisplay(plant)}
-                isEditing={isEditing}
-                onChange={(v) => {
-                  updateField('bloom_color', v);
-                  if (!COMPOUND_BLOOM_COLORS.has(v)) updateField('bloom_colors', []);
-                }}
-                options={BLOOM_COLOR_OPTIONS}
-              />
-              {isEditing && COMPOUND_BLOOM_COLORS.has(formData?.bloom_color) && (
-                <div style={{ marginTop: 12 }}>
-                  <BloomColorPicker
-                    value={formData?.bloom_colors || []}
-                    onChange={(colors) => updateField('bloom_colors', colors)}
-                    hint={
-                      formData.bloom_color === 'bi-color'
-                        ? 'Pick the two colors that make up this bloom.'
-                        : 'Pick all colors present in this bloom.'
-                    }
-                  />
-                </div>
-              )}
-            </div>
-
-            <EditableField
-              label="Bloom Type"
-              value={isEditing ? formData?.bloom_type : plant.bloom_type}
-              displayValue={BLOOM_TYPE_LABELS[plant.bloom_type] || 'Not set'}
-              isEditing={isEditing}
-              onChange={(v) => updateField('bloom_type', v)}
-              options={BLOOM_TYPE_OPTIONS}
-            />
-
-            <EditableField
-              label="Leaf Type"
-              value={isEditing ? formData?.leaf_type : plant.leaf_type}
-              displayValue={LEAF_TYPE_LABELS[plant.leaf_type] || 'Not set'}
-              isEditing={isEditing}
-              onChange={(v) => updateField('leaf_type', v)}
-              options={LEAF_TYPE_OPTIONS}
-            />
-
-            <EditableField
-              label="Leaf Color"
-              value={isEditing ? formData?.leaf_color : plant.leaf_color}
-              displayValue={LEAF_COLOR_LABELS[plant.leaf_color] || 'Not set'}
-              isEditing={isEditing}
-              onChange={(v) => updateField('leaf_color', v)}
-              options={LEAF_COLOR_OPTIONS}
-            />
-
-            <EditableField
-              label="AVSA Number"
-              value={isEditing ? formData?.avsa_number : plant.avsa_number}
-              isEditing={isEditing}
-              onChange={(v) => updateField('avsa_number', v)}
-              placeholder="e.g., 10822"
-            />
-
-            <EditableField
-              label="Hybridizer"
-              value={isEditing ? formData?.hybridizer : plant.hybridizer}
-              isEditing={isEditing}
-              onChange={(v) => updateField('hybridizer', v)}
-              placeholder="e.g., LLG Greenhouses"
-            />
-          </div>
-
-          <div className="my-6" style={{ borderTop: '1px solid var(--sage-200)' }} />
-
-          {/* Notes */}
-          <EditableField
-            label="Notes"
-            value={isEditing ? formData?.notes : plant.notes}
-            isEditing={isEditing}
-            onChange={(v) => updateField('notes', v)}
-            multiline
-            placeholder="Any notes about this plant..."
+        {isEditing ? (
+          <EditFormCard
+            formData={formData}
+            updateField={updateField}
+            allLocationOptions={allLocationOptions}
+            canAddMultiPhotos={canAddMultiPhotos}
+            formatDate={formatDate}
           />
-        </div>
-
-        {/* Lineage (only in view mode) */}
-        {!isEditing && (
-          <section className="mb-6">
-            <MiniPedigree plant={plant} />
-          </section>
-        )}
-
-        {/* Care Status Grid (only in view mode, hide for archived) */}
-        {!isEditing && !plantIsArchived && (
+        ) : (
           <>
-            <section className="mb-6">
-              <h2 className="heading heading-md mb-4">Care Status</h2>
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                <CareStatusCard
-                  careType="watering"
-                  status={careStatuses.watering}
-                  lastDate={plant.last_watered}
-                />
-                <CareStatusCard
-                  careType="fertilizing"
-                  status={careStatuses.fertilizing}
-                  lastDate={plant.last_fertilized}
-                />
-                <CareStatusCard
-                  careType="grooming"
-                  status={careStatuses.grooming}
-                  lastDate={plant.last_groomed}
-                />
-              </div>
-            </section>
-
-            {/* Quick Care Actions */}
-            <QuickCareActions
-              plantId={id}
-              onLogCare={logCare}
-              isPending={isPending}
-              currentPotSize={plant.pot_size}
+            <PlantHero
+              plant={plant}
+              displayName={displayName}
+              careStatuses={careStatuses}
+              activeBloom={activeBloom}
+              canAddMultiPhotos={canAddMultiPhotos}
+              photoUrls={plant.photo_urls || []}
+              onPhotoUrlsChange={handlePhotoUrlsChange}
             />
-          </>
-        )}
 
-        {/* History sections (visible for both active and archived plants) */}
-        {!isEditing && (
-          <>
-            {/* Bloom History */}
-            <div className="mb-6">
-              <BloomHistory
-                logs={bloomLogs}
-                isLoading={bloomsLoading}
-                onCreateBloom={(data) => createBloomLog.mutateAsync({ ...data, plant_id: id })}
-                onEndBloom={(logId) =>
-                  endBloom.mutateAsync({
-                    id: logId,
+            {!plantIsArchived && (
+              <CareSection
+                plant={plant}
+                careStatuses={careStatuses}
+                onLogCare={async ({ careType, fertilizerType, potSize, treatmentType }) => {
+                  await logCare({
                     plantId: id,
-                    endDate: new Date().toISOString().split('T')[0],
-                  })
-                }
-                onDeleteBloom={(logId) => deleteBloomLog.mutateAsync(logId)}
-                isCreating={createBloomLog.isPending}
-                isEnding={endBloom.isPending}
-                isDeleting={deleteBloomLog.isPending}
-              />
-            </div>
-
-            {/* Health Log */}
-            <div className="mb-6">
-              <HealthHistory
-                logs={healthLogs}
-                isLoading={healthLoading}
-                onCreateLog={(data) => createHealthLog.mutateAsync({ ...data, plant_id: id })}
-                onDeleteLog={(logId) => deleteHealthLog.mutateAsync(logId)}
-                isCreating={createHealthLog.isPending}
-                isDeleting={deleteHealthLog.isPending}
-              />
-            </div>
-
-            {/* Care History */}
-            <div className="mb-6">
-              <CareHistory logs={careLogs} isLoading={logsLoading} />
-            </div>
-
-            {/* Journal Notes */}
-            <section className="mt-6">
-              <NotesLog
-                entries={journalEntries}
-                onAdd={async (content) => {
-                  await createJournalEntry.mutateAsync({ plant_id: id, content });
+                    careType,
+                    notes: '',
+                    fertilizerType: fertilizerType || null,
+                    potSize: potSize || null,
+                    treatmentType: treatmentType || null,
+                  });
                 }}
-                onDelete={(entryId) => {
-                  deleteJournalEntry.mutate({ id: entryId, parentKey: journalKeys.forPlant(id) });
+                isLoggingCare={isLoggingCare}
+                onCreateHealthLog={async (data) => {
+                  await createHealthLog.mutateAsync({ ...data, plant_id: id });
                 }}
-                isLoading={journalLoading}
-                isPending={createJournalEntry.isPending || deleteJournalEntry.isPending}
+                isCreatingHealth={createHealthLog.isPending}
               />
+            )}
+
+            <BloomHistorySection
+              logs={bloomLogs}
+              isLoading={bloomsLoading}
+              onCreateBloom={(data) => createBloomLog.mutateAsync({ ...data, plant_id: id })}
+              onEndBloom={(logId) =>
+                endBloom.mutateAsync({
+                  id: logId,
+                  plantId: id,
+                  endDate: new Date().toISOString().split('T')[0],
+                })
+              }
+              onUpdatePeak={(logId, peak) =>
+                updateBloomLog.mutateAsync({
+                  id: logId,
+                  updates: { peak_bloom_count: peak, flower_count: peak },
+                })
+              }
+              onUpdateBloom={(logId, updates) =>
+                updateBloomLog.mutateAsync({ id: logId, updates })
+              }
+              onDeleteBloom={(logId) => deleteBloomLog.mutateAsync(logId)}
+              isCreating={createBloomLog.isPending}
+              isEnding={endBloom.isPending}
+              isUpdating={updateBloomLog.isPending}
+              isDeleting={deleteBloomLog.isPending}
+            />
+
+            <ActivityLog
+              careLogs={careLogs}
+              healthLogs={healthLogs}
+              isLoading={logsLoading || healthLoading}
+            />
+
+            <NotesLog
+              entries={journalEntries}
+              onAdd={async (content) => {
+                await createJournalEntry.mutateAsync({ plant_id: id, content });
+              }}
+              onDelete={(entryId) => {
+                deleteJournalEntry.mutate({ id: entryId, parentKey: journalKeys.forPlant(id) });
+              }}
+              isLoading={journalLoading}
+              isPending={createJournalEntry.isPending || deleteJournalEntry.isPending}
+            />
+
+            <div className="mb-6" />
+
+            <DetailsSection plant={plant} onEdit={() => setIsEditing(true)} />
+
+            <section className="mb-6">
+              <MiniPedigree plant={plant} />
             </section>
           </>
         )}
       </div>
 
-      {/* Delete Confirmation Modal */}
       {showDeleteConfirm && (
         <div
           className="fixed inset-0 flex items-center justify-center z-50 p-4"
@@ -853,4 +564,177 @@ export default function PlantDetail() {
       )}
     </div>
   );
+
+  function EditFormCard({ formData, updateField, allLocationOptions, canAddMultiPhotos, formatDate }) {
+    if (!formData) return null;
+    return (
+      <div className="card p-6 mb-6">
+        <div className="flex flex-col md:flex-row gap-6">
+          <div className="flex-shrink-0 space-y-3">
+            <PhotoUpload
+              value={formData.photo_url}
+              onChange={(url) => updateField('photo_url', url)}
+            />
+            {canAddMultiPhotos ? (
+              <div className="w-48">
+                <label className="text-small text-muted block mb-2">More photos</label>
+                <PlantPhotoGallery
+                  value={formData.photo_urls || []}
+                  onChange={(urls) => updateField('photo_urls', urls)}
+                />
+              </div>
+            ) : (
+              <div
+                className="w-48 flex items-center gap-2 px-2 py-1.5 rounded-lg"
+                style={{ background: 'var(--cream-100)', border: '1px dashed var(--sage-300)' }}
+              >
+                <Sparkles size={12} style={{ color: 'var(--copper-500)' }} />
+                <span className="text-small" style={{ color: 'var(--text-muted)', fontSize: 11 }}>
+                  Add up to 5 photos with Premium
+                </span>
+              </div>
+            )}
+          </div>
+
+          <div className="flex-1 min-w-0 space-y-5">
+            <EditableField
+              label="Cultivar Name"
+              value={formData.cultivar_name}
+              isEditing
+              onChange={(v) => updateField('cultivar_name', v)}
+              placeholder="e.g., Optimara EverGrace"
+              required
+            />
+            <EditableField
+              label="Nickname"
+              value={formData.nickname}
+              isEditing
+              onChange={(v) => updateField('nickname', v)}
+              placeholder="e.g., Grace"
+            />
+          </div>
+        </div>
+
+        <div className="my-6" style={{ borderTop: '1px solid var(--sage-200)' }} />
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <EditableField
+            label="Acquired Date"
+            value={formData.acquisition_date}
+            isEditing
+            onChange={(v) => updateField('acquisition_date', v)}
+            type="date"
+          />
+          <EditableField
+            label="Source"
+            value={formData.source}
+            isEditing
+            onChange={(v) => updateField('source', v)}
+            placeholder="e.g., Local nursery"
+          />
+          <EditableField
+            label="Location"
+            value={formData.location}
+            isEditing
+            onChange={(v) => updateField('location', v)}
+            options={allLocationOptions}
+          />
+          <EditableField
+            label="Status"
+            value={formData.status}
+            isEditing
+            onChange={(v) => updateField('status', v)}
+            options={STATUS_OPTIONS}
+          />
+          <EditableField
+            label="Pot Size"
+            value={formData.pot_size}
+            isEditing
+            onChange={(v) => updateField('pot_size', v)}
+            options={POT_SIZE_OPTIONS}
+          />
+          <EditableField
+            label="Size Class"
+            value={formData.size_class}
+            isEditing
+            onChange={(v) => updateField('size_class', v)}
+            options={SIZE_CLASS_OPTIONS}
+          />
+
+          <div>
+            <EditableField
+              label="Bloom Color"
+              value={formData.bloom_color}
+              isEditing
+              onChange={(v) => {
+                updateField('bloom_color', v);
+                if (!COMPOUND_BLOOM_COLORS.has(v)) updateField('bloom_colors', []);
+              }}
+              options={BLOOM_COLOR_OPTIONS}
+            />
+            {COMPOUND_BLOOM_COLORS.has(formData.bloom_color) && (
+              <div style={{ marginTop: 12 }}>
+                <BloomColorPicker
+                  value={formData.bloom_colors || []}
+                  onChange={(colors) => updateField('bloom_colors', colors)}
+                  hint={
+                    formData.bloom_color === 'bi-color'
+                      ? 'Pick the two colors that make up this bloom.'
+                      : 'Pick all colors present in this bloom.'
+                  }
+                />
+              </div>
+            )}
+          </div>
+
+          <EditableField
+            label="Bloom Type"
+            value={formData.bloom_type}
+            isEditing
+            onChange={(v) => updateField('bloom_type', v)}
+            options={BLOOM_TYPE_OPTIONS}
+          />
+          <EditableField
+            label="Leaf Type"
+            value={formData.leaf_type}
+            isEditing
+            onChange={(v) => updateField('leaf_type', v)}
+            options={LEAF_TYPE_OPTIONS}
+          />
+          <EditableField
+            label="Leaf Color"
+            value={formData.leaf_color}
+            isEditing
+            onChange={(v) => updateField('leaf_color', v)}
+            options={LEAF_COLOR_OPTIONS}
+          />
+          <EditableField
+            label="AVSA Number"
+            value={formData.avsa_number}
+            isEditing
+            onChange={(v) => updateField('avsa_number', v)}
+            placeholder="e.g., 10822"
+          />
+          <EditableField
+            label="Hybridizer"
+            value={formData.hybridizer}
+            isEditing
+            onChange={(v) => updateField('hybridizer', v)}
+            placeholder="e.g., LLG Greenhouses"
+          />
+        </div>
+
+        <div className="my-6" style={{ borderTop: '1px solid var(--sage-200)' }} />
+
+        <EditableField
+          label="Notes"
+          value={formData.notes}
+          isEditing
+          onChange={(v) => updateField('notes', v)}
+          multiline
+          placeholder="Any notes about this plant..."
+        />
+      </div>
+    );
+  }
 }
