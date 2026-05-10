@@ -14,7 +14,20 @@ export const lineageKeys = {
   ancestors: (id, gens) => [...lineageKeys.all, 'ancestors', id, gens],
   descendants: (id) => [...lineageKeys.all, 'descendants', id],
   traits: (id) => [...lineageKeys.all, 'traits', id],
+  graph: () => [...lineageKeys.all, 'graph'],
 };
+
+/**
+ * Fetch the full slim plant set used for collection-wide pedigree math.
+ */
+export function useLineageGraph() {
+  const { isAuthenticated } = useAuth();
+  return useQuery({
+    queryKey: lineageKeys.graph(),
+    queryFn: () => lineageService.getAllPlantsForLineage(),
+    enabled: isAuthenticated,
+  });
+}
 
 /**
  * Fetch ancestor tree data for a plant (flat array, build tree client-side).

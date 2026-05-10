@@ -90,6 +90,16 @@ export async function getDirectDescendants(plantId) {
 }
 
 /**
+ * Fetch all plants belonging to the current user with the slim set of fields
+ * required for collection-wide pedigree math (stats hero, featured pedigree).
+ */
+export async function getAllPlantsForLineage() {
+  const { data, error } = await supabase.from('plants').select('*');
+  if (error) throw error;
+  return data || [];
+}
+
+/**
  * Update lineage fields on a plant.
  */
 export async function updatePlantLineage(plantId, lineageData) {

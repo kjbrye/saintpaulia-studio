@@ -6,3 +6,8 @@ export { default as MiniPedigree } from './MiniPedigree';
 export { default as LineageEditor } from './LineageEditor';
 export { default as RelationshipFinder } from './RelationshipFinder';
 export { default as TraitInheritance } from './TraitInheritance';
+export { default as CollectionStatsHero } from './CollectionStatsHero';
+export { default as FeaturedPedigree } from './FeaturedPedigree';
+export { default as HybridPedigree } from './HybridPedigree';
+export { default as CloneRibbon } from './CloneRibbon';
+export { default as PlantInfoCard } from './PlantInfoCard';

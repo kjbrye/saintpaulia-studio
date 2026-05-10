@@ -121,7 +121,10 @@ export default function AddPlant() {
         leaf_color: formData.leaf_color || null,
         notes: formData.notes.trim() || null,
         ...(parentForLineage
-          ? { lineage_notes: `Leaf-cutting propagation from parent plant.` }
+          ? {
+              clone_source_plant_id: parentForLineage,
+              lineage_notes: `Leaf-cutting propagation from parent plant.`,
+            }
           : {}),
       });
 

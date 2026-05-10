@@ -301,6 +301,79 @@ export function describeRelationship(plantAId, plantBId, plantMap) {
 }
 
 /**
+ * Compute the depth (in generations) of a plant's pedigree — i.e. how many
+ * levels of ancestors are recorded above it. A plant with no parents has
+ * depth 0; a plant with parents but no grandparents has depth 1.
+ */
+export function pedigreeDepth(plantId, plantMap, cache = new Map(), seen = new Set()) {
+  if (!plantId || seen.has(plantId)) return 0;
+  if (cache.has(plantId)) return cache.get(plantId);
+  const plant = plantMap.get(plantId);
+  if (!plant) return 0;
+  seen.add(plantId);
+  const podDepth = plant.pod_parent_id
+    ? 1 + pedigreeDepth(plant.pod_parent_id, plantMap, cache, seen)
+    : 0;
+  const pollenDepth = plant.pollen_parent_id
+    ? 1 + pedigreeDepth(plant.pollen_parent_id, plantMap, cache, seen)
+    : 0;
+  seen.delete(plantId);
+  const depth = Math.max(podDepth, pollenDepth);
+  cache.set(plantId, depth);
+  return depth;
+}
+
+/**
+ * Compute collection-wide lineage stats for the stats hero.
+ *   generationsDeep   max pedigree depth across the collection
+ *   lineagesMapped    plants with at least one recorded parent
+ *   relationships     total parent→child links
+ */
+export function computeCollectionStats(plants) {
+  if (!plants || plants.length === 0) {
+    return { generationsDeep: 0, lineagesMapped: 0, relationships: 0 };
+  }
+  const plantMap = new Map(plants.map((p) => [p.id, p]));
+  const cache = new Map();
+  let generationsDeep = 0;
+  let lineagesMapped = 0;
+  let relationships = 0;
+  for (const p of plants) {
+    const d = pedigreeDepth(p.id, plantMap, cache);
+    if (d > generationsDeep) generationsDeep = d;
+    if (p.pod_parent_id || p.pollen_parent_id) lineagesMapped += 1;
+    if (p.pod_parent_id) relationships += 1;
+    if (p.pollen_parent_id) relationships += 1;
+  }
+  return { generationsDeep, lineagesMapped, relationships };
+}
+
+/**
+ * Pick the plant with the deepest pedigree (ties broken by most recent
+ * updated_at). Returns { plant, depth, ancestorCount } or null.
+ */
+export function findDeepestPedigree(plants) {
+  if (!plants || plants.length === 0) return null;
+  const plantMap = new Map(plants.map((p) => [p.id, p]));
+  const cache = new Map();
+  let best = null;
+  for (const p of plants) {
+    const depth = pedigreeDepth(p.id, plantMap, cache);
+    if (depth === 0) continue;
+    if (
+      !best ||
+      depth > best.depth ||
+      (depth === best.depth &&
+        new Date(p.updated_at || 0) > new Date(best.plant.updated_at || 0))
+    ) {
+      const ancestorCount = collectAncestorIds(p.id, plantMap, depth + 1).size - 1;
+      best = { plant: p, depth, ancestorCount };
+    }
+  }
+  return best;
+}
+
+/**
  * Get COI risk level and label.
  * @param {number} coi
  * @returns {{ level: string, label: string, color: string }}
