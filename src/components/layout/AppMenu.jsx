@@ -42,10 +42,10 @@ const PRIMARY_ITEMS = [
   { label: 'Lineage', href: '/lineage', icon: GitFork, shortcut: 'G', feature: 'lineage' },
   { label: 'Analytics', href: '/analytics', icon: BarChart3, shortcut: 'A', feature: 'analytics' },
   { label: 'Notes', href: '/notes', icon: StickyNote, shortcut: 'J' },
+  { label: 'Wishlist', href: '/wishlist', icon: Heart, shortcut: 'W' },
 ];
 
 const SECONDARY_ITEMS = [
-  { label: 'Wishlist', icon: Heart, comingSoon: true },
   { label: 'Settings', href: '/settings', icon: Settings },
   { label: 'Help', href: '/about', icon: HelpCircle },
 ];

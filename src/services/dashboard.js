@@ -145,10 +145,9 @@ async function fetchPlantsByIds(ids) {
  * queried for free users (returns the real number) so the UI can show
  * accurate values the moment they upgrade.
  *
- * Wishlist is hardcoded to 0 — the wishlist_items table doesn't exist yet.
  */
 export async function getCollectionCounts() {
-  const [plantsRes, propRes, crossRes, sportsRes] = await Promise.all([
+  const [plantsRes, propRes, crossRes, sportsRes, wishlistRes] = await Promise.all([
     supabase.from('plants').select('id, status, is_blooming'),
     supabase
       .from('propagations')
@@ -159,19 +158,24 @@ export async function getCollectionCounts() {
       .select('id', { count: 'exact', head: true })
       .in('stage', ACTIVE_CROSS_STAGES),
     supabase.from('sports').select('id', { count: 'exact', head: true }),
+    supabase
+      .from('wishlist_items')
+      .select('id', { count: 'exact', head: true })
+      .eq('status', 'active'),
   ]);
 
   if (plantsRes.error) throw plantsRes.error;
   if (propRes.error) throw propRes.error;
   if (crossRes.error) throw crossRes.error;
   if (sportsRes.error) throw sportsRes.error;
+  if (wishlistRes.error) throw wishlistRes.error;
 
   const activePlants = (plantsRes.data ?? []).filter((p) => !isArchived(p.status));
 
   return {
     plants: activePlants.length,
     blooming: activePlants.filter((p) => p.is_blooming).length,
-    wishlist: 0, // TODO: wire up when wishlist_items table ships
+    wishlist: wishlistRes.count ?? 0,
     propagations: propRes.count ?? 0,
     crosses: crossRes.count ?? 0,
     sports: sportsRes.count ?? 0,

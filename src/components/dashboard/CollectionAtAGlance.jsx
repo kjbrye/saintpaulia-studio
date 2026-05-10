@@ -141,7 +141,7 @@ export default function CollectionAtAGlance({ counts, isPremium }) {
           label="Wishlist"
           count={data.wishlist}
           tone="copper"
-          href={null}
+          href="/wishlist"
         />
 
         {isPremium ? (

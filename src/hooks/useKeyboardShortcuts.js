@@ -79,6 +79,10 @@ export function useKeyboardShortcuts({ onOpenCommandPalette }) {
           e.preventDefault();
           navigate('/notes');
           break;
+        case 'w':
+          e.preventDefault();
+          navigate('/wishlist');
+          break;
         case 'x':
           e.preventDefault();
           navigate('/settings');

@@ -7,6 +7,7 @@ import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { ArrowLeft, Plus, Loader2, Sparkles, Sprout } from 'lucide-react';
 import { usePlants, useCreatePlant } from '../hooks/usePlants';
 import { useEstablishPropagation } from '../hooks/usePropagation';
+import { useMarkWishlistItemAcquired } from '../hooks/useWishlist';
 import { useSubscription } from '../hooks/useSubscription';
 import { useToast } from '../hooks/useToast';
 import FormField from '../components/ui/FormField';
@@ -30,10 +31,16 @@ export default function AddPlant() {
   const toast = useToast();
   const createPlant = useCreatePlant();
   const establishPropagation = useEstablishPropagation();
+  const markWishlistAcquired = useMarkWishlistItemAcquired();
   const propagationId = searchParams.get('propagation_id');
+  const wishlistItemId = searchParams.get('wishlist_item_id') || '';
   const prefillCultivar = searchParams.get('cultivar_name') || '';
   const prefillParentId = searchParams.get('parent_plant_id') || '';
+  const prefillHybridizer = searchParams.get('hybridizer') || '';
+  const prefillSource = searchParams.get('source') || '';
+  const prefillNotes = searchParams.get('notes') || '';
   const isEstablishing = !!propagationId;
+  const isAcquiringFromWishlist = !!wishlistItemId;
   const { data: plants = [] } = usePlants();
   const { plantLimit, canUseFeature } = useSubscription();
   const { settings } = useSettings();
@@ -44,11 +51,11 @@ export default function AddPlant() {
     cultivar_name: prefillCultivar,
     nickname: '',
     avsa_number: '',
-    hybridizer: '',
+    hybridizer: prefillHybridizer,
     photo_url: null,
     photo_urls: [],
     acquisition_date: '',
-    source: '',
+    source: prefillSource,
     location: '',
     status: 'healthy',
     pot_size: '',
@@ -58,7 +65,7 @@ export default function AddPlant() {
     size_class: '',
     leaf_type: '',
     leaf_color: '',
-    notes: '',
+    notes: prefillNotes,
   });
 
   const [errors, setErrors] = useState({});
@@ -136,6 +143,17 @@ export default function AddPlant() {
         }
       }
 
+      if (isAcquiringFromWishlist) {
+        try {
+          await markWishlistAcquired.mutateAsync({
+            id: wishlistItemId,
+            plantId: plant.id,
+          });
+        } catch {
+          toast.error('Plant created, but failed to update the wishlist item.');
+        }
+      }
+
       navigate(`/plants/${plant.id}`);
     } catch (error) {
       // Sentry captures this automatically
@@ -159,6 +177,24 @@ export default function AddPlant() {
             {isEstablishing ? 'Establish Propagation' : 'Add New Plant'}
           </h1>
         </header>
+
+        {isAcquiringFromWishlist && prefillCultivar && (
+          <div
+            className="card p-4 mb-6"
+            style={{ background: 'var(--gradient-sage-card)' }}
+          >
+            <p
+              style={{
+                fontFamily: 'var(--font-heading)',
+                fontStyle: 'italic',
+                fontSize: 16,
+                color: 'var(--sage-700)',
+              }}
+            >
+              Acquiring {prefillCultivar} from your wishlist
+            </p>
+          </div>
+        )}
 
         {isEstablishing && (
           <div
