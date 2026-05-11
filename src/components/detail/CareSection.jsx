@@ -119,12 +119,21 @@ export default function CareSection({
   isCreatingHealth,
 }) {
   const { settings } = useSettings();
-  const [openAction, setOpenAction] = useState(null); // 'repot' | 'treat' | 'observation' | null
+  const [openAction, setOpenAction] = useState(null); // 'fertilize' | 'repot' | 'treat' | 'observation' | null
   const [potSize, setPotSize] = useState(plant.pot_size || '');
+  const [fertilizerType, setFertilizerType] = useState('');
   const [treatmentType, setTreatmentType] = useState('');
   const [obsStatus, setObsStatus] = useState('');
   const [obsSymptoms, setObsSymptoms] = useState('');
   const [obsNotes, setObsNotes] = useState('');
+
+  const fertilizerOptions = useMemo(() => {
+    const custom = (settings.customFertilizers || []).map((name) => ({
+      value: `custom:${name}`,
+      label: name,
+    }));
+    return [...FERTILIZER_OPTIONS, ...custom];
+  }, [settings.customFertilizers]);
 
   const treatmentOptions = useMemo(() => {
     const custom = (settings.customTreatments || []).map((name) => ({
@@ -140,7 +149,18 @@ export default function CareSection({
     : `${overdueCount} ${overdueCount === 1 ? 'type' : 'types'} overdue`;
 
   const handlePrimaryLog = (careType) => {
+    if (careType === 'fertilizing') {
+      setOpenAction(openAction === 'fertilize' ? null : 'fertilize');
+      return;
+    }
     onLogCare({ careType });
+  };
+
+  const handleFertilize = async () => {
+    if (!fertilizerType) return;
+    await onLogCare({ careType: 'fertilizing', fertilizerType });
+    setFertilizerType('');
+    setOpenAction(null);
   };
 
   const handleRepot = async () => {
@@ -217,6 +237,30 @@ export default function CareSection({
           active={openAction === 'observation'}
         />
       </div>
+
+      {openAction === 'fertilize' && (
+        <div className="card-inset p-4 mt-3 space-y-3">
+          <label className="text-small font-medium" style={{ color: 'var(--sage-700)' }}>
+            Fertilizer
+          </label>
+          <select
+            value={fertilizerType}
+            onChange={(e) => setFertilizerType(e.target.value)}
+            className="input w-full py-1.5 text-small"
+          >
+            <option value="">Select fertilizer...</option>
+            {fertilizerOptions.map((o) => (
+              <option key={o.value} value={o.value}>{o.label}</option>
+            ))}
+          </select>
+          <div className="flex justify-end gap-2">
+            <button className="btn btn-secondary btn-small" onClick={() => setOpenAction(null)}>Cancel</button>
+            <button className="btn btn-primary btn-small" disabled={!fertilizerType || isLoggingCare} onClick={handleFertilize}>
+              Log fertilizing
+            </button>
+          </div>
+        </div>
+      )}
 
       {openAction === 'repot' && (
         <div className="card-inset p-4 mt-3 space-y-3">
