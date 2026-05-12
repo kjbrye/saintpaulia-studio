@@ -444,7 +444,6 @@ export default function PlantDetail() {
             updateField={updateField}
             allLocationOptions={allLocationOptions}
             canAddMultiPhotos={canAddMultiPhotos}
-            formatDate={formatDate}
           />
         ) : (
           <>
@@ -564,177 +563,177 @@ export default function PlantDetail() {
       )}
     </div>
   );
+}
 
-  function EditFormCard({ formData, updateField, allLocationOptions, canAddMultiPhotos, formatDate }) {
-    if (!formData) return null;
-    return (
-      <div className="card p-6 mb-6">
-        <div className="flex flex-col md:flex-row gap-6">
-          <div className="flex-shrink-0 space-y-3">
-            <PhotoUpload
-              value={formData.photo_url}
-              onChange={(url) => updateField('photo_url', url)}
-            />
-            {canAddMultiPhotos ? (
-              <div className="w-48">
-                <label className="text-small text-muted block mb-2">More photos</label>
-                <PlantPhotoGallery
-                  value={formData.photo_urls || []}
-                  onChange={(urls) => updateField('photo_urls', urls)}
-                />
-              </div>
-            ) : (
-              <div
-                className="w-48 flex items-center gap-2 px-2 py-1.5 rounded-lg"
-                style={{ background: 'var(--cream-100)', border: '1px dashed var(--sage-300)' }}
-              >
-                <Sparkles size={12} style={{ color: 'var(--copper-500)' }} />
-                <span className="text-small" style={{ color: 'var(--text-muted)', fontSize: 11 }}>
-                  Add up to 5 photos with Premium
-                </span>
-              </div>
-            )}
-          </div>
-
-          <div className="flex-1 min-w-0 space-y-5">
-            <EditableField
-              label="Cultivar Name"
-              value={formData.cultivar_name}
-              isEditing
-              onChange={(v) => updateField('cultivar_name', v)}
-              placeholder="e.g., Optimara EverGrace"
-              required
-            />
-            <EditableField
-              label="Nickname"
-              value={formData.nickname}
-              isEditing
-              onChange={(v) => updateField('nickname', v)}
-              placeholder="e.g., Grace"
-            />
-          </div>
+function EditFormCard({ formData, updateField, allLocationOptions, canAddMultiPhotos }) {
+  if (!formData) return null;
+  return (
+    <div className="card p-6 mb-6">
+      <div className="flex flex-col md:flex-row gap-6">
+        <div className="flex-shrink-0 space-y-3">
+          <PhotoUpload
+            value={formData.photo_url}
+            onChange={(url) => updateField('photo_url', url)}
+          />
+          {canAddMultiPhotos ? (
+            <div className="w-48">
+              <label className="text-small text-muted block mb-2">More photos</label>
+              <PlantPhotoGallery
+                value={formData.photo_urls || []}
+                onChange={(urls) => updateField('photo_urls', urls)}
+              />
+            </div>
+          ) : (
+            <div
+              className="w-48 flex items-center gap-2 px-2 py-1.5 rounded-lg"
+              style={{ background: 'var(--cream-100)', border: '1px dashed var(--sage-300)' }}
+            >
+              <Sparkles size={12} style={{ color: 'var(--copper-500)' }} />
+              <span className="text-small" style={{ color: 'var(--text-muted)', fontSize: 11 }}>
+                Add up to 5 photos with Premium
+              </span>
+            </div>
+          )}
         </div>
 
-        <div className="my-6" style={{ borderTop: '1px solid var(--sage-200)' }} />
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="flex-1 min-w-0 space-y-5">
           <EditableField
-            label="Acquired Date"
-            value={formData.acquisition_date}
+            label="Cultivar Name"
+            value={formData.cultivar_name}
             isEditing
-            onChange={(v) => updateField('acquisition_date', v)}
-            type="date"
+            onChange={(v) => updateField('cultivar_name', v)}
+            placeholder="e.g., Optimara EverGrace"
+            required
           />
           <EditableField
-            label="Source"
-            value={formData.source}
+            label="Nickname"
+            value={formData.nickname}
             isEditing
-            onChange={(v) => updateField('source', v)}
-            placeholder="e.g., Local nursery"
-          />
-          <EditableField
-            label="Location"
-            value={formData.location}
-            isEditing
-            onChange={(v) => updateField('location', v)}
-            options={allLocationOptions}
-          />
-          <EditableField
-            label="Status"
-            value={formData.status}
-            isEditing
-            onChange={(v) => updateField('status', v)}
-            options={STATUS_OPTIONS}
-          />
-          <EditableField
-            label="Pot Size"
-            value={formData.pot_size}
-            isEditing
-            onChange={(v) => updateField('pot_size', v)}
-            options={POT_SIZE_OPTIONS}
-          />
-          <EditableField
-            label="Size Class"
-            value={formData.size_class}
-            isEditing
-            onChange={(v) => updateField('size_class', v)}
-            options={SIZE_CLASS_OPTIONS}
-          />
-
-          <div>
-            <EditableField
-              label="Bloom Color"
-              value={formData.bloom_color}
-              isEditing
-              onChange={(v) => {
-                updateField('bloom_color', v);
-                if (!COMPOUND_BLOOM_COLORS.has(v)) updateField('bloom_colors', []);
-              }}
-              options={BLOOM_COLOR_OPTIONS}
-            />
-            {COMPOUND_BLOOM_COLORS.has(formData.bloom_color) && (
-              <div style={{ marginTop: 12 }}>
-                <BloomColorPicker
-                  value={formData.bloom_colors || []}
-                  onChange={(colors) => updateField('bloom_colors', colors)}
-                  hint={
-                    formData.bloom_color === 'bi-color'
-                      ? 'Pick the two colors that make up this bloom.'
-                      : 'Pick all colors present in this bloom.'
-                  }
-                />
-              </div>
-            )}
-          </div>
-
-          <EditableField
-            label="Bloom Type"
-            value={formData.bloom_type}
-            isEditing
-            onChange={(v) => updateField('bloom_type', v)}
-            options={BLOOM_TYPE_OPTIONS}
-          />
-          <EditableField
-            label="Leaf Type"
-            value={formData.leaf_type}
-            isEditing
-            onChange={(v) => updateField('leaf_type', v)}
-            options={LEAF_TYPE_OPTIONS}
-          />
-          <EditableField
-            label="Leaf Color"
-            value={formData.leaf_color}
-            isEditing
-            onChange={(v) => updateField('leaf_color', v)}
-            options={LEAF_COLOR_OPTIONS}
-          />
-          <EditableField
-            label="AVSA Number"
-            value={formData.avsa_number}
-            isEditing
-            onChange={(v) => updateField('avsa_number', v)}
-            placeholder="e.g., 10822"
-          />
-          <EditableField
-            label="Hybridizer"
-            value={formData.hybridizer}
-            isEditing
-            onChange={(v) => updateField('hybridizer', v)}
-            placeholder="e.g., LLG Greenhouses"
+            onChange={(v) => updateField('nickname', v)}
+            placeholder="e.g., Grace"
           />
         </div>
+      </div>
 
-        <div className="my-6" style={{ borderTop: '1px solid var(--sage-200)' }} />
+      <div className="my-6" style={{ borderTop: '1px solid var(--sage-200)' }} />
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <EditableField
+          label="Acquired Date"
+          value={formData.acquisition_date}
+          isEditing
+          onChange={(v) => updateField('acquisition_date', v)}
+          type="date"
+        />
+        <EditableField
+          label="Source"
+          value={formData.source}
+          isEditing
+          onChange={(v) => updateField('source', v)}
+          placeholder="e.g., Local nursery"
+        />
+        <EditableField
+          label="Location"
+          value={formData.location}
+          isEditing
+          onChange={(v) => updateField('location', v)}
+          options={allLocationOptions}
+        />
+        <EditableField
+          label="Status"
+          value={formData.status}
+          isEditing
+          onChange={(v) => updateField('status', v)}
+          options={STATUS_OPTIONS}
+        />
+        <EditableField
+          label="Pot Size"
+          value={formData.pot_size}
+          isEditing
+          onChange={(v) => updateField('pot_size', v)}
+          options={POT_SIZE_OPTIONS}
+        />
+        <EditableField
+          label="Size Class"
+          value={formData.size_class}
+          isEditing
+          onChange={(v) => updateField('size_class', v)}
+          options={SIZE_CLASS_OPTIONS}
+        />
+
+        <div>
+          <EditableField
+            label="Bloom Color"
+            value={formData.bloom_color}
+            isEditing
+            onChange={(v) => {
+              updateField('bloom_color', v);
+              if (!COMPOUND_BLOOM_COLORS.has(v)) updateField('bloom_colors', []);
+            }}
+            options={BLOOM_COLOR_OPTIONS}
+          />
+          {COMPOUND_BLOOM_COLORS.has(formData.bloom_color) && (
+            <div style={{ marginTop: 12 }}>
+              <BloomColorPicker
+                value={formData.bloom_colors || []}
+                onChange={(colors) => updateField('bloom_colors', colors)}
+                hint={
+                  formData.bloom_color === 'bi-color'
+                    ? 'Pick the two colors that make up this bloom.'
+                    : 'Pick all colors present in this bloom.'
+                }
+              />
+            </div>
+          )}
+        </div>
 
         <EditableField
-          label="Notes"
-          value={formData.notes}
+          label="Bloom Type"
+          value={formData.bloom_type}
           isEditing
-          onChange={(v) => updateField('notes', v)}
-          multiline
-          placeholder="Any notes about this plant..."
+          onChange={(v) => updateField('bloom_type', v)}
+          options={BLOOM_TYPE_OPTIONS}
+        />
+        <EditableField
+          label="Leaf Type"
+          value={formData.leaf_type}
+          isEditing
+          onChange={(v) => updateField('leaf_type', v)}
+          options={LEAF_TYPE_OPTIONS}
+        />
+        <EditableField
+          label="Leaf Color"
+          value={formData.leaf_color}
+          isEditing
+          onChange={(v) => updateField('leaf_color', v)}
+          options={LEAF_COLOR_OPTIONS}
+        />
+        <EditableField
+          label="AVSA Number"
+          value={formData.avsa_number}
+          isEditing
+          onChange={(v) => updateField('avsa_number', v)}
+          placeholder="e.g., 10822"
+        />
+        <EditableField
+          label="Hybridizer"
+          value={formData.hybridizer}
+          isEditing
+          onChange={(v) => updateField('hybridizer', v)}
+          placeholder="e.g., LLG Greenhouses"
         />
       </div>
-    );
-  }
+
+      <div className="my-6" style={{ borderTop: '1px solid var(--sage-200)' }} />
+
+      <EditableField
+        label="Notes"
+        value={formData.notes}
+        isEditing
+        onChange={(v) => updateField('notes', v)}
+        multiline
+        placeholder="Any notes about this plant..."
+      />
+    </div>
+  );
 }
