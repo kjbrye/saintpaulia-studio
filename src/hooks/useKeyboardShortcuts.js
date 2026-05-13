@@ -5,6 +5,22 @@
 import { useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+// Module-level counter so any page can suspend the single-key navigation
+// shortcuts while it owns the keyboard (e.g. an inline edit form where
+// focus may sit on buttons or the body between field interactions).
+// ⌘K stays active regardless.
+let navSuppressionCount = 0;
+
+export function useSuppressNavShortcuts(active) {
+  useEffect(() => {
+    if (!active) return undefined;
+    navSuppressionCount += 1;
+    return () => {
+      navSuppressionCount = Math.max(0, navSuppressionCount - 1);
+    };
+  }, [active]);
+}
+
 /**
  * Hook that listens for global keyboard shortcuts.
  * Navigation shortcuts fire on single keypress when no input is focused.
@@ -33,6 +49,9 @@ export function useKeyboardShortcuts({ onOpenCommandPalette }) {
 
       // Single-key navigation shortcuts (no modifier)
       if (e.metaKey || e.ctrlKey || e.altKey) return;
+
+      // A page has asked to suspend navigation shortcuts (e.g. edit mode).
+      if (navSuppressionCount > 0) return;
 
       switch (e.key.toLowerCase()) {
         case 'k':

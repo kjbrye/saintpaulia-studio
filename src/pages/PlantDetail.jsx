@@ -43,6 +43,7 @@ import { Sparkles } from 'lucide-react';
 import NotesLog from '../components/ui/NotesLog';
 import { MiniPedigree } from '../components/lineage';
 import { usePageTitle } from '../hooks/usePageTitle';
+import { useSuppressNavShortcuts } from '../hooks/useKeyboardShortcuts';
 import {
   STATUS_LABELS,
   STATUS_OPTIONS,
@@ -176,6 +177,8 @@ export default function PlantDetail() {
   const [hasChanges, setHasChanges] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [showArchiveMenu, setShowArchiveMenu] = useState(false);
+
+  useSuppressNavShortcuts(isEditing);
 
   const { canUseFeature } = useSubscription();
   const canAddMultiPhotos = canUseFeature('multi_photos');
