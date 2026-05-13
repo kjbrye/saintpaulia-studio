@@ -61,7 +61,7 @@ export default function Library() {
     searchTimerRef.current = setTimeout(() => setDebouncedSearch(value), 200);
   }, []);
   const [viewMode, setViewMode] = useState(settings.defaultView);
-  const [sortBy, setSortBy] = useState('watered');
+  const [sortBy, setSortBy] = useState('name');
   const [currentPage, setCurrentPage] = useState(1);
 
   // Care filter is URL-driven — the dashboard's overdue TaskCards link here
@@ -182,10 +182,6 @@ export default function Library() {
     // Sort
     result = [...result].sort((a, b) => {
       switch (sortBy) {
-        case 'name':
-          return (a.nickname || a.cultivar_name || '').localeCompare(
-            b.nickname || b.cultivar_name || '',
-          );
         case 'acquired':
           return new Date(b.acquisition_date || 0) - new Date(a.acquisition_date || 0);
         case 'lastBloomed': {
@@ -202,8 +198,12 @@ export default function Library() {
           return idx(a.pot_size) - idx(b.pot_size);
         }
         case 'watered':
-        default:
           return new Date(b.last_watered || 0) - new Date(a.last_watered || 0);
+        case 'name':
+        default:
+          return (a.nickname || a.cultivar_name || '').localeCompare(
+            b.nickname || b.cultivar_name || '',
+          );
       }
     });
 
