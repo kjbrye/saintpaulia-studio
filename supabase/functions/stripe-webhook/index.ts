@@ -12,6 +12,15 @@ async function stripeGet(endpoint: string) {
   return res.json();
 }
 
+// As of Stripe API 2025-03-31, current_period_end moved off the subscription
+// object onto each subscription item. Read whichever is present; return null
+// rather than producing an invalid Date.
+function periodEnd(sub: Record<string, unknown>): string | null {
+  const ts = sub?.current_period_end ??
+    sub?.items?.data?.[0]?.current_period_end;
+  return ts ? new Date((ts as number) * 1000).toISOString() : null;
+}
+
 async function verifySignature(payload: string, sigHeader: string, secret: string): Promise<boolean> {
   const parts: Record<string, string> = {};
   for (const part of sigHeader.split(',')) {
@@ -91,7 +100,7 @@ Deno.serve(async (req) => {
           stripe_subscription_id: subscriptionId,
           plan: 'premium',
           status: stripeSub.status === 'active' ? 'active' : stripeSub.status,
-          current_period_end: new Date(stripeSub.current_period_end * 1000).toISOString(),
+          current_period_end: periodEnd(stripeSub),
           cancel_at_period_end: stripeSub.cancel_at_period_end,
           updated_at: new Date().toISOString(),
         },
@@ -116,7 +125,7 @@ Deno.serve(async (req) => {
         .from('subscriptions')
         .update({
           status: subscription.status,
-          current_period_end: new Date(subscription.current_period_end * 1000).toISOString(),
+          current_period_end: periodEnd(subscription),
           cancel_at_period_end: subscription.cancel_at_period_end,
           updated_at: new Date().toISOString(),
         })
