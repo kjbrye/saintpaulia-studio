@@ -1,0 +1,6 @@
+# Stripe (and other third-party webhooks) authenticate with their own
+# signature headers, not a Supabase JWT. Without this, the Edge Function
+# gateway rejects webhook calls with 401 UNAUTHORIZED_NO_AUTH_HEADER before
+# the function code runs. The function itself verifies the stripe-signature.
+[functions.stripe-webhook]
+verify_jwt = false
