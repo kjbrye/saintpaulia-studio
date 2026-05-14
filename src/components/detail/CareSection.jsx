@@ -12,7 +12,7 @@ import { useSettings } from '../../hooks/useSettings.jsx';
 
 const PRIMARY_CARE = [
   { type: 'watering', label: 'Watering', icon: Droplets, tile: 'var(--sage-100)', color: 'var(--sage-600)' },
-  { type: 'fertilizing', label: 'Fertilizing', icon: Sparkles, tile: 'rgba(184,119,80,0.12)', color: 'var(--copper-500)' },
+  { type: 'fertilizing', label: 'Fertilizing', icon: Sparkles, tile: 'var(--sage-100)', color: 'var(--sage-600)' },
   { type: 'grooming', label: 'Grooming', icon: Scissors, tile: 'var(--sage-100)', color: 'var(--sage-600)' },
 ];
 
