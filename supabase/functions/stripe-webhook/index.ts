@@ -137,6 +137,29 @@ Deno.serve(async (req) => {
       const subscription = event.data.object;
       const customerId = subscription.customer;
 
+      // The customer may still have another active subscription (duplicate
+      // sign-ups, plan switches). Only downgrade if nothing active remains;
+      // otherwise resync the row to whatever is still active.
+      const active = await stripeGet(
+        `/subscriptions?customer=${customerId}&status=active&limit=1`,
+      );
+      const remaining = active?.data?.[0];
+
+      if (remaining) {
+        await supabase
+          .from('subscriptions')
+          .update({
+            stripe_subscription_id: remaining.id,
+            plan: 'premium',
+            status: remaining.status,
+            current_period_end: periodEnd(remaining),
+            cancel_at_period_end: remaining.cancel_at_period_end,
+            updated_at: new Date().toISOString(),
+          })
+          .eq('stripe_customer_id', customerId);
+        break;
+      }
+
       await supabase
         .from('subscriptions')
         .update({
