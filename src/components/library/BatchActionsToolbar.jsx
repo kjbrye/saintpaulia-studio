@@ -49,9 +49,7 @@ export default function BatchActionsToolbar({
     }
   };
 
-  if (selectedIds.length === 0) {
-    return null;
-  }
+  const hasSelection = selectedIds.length > 0;
 
   return (
     <div className="batch-toolbar">
@@ -61,7 +59,7 @@ export default function BatchActionsToolbar({
           <button
             onClick={onClearSelection}
             className="p-1.5 rounded hover:bg-[var(--sage-200)] transition-colors"
-            title="Clear selection"
+            title="Exit selection mode"
           >
             <X size={16} style={{ color: 'var(--sage-600)' }} />
           </button>
@@ -79,55 +77,59 @@ export default function BatchActionsToolbar({
           )}
         </div>
 
-        {/* Divider */}
-        <div className="w-px h-6 bg-[var(--sage-300)]" />
+        {hasSelection && (
+          <>
+            {/* Divider */}
+            <div className="w-px h-6 bg-[var(--sage-300)]" />
 
-        {/* Batch actions */}
-        <div className="flex items-center gap-2">
-          <span className="text-small text-muted mr-1">Log care:</span>
+            {/* Batch actions */}
+            <div className="flex items-center gap-2">
+              <span className="text-small text-muted mr-1">Log care:</span>
 
-          <button
-            onClick={() => handleBatchCare('watering')}
-            disabled={isLogging}
-            className="batch-action-btn"
-            title="Log watering for selected"
-          >
-            {isLogging && loggedCareType === 'watering' ? (
-              <Check size={16} style={{ color: 'var(--color-success)' }} />
-            ) : (
-              <Droplets size={16} style={{ color: 'var(--sage-600)' }} />
-            )}
-            <span>Water</span>
-          </button>
+              <button
+                onClick={() => handleBatchCare('watering')}
+                disabled={isLogging}
+                className="batch-action-btn"
+                title="Log watering for selected"
+              >
+                {isLogging && loggedCareType === 'watering' ? (
+                  <Check size={16} style={{ color: 'var(--color-success)' }} />
+                ) : (
+                  <Droplets size={16} style={{ color: 'var(--sage-600)' }} />
+                )}
+                <span>Water</span>
+              </button>
 
-          <button
-            onClick={() => handleBatchCare('fertilizing')}
-            disabled={isLogging}
-            className="batch-action-btn"
-            title="Log fertilizing for selected"
-          >
-            {isLogging && loggedCareType === 'fertilizing' ? (
-              <Check size={16} style={{ color: 'var(--color-success)' }} />
-            ) : (
-              <Sparkles size={16} style={{ color: 'var(--purple-400)' }} />
-            )}
-            <span>Fertilize</span>
-          </button>
+              <button
+                onClick={() => handleBatchCare('fertilizing')}
+                disabled={isLogging}
+                className="batch-action-btn"
+                title="Log fertilizing for selected"
+              >
+                {isLogging && loggedCareType === 'fertilizing' ? (
+                  <Check size={16} style={{ color: 'var(--color-success)' }} />
+                ) : (
+                  <Sparkles size={16} style={{ color: 'var(--purple-400)' }} />
+                )}
+                <span>Fertilize</span>
+              </button>
 
-          <button
-            onClick={() => handleBatchCare('grooming')}
-            disabled={isLogging}
-            className="batch-action-btn"
-            title="Log grooming for selected"
-          >
-            {isLogging && loggedCareType === 'grooming' ? (
-              <Check size={16} style={{ color: 'var(--color-success)' }} />
-            ) : (
-              <Scissors size={16} style={{ color: 'var(--copper-500)' }} />
-            )}
-            <span>Groom</span>
-          </button>
-        </div>
+              <button
+                onClick={() => handleBatchCare('grooming')}
+                disabled={isLogging}
+                className="batch-action-btn"
+                title="Log grooming for selected"
+              >
+                {isLogging && loggedCareType === 'grooming' ? (
+                  <Check size={16} style={{ color: 'var(--color-success)' }} />
+                ) : (
+                  <Scissors size={16} style={{ color: 'var(--copper-500)' }} />
+                )}
+                <span>Groom</span>
+              </button>
+            </div>
+          </>
+        )}
       </div>
     </div>
   );
