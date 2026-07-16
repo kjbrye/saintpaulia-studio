@@ -2,7 +2,7 @@
  * CareStatusCard - Shows care status for a single care type
  */
 
-import { Droplets, Sparkles, Scissors } from 'lucide-react';
+import { Droplets, Sparkles, Scissors, Shovel } from 'lucide-react';
 
 const careConfig = {
   watering: {
@@ -19,6 +19,11 @@ const careConfig = {
     icon: Scissors,
     label: 'Grooming',
     field: 'last_groomed',
+  },
+  repotting: {
+    icon: Shovel,
+    label: 'Repotting',
+    field: 'last_repotted',
   },
 };
 

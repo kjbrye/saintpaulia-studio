@@ -36,6 +36,7 @@ export const CARE_THRESHOLDS = {
   watering: 7,
   fertilizing: 14,
   grooming: 7,
+  repotting: 180,
 };
 
 /**
@@ -52,6 +53,10 @@ export function getPlantCareStatuses(plant, thresholds = CARE_THRESHOLDS) {
       thresholds.fertilizing ?? CARE_THRESHOLDS.fertilizing,
     ),
     grooming: getCareStatus(plant.last_groomed, thresholds.grooming ?? CARE_THRESHOLDS.grooming),
+    repotting: getCareStatus(
+      plant.last_repotted ?? plant.acquisition_date ?? plant.created_at,
+      thresholds.repotting ?? CARE_THRESHOLDS.repotting,
+    ),
   };
 }
 
@@ -105,6 +110,7 @@ export function getCollectionCareStats(plants, thresholds = CARE_THRESHOLDS) {
     watering: { overdue: 0, soon: 0, good: 0 },
     fertilizing: { overdue: 0, soon: 0, good: 0 },
     grooming: { overdue: 0, soon: 0, good: 0 },
+    repotting: { overdue: 0, soon: 0, good: 0 },
   };
 
   let healthyCount = 0;

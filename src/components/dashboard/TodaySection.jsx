@@ -14,7 +14,7 @@
 
 import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Droplets, Flower2, Scissors, Sparkles } from 'lucide-react';
+import { Droplets, Flower2, Scissors, Sparkles, Shovel } from 'lucide-react';
 import TaskCard from './TaskCard';
 import { PremiumFeatureModal } from '../ui';
 
@@ -40,15 +40,22 @@ const CARE_CARD_DEFS = {
     iconBg: 'var(--sage-100)',
     href: '/library?filter=groom-overdue',
   },
+  repotting: {
+    icon: Shovel,
+    title: 'Repot due plants',
+    iconColor: 'var(--copper-500)',
+    iconBg: 'var(--cream-300)',
+    href: '/library?filter=repot-overdue',
+  },
 };
 
 function pickCareCards(overdueCounts) {
-  const types = ['watering', 'fertilizing', 'grooming'];
+  const types = ['watering', 'fertilizing', 'grooming', 'repotting'];
   const overdue = types
     .map((type) => ({ type, count: overdueCounts?.[type]?.count ?? 0 }))
     .filter((entry) => entry.count > 0);
 
-  if (overdue.length === 3) {
+  if (overdue.length >= 3) {
     overdue.sort((a, b) => b.count - a.count);
     return overdue.slice(0, 2).map((entry) => entry.type);
   }

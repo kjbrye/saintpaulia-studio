@@ -12,6 +12,7 @@ const DEFAULT_SETTINGS = {
   wateringThreshold: 7,
   fertilizingThreshold: 14,
   groomingThreshold: 7,
+  repottingThreshold: 180,
   defaultView: 'grid',
   plantsPerPage: 24,
   highContrast: false,
@@ -100,6 +101,7 @@ export function useSettings() {
     watering: context.settings.wateringThreshold,
     fertilizing: context.settings.fertilizingThreshold,
     grooming: context.settings.groomingThreshold,
+    repotting: context.settings.repottingThreshold,
   };
 
   return { ...context, careThresholds };

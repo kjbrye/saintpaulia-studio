@@ -36,6 +36,13 @@ const GROOMING_OPTIONS = [
   { value: 21, label: '21 days' },
 ];
 
+const REPOTTING_OPTIONS = [
+  { value: 90, label: '3 months' },
+  { value: 180, label: '6 months' },
+  { value: 270, label: '9 months' },
+  { value: 365, label: '12 months' },
+];
+
 const VIEW_OPTIONS = [
   { value: 'grid', label: 'Grid' },
   { value: 'list', label: 'List' },
@@ -254,6 +261,12 @@ export default function Settings() {
               value={settings.groomingThreshold}
               options={GROOMING_OPTIONS}
               onChange={(v) => updateSetting('groomingThreshold', v)}
+            />
+            <SettingRow
+              label="Repotting reminder"
+              value={settings.repottingThreshold}
+              options={REPOTTING_OPTIONS}
+              onChange={(v) => updateSetting('repottingThreshold', v)}
             />
           </div>
         </section>

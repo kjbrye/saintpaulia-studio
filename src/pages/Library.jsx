@@ -73,6 +73,7 @@ export default function Library() {
     if (filterParam === 'water-overdue') return 'water-overdue';
     if (filterParam === 'fertilize-overdue') return 'fertilize-overdue';
     if (filterParam === 'groom-overdue') return 'groom-overdue';
+    if (filterParam === 'repot-overdue') return 'repot-overdue';
     return 'all';
   })();
   // ?filter=needs-bloom-update is aliased to the blooming filter — a stricter
@@ -167,12 +168,14 @@ export default function Library() {
     } else if (
       careFilter === 'water-overdue' ||
       careFilter === 'fertilize-overdue' ||
-      careFilter === 'groom-overdue'
+      careFilter === 'groom-overdue' ||
+      careFilter === 'repot-overdue'
     ) {
       const careTypeKey = {
         'water-overdue': 'watering',
         'fertilize-overdue': 'fertilizing',
         'groom-overdue': 'grooming',
+        'repot-overdue': 'repotting',
       }[careFilter];
       result = result.filter((p) =>
         getOverdueCareTypes(p, careThresholds).includes(careTypeKey),
@@ -303,6 +306,7 @@ export default function Library() {
         'water-overdue': 'Water overdue',
         'fertilize-overdue': 'Fertilize overdue',
         'groom-overdue': 'Groom overdue',
+        'repot-overdue': 'Repot overdue',
       };
       chips.push({
         key: 'careFilter',

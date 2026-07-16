@@ -67,17 +67,35 @@ describe('getCareStatus', () => {
 // ---------- getPlantCareStatuses ----------
 
 describe('getPlantCareStatuses', () => {
-  it('returns statuses for all three care types', () => {
+  it('returns statuses for all care types', () => {
     const plant = {
       last_watered: daysAgo(3),
       last_fertilized: daysAgo(10),
       last_groomed: null,
+      last_repotted: daysAgo(30),
     };
     const statuses = getPlantCareStatuses(plant);
 
     expect(statuses.watering.status).toBe('good');
     expect(statuses.fertilizing.status).toBe('good');
     expect(statuses.grooming.status).toBe('overdue');
+    expect(statuses.repotting.status).toBe('good');
+  });
+
+  it('flags repotting overdue past the default 180-day threshold', () => {
+    const plant = { last_repotted: daysAgo(200) };
+    const statuses = getPlantCareStatuses(plant);
+    expect(statuses.repotting.status).toBe('overdue');
+  });
+
+  it('falls back to acquisition_date for repotting when never repotted', () => {
+    const plant = { last_repotted: null, acquisition_date: daysAgo(60) };
+    expect(getPlantCareStatuses(plant).repotting.status).toBe('good');
+  });
+
+  it('falls back to created_at when neither last_repotted nor acquisition_date is set', () => {
+    const plant = { last_repotted: null, acquisition_date: null, created_at: daysAgo(200) };
+    expect(getPlantCareStatuses(plant).repotting.status).toBe('overdue');
   });
 
   it('uses custom thresholds when provided', () => {
@@ -85,13 +103,15 @@ describe('getPlantCareStatuses', () => {
       last_watered: daysAgo(4),
       last_fertilized: daysAgo(4),
       last_groomed: daysAgo(4),
+      last_repotted: daysAgo(4),
     };
-    const thresholds = { watering: 3, fertilizing: 3, grooming: 3 };
+    const thresholds = { watering: 3, fertilizing: 3, grooming: 3, repotting: 3 };
     const statuses = getPlantCareStatuses(plant, thresholds);
 
     expect(statuses.watering.status).toBe('overdue');
     expect(statuses.fertilizing.status).toBe('overdue');
     expect(statuses.grooming.status).toBe('overdue');
+    expect(statuses.repotting.status).toBe('overdue');
   });
 
   it('falls back to default thresholds for missing custom values', () => {
@@ -99,6 +119,7 @@ describe('getPlantCareStatuses', () => {
       last_watered: daysAgo(3),
       last_fertilized: daysAgo(3),
       last_groomed: daysAgo(3),
+      last_repotted: daysAgo(3),
     };
     // Only set watering threshold, others should use defaults
     const statuses = getPlantCareStatuses(plant, { watering: 2 });
@@ -106,6 +127,7 @@ describe('getPlantCareStatuses', () => {
     expect(statuses.watering.status).toBe('overdue'); // 3 days > 2
     expect(statuses.fertilizing.status).toBe('good'); // 3 days < 14
     expect(statuses.grooming.status).toBe('good'); // 3 days < 7
+    expect(statuses.repotting.status).toBe('good'); // 3 days < 180
   });
 });
 
@@ -126,6 +148,7 @@ describe('plantNeedsCare', () => {
       last_watered: daysAgo(1),
       last_fertilized: daysAgo(1),
       last_groomed: daysAgo(1),
+      last_repotted: daysAgo(1),
     };
     expect(plantNeedsCare(plant)).toBe(false);
   });
@@ -139,6 +162,7 @@ describe('getOverdueCareTypes', () => {
       last_watered: daysAgo(1),
       last_fertilized: daysAgo(1),
       last_groomed: daysAgo(1),
+      last_repotted: daysAgo(1),
     };
     expect(getOverdueCareTypes(plant)).toEqual([]);
   });
@@ -174,9 +198,9 @@ describe('getCollectionCareStats', () => {
 
   it('calculates correct breakdown for mixed collection', () => {
     const plants = [
-      { last_watered: daysAgo(1), last_fertilized: daysAgo(1), last_groomed: daysAgo(1) }, // all good
-      { last_watered: daysAgo(10), last_fertilized: daysAgo(1), last_groomed: daysAgo(1) }, // watering overdue
-      { last_watered: null, last_fertilized: null, last_groomed: null }, // all overdue
+      { last_watered: daysAgo(1), last_fertilized: daysAgo(1), last_groomed: daysAgo(1), last_repotted: daysAgo(1) }, // all good
+      { last_watered: daysAgo(10), last_fertilized: daysAgo(1), last_groomed: daysAgo(1), last_repotted: daysAgo(1) }, // watering overdue
+      { last_watered: null, last_fertilized: null, last_groomed: null, last_repotted: null }, // all overdue
     ];
 
     const stats = getCollectionCareStats(plants);
@@ -191,18 +215,19 @@ describe('getCollectionCareStats', () => {
 
   it('reports all neglected care types when multiple are overdue', () => {
     const plants = [
-      { last_watered: daysAgo(10), last_fertilized: daysAgo(20), last_groomed: daysAgo(1) },
+      { last_watered: daysAgo(10), last_fertilized: daysAgo(20), last_groomed: daysAgo(1), last_repotted: daysAgo(1) },
     ];
     const stats = getCollectionCareStats(plants);
     expect(stats.neglectedCareTypes).toContain('watering');
     expect(stats.neglectedCareTypes).toContain('fertilizing');
     expect(stats.neglectedCareTypes).not.toContain('grooming');
+    expect(stats.neglectedCareTypes).not.toContain('repotting');
     expect(stats.neglectedCareTypes).toHaveLength(2);
   });
 
   it('reports null mostNeglectedCareType when nothing is overdue', () => {
     const plants = [
-      { last_watered: daysAgo(1), last_fertilized: daysAgo(1), last_groomed: daysAgo(1) },
+      { last_watered: daysAgo(1), last_fertilized: daysAgo(1), last_groomed: daysAgo(1), last_repotted: daysAgo(1) },
     ];
     const stats = getCollectionCareStats(plants);
     expect(stats.healthyCount).toBe(1);

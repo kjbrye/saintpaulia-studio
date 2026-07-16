@@ -66,7 +66,7 @@ function toThumb(plant) {
 export async function getOverdueCounts(thresholds = CARE_THRESHOLDS) {
   const { data: plants, error } = await supabase
     .from('plants')
-    .select('id, nickname, cultivar_name, photo_url, status, last_watered, last_fertilized, last_groomed');
+    .select('id, nickname, cultivar_name, photo_url, status, last_watered, last_fertilized, last_groomed, last_repotted, acquisition_date, created_at');
 
   if (error) throw error;
 
@@ -74,6 +74,7 @@ export async function getOverdueCounts(thresholds = CARE_THRESHOLDS) {
     watering: { count: 0, plants: [] },
     fertilizing: { count: 0, plants: [] },
     grooming: { count: 0, plants: [] },
+    repotting: { count: 0, plants: [] },
   };
 
   for (const plant of plants ?? []) {

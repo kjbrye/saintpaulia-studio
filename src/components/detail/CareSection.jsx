@@ -92,16 +92,16 @@ function PrimaryRow({ entry, status, lastDate, onLog, isPending }) {
   );
 }
 
-function SecondaryButton({ icon: Icon, label, onClick, active }) {
+function SecondaryButton({ icon: Icon, label, onClick, active, overdue }) {
   return (
     <button
       type="button"
       onClick={onClick}
-      className="flex items-center justify-center gap-2 py-2.5 rounded-lg text-small font-medium transition-colors"
+      className="flex items-center justify-center gap-2 py-2.5 rounded-lg text-small font-medium transition-colors relative"
       style={{
         background: active ? 'var(--sage-100)' : 'var(--cream-100)',
-        border: '1px solid var(--sage-200)',
-        color: 'var(--sage-700)',
+        border: `1px solid ${overdue ? 'var(--copper-500)' : 'var(--sage-200)'}`,
+        color: overdue ? 'var(--copper-600)' : 'var(--sage-700)',
       }}
     >
       <Icon size={16} />
@@ -220,9 +220,10 @@ export default function CareSection({
       >
         <SecondaryButton
           icon={Flower2}
-          label="Repot"
+          label={careStatuses?.repotting?.status === 'overdue' ? 'Repot · overdue' : 'Repot'}
           onClick={() => setOpenAction(openAction === 'repot' ? null : 'repot')}
           active={openAction === 'repot'}
+          overdue={careStatuses?.repotting?.status === 'overdue'}
         />
         <SecondaryButton
           icon={Bug}

@@ -10,6 +10,7 @@ import {
   Droplets,
   Sparkles,
   Scissors,
+  Shovel,
   Activity,
   TrendingUp,
   Sprout,
@@ -78,6 +79,7 @@ function CareBreakdownPanel({ careBreakdown, totalPlants }) {
     { key: 'watering', label: 'Watering', icon: Droplets, color: 'var(--sage-500)' },
     { key: 'fertilizing', label: 'Fertilizing', icon: Sparkles, color: 'var(--purple-400)' },
     { key: 'grooming', label: 'Grooming', icon: Scissors, color: 'var(--copper-500)' },
+    { key: 'repotting', label: 'Repotting', icon: Shovel, color: 'var(--sage-600)' },
   ];
 
   return (

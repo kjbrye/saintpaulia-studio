@@ -9,12 +9,13 @@
  * removed — the Today section above already surfaces those actions.
  */
 
-import { Droplets, Scissors, Sparkles } from 'lucide-react';
+import { Droplets, Scissors, Sparkles, Shovel } from 'lucide-react';
 
 const CARE_META = {
   watering: { icon: Droplets, label: 'Watering' },
   fertilizing: { icon: Sparkles, label: 'Fertilizing' },
   grooming: { icon: Scissors, label: 'Grooming' },
+  repotting: { icon: Shovel, label: 'Repotting' },
 };
 
 function HealthRing({ percentage }) {
@@ -189,6 +190,11 @@ export default function CareOverviewCard({ stats }) {
           <CareBar
             careType="grooming"
             upToDate={upToDate(careBreakdown.grooming)}
+            total={totalPlants}
+          />
+          <CareBar
+            careType="repotting"
+            upToDate={upToDate(careBreakdown.repotting)}
             total={totalPlants}
           />
         </div>
