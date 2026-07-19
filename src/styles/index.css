@@ -66,6 +66,18 @@
   --text-muted: var(--sage-500);
   --text-on-dark: var(--cream-100);
 
+  /* Darker, high-contrast text — passes WCAG AA on sage card backgrounds.
+     Use for wayfinding section labels and helper/description copy. */
+  --text-label-strong: var(--sage-800);
+  --text-description: var(--sage-700);
+
+  /* Form-control surface — near-white so fields read as fields on sage cards. */
+  --field-bg: var(--cream-50);
+  --field-border: var(--sage-300);
+
+  /* Thin divider between rows within a card. */
+  --divider-sage: rgba(148, 165, 134, 0.4);
+
   /* ===========================================
      BACKGROUNDS
      =========================================== */
@@ -1532,6 +1544,159 @@ textarea.input {
 
 .a11y-toggle[data-checked='true'] .a11y-toggle-thumb {
   transform: translateX(22px);
+}
+
+/* ===========================================
+   SETTINGS PAGE
+   =========================================== */
+
+/* Form controls read as near-white fields (scoped to Settings only so the
+   rest of the app keeps its sage-on-sage inputs). */
+.settings-root .input {
+  background: var(--field-bg);
+  border: 1px solid var(--field-border);
+  box-shadow: inset 0 1px 2px rgba(74, 88, 66, 0.06);
+  color: var(--text-primary);
+}
+
+.settings-root .input:focus {
+  border-color: var(--sage-500);
+  box-shadow:
+    inset 0 1px 2px rgba(74, 88, 66, 0.06),
+    0 0 0 2px rgba(119, 138, 104, 0.25);
+}
+
+/* Strong wayfinding section label — the primary contrast fix. */
+.settings-label {
+  font-family: var(--font-body);
+  font-size: 12px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  color: var(--text-label-strong);
+}
+
+/* Readable helper / description copy. */
+.settings-desc {
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-description);
+  line-height: 1.45;
+}
+
+/* Thin divider between rows within a card. */
+.settings-divider {
+  border-top: 1px solid var(--divider-sage);
+}
+
+/* Rows read as discrete items: a thin divider between each row in a group. */
+.setting-rows > * + * {
+  border-top: 1px solid var(--divider-sage);
+}
+
+/* --- Nav: sidebar items + mobile tab-strip items share this base --- */
+.settings-nav-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: var(--radius-md);
+  font-family: var(--font-body);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  border: 1px solid transparent;
+  background: transparent;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all var(--transition-fast);
+}
+
+.settings-nav-item:hover {
+  color: var(--text-primary);
+  background: var(--gradient-sage-button);
+}
+
+.settings-nav-item[data-active='true'] {
+  background: var(--gradient-sage-inset);
+  box-shadow: var(--shadow-sage-inset);
+  border: var(--border-sage);
+  color: var(--sage-900);
+  font-weight: 700;
+}
+
+/* Mobile: horizontal scrolling tab strip. */
+.settings-tabstrip {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  padding-bottom: 4px;
+}
+
+.settings-tabstrip::-webkit-scrollbar {
+  display: none;
+}
+
+/* --- Custom-options tabs (Fertilizers / Treatments / Locations) --- */
+.custom-tab {
+  padding: 8px 14px;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  background: transparent;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.custom-tab:hover {
+  color: var(--text-primary);
+}
+
+.custom-tab[data-active='true'] {
+  background: var(--field-bg);
+  border: 1px solid var(--field-border);
+  color: var(--text-primary);
+  box-shadow: var(--shadow-sage-subtle);
+}
+
+/* --- Removable chips for saved custom values --- */
+.settings-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 6px 6px 12px;
+  border-radius: 9999px;
+  background: var(--field-bg);
+  border: 1px solid var(--field-border);
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.settings-chip-remove {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: none;
+  background: transparent;
+  color: var(--copper-500);
+  cursor: pointer;
+  transition: background var(--transition-fast);
+}
+
+.settings-chip-remove:hover {
+  background: rgba(184, 119, 80, 0.15);
+  color: var(--copper-600);
 }
 
 /* ===========================================
