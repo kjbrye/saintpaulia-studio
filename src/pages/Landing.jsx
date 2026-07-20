@@ -14,7 +14,6 @@ import {
   Heart,
   GitBranch,
   ImageIcon,
-  ExternalLink,
 } from 'lucide-react';
 import { Button, Card, Seal } from '../components/ui';
 import { usePageTitle } from '../hooks/usePageTitle';
@@ -246,16 +245,9 @@ export default function Landing() {
             <Link to="/legal" style={{ color: 'var(--text-secondary)' }}>
               Privacy & Terms
             </Link>
-            <a
-              href="https://captainmothphd.notion.site/Saintpaulia-Studio-Help-Center-337aaf3f8df78167ab20d16c97ec93f9"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-1"
-              style={{ color: 'var(--text-secondary)' }}
-            >
+            <Link to="/help" style={{ color: 'var(--text-secondary)' }}>
               Help Center
-              <ExternalLink size={12} />
-            </a>
+            </Link>
           </div>
           <span className="text-small" style={{ color: 'var(--text-muted)' }}>
             Made with love for violet enthusiasts everywhere

@@ -59,6 +59,8 @@ const Login = lazyWithRetry(() => import('./pages/Login'));
 const Landing = lazyWithRetry(() => import('./pages/Landing'));
 const About = lazyWithRetry(() => import('./pages/About'));
 const Legal = lazyWithRetry(() => import('./pages/Legal'));
+const Help = lazyWithRetry(() => import('./pages/Help'));
+const HelpArticle = lazyWithRetry(() => import('./pages/HelpArticle'));
 const Propagation = lazyWithRetry(() => import('./pages/Propagation'));
 const PropagationDetail = lazyWithRetry(() => import('./pages/PropagationDetail'));
 const Breeding = lazyWithRetry(() => import('./pages/Breeding'));
@@ -134,6 +136,9 @@ function AppRoutes() {
       <Route path="/login" element={<Login />} />
       <Route path="/about" element={<About />} />
       <Route path="/legal" element={<Legal />} />
+      <Route path="/help" element={<Help />} />
+      <Route path="/help/:slug" element={<HelpArticle />} />
+      <Route path="/help/:section/:slug" element={<HelpArticle />} />
 
       {/* Home — auth-aware: Landing for signed-out, Dashboard for signed-in */}
       <Route path="/" element={<HomeRoute />} />

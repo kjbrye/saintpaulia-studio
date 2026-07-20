@@ -1833,3 +1833,277 @@ html[data-large-text='true'] .badge {
   font-size: 14px;
   padding: 5px 12px;
 }
+
+/* ===========================================
+   HELP CENTER
+   =========================================== */
+
+/* Getting-started hero — purple gradient entry point. */
+.help-hero {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 24px;
+  border-radius: var(--radius-xl);
+  background: var(--gradient-accent, linear-gradient(135deg, var(--purple-300) 0%, var(--purple-400) 100%));
+  border: var(--border-purple);
+  box-shadow: var(--shadow-purple-raised);
+  text-decoration: none;
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.help-hero:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(119, 99, 145, 0.28);
+}
+
+.help-hero-icon {
+  width: 52px;
+  height: 52px;
+  border-radius: var(--radius-md);
+  background: rgba(255, 255, 255, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+/* Colored icon tile inside cards — sage or purple register. */
+.help-tile {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.help-tile-sage {
+  background: var(--gradient-sage-button);
+  border: var(--border-sage-light);
+}
+
+.help-tile-purple {
+  background: var(--gradient-purple-card);
+  border: var(--border-purple);
+}
+
+/* Rows inside a card, separated by thin sage dividers. */
+.help-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 4px;
+  width: 100%;
+  text-align: left;
+  text-decoration: none;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: transform var(--transition-fast);
+}
+
+.help-row + .help-row {
+  border-top: 1px solid var(--divider-sage);
+}
+
+.help-row:hover {
+  transform: translateX(3px);
+}
+
+/* Cream chips for the individual workflow links. */
+.help-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border-radius: var(--radius-md);
+  background: var(--gradient-cream-icon);
+  border: var(--border-cream);
+  box-shadow: var(--shadow-cream-raised);
+  font-family: var(--font-body);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--sage-700);
+  text-decoration: none;
+  transition: transform var(--transition-fast);
+}
+
+.help-chip:hover {
+  transform: translateY(-2px);
+  color: var(--sage-800);
+}
+
+/* Search results list. */
+.help-search-result {
+  display: block;
+  padding: 12px 14px;
+  border-radius: var(--radius-md);
+  text-decoration: none;
+  transition: background var(--transition-fast);
+}
+
+.help-search-result:hover {
+  background: rgba(255, 255, 255, 0.5);
+}
+
+.help-search-result + .help-search-result {
+  border-top: 1px solid var(--divider-sage);
+}
+
+/* ===========================================
+   MARKDOWN BODY (rendered article content)
+   =========================================== */
+.help-markdown {
+  font-family: var(--font-body);
+  font-size: 17px;
+  line-height: 1.7;
+  color: var(--text-primary);
+}
+
+.help-markdown h1,
+.help-markdown h2,
+.help-markdown h3,
+.help-markdown h4 {
+  font-family: var(--font-heading);
+  color: var(--text-primary);
+  line-height: 1.2;
+  scroll-margin-top: 24px;
+}
+
+.help-markdown h1 {
+  font-size: 32px;
+  font-weight: 700;
+  margin: 0 0 16px;
+}
+
+.help-markdown h2 {
+  font-size: 26px;
+  font-weight: 600;
+  margin: 32px 0 12px;
+  padding-top: 24px;
+  border-top: 1px solid var(--divider-sage);
+}
+
+/* First section heading shouldn't carry a top rule. */
+.help-markdown > h2:first-child {
+  border-top: none;
+  padding-top: 0;
+  margin-top: 0;
+}
+
+.help-markdown h3 {
+  font-size: 21px;
+  font-weight: 600;
+  margin: 24px 0 8px;
+}
+
+.help-markdown p {
+  margin: 0 0 16px;
+}
+
+.help-markdown ul,
+.help-markdown ol {
+  margin: 0 0 16px;
+  padding-left: 24px;
+}
+
+.help-markdown li {
+  margin-bottom: 6px;
+}
+
+.help-markdown a {
+  color: var(--purple-500);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.help-markdown a:hover {
+  color: var(--purple-400);
+}
+
+.help-markdown strong {
+  color: var(--text-primary);
+  font-weight: 700;
+}
+
+.help-markdown code {
+  font-family: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
+  font-size: 0.9em;
+  padding: 2px 7px;
+  border-radius: var(--radius-full);
+  background: var(--cream-200);
+  border: var(--border-cream);
+  color: var(--copper-700);
+}
+
+.help-markdown blockquote {
+  margin: 0 0 16px;
+  padding: 4px 16px;
+  border-left: 3px solid var(--sage-400);
+  background: rgba(148, 165, 134, 0.1);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  color: var(--text-secondary);
+}
+
+.help-markdown hr {
+  border: none;
+  border-top: 1px solid var(--divider-sage);
+  margin: 28px 0;
+}
+
+/* Tables — cream body, sage header row, thin dividers. */
+.help-markdown-table-wrap {
+  overflow-x: auto;
+  margin: 0 0 20px;
+}
+
+.help-markdown table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 15px;
+  background: var(--cream-100);
+  border: var(--border-sage-light);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.help-markdown thead {
+  background: var(--gradient-sage-inset);
+}
+
+.help-markdown th {
+  font-family: var(--font-body);
+  font-weight: 700;
+  text-align: left;
+  color: var(--sage-800);
+  padding: 10px 14px;
+}
+
+.help-markdown td {
+  padding: 10px 14px;
+  border-top: 1px solid var(--divider-sage);
+  color: var(--text-primary);
+  vertical-align: top;
+}
+
+/* Table of contents — cream card with jump links. */
+.help-toc summary {
+  cursor: pointer;
+  list-style: none;
+}
+
+.help-toc summary::-webkit-details-marker {
+  display: none;
+}
+
+.help-toc a {
+  color: var(--sage-700);
+  text-decoration: none;
+}
+
+.help-toc a:hover {
+  color: var(--purple-500);
+  text-decoration: underline;
+}

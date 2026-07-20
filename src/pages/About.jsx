@@ -12,10 +12,12 @@ import {
   Droplets,
   BarChart3,
   Scissors,
-  ExternalLink,
+  HelpCircle,
+  ChevronRight,
   Shield,
 } from 'lucide-react';
 import { usePageTitle } from '../hooks/usePageTitle';
+import { version } from '../../package.json';
 
 const features = [
   {
@@ -146,27 +148,18 @@ export default function About() {
         </section>
 
         {/* Help & Guides */}
-        <section className="card p-8">
-          <div className="flex items-start gap-4 mb-4">
-            <div className="icon-container-purple" style={{ width: 48, height: 48 }}>
-              <ExternalLink size={24} style={{ color: 'var(--purple-400)' }} />
-            </div>
-            <h2 className="heading heading-lg pt-2">Help & Guides</h2>
+        <Link to="/help" className="card p-6 flex items-center gap-4">
+          <div className="icon-container" style={{ width: 48, height: 48 }}>
+            <HelpCircle size={24} style={{ color: 'var(--sage-600)' }} />
           </div>
-          <p className="leading-relaxed mb-4" style={{ color: 'var(--text-primary)' }}>
-            Need help getting started or want to learn more about what Saintpaulia Studio can do?
-            Visit our Help Center for guides, tips, and answers to common questions.
-          </p>
-          <a
-            href="https://captainmothphd.notion.site/Saintpaulia-Studio-Help-Center-337aaf3f8df78167ab20d16c97ec93f9"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="btn btn-primary inline-flex items-center gap-2"
-          >
-            Visit Help Center
-            <ExternalLink size={16} />
-          </a>
-        </section>
+          <div className="flex-1 min-w-0">
+            <h2 className="heading heading-md">Help & guides</h2>
+            <p className="text-small" style={{ color: 'var(--text-secondary)' }}>
+              Guides, answers, and what’s coming next
+            </p>
+          </div>
+          <ChevronRight size={20} style={{ color: 'var(--sage-500)', flexShrink: 0 }} />
+        </Link>
 
         {/* Legal */}
         <section className="card p-8">
@@ -190,7 +183,7 @@ export default function About() {
           <div className="flex items-center justify-center gap-2 mb-2">
             <Heart size={16} style={{ color: 'var(--copper-500)' }} />
             <span className="text-small font-medium" style={{ color: 'var(--text-secondary)' }}>
-              Version 1.5.0
+              Version {version}
             </span>
           </div>
           <p className="text-small" style={{ color: 'var(--text-secondary)' }}>

@@ -47,7 +47,7 @@ const PRIMARY_ITEMS = [
 
 const SECONDARY_ITEMS = [
   { label: 'Settings', href: '/settings', icon: Settings },
-  { label: 'Help', href: '/about', icon: HelpCircle },
+  { label: 'Help', href: '/help', icon: HelpCircle },
 ];
 
 function ShortcutChip({ children }) {
