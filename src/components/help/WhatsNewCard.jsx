@@ -1,13 +1,13 @@
 /**
- * WhatsNewCard — Changelog (native) and Roadmap (external, Notion).
+ * WhatsNewCard — Changelog and Roadmap, both native in-app pages.
  *
  * The changelog subtitle reads the live version from package.json so it never
- * goes stale. The roadmap stays in Notion — it's a live status database, not a
- * static article — so its row carries an external-link icon and opens a new tab.
+ * goes stale. The roadmap is now an in-app page (/help/roadmap) rather than an
+ * outbound Notion link.
  */
 
 import { Link } from 'react-router-dom';
-import { History, Map, ChevronRight, ExternalLink } from 'lucide-react';
+import { History, Map, ChevronRight } from 'lucide-react';
 import { version } from '../../../package.json';
 import { getArticle } from '../../content/help';
 import { HELP_COPY } from '../../constants/helpCopy';
@@ -34,12 +34,7 @@ export default function WhatsNewCard() {
         </Link>
       )}
 
-      <a
-        href={HELP_COPY.whatsNew.roadmap.url}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="help-row"
-      >
+      <Link to={`/help/${HELP_COPY.whatsNew.roadmap.slug}`} className="help-row">
         <span className="help-tile help-tile-purple">
           <Map size={20} style={{ color: 'var(--purple-500)' }} />
         </span>
@@ -51,8 +46,8 @@ export default function WhatsNewCard() {
             {HELP_COPY.whatsNew.roadmap.description}
           </span>
         </span>
-        <ExternalLink size={16} style={{ color: 'var(--purple-400)', flexShrink: 0 }} />
-      </a>
+        <ChevronRight size={18} style={{ color: 'var(--sage-500)', flexShrink: 0 }} />
+      </Link>
     </section>
   );
 }

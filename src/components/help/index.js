@@ -6,3 +6,4 @@ export { default as FaqContactCards } from './FaqContactCards';
 export { default as WhatsNewCard } from './WhatsNewCard';
 export { default as Markdown } from './Markdown';
 export { default as ArticleTOC } from './ArticleTOC';
+export { default as RoadmapSection } from './RoadmapSection';

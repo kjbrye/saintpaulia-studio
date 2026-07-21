@@ -3,11 +3,9 @@
  *
  * All user-facing strings for the Help pages live here so the pages and their
  * cards stay free of inline copy. The article *content* lives in the markdown
- * files under src/content/help — this file only covers the index page chrome
- * and the fixed row/section metadata (tiles, icons, ordering).
- *
- * The Roadmap intentionally stays in Notion (it's a live status database, not a
- * static article), so it's linked out to rather than migrated.
+ * files under src/content/help (and roadmap items in src/content/roadmap.js) —
+ * this file only covers page chrome and fixed row/section metadata (tiles,
+ * icons, ordering).
  */
 
 import {
@@ -68,9 +66,9 @@ export const HELP_COPY = {
       title: 'Changelog',
     },
     roadmap: {
+      slug: 'roadmap',
       title: 'Roadmap',
       description: 'What’s planned for upcoming releases',
-      url: 'https://captainmothphd.notion.site/337aaf3f8df78153a21bd567b4bd5fdb',
     },
   },
 
@@ -110,4 +108,48 @@ export const WHATS_NEW_ICONS = { changelog: History, roadmap: Map };
 export const SECTION_LABELS = {
   guides: 'Guides',
   workflows: 'Workflows',
+};
+
+/**
+ * Roadmap page copy. Item content lives in src/content/roadmap.js; everything
+ * here is the surrounding chrome — headings, section descriptions, the
+ * expectation-setting intro, and the feedback footer.
+ */
+export const ROADMAP_COPY = {
+  pageTitle: 'Roadmap',
+  subtitle: 'What’s coming to Saintpaulia Studio',
+
+  intro: {
+    before:
+      'This roadmap reflects current priorities and shifts with your feedback — nothing here is a promise or a firm date. Shipped features move to the ',
+    linkText: 'Changelog',
+    to: '/help/changelog',
+    after: '.',
+  },
+
+  sections: {
+    'coming-soon': {
+      label: 'In progress',
+      title: 'Coming soon',
+      description: 'Actively being built or already with beta testers',
+    },
+    exploring: {
+      label: 'Under consideration',
+      title: 'Exploring',
+      description: 'Being scoped or under consideration — not yet scheduled',
+    },
+  },
+
+  // Exploring collapses to the first `collapseVisible` items once it passes
+  // `collapseThreshold`; Coming soon always shows everything.
+  collapseThreshold: 8,
+  collapseVisible: 6,
+  showMore: 'Show more',
+  showLess: 'Show less',
+
+  footer: {
+    before: 'Have something you’d like to see? ',
+    linkText: 'Share feedback →',
+    to: '/help/contact',
+  },
 };

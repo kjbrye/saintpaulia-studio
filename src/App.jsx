@@ -61,6 +61,7 @@ const About = lazyWithRetry(() => import('./pages/About'));
 const Legal = lazyWithRetry(() => import('./pages/Legal'));
 const Help = lazyWithRetry(() => import('./pages/Help'));
 const HelpArticle = lazyWithRetry(() => import('./pages/HelpArticle'));
+const Roadmap = lazyWithRetry(() => import('./pages/Roadmap'));
 const Propagation = lazyWithRetry(() => import('./pages/Propagation'));
 const PropagationDetail = lazyWithRetry(() => import('./pages/PropagationDetail'));
 const Breeding = lazyWithRetry(() => import('./pages/Breeding'));
@@ -137,6 +138,7 @@ function AppRoutes() {
       <Route path="/about" element={<About />} />
       <Route path="/legal" element={<Legal />} />
       <Route path="/help" element={<Help />} />
+      <Route path="/help/roadmap" element={<Roadmap />} />
       <Route path="/help/:slug" element={<HelpArticle />} />
       <Route path="/help/:section/:slug" element={<HelpArticle />} />
 
