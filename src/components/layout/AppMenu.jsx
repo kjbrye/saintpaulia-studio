@@ -18,6 +18,7 @@ import {
   HelpCircle,
   Home,
   LogOut,
+  Sprout,
   Plus,
   Scissors,
   Settings,
@@ -48,6 +49,7 @@ const PRIMARY_ITEMS = [
 const SECONDARY_ITEMS = [
   { label: 'Settings', href: '/settings', icon: Settings },
   { label: 'Help', href: '/help', icon: HelpCircle },
+  { label: 'Welcome Page', href: '/welcome', icon: Sprout },
 ];
 
 function ShortcutChip({ children }) {

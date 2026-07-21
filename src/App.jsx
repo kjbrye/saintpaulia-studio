@@ -135,6 +135,7 @@ function AppRoutes() {
     <Routes>
       {/* Public routes */}
       <Route path="/login" element={<Login />} />
+      <Route path="/welcome" element={<Landing />} />
       <Route path="/about" element={<About />} />
       <Route path="/legal" element={<Legal />} />
       <Route path="/help" element={<Help />} />

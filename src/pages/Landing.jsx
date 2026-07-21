@@ -17,6 +17,7 @@ import {
 } from 'lucide-react';
 import { Button, Card, Seal } from '../components/ui';
 import { usePageTitle } from '../hooks/usePageTitle';
+import { useAuth } from '../hooks/useAuth';
 
 const features = [
   {
@@ -111,6 +112,7 @@ function ScreenshotPreview({ src, label }) {
 
 export default function Landing() {
   usePageTitle('Welcome');
+  const { isAuthenticated } = useAuth();
 
   return (
     <div className="min-h-screen">
@@ -132,11 +134,19 @@ export default function Landing() {
                 About
               </Button>
             </Link>
-            <Link to="/login">
-              <Button variant="ghost" size="sm">
-                Sign In
-              </Button>
-            </Link>
+            {isAuthenticated ? (
+              <Link to="/">
+                <Button variant="ghost" size="sm">
+                  Dashboard
+                </Button>
+              </Link>
+            ) : (
+              <Link to="/login">
+                <Button variant="ghost" size="sm">
+                  Sign In
+                </Button>
+              </Link>
+            )}
           </div>
         </nav>
 
@@ -158,16 +168,26 @@ export default function Landing() {
               Studio helps you keep track of every plant, every care task, and every cross.
             </p>
             <div className="flex flex-wrap gap-3 pt-2">
-              <Link to="/login?mode=signup">
-                <Button variant="primary" size="lg">
-                  Get Started
-                </Button>
-              </Link>
-              <Link to="/login">
-                <Button variant="ghost" size="lg">
-                  Sign In
-                </Button>
-              </Link>
+              {isAuthenticated ? (
+                <Link to="/">
+                  <Button variant="primary" size="lg">
+                    Go to Dashboard
+                  </Button>
+                </Link>
+              ) : (
+                <>
+                  <Link to="/login?mode=signup">
+                    <Button variant="primary" size="lg">
+                      Get Started
+                    </Button>
+                  </Link>
+                  <Link to="/login">
+                    <Button variant="ghost" size="lg">
+                      Sign In
+                    </Button>
+                  </Link>
+                </>
+              )}
             </div>
           </div>
           <div className="flex justify-center order-1 md:order-2">
@@ -221,15 +241,31 @@ export default function Landing() {
         {/* Closing CTA */}
         <section className="mb-16">
           <Card variant="accent" className="p-10 text-center">
-            <h2 className="heading heading-lg mb-3">Ready to start your collection?</h2>
-            <p className="mb-6" style={{ color: 'var(--text-secondary)' }}>
-              Create a free account and add your first plant in under a minute.
-            </p>
-            <Link to="/login?mode=signup">
-              <Button variant="primary" size="lg">
-                Get Started
-              </Button>
-            </Link>
+            {isAuthenticated ? (
+              <>
+                <h2 className="heading heading-lg mb-3">Ready to get back to it?</h2>
+                <p className="mb-6" style={{ color: 'var(--text-secondary)' }}>
+                  Jump into your dashboard and check on your collection.
+                </p>
+                <Link to="/">
+                  <Button variant="primary" size="lg">
+                    Go to Dashboard
+                  </Button>
+                </Link>
+              </>
+            ) : (
+              <>
+                <h2 className="heading heading-lg mb-3">Ready to start your collection?</h2>
+                <p className="mb-6" style={{ color: 'var(--text-secondary)' }}>
+                  Create a free account and add your first plant in under a minute.
+                </p>
+                <Link to="/login?mode=signup">
+                  <Button variant="primary" size="lg">
+                    Get Started
+                  </Button>
+                </Link>
+              </>
+            )}
           </Card>
         </section>
 
