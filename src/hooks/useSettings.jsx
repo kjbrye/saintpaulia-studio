@@ -21,6 +21,9 @@ const DEFAULT_SETTINGS = {
   customFertilizers: [],
   customTreatments: [],
   customLocations: [],
+  // Dashboard hero: a chosen plant id to feature, or null for automatic
+  // (most recent bloom / newest plant with a photo).
+  featuredPlantId: null,
 };
 
 const STORAGE_KEY = 'saintpaulia-settings';
