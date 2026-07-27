@@ -8,49 +8,18 @@
 
 import { useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import {
-  BarChart3,
-  BookOpen,
-  Droplets,
-  FlaskConical,
-  GitFork,
-  Heart,
-  HelpCircle,
-  Home,
-  LogOut,
-  Sprout,
-  Plus,
-  Scissors,
-  Settings,
-  Sparkles,
-  StickyNote,
-  X,
-  Lock,
-} from 'lucide-react';
+import { LogOut, X, Lock } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
 import { useSubscription } from '../../hooks/useSubscription';
 import { useSettings } from '../../hooks/useSettings.jsx';
 import { PremiumFeatureModal } from '../ui';
+import { PRIMARY_NAV, UTILITY_NAV, SECONDARY_NAV } from '../../constants/navigation';
 
-const PRIMARY_ITEMS = [
-  { label: 'Dashboard', href: '/', icon: Home, shortcut: 'H' },
-  { label: 'Library', href: '/library', icon: BookOpen, shortcut: 'L' },
-  { label: 'Care Log', href: '/care', icon: Droplets, shortcut: 'C' },
-  { label: 'Add Plant', href: '/plants/new', icon: Plus, shortcut: 'N' },
-  { label: 'Propagation', href: '/propagation', icon: Scissors, shortcut: 'P', feature: 'propagation' },
-  { label: 'Breeding', href: '/breeding', icon: FlaskConical, shortcut: 'B', feature: 'breeding' },
-  { label: 'Sports', href: '/sports', icon: Sparkles, shortcut: 'S', feature: 'sports' },
-  { label: 'Lineage', href: '/lineage', icon: GitFork, shortcut: 'G', feature: 'lineage' },
-  { label: 'Analytics', href: '/analytics', icon: BarChart3, shortcut: 'A', feature: 'analytics' },
-  { label: 'Notes', href: '/notes', icon: StickyNote, shortcut: 'J' },
-  { label: 'Wishlist', href: '/wishlist', icon: Heart, shortcut: 'W' },
-];
-
-const SECONDARY_ITEMS = [
-  { label: 'Settings', href: '/settings', icon: Settings },
-  { label: 'Help', href: '/help', icon: HelpCircle },
-  { label: 'Welcome Page', href: '/welcome', icon: Sprout },
-];
+// Shared source of truth (constants/navigation). The mobile drawer keeps the
+// fuller set: the slim desktop sidebar's PRIMARY_NAV plus the UTILITY_NAV
+// destinations, then the SECONDARY_NAV utilities.
+const PRIMARY_ITEMS = [...PRIMARY_NAV, ...UTILITY_NAV];
+const SECONDARY_ITEMS = SECONDARY_NAV;
 
 function ShortcutChip({ children }) {
   return <span className="kbd">{children}</span>;
