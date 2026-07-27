@@ -124,21 +124,23 @@ export default function LibraryFilterDrawer({
           open ? 'translate-x-0' : 'translate-x-full'
         }`}
         style={{
-          background: 'var(--cream-100)',
-          boxShadow: '-4px 0 16px rgba(74, 88, 66, 0.18)',
+          background: 'var(--surface-card)',
+          boxShadow: '-4px 0 16px rgba(45, 58, 40, 0.18)',
         }}
         aria-hidden={!open}
       >
         {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b border-[var(--sage-200)]">
-          <h2 className="heading heading-md">Filters</h2>
+        <div className="flex items-center justify-between p-4 border-b border-[var(--card-border)]">
+          <h2 className="heading heading-md" style={{ color: 'var(--text-strong)' }}>
+            Filters
+          </h2>
           <button
             type="button"
             onClick={onClose}
             className="icon-container icon-container-sm"
             aria-label="Close filters"
           >
-            <X size={16} style={{ color: 'var(--sage-600)' }} />
+            <X size={16} style={{ color: 'var(--text-body)' }} />
           </button>
         </div>
 
@@ -227,9 +229,9 @@ export default function LibraryFilterDrawer({
                 <div
                   className="border rounded-md overflow-y-auto"
                   style={{
-                    borderColor: 'var(--sage-200)',
+                    borderColor: 'var(--card-border)',
                     maxHeight: 200,
-                    background: 'var(--cream-50)',
+                    background: 'var(--page-bg)',
                   }}
                 >
                   <HybridizerOption
@@ -270,16 +272,16 @@ export default function LibraryFilterDrawer({
         </div>
 
         {/* Footer */}
-        <div className="flex items-center justify-between gap-3 p-4 border-t border-[var(--sage-200)]">
+        <div className="flex items-center justify-between gap-3 p-4 border-t border-[var(--card-border)]">
           <button
             type="button"
             onClick={handleReset}
             className="text-small font-semibold"
-            style={{ color: 'var(--sage-600)' }}
+            style={{ color: 'var(--text-body)' }}
           >
             Reset
           </button>
-          <button type="button" onClick={handleApply} className="btn btn-primary">
+          <button type="button" onClick={handleApply} className="ds-btn-primary">
             Apply
           </button>
         </div>
@@ -298,7 +300,7 @@ function FilterSection({ title, children }) {
           fontWeight: 700,
           letterSpacing: '0.12em',
           textTransform: 'uppercase',
-          color: 'var(--sage-600)',
+          color: 'var(--text-quiet)',
         }}
       >
         {title}
@@ -315,9 +317,9 @@ function ChipButton({ active, onClick, children }) {
       onClick={onClick}
       className="px-3 py-1.5 rounded-lg text-small font-medium transition-all"
       style={{
-        background: active ? 'var(--sage-600)' : 'var(--sage-100)',
-        color: active ? 'white' : 'var(--sage-600)',
-        border: active ? '1px solid var(--sage-700)' : 'var(--border-sage-light)',
+        background: active ? 'var(--purple-emphasis)' : 'var(--page-bg)',
+        color: active ? 'white' : 'var(--text-body)',
+        border: active ? '1px solid var(--purple-emphasis)' : '0.5px solid var(--card-border)',
       }}
     >
       {children}
@@ -333,9 +335,9 @@ function HybridizerOption({ label, selected, onSelect }) {
       className="w-full text-left px-3 py-2 transition-colors"
       style={{
         fontSize: 14,
-        color: selected ? 'var(--sage-700)' : 'var(--text-secondary)',
+        color: selected ? 'var(--text-strong)' : 'var(--text-body)',
         fontWeight: selected ? 700 : 500,
-        background: selected ? 'var(--sage-100)' : 'transparent',
+        background: selected ? 'var(--page-bg)' : 'transparent',
       }}
     >
       {label}

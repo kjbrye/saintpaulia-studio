@@ -47,8 +47,8 @@ export default function PlantCard({
 
   const CardContent = (
     <div
-      className={`card-subtle plant-card-grid p-4 cursor-pointer relative h-full ${
-        isSelected ? 'ring-2 ring-[var(--sage-500)]' : ''
+      className={`plant-card-grid p-4 cursor-pointer relative h-full ${
+        isSelected ? 'ring-2 ring-[var(--purple-emphasis)]' : ''
       }`}
       onClick={selectionMode ? handleClick : undefined}
     >
@@ -89,7 +89,7 @@ export default function PlantCard({
           fontSize: '10px',
           fontWeight: 700,
           letterSpacing: '0.14em',
-          color: 'var(--sage-500)',
+          color: 'var(--text-quiet)',
           minHeight: '14px',
           lineHeight: '14px',
         }}
@@ -98,10 +98,12 @@ export default function PlantCard({
       </p>
 
       {/* Plant Info — cultivar slot always reserved */}
-      <h3 className="heading heading-md truncate">{displayName}</h3>
+      <h3 className="heading heading-md truncate" style={{ color: 'var(--text-strong)' }}>
+        {displayName}
+      </h3>
       <p
-        className="text-small text-muted truncate"
-        style={{ minHeight: '20px', lineHeight: '20px' }}
+        className="text-small truncate"
+        style={{ minHeight: '20px', lineHeight: '20px', color: 'var(--text-body)' }}
       >
         {showCultivar ? plant.cultivar_name : ' '}
       </p>
@@ -148,7 +150,7 @@ export default function PlantCard({
           fontFamily: 'var(--font-heading)',
           fontStyle: 'italic',
           fontSize: '11px',
-          color: 'var(--text-muted)',
+          color: 'var(--text-quiet)',
           minHeight: '16px',
           lineHeight: '16px',
         }}

@@ -1,9 +1,10 @@
 /**
- * DashboardTopBar
+ * AppTopBar
  *
- * Sits in the content pane to the right of the sidebar on desktop; above the
- * content with a hamburger on mobile. Holds the search trigger (opens the
- * command palette), a notifications bell, and the user chip.
+ * The app-wide top bar that lives in the content area of the AppShell, to the
+ * right of the sidebar on desktop and above the content with a hamburger on
+ * mobile. Holds the search trigger (opens the command palette), a notifications
+ * bell, and the user chip. Shared by every authenticated page via AppLayout.
  */
 
 import { useEffect, useRef, useState } from 'react';
@@ -49,7 +50,7 @@ function NotificationBell() {
   );
 }
 
-export default function DashboardTopBar({ onOpenSearch, onOpenMenu, displayName }) {
+export default function AppTopBar({ onOpenSearch, onOpenMenu, displayName }) {
   const initial = displayName.charAt(0).toUpperCase();
 
   return (

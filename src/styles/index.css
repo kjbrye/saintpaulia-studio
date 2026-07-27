@@ -230,7 +230,7 @@
 
   /* Translucent page tint so the app's botanical background reads as a muted
      texture behind the dashboard content while cards still lift off it. */
-  --page-veil: rgba(239, 237, 230, 0.55);
+  --page-veil: rgba(239, 237, 230, 0.45);
 }
 
 /* ===========================================
@@ -661,16 +661,18 @@ a:hover {
 }
 
 /* ===========================================
-   LIBRARY VIEW TOGGLE (grid/list)
-   Sage gradient when active, matches the primary "Add Plant" button.
+   LIBRARY VIEW TOGGLE (grid/list) — v2 repalette
+   A neutral segmented control: transparent when idle, a near-white lifted pill
+   when active (same register as the sidebar's active nav item). Kept quiet on
+   purpose so it never competes with the purple-emphasis "Add Plant" action.
    =========================================== */
 .library-view-toggle {
   width: 34px;
   height: 34px;
-  border-radius: var(--radius-sm);
-  border: var(--border-sage-light);
-  background: var(--gradient-sage-button);
-  color: var(--sage-600);
+  border-radius: 8px;
+  border: 0.5px solid var(--card-border);
+  background: transparent;
+  color: var(--text-quiet);
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -679,15 +681,15 @@ a:hover {
   transition: all var(--transition-fast);
 }
 
-.library-view-toggle[data-active='true'] {
-  background: var(--gradient-sage-primary);
-  color: var(--text-on-dark);
-  border-color: var(--sage-600);
-  box-shadow: var(--shadow-sage-primary);
+.library-view-toggle:hover {
+  color: var(--text-strong);
 }
 
-.library-view-toggle[data-active='true']:hover {
-  transform: translateY(-1px);
+.library-view-toggle[data-active='true'] {
+  background: var(--surface-card);
+  color: var(--text-strong);
+  border-color: var(--card-border);
+  box-shadow: var(--shadow-card);
 }
 
 /* ===========================================
@@ -699,26 +701,28 @@ a:hover {
   gap: 12px;
   padding: 12px 16px;
   min-height: 72px;
-  background: var(--gradient-sage-card);
-  border-radius: var(--radius-lg);
-  border: var(--border-sage-light);
-  box-shadow: var(--shadow-sage-subtle);
+  background: var(--surface-card);
+  border-radius: var(--radius-card);
+  border: 0.5px solid var(--card-border);
+  box-shadow: var(--shadow-card);
   cursor: pointer;
-  transition: all var(--transition-fast);
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
 }
 
 .plant-list-row:hover {
-  border-color: rgba(181, 192, 171, 0.6);
-  transform: translateX(2px);
+  transform: translateY(-1px);
+  box-shadow:
+    0 2px 4px rgba(45, 58, 40, 0.06),
+    0 8px 20px rgba(45, 58, 40, 0.08);
 }
 
 .plant-list-row:active {
-  box-shadow: var(--shadow-sage-pressed);
-  transform: translateX(0);
+  transform: translateY(0);
+  box-shadow: var(--shadow-card);
 }
 
 .plant-list-row-selected {
-  outline: 2px solid var(--sage-500);
+  outline: 2px solid var(--purple-emphasis);
   outline-offset: -2px;
 }
 
@@ -788,15 +792,39 @@ a:hover {
 }
 
 /* ===========================================
-   PLANT CARD HOVER (grid view)
+   PLANT CARD (grid view) — v2 repalette
+   Self-contained card surface (no longer leans on the shared .card-subtle) so
+   grid cards lift off the page with a defined edge + soft shadow, matching the
+   dashboard's bloom cards.
    =========================================== */
+.plant-card-grid {
+  background: var(--surface-card);
+  border: 0.5px solid var(--card-border);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-card);
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+}
+
 .plant-card-grid:hover {
   transform: translateY(-4px);
   box-shadow:
-    8px 8px 18px rgba(74, 88, 66, 0.25),
-    -5px -5px 12px rgba(255, 255, 255, 0.85),
-    inset 0 1px 1px rgba(255, 255, 255, 0.4),
-    inset 0 -1px 1px rgba(74, 88, 66, 0.1);
+    0 2px 4px rgba(45, 58, 40, 0.06),
+    0 10px 24px rgba(45, 58, 40, 0.10);
+}
+
+/* Grid reflows against the content pane's width (auto-fill), not the viewport,
+   so it recalculates its column count correctly inside the shell's narrower
+   content area — but never wider than 4 columns. The min column width is the
+   larger of 160px (so it drops to 3 / 2 / 1 as space tightens) and the width a
+   4-up row needs, which forces auto-fill to stop at 4 on wide screens. */
+.library-grid {
+  --library-grid-gap: 20px;
+  display: grid;
+  grid-template-columns: repeat(
+    auto-fill,
+    minmax(max(160px, (100% - 3 * var(--library-grid-gap)) / 4), 1fr)
+  );
+  gap: var(--library-grid-gap);
 }
 
 /* ===========================================
@@ -1201,10 +1229,10 @@ textarea.input {
    BATCH SELECTION TOOLBAR
    =========================================== */
 .batch-toolbar {
-  background: var(--gradient-sage-card);
-  border: var(--border-sage);
-  border-radius: var(--radius-md);
-  box-shadow: var(--shadow-sage-subtle);
+  background: var(--surface-card);
+  border: 0.5px solid var(--card-border);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-card);
   padding: 12px 16px;
   margin-bottom: 16px;
 }
@@ -1215,11 +1243,12 @@ textarea.input {
   gap: 6px;
   padding: 8px 12px;
   background: rgba(255, 255, 255, 0.5);
-  border: 1px solid var(--sage-200);
+  border: 0.5px solid var(--card-border);
   border-radius: var(--radius-sm);
   font-family: var(--font-body);
   font-size: 13px;
   font-weight: 600;
+  color: var(--text-body);
   color: var(--sage-700);
   cursor: pointer;
   transition: all var(--transition-fast);

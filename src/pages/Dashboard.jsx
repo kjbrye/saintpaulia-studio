@@ -1,24 +1,21 @@
 /**
  * Dashboard — v2 layout.
  *
- * Persistent left sidebar (desktop) / hamburger drawer (mobile) around a
- * content pane: top bar, welcome hero, care snapshot, blooming now, collection
- * at a glance, and a bottom row of upcoming tasks + recent note. This is a
- * re-housing of the existing dashboard's data (subtitle, Today task logic,
- * care/overdue counts, sanctuary moment) into the new palette — not new data.
+ * A content pane: welcome hero, care snapshot, blooming now, collection at a
+ * glance, and a bottom row of upcoming tasks + recent note. The surrounding
+ * chrome — persistent left sidebar (desktop) / hamburger drawer (mobile) and
+ * the top bar — now comes from the shared AppLayout shell, so the dashboard
+ * renders *inside* it rather than owning it. This is a re-housing of the
+ * existing dashboard's data (subtitle, Today task logic, care/overdue counts,
+ * sanctuary moment) into the new palette — not new data.
  *
  * Thin orchestrator: data comes from the existing hooks; layout and copy
  * decisions live in components/dashboard/ and constants/.
  */
 
-import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Flower2, Plus, Upload } from 'lucide-react';
-import Sidebar from '../components/layout/Sidebar';
-import AppMenu from '../components/layout/AppMenu';
-import CommandPalette from '../components/ui/CommandPalette';
 import {
-  DashboardTopBar,
   DashboardHero,
   CareSnapshot,
   BloomingNow,
@@ -41,29 +38,6 @@ import { isArchived } from '../constants/plantStatus';
 /** Most recent by created_at, descending. */
 function byNewest(a, b) {
   return (a.created_at ?? '') < (b.created_at ?? '') ? 1 : -1;
-}
-
-/** Shell: sidebar + content pane + top bar. Wraps every dashboard state. */
-function DashboardShell({ displayName, children }) {
-  const [menuOpen, setMenuOpen] = useState(false);
-  const [searchOpen, setSearchOpen] = useState(false);
-
-  return (
-    <div className="dash-shell">
-      <Sidebar />
-      <div className="dash-main">
-        <DashboardTopBar
-          displayName={displayName}
-          onOpenMenu={() => setMenuOpen(true)}
-          onOpenSearch={() => setSearchOpen(true)}
-        />
-        <main className="dash-content">{children}</main>
-      </div>
-
-      <AppMenu open={menuOpen} onClose={() => setMenuOpen(false)} />
-      <CommandPalette isOpen={searchOpen} onClose={() => setSearchOpen(false)} />
-    </div>
-  );
 }
 
 export default function Dashboard() {
@@ -99,63 +73,57 @@ export default function Dashboard() {
 
   if (plantsLoading) {
     return (
-      <DashboardShell displayName={displayName}>
-        <div className="flex items-center justify-center" style={{ minHeight: '50vh' }}>
-          <p style={{ color: 'var(--text-quiet)' }}>Loading your collection…</p>
-        </div>
-      </DashboardShell>
+      <div className="flex items-center justify-center" style={{ minHeight: '50vh' }}>
+        <p style={{ color: 'var(--text-quiet)' }}>Loading your collection…</p>
+      </div>
     );
   }
 
   if (plantsError) {
     return (
-      <DashboardShell displayName={displayName}>
-        <div className="ds-card p-8 text-center max-w-md mx-auto" style={{ marginTop: 40 }}>
-          <p className="ds-section-title" style={{ marginBottom: 8 }}>
-            Failed to load
-          </p>
-          <p style={{ color: 'var(--text-body)', marginBottom: 16 }}>{plantsError.message}</p>
-          <button className="ds-btn-primary" onClick={() => window.location.reload()}>
-            Try again
-          </button>
-        </div>
-      </DashboardShell>
+      <div className="ds-card p-8 text-center max-w-md mx-auto" style={{ marginTop: 40 }}>
+        <p className="ds-section-title" style={{ marginBottom: 8 }}>
+          Failed to load
+        </p>
+        <p style={{ color: 'var(--text-body)', marginBottom: 16 }}>{plantsError.message}</p>
+        <button className="ds-btn-primary" onClick={() => window.location.reload()}>
+          Try again
+        </button>
+      </div>
     );
   }
 
   if (activePlants.length === 0) {
     return (
-      <DashboardShell displayName={displayName}>
-        <div className="ds-card p-10 text-center max-w-md mx-auto" style={{ marginTop: 40 }}>
-          <div
-            className="w-16 h-16 rounded-xl mx-auto mb-4 flex items-center justify-center"
-            style={{ background: 'var(--purple-100)' }}
-          >
-            <Flower2 size={32} style={{ color: 'var(--purple-emphasis)' }} />
-          </div>
-          <h2 className="ds-section-title" style={{ marginBottom: 8 }}>
-            Start your collection
-          </h2>
-          <p style={{ color: 'var(--text-body)', marginBottom: 24 }}>
-            Add your first African violet to begin tracking care, growth, and blooming cycles.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-3 justify-center">
-            <Link to="/plants/new" className="ds-btn-primary">
-              <Plus size={18} /> Add your first plant
-            </Link>
-            <Link to="/import" className="btn btn-secondary">
-              <Upload size={18} /> Import a spreadsheet
-            </Link>
-          </div>
+      <div className="ds-card p-10 text-center max-w-md mx-auto" style={{ marginTop: 40 }}>
+        <div
+          className="w-16 h-16 rounded-xl mx-auto mb-4 flex items-center justify-center"
+          style={{ background: 'var(--purple-100)' }}
+        >
+          <Flower2 size={32} style={{ color: 'var(--purple-emphasis)' }} />
         </div>
-      </DashboardShell>
+        <h2 className="ds-section-title" style={{ marginBottom: 8 }}>
+          Start your collection
+        </h2>
+        <p style={{ color: 'var(--text-body)', marginBottom: 24 }}>
+          Add your first African violet to begin tracking care, growth, and blooming cycles.
+        </p>
+        <div className="flex flex-col sm:flex-row gap-3 justify-center">
+          <Link to="/plants/new" className="ds-btn-primary">
+            <Plus size={18} /> Add your first plant
+          </Link>
+          <Link to="/import" className="btn btn-secondary">
+            <Upload size={18} /> Import a spreadsheet
+          </Link>
+        </div>
+      </div>
     );
   }
 
   const bloomingCount = collectionCounts?.blooming ?? bloomingPlants.length;
 
   return (
-    <DashboardShell displayName={displayName}>
+    <>
       <DashboardHero
         displayName={displayName}
         featuredPlant={featuredPlant}
@@ -181,6 +149,6 @@ export default function Dashboard() {
         <UpcomingTasks overdueCounts={overdueCounts} bloomsToUpdate={bloomsToUpdate} />
         <RecentNote />
       </div>
-    </DashboardShell>
+    </>
   );
 }

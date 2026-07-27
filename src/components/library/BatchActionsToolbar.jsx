@@ -58,19 +58,19 @@ export default function BatchActionsToolbar({
         <div className="flex items-center gap-2">
           <button
             onClick={onClearSelection}
-            className="p-1.5 rounded hover:bg-[var(--sage-200)] transition-colors"
+            className="p-1.5 rounded hover:bg-[var(--page-bg)] transition-colors"
             title="Exit selection mode"
           >
-            <X size={16} style={{ color: 'var(--sage-600)' }} />
+            <X size={16} style={{ color: 'var(--text-body)' }} />
           </button>
-          <span className="text-small font-semibold" style={{ color: 'var(--sage-700)' }}>
+          <span className="text-small font-semibold" style={{ color: 'var(--text-strong)' }}>
             {selectedIds.length} selected
           </span>
           {selectedIds.length < totalCount && (
             <button
               onClick={onSelectAll}
               className="text-small font-medium hover:underline"
-              style={{ color: 'var(--sage-600)' }}
+              style={{ color: 'var(--purple-emphasis)' }}
             >
               Select all {totalCount}
             </button>
@@ -80,11 +80,13 @@ export default function BatchActionsToolbar({
         {hasSelection && (
           <>
             {/* Divider */}
-            <div className="w-px h-6 bg-[var(--sage-300)]" />
+            <div className="w-px h-6" style={{ background: 'var(--card-border)' }} />
 
             {/* Batch actions */}
             <div className="flex items-center gap-2">
-              <span className="text-small text-muted mr-1">Log care:</span>
+              <span className="text-small mr-1" style={{ color: 'var(--text-quiet)' }}>
+                Log care:
+              </span>
 
               <button
                 onClick={() => handleBatchCare('watering')}

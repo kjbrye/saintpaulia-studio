@@ -102,7 +102,7 @@ export default function PlantListItem({
             fontWeight: 600,
             fontSize: '17px',
             lineHeight: 1.15,
-            color: 'var(--text-primary)',
+            color: 'var(--text-strong)',
           }}
         >
           {displayName}
@@ -110,7 +110,7 @@ export default function PlantListItem({
         {showCultivar && (
           <p
             className="truncate"
-            style={{ fontSize: '12px', color: 'var(--sage-600)', marginTop: 2 }}
+            style={{ fontSize: '12px', color: 'var(--text-body)', marginTop: 2 }}
           >
             {plant.cultivar_name}
           </p>
@@ -123,7 +123,7 @@ export default function PlantListItem({
               fontSize: '10px',
               fontWeight: 700,
               letterSpacing: '0.14em',
-              color: 'var(--sage-500)',
+              color: 'var(--text-quiet)',
               marginTop: 2,
             }}
           >
@@ -139,7 +139,7 @@ export default function PlantListItem({
           fontSize: '10px',
           fontWeight: 700,
           letterSpacing: '0.14em',
-          color: 'var(--sage-500)',
+          color: 'var(--text-quiet)',
         }}
       >
         {eyebrow || ''}
@@ -187,7 +187,7 @@ export default function PlantListItem({
       {!selectionMode && (
         <ChevronRight
           size={16}
-          style={{ color: 'var(--sage-500)', flexShrink: 0 }}
+          style={{ color: 'var(--text-quiet)', flexShrink: 0 }}
         />
       )}
     </div>

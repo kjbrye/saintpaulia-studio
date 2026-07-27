@@ -375,55 +375,54 @@ export default function Library() {
       : `${activePlants.length} ${activePlants.length === 1 ? 'plant' : 'plants'} · ${bloomingCount} blooming · ${upToDateCount} up to date`;
 
   return (
-    <div className="min-h-screen p-6 md:p-10">
-      <div className="max-w-6xl mx-auto">
-        {/* Header */}
-        <header className="flex items-start justify-between mb-6 gap-4">
-          <div className="flex items-start gap-4">
-            <Link to="/">
-              <button className="icon-container">
-                <ArrowLeft size={20} style={{ color: 'var(--sage-600)' }} />
-              </button>
-            </Link>
-            <div>
-              <h1 className="heading heading-xl">Plant Library</h1>
-              <p
-                className="mt-1"
-                style={{
-                  fontFamily: 'var(--font-heading)',
-                  fontStyle: 'italic',
-                  fontSize: 16,
-                  color: 'var(--purple-500)',
-                }}
-              >
-                {subtitle}
-              </p>
-            </div>
+    <>
+      {/* Header */}
+      <header className="flex items-start justify-between mb-6 gap-4">
+        <div className="flex items-start gap-4">
+          <Link to="/">
+            <button className="icon-container">
+              <ArrowLeft size={20} style={{ color: 'var(--text-body)' }} />
+            </button>
+          </Link>
+          <div>
+            <h1 className="heading heading-xl" style={{ color: 'var(--text-strong)' }}>
+              Plant Library
+            </h1>
+            <p
+              className="mt-1"
+              style={{
+                fontFamily: 'var(--font-heading)',
+                fontStyle: 'italic',
+                fontSize: 16,
+                color: 'var(--text-body)',
+              }}
+            >
+              {subtitle}
+            </p>
           </div>
+        </div>
 
-          <div className="flex items-center gap-3 mt-2">
-            {plants.length > 0 && (
-              <button
-                onClick={toggleSelectionMode}
-                className={`icon-container ${selectionMode ? 'active' : ''}`}
-                title={selectionMode ? 'Exit selection mode' : 'Select multiple plants'}
-              >
-                {selectionMode ? (
-                  <CheckSquare size={20} style={{ color: 'var(--sage-600)' }} />
-                ) : (
-                  <Square size={20} style={{ color: 'var(--sage-600)' }} />
-                )}
-              </button>
-            )}
+        <div className="flex items-center gap-3 mt-2">
+          {plants.length > 0 && (
+            <button
+              onClick={toggleSelectionMode}
+              className={`icon-container ${selectionMode ? 'active' : ''}`}
+              title={selectionMode ? 'Exit selection mode' : 'Select multiple plants'}
+            >
+              {selectionMode ? (
+                <CheckSquare size={20} style={{ color: 'var(--text-body)' }} />
+              ) : (
+                <Square size={20} style={{ color: 'var(--text-body)' }} />
+              )}
+            </button>
+          )}
 
-            <Link to="/plants/new">
-              <button className="btn btn-primary">
-                <Plus size={18} />
-                Add Plant
-              </button>
-            </Link>
-          </div>
-        </header>
+          <Link to="/plants/new" className="ds-btn-primary">
+            <Plus size={18} />
+            Add Plant
+          </Link>
+        </div>
+      </header>
 
         {/* Empty state - no plants at all */}
         {activePlants.length === 0 && tab === 'active' && <EmptyLibrary />}
@@ -433,7 +432,7 @@ export default function Library() {
             {/* Active / Archived tabs */}
             <div
               className="flex items-center gap-6 mb-5"
-              style={{ borderBottom: '1px solid var(--sage-200)' }}
+              style={{ borderBottom: '0.5px solid var(--card-border)' }}
             >
               <TabButton
                 active={tab === 'active'}
@@ -476,17 +475,19 @@ export default function Library() {
             {/* Results meta */}
             {filteredPlants.length > 0 && (
               <div className="flex items-center justify-between mb-3 px-1">
-                <span style={{ fontSize: 13, color: 'var(--text-muted)' }}>
-                  Showing {filteredPlants.length} of{' '}
-                  {tab === 'archive' ? archivedPlants.length : activePlants.length}{' '}
-                  plants
+                <span style={{ fontSize: 13, color: 'var(--text-body)' }}>
+                  Showing{' '}
+                  <strong style={{ color: 'var(--text-strong)', fontWeight: 700 }}>
+                    {filteredPlants.length}
+                  </strong>{' '}
+                  of {tab === 'archive' ? archivedPlants.length : activePlants.length} plants
                 </span>
                 <span
                   style={{
                     fontFamily: 'var(--font-heading)',
                     fontStyle: 'italic',
                     fontSize: 14,
-                    color: 'var(--sage-600)',
+                    color: 'var(--text-quiet)',
                   }}
                 >
                   Sorted by {SORT_LABELS[sortBy]}
@@ -501,7 +502,7 @@ export default function Library() {
 
             {/* Grid View */}
             {filteredPlants.length > 0 && viewMode === 'grid' && (
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
+              <div className="library-grid">
                 {paginatedPlants.map((plant) => (
                   <PlantCard
                     key={plant.id}
@@ -558,7 +559,7 @@ export default function Library() {
                   </div>
                 )}
 
-                <p className="text-center text-muted">
+                <p className="text-center" style={{ color: 'var(--text-quiet)' }}>
                   Showing {startIndex + 1}–
                   {Math.min(startIndex + plantsPerPage, filteredPlants.length)} of{' '}
                   {filteredPlants.length} plants
@@ -567,7 +568,6 @@ export default function Library() {
             )}
           </>
         )}
-      </div>
 
       {/* Filter drawer */}
       <LibraryFilterDrawer
@@ -577,7 +577,7 @@ export default function Library() {
         onApply={setFilters}
         hybridizers={hybridizers}
       />
-    </div>
+    </>
   );
 }
 
@@ -591,8 +591,10 @@ function TabButton({ active, onClick, label, count }) {
         fontFamily: 'var(--font-heading)',
         fontWeight: 600,
         fontSize: 18,
-        color: active ? 'var(--sage-700)' : 'var(--text-muted)',
-        borderBottom: active ? '2px solid var(--sage-500)' : '2px solid transparent',
+        color: active ? 'var(--text-strong)' : 'var(--text-quiet)',
+        borderBottom: active
+          ? '2px solid var(--purple-emphasis)'
+          : '2px solid transparent',
       }}
     >
       {label}
@@ -602,7 +604,7 @@ function TabButton({ active, onClick, label, count }) {
           fontFamily: 'var(--font-body)',
           fontSize: 13,
           fontWeight: 600,
-          color: active ? 'var(--sage-500)' : 'var(--text-muted)',
+          color: active ? 'var(--purple-emphasis)' : 'var(--text-quiet)',
         }}
       >
         {count}
