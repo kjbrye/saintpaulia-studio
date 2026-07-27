@@ -8,12 +8,13 @@
  */
 
 import { lazy, Suspense } from 'react';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, Outlet } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AuthProvider, useAuth } from './hooks/useAuth';
 import { SettingsProvider } from './hooks/useSettings.jsx';
 import { ToastProvider } from './hooks/useToast.jsx';
 import AppShell from './components/AppShell';
+import AppLayout from './components/layout/AppLayout';
 import ToastContainer from './components/ui/ToastContainer';
 import ErrorBoundary from './components/ui/ErrorBoundary';
 
@@ -88,8 +89,10 @@ const queryClient = new QueryClient({
   },
 });
 
-// Protected route wrapper
-function ProtectedRoute({ children }) {
+// Protected layout — auth gate + the shared AppLayout shell (sidebar + top
+// bar). Its child routes render into <Outlet /> inside the shell, so every
+// authenticated page appears within the same navigation chrome.
+function ProtectedLayout() {
   const { isAuthenticated, loading } = useAuth();
 
   if (loading) {
@@ -104,10 +107,15 @@ function ProtectedRoute({ children }) {
     return <Navigate to="/login" replace />;
   }
 
-  return children;
+  return (
+    <AppLayout>
+      <Outlet />
+    </AppLayout>
+  );
 }
 
-// Home route — shows Landing for signed-out users, Dashboard for signed-in users
+// Home route — shows Landing for signed-out users, and the Dashboard inside the
+// shared shell for signed-in users.
 function HomeRoute() {
   const { isAuthenticated, loading } = useAuth();
 
@@ -119,7 +127,15 @@ function HomeRoute() {
     );
   }
 
-  return isAuthenticated ? <Dashboard /> : <Landing />;
+  if (!isAuthenticated) {
+    return <Landing />;
+  }
+
+  return (
+    <AppLayout>
+      <Dashboard />
+    </AppLayout>
+  );
 }
 
 // App routes
@@ -146,177 +162,52 @@ function AppRoutes() {
       {/* Home — auth-aware: Landing for signed-out, Dashboard for signed-in */}
       <Route path="/" element={<HomeRoute />} />
 
-      {/* Protected routes */}
+      {/* Protected routes — all rendered inside the shared AppLayout shell */}
+      <Route element={<ProtectedLayout />}>
+        {/* Library */}
+        <Route path="/library" element={<Library />} />
 
-      {/* Library */}
-      <Route
-        path="/library"
-        element={
-          <ProtectedRoute>
-            <Library />
-          </ProtectedRoute>
-        }
-      />
+        {/* Care Log */}
+        <Route path="/care" element={<CareLog />} />
 
-      {/* Care Log */}
-      <Route
-        path="/care"
-        element={
-          <ProtectedRoute>
-            <CareLog />
-          </ProtectedRoute>
-        }
-      />
+        {/* Settings */}
+        <Route path="/settings" element={<Settings />} />
+        <Route path="/settings/:pane" element={<Settings />} />
 
-      {/* Settings */}
-      <Route
-        path="/settings"
-        element={
-          <ProtectedRoute>
-            <Settings />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/settings/:pane"
-        element={
-          <ProtectedRoute>
-            <Settings />
-          </ProtectedRoute>
-        }
-      />
+        {/* Propagation */}
+        <Route path="/propagation" element={<Propagation />} />
+        <Route path="/propagation/:id" element={<PropagationDetail />} />
 
-      {/* Propagation */}
-      <Route
-        path="/propagation"
-        element={
-          <ProtectedRoute>
-            <Propagation />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/propagation/:id"
-        element={
-          <ProtectedRoute>
-            <PropagationDetail />
-          </ProtectedRoute>
-        }
-      />
+        {/* Breeding */}
+        <Route path="/breeding" element={<Breeding />} />
+        <Route path="/breeding/:id" element={<CrossDetail />} />
 
-      {/* Breeding */}
-      <Route
-        path="/breeding"
-        element={
-          <ProtectedRoute>
-            <Breeding />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/breeding/:id"
-        element={
-          <ProtectedRoute>
-            <CrossDetail />
-          </ProtectedRoute>
-        }
-      />
+        {/* Lineage */}
+        <Route path="/lineage" element={<Lineage />} />
 
-      {/* Lineage */}
-      <Route
-        path="/lineage"
-        element={
-          <ProtectedRoute>
-            <Lineage />
-          </ProtectedRoute>
-        }
-      />
+        {/* Analytics */}
+        <Route path="/analytics" element={<Analytics />} />
 
-      {/* Analytics */}
-      <Route
-        path="/analytics"
-        element={
-          <ProtectedRoute>
-            <Analytics />
-          </ProtectedRoute>
-        }
-      />
+        {/* Notes */}
+        <Route path="/notes" element={<Notes />} />
 
-      {/* Notes */}
-      <Route
-        path="/notes"
-        element={
-          <ProtectedRoute>
-            <Notes />
-          </ProtectedRoute>
-        }
-      />
+        {/* Sports - /new must come before /:id */}
+        <Route path="/sports" element={<Sports />} />
+        <Route path="/sports/new" element={<SportRegistrationForm />} />
+        <Route path="/sports/:id" element={<SportDetail />} />
 
-      {/* Sports - /new must come before /:id */}
-      <Route
-        path="/sports"
-        element={
-          <ProtectedRoute>
-            <Sports />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/sports/new"
-        element={
-          <ProtectedRoute>
-            <SportRegistrationForm />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/sports/:id"
-        element={
-          <ProtectedRoute>
-            <SportDetail />
-          </ProtectedRoute>
-        }
-      />
+        {/* Wishlist */}
+        <Route path="/wishlist" element={<Wishlist />} />
 
-      {/* Wishlist */}
-      <Route
-        path="/wishlist"
-        element={
-          <ProtectedRoute>
-            <Wishlist />
-          </ProtectedRoute>
-        }
-      />
+        {/* Import */}
+        <Route path="/import" element={<ImportPlants />} />
 
-      {/* Import */}
-      <Route
-        path="/import"
-        element={
-          <ProtectedRoute>
-            <ImportPlants />
-          </ProtectedRoute>
-        }
-      />
+        {/* Add Plant - must come before /plants/:id */}
+        <Route path="/plants/new" element={<AddPlant />} />
 
-      {/* Add Plant - must come before /plants/:id */}
-      <Route
-        path="/plants/new"
-        element={
-          <ProtectedRoute>
-            <AddPlant />
-          </ProtectedRoute>
-        }
-      />
-
-      {/* Plant Detail */}
-      <Route
-        path="/plants/:id"
-        element={
-          <ProtectedRoute>
-            <PlantDetail />
-          </ProtectedRoute>
-        }
-      />
+        {/* Plant Detail */}
+        <Route path="/plants/:id" element={<PlantDetail />} />
+      </Route>
 
       {/* 404 */}
       <Route path="*" element={<NotFound />} />
@@ -343,7 +234,7 @@ export default function App() {
                         backgroundSize: 'cover',
                         backgroundPosition: 'center',
                         backgroundRepeat: 'no-repeat',
-                        opacity: 0.3,
+                        opacity: 0.42,
                       }}
                     />
                     <AppRoutes />

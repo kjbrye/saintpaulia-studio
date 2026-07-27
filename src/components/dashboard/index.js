@@ -11,8 +11,8 @@ export { default as PremiumDiscoveryTile } from './PremiumDiscoveryTile';
 export { default as RecentActivity } from './RecentActivity';
 export { default as SanctuaryMoment } from './SanctuaryMoment';
 
-// v2 dashboard layout (sidebar shell + repalette)
-export { default as DashboardTopBar } from './DashboardTopBar';
+// v2 dashboard layout (repalette). The sidebar shell + top bar moved to
+// components/layout/ (AppLayout, AppTopBar) so every page shares them.
 export { default as DashboardHero } from './DashboardHero';
 export { default as FeaturedPhotoPicker } from './FeaturedPhotoPicker';
 export { default as CareSnapshot } from './CareSnapshot';

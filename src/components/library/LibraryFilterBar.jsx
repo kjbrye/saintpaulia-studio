@@ -34,19 +34,20 @@ export default function LibraryFilterBar({
   onClearAllFilters,
 }) {
   return (
-    <div className="card p-3 mb-4">
+    <div className="ds-card p-3 mb-4">
       {/* Row 1: search | view toggle | sort | filters */}
       <div className="flex flex-col md:flex-row md:items-center gap-3">
         <div className="flex-1 relative">
           <Search
             size={16}
             className="absolute left-3 top-1/2 -translate-y-1/2"
-            style={{ color: 'var(--sage-500)' }}
+            style={{ color: 'var(--text-quiet)' }}
           />
           <input
             type="text"
             placeholder="Search plants, cultivar, hybridizer, notes..."
-            className="input w-full pl-9"
+            className="input w-full"
+            style={{ paddingLeft: 38 }}
             value={searchQuery}
             onChange={(e) => onSearchChange(e.target.value)}
           />
@@ -106,7 +107,7 @@ export default function LibraryFilterBar({
                   fontSize: 11,
                   fontWeight: 700,
                   padding: '0 6px',
-                  background: 'var(--sage-500)',
+                  background: 'var(--purple-emphasis)',
                   color: 'white',
                 }}
               >
@@ -119,14 +120,14 @@ export default function LibraryFilterBar({
 
       {/* Row 2: active filter chips */}
       {activeChips.length > 0 && (
-        <div className="flex items-center flex-wrap gap-2 mt-3 pt-3 border-t border-[var(--sage-200)]">
+        <div className="flex items-center flex-wrap gap-2 mt-3 pt-3 border-t border-[var(--card-border)]">
           <span
             style={{
               fontSize: 10,
               fontWeight: 700,
               letterSpacing: '0.14em',
               textTransform: 'uppercase',
-              color: 'var(--sage-500)',
+              color: 'var(--text-quiet)',
             }}
           >
             Filtering by
@@ -138,18 +139,18 @@ export default function LibraryFilterBar({
               onClick={chip.onRemove}
               className="inline-flex items-center gap-1.5"
               style={{
-                background: 'var(--cream-200)',
-                border: 'var(--border-cream)',
+                background: 'var(--page-bg)',
+                border: '0.5px solid var(--card-border)',
                 borderRadius: 9999,
                 padding: '4px 10px',
                 fontSize: 12,
                 fontWeight: 600,
-                color: 'var(--sage-700)',
+                color: 'var(--text-body)',
               }}
               title={`Remove ${chip.label}`}
             >
               <span>{chip.label}</span>
-              <X size={12} style={{ color: 'var(--copper-500)' }} />
+              <X size={12} style={{ color: 'var(--copper-signal)' }} />
             </button>
           ))}
           <button
@@ -159,7 +160,7 @@ export default function LibraryFilterBar({
             style={{
               fontSize: 12,
               fontWeight: 600,
-              color: 'var(--copper-600)',
+              color: 'var(--copper-signal)',
               textDecoration: 'underline',
             }}
           >
