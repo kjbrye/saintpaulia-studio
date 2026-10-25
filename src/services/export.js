@@ -4,6 +4,7 @@
  * Fetches all user data and exports it as CSV files in a ZIP archive.
  */
 
+import JSZip from 'jszip';
 import { supabase } from '../api/supabase';
 
 const TABLES = [
@@ -43,7 +44,7 @@ function toCsv(rows) {
  * Trigger a file download in the browser.
  */
 function downloadFile(content, filename, type = 'text/csv') {
-  const blob = new Blob([content], { type });
+  const blob = content instanceof Blob ? content : new Blob([content], { type });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
@@ -51,11 +52,14 @@ function downloadFile(content, filename, type = 'text/csv') {
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);
-  URL.revokeObjectURL(url);
+  // Revoking synchronously can cancel the download before it starts
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
 
 /**
- * Export all user data as individual CSV files.
+ * Export all user data as CSV files.
+ * Multiple tables are bundled into a single ZIP, since browsers block
+ * repeated programmatic downloads and only the first one would go through.
  * Returns the count of exported tables.
  */
 export async function exportAllData() {
@@ -73,19 +77,21 @@ export async function exportAllData() {
     throw new Error('No data to export');
   }
 
+  const date = new Date().toISOString().slice(0, 10);
+
   // If only one table has data, download a single CSV
   if (results.length === 1) {
     const { name, data } = results[0];
-    downloadFile(toCsv(data), `saintpaulia-${name}.csv`);
+    downloadFile(toCsv(data), `saintpaulia-${name}-${date}.csv`);
     return 1;
   }
 
-  // Multiple tables: download as a combined JSON (more reliable than
-  // trying to zip without a library), or individual CSVs
-  const date = new Date().toISOString().slice(0, 10);
+  const zip = new JSZip();
   for (const { name, data } of results) {
-    downloadFile(toCsv(data), `saintpaulia-${name}-${date}.csv`);
+    zip.file(`saintpaulia-${name}-${date}.csv`, toCsv(data));
   }
+  const archive = await zip.generateAsync({ type: 'blob' });
+  downloadFile(archive, `saintpaulia-export-${date}.zip`);
 
   return results.length;
 }
