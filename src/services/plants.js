@@ -6,6 +6,7 @@
  */
 
 import { supabase, requireUserId } from '../api/supabase';
+import { deletePlantPhotos } from './storage';
 
 /**
  * Fetch all plants for the current user
@@ -57,6 +58,19 @@ export async function createPlant(plant) {
  * @returns {Promise<Object>} Updated plant object
  */
 export async function updatePlant(id, updates) {
+  const touchesPhotos = 'photo_url' in updates || 'photo_urls' in updates;
+  let previous = null;
+
+  if (touchesPhotos) {
+    const { data, error } = await supabase
+      .from('plants')
+      .select('photo_url, photo_urls')
+      .eq('id', id)
+      .single();
+    if (error) throw error;
+    previous = data;
+  }
+
   const { data, error } = await supabase
     .from('plants')
     .update(updates)
@@ -65,6 +79,21 @@ export async function updatePlant(id, updates) {
     .single();
 
   if (error) throw error;
+
+  if (touchesPhotos) {
+    const oldUrls = [previous?.photo_url, ...(previous?.photo_urls || [])].filter(Boolean);
+    const newUrls = new Set([data.photo_url, ...(data.photo_urls || [])].filter(Boolean));
+    const removedUrls = oldUrls.filter((url) => !newUrls.has(url));
+
+    if (removedUrls.length > 0) {
+      try {
+        await deletePlantPhotos(removedUrls);
+      } catch (err) {
+        console.error('Failed to delete replaced plant photo(s) from storage:', err);
+      }
+    }
+  }
+
   return data;
 }
 
@@ -76,6 +105,22 @@ export async function updatePlant(id, updates) {
  * @returns {Promise<void>}
  */
 export async function deletePlant(id) {
+  // Gather every photo file this plant owns (plant photos + journal attachments)
+  // before the rows referencing them are deleted.
+  const [{ data: plant, error: plantFetchError }, { data: entries, error: entriesFetchError }] =
+    await Promise.all([
+      supabase.from('plants').select('photo_url, photo_urls').eq('id', id).single(),
+      supabase.from('journal_entries').select('photos').eq('plant_id', id),
+    ]);
+  if (plantFetchError) throw plantFetchError;
+  if (entriesFetchError) throw entriesFetchError;
+
+  const photoUrls = [
+    plant?.photo_url,
+    ...(plant?.photo_urls || []),
+    ...(entries || []).flatMap((entry) => entry.photos || []),
+  ].filter(Boolean);
+
   // Delete associated records first (order doesn't matter, all independent)
   const relatedDeletes = [
     supabase.from('care_logs').delete().eq('plant_id', id),
@@ -92,4 +137,12 @@ export async function deletePlant(id) {
   // Now delete the plant
   const { error } = await supabase.from('plants').delete().eq('id', id);
   if (error) throw error;
+
+  if (photoUrls.length > 0) {
+    try {
+      await deletePlantPhotos(photoUrls);
+    } catch (err) {
+      console.error('Failed to delete plant photo(s) from storage:', err);
+    }
+  }
 }

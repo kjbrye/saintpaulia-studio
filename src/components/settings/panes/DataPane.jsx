@@ -23,7 +23,7 @@ export default function DataPane() {
     setIsExporting(true);
     try {
       const count = await exportAllData();
-      toast.success(`Exported ${count} file${count > 1 ? 's' : ''} successfully`);
+      toast.success(`Exported ${count} table${count > 1 ? 's' : ''} successfully`);
     } catch (error) {
       toast.error(error.message || 'Failed to export data');
     } finally {

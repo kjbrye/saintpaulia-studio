@@ -151,7 +151,7 @@ export const SETTINGS_COPY = {
     export: {
       heading: 'Export all data',
       description:
-        'Download all your data as CSV files — plants, care logs, bloom logs, health logs, journal entries, propagations, and breeding crosses.',
+        'Download all your data as a ZIP of CSV files — plants, care logs, bloom logs, health logs, journal entries, propagations, and breeding crosses.',
       button: 'Export',
       exporting: 'Exporting...',
     },
