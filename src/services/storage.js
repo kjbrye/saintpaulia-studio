@@ -106,3 +106,20 @@ export async function deleteNotePhoto(publicUrl) {
   const { error } = await supabase.storage.from(BUCKET).remove([path]);
   if (error) throw error;
 }
+
+/**
+ * Delete multiple plant photos from Supabase Storage in one call.
+ * Ignores empty/falsy URLs.
+ * @param {string[]} publicUrls
+ */
+export async function deletePlantPhotos(publicUrls = []) {
+  const paths = publicUrls
+    .filter(Boolean)
+    .map((url) => url.split(`${BUCKET}/`)[1])
+    .filter(Boolean);
+
+  if (paths.length === 0) return;
+
+  const { error } = await supabase.storage.from(BUCKET).remove(paths);
+  if (error) throw error;
+}

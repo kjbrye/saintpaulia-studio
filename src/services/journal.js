@@ -6,6 +6,7 @@
  */
 
 import { supabase, requireUserId } from '../api/supabase';
+import { deletePlantPhotos } from './storage';
 
 /**
  * Fetch journal entries for a given parent entity
@@ -45,7 +46,21 @@ export async function createJournalEntry(entry) {
  * Delete a journal entry
  */
 export async function deleteJournalEntry(id) {
-  const { error } = await supabase.from('journal_entries').delete().eq('id', id);
+  const { data: entry, error: fetchError } = await supabase
+    .from('journal_entries')
+    .select('photos')
+    .eq('id', id)
+    .single();
+  if (fetchError) throw fetchError;
 
+  const { error } = await supabase.from('journal_entries').delete().eq('id', id);
   if (error) throw error;
+
+  if (entry?.photos?.length > 0) {
+    try {
+      await deletePlantPhotos(entry.photos);
+    } catch (err) {
+      console.error('Failed to delete journal entry photo(s) from storage:', err);
+    }
+  }
 }
